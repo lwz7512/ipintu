@@ -3,3 +3,5 @@ Hello World git on 2011/07/17
 git commit -a -e
 #commit the local database to github:
 git push git@github.com:lwz7512/ipintu master
+# test commit with origin:
+git push origin master
