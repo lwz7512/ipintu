@@ -1,4 +1,7 @@
 Hello World git on 2011/07/17
+all the git use tips:
+http://help.github.com/git-cheat-sheets/
+
 #commit all the modifcation to local database and add message, press Esc, then enter ZZ to quit vim:
 git commit -a -e
 #commit the local database to github:
