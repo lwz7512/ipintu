@@ -1,3 +1,5 @@
 Hello World git on 2011/07/17
-提交到github远程仓库命令：
+#commit all the modifcation to local database and add message, enter ZZ to quit vim:
+#commit the local database to github：
+git commit -a -e
 git push git@github.com:lwz7512/ipintu master
