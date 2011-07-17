@@ -2,9 +2,9 @@ Hello World git on 2011/07/17
 all the git use tips:
 http://help.github.com/git-cheat-sheets/
 
+# add all the files to commit task:
+git add .
 #commit all the modifcation to local database and add message, press Esc, then enter ZZ to quit vim:
-git commit -a -e
-#commit the local database to github:
-git push git@github.com:lwz7512/ipintu master
-# test commit with origin:
+git commit -m "write some english note, can not use chinese!"
+#commit the local repository to github:
 git push origin master
