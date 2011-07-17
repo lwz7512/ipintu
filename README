@@ -1,1 +1,3 @@
 Hello World git on 2011/07/17
+提交到github远程仓库命令：
+git push git@github.com:lwz7512/ipintu master
