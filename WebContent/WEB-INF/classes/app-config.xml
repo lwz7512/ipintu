@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/security
+		http://www.springframework.org/schema/security/spring-security-3.0.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<!-- dataSource for MySQL -->
+	<bean id="dataSource"
+		  class="org.apache.commons.dbcp.BasicDataSource"
+		  destroy-method="close">
+		  <property name="driverClassName"
+			value="com.mysql.jdbc.Driver" />
+		  <property name="url"
+			value="jdbc:mysql://localhost:3306/testdrive_db" />
+		  <property name="username" value="root" />
+		  <property name="password" value="root" />
+	</bean>
+	
+	<!-- Servlet to Bean 用来处理客户端请求-->
+	<bean id="paramAnalyzer"
+		  class="com.pintu.facade.ParamAnalyzer">
+		<property name="apiAdaptor" ref="apiAdaptor"/>
+		<property name="taskStarter" ref="taskStarter"/>
+	</bean>
+	<bean id="apiAdaptor"
+		  class="com.pintu.facade.ServiceAdaptor">
+		<property name="pintuService" ref="pintuService"/>
+	</bean>
+	<bean id="taskStarter"
+		  class="com.pintu.jobs.TaskStarter">
+		<property name="dbVisitor" ref="dbAcess"/>
+		<property name="cacheVisitor" ref="pintuCache"/>		  
+	</bean>
+	<bean id="pintuService"
+		  class="com.pintu.facade.PintuServiceImplement">
+		<property name="dbVisitor" ref="dbAcess"/>
+		<property name="cacheVisitor" ref="pintuCache"/>
+	</bean>	
+		  	   
+    <!--将共享的DataSource实例注入到DAO中，JdbcTemplate实例在DataSource的setter方法中被创建-->
+    <bean id = "dbAcess" 
+          class = "com.pintu.dao.impl.DBAccessImplement"> 
+         <property name = "dataSource" ref="dataSource"/> 
+    </bean>
+    <bean id="cacheAccess"
+    	  class="com.pintu.dao.impl.CacheAccessImplement">
+    	<property name="pintuCache" ref="pintuCache"/>
+    </bean>
+    <bean id="pintuCache" class="com.pintu.cache.PintuCache"/>
+    <!-- 线程池个数配置 -->
+    <bean id="imgProcessor"
+    	  class="com.pintu.tools.ImgDataProcessor">
+    	<constructor-arg type="int" value="10"/>
+    </bean>
+   
+</beans>
