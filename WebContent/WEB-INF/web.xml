@@ -30,7 +30,7 @@
     	<init-param>
 	    	<param-name>targetBean</param-name>
 	    	<!-- 这是个bean实例id，在app-config.xml中定义 -->
-	    	<param-value>paramAnalyzer</param-value>
+	    	<param-value>appStarter</param-value>
 	    </init-param>
     </servlet>
     <servlet>
