@@ -1,5 +1,7 @@
 package com.pintu.beans;
-
+/**
+ * test git 
+ */
 import java.io.Serializable;
 
 public class Comment implements Serializable{
@@ -7,8 +9,8 @@ public class Comment implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	
-	//ÊÇ·ñÒÑ¾­±»Í¬²½Èë¿â£¬ÓÃÓÚÍ¬²½¹ı³ÌÖĞ±éÀú»º´æÊ±ÅĞ¶Ï
-	//Èç¹ûÎªÕæ±íÊ¾ÒÑÈë¿â£¬Èç¹ûÎª¼Ù±íÊ¾ÎªÈë¿â
+	//æ˜¯å¦å·²ç»è¢«åŒæ­¥å…¥åº“ï¼Œç”¨äºåŒæ­¥è¿‡ç¨‹ä¸­éå†ç¼“å­˜æ—¶åˆ¤æ–­
+	//å¦‚æœä¸ºçœŸè¡¨ç¤ºå·²å…¥åº“ï¼Œå¦‚æœä¸ºå‡è¡¨ç¤ºä¸ºå…¥åº“
 	private Boolean saved;
 
 	
