@@ -9,7 +9,9 @@ import java.io.Serializable;
  *
  */
 public class TPicItem implements Serializable{
-
+	
+	private static final long serialVersionUID = 1L;
+	
 	//贴图ID
 	private String id;
 	//贴图名称，这个其实用不着，留着吧
@@ -41,8 +43,10 @@ public class TPicItem implements Serializable{
 	private String rawImgPath;
 	//是否审核通过，默认都是1，即通过，不通过变为0
 	private String pass;
-	//备用字段
-	private String memo;
+	
+	//是否已经被同步入库，用于同步过程中遍历缓存时判断
+	//如果为真表示已入库，如果为假表示为入库
+	private Boolean saved;
 	
 	
 	public TPicItem(){
@@ -190,13 +194,13 @@ public class TPicItem implements Serializable{
 	}
 
 
-	public String getMemo() {
-		return memo;
+	public Boolean getSaved() {
+		return saved;
 	}
 
 
-	public void setMemo(String memo) {
-		this.memo = memo;
+	public void setSaved(Boolean saved) {
+		this.saved = saved;
 	}
 	
 	

@@ -12,6 +12,7 @@ import javax.servlet.ServletResponse;
 import org.apache.log4j.Logger;
 
 import com.pintu.jobs.TaskStarter;
+import com.pintu.sync.CacheToDB;
 
 /**
  * 真正处理客户端传参到服务端的逻辑，与适配器打交道，适配器再与服务打交道；
@@ -30,6 +31,8 @@ public class ParamAnalyzer extends GenericServlet implements Servlet,ExtVisitorI
 	//启动自动任务，由Spring注入
 	private TaskStarter taskStarter;
 	
+	private CacheToDB synchProcess;
+	
 	public ParamAnalyzer() {
 		// TODO Auto-generated constructor stub
 	}	
@@ -39,9 +42,12 @@ public class ParamAnalyzer extends GenericServlet implements Servlet,ExtVisitorI
 		this.apiAdaptor = apiAdaptor;
 	}
 		
-	
 	public void setTaskStarter(TaskStarter taskStarter) {
 		this.taskStarter = taskStarter;
+	}
+
+	public void setSynchProcess(CacheToDB synchProcess) {
+		this.synchProcess = synchProcess;
 	}
 
 
@@ -55,6 +61,10 @@ public class ParamAnalyzer extends GenericServlet implements Servlet,ExtVisitorI
 		}
 		//启动任务定时器
 		if(taskStarter!=null) taskStarter.runAutoTasks();
+		
+		//启动数据库同步任务
+		if(synchProcess!=null) synchProcess.start();
+		
 	}
 
 	

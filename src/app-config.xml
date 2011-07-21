@@ -28,6 +28,7 @@
 		  class="com.pintu.facade.ParamAnalyzer">
 		<property name="apiAdaptor" ref="apiAdaptor"/>
 		<property name="taskStarter" ref="taskStarter"/>
+		<property name="synchProcess" ref="synchProcess"/>
 	</bean>
 	<bean id="apiAdaptor"
 		  class="com.pintu.facade.ServiceAdaptor">
@@ -42,8 +43,7 @@
 		  class="com.pintu.facade.PintuServiceImplement">
 		<property name="dbVisitor" ref="dbAcess"/>
 		<property name="cacheVisitor" ref="pintuCache"/>
-	</bean>	
-		  	   
+	</bean>			  	   
     <!--将共享的DataSource实例注入到DAO中，JdbcTemplate实例在DataSource的setter方法中被创建-->
     <bean id = "dbAcess" 
           class = "com.pintu.dao.impl.DBAccessImplement"> 
@@ -59,5 +59,14 @@
     	  class="com.pintu.tools.ImgDataProcessor">
     	<constructor-arg type="int" value="10"/>
     </bean>
-   
+	<!-- 同步缓存对象到数据库操作 -->
+    <bean id="executor"
+    	  class="com.pintu.sync.SyncExecute">
+		<property name="dbVisitor" ref="dbAcess"/>
+		<property name="cacheVisitor" ref="pintuCache"/>    	
+    </bean>
+    <bean id="synchProcess"
+    	  class="com.pintu.sync.CacheToDB">
+    	<property name="executor" ref="executor"/>
+    </bean>
 </beans>
