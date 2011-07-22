@@ -16,7 +16,7 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 	
 	
-	//ÓÉSpring×¢Èë
+	//Inject by Spring
 	public void setDataSource(DataSource dataSource) {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 		
