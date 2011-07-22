@@ -24,6 +24,7 @@ public class CacheToDB {
 		return executor;
 	}
 
+	//由Spring注入
 	public void setExecutor(SyncExecute executor) {
 		this.executor = executor;		
 		executor.setSyncFlag(true);

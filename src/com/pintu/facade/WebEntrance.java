@@ -21,7 +21,7 @@ public class WebEntrance extends GenericServlet {
 	//web.xml中配置的参数名称
 	private String targetBean;
 
-	//此代理类在app-config.xml中定义:paramAnalyzer
+	//此代理类在app-config.xml中定义:appStarter
 	private Servlet proxy;
 
 	public WebEntrance() {
