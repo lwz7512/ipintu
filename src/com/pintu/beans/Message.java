@@ -1,7 +1,7 @@
 package com.pintu.beans;
 
 /**
- * 个人消息，相对于私信
+ * personal message, like SINA Weibo private message;
  * @author lwz
  *
  */

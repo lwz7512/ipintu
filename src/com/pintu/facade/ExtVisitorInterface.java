@@ -4,7 +4,7 @@
 package com.pintu.facade;
 
 /**
- * ���ﶨ���ⲿ���ʽӿ���Ҫ�ĳ����ַ���
+ * 这里定义外部访问接口需要的常量字符串
  * @author lwz
  *
  */

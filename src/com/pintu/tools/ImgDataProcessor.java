@@ -10,29 +10,29 @@ public class ImgDataProcessor {
 	
 	private ExecutorService pool;
 	
-	//Ïß³Ì¶àÉÙÓÉSpringÅäÖÃ
+	//çº¿ç¨‹å¤šå°‘ç”±Springé…ç½®
 	public ImgDataProcessor(int threadNumber) {
 		pool = Executors.newFixedThreadPool(threadNumber);
 	}
 
-	//Ö»¹ÜÍùÀïÈÓÊı¾İ¾ÍĞĞÁË£¬ÈÎÎñ¶ÓÁĞ×Ô¶¯»áÅÅ¶ÓÖ´ĞĞ
+	//åªç®¡å¾€é‡Œæ‰”æ•°æ®å°±è¡Œäº†ï¼Œä»»åŠ¡é˜Ÿåˆ—è‡ªåŠ¨ä¼šæ’é˜Ÿæ‰§è¡Œ
 	public void createImageFile(Byte[] imgData, TPicItem picObj){
 		
-		//ËõÂÔÍ¼¿ÉÒÔ²»ÓÃĞ´ÎÄ¼ş£¬´æµ½»º´æÖĞ
+		//ç¼©ç•¥å›¾å¯ä»¥ä¸ç”¨å†™æ–‡ä»¶ï¼Œå­˜åˆ°ç¼“å­˜ä¸­
 		ImageFileCreationTask thumbnailTask = new ImageFileCreationTask();
 		thumbnailTask.setImgData(imgData);
 		thumbnailTask.setImgType("thumbnail");
 		thumbnailTask.setPicObj(picObj);
 		pool.execute(thumbnailTask);
 		
-		//´´½¨ÊÖ»ú·ÃÎÊÍ¼Æ¬
+		//åˆ›å»ºæ‰‹æœºè®¿é—®å›¾ç‰‡
 		ImageFileCreationTask mobileTask = new ImageFileCreationTask();
 		mobileTask.setImgData(imgData);
 		mobileTask.setImgType("mobile");
 		mobileTask.setPicObj(picObj);
 		pool.execute(mobileTask);
 
-		//´´½¨Ô­Ê¼´óÍ¼Æ¬
+		//åˆ›å»ºåŸå§‹å¤§å›¾ç‰‡
 		ImageFileCreationTask rawTask = new ImageFileCreationTask();
 		rawTask.setImgData(imgData);
 		rawTask.setImgType("raw");
@@ -50,18 +50,18 @@ public class ImgDataProcessor {
 
  class ImageFileCreationTask implements Runnable{
 
-	 //Éú³ÉËõÂÔÍ¼thumbnail£¬»¹ÊÇÊÖ»úä¯ÀÀÍ¼mobile£¬»¹ÊÇÔ­Ê¼´óÍ¼raw
+	 //ç”Ÿæˆç¼©ç•¥å›¾thumbnailï¼Œè¿˜æ˜¯æ‰‹æœºæµè§ˆå›¾mobileï¼Œè¿˜æ˜¯åŸå§‹å¤§å›¾raw
 	 private String imgType;
 	 
 	 private Byte[] imgData;
 	 
-	 //»º´æµÄÌùÍ¼¶ÔÏó£¬ÕâÊ±Í¼Æ¬Â·¾¶ºÍ´óĞ¡»¹Î´Öª
-	 //ĞèÒªÉú³ÉÎÄ¼şºóºó²¹³äÊôĞÔ£¬È»ºó²ÅÄÜÓÉÁíÍâµÄÏß³ÌÈë¿â
+	 //ç¼“å­˜çš„è´´å›¾å¯¹è±¡ï¼Œè¿™æ—¶å›¾ç‰‡è·¯å¾„å’Œå¤§å°è¿˜æœªçŸ¥
+	 //éœ€è¦ç”Ÿæˆæ–‡ä»¶ååè¡¥å……å±æ€§ï¼Œç„¶åæ‰èƒ½ç”±å¦å¤–çš„çº¿ç¨‹å…¥åº“
 	 private TPicItem picObj;
 	 
 	@Override
 	public void run() {
-		// TODO Éú³ÉÍ¼Æ¬ÎÄ¼ş£¬²¢½«Â·¾¶´æÔÚpicObjÖĞ
+		// TODO ç”Ÿæˆå›¾ç‰‡æ–‡ä»¶ï¼Œå¹¶å°†è·¯å¾„å­˜åœ¨picObjä¸­
 		
 	}
 

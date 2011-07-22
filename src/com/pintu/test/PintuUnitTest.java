@@ -22,6 +22,10 @@ public class PintuUnitTest {
 	
 	@Test
 	public void getLatestPintus(){
+		//From lwz7512@2011/07/22
+		//Hi, xiaoming:
+		//TODO, this is your method has implemented, now to test here!
+		
 	}
 	
 

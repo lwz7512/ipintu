@@ -1,20 +1,20 @@
 package com.pintu.beans;
 
 /**
- * Æ·Í¼ÏêÇé£¬±ÈÆ·Í¼ÌõÄ¿TPicItem¶àÓÃ»§µÄ»ù±¾×ÊÁÏ
- * ÓÃÔÚµã»÷ËõÂÔÍ¼ºóµÄÄÚÈİÕ¹Ê¾
+ * å“å›¾è¯¦æƒ…ï¼Œæ¯”å“å›¾æ¡ç›®TPicItemå¤šç”¨æˆ·çš„åŸºæœ¬èµ„æ–™
+ * ç”¨åœ¨ç‚¹å‡»ç¼©ç•¥å›¾åçš„å†…å®¹å±•ç¤º
  * @author lwz
  *
  */
 public class TPicDetails extends TPicItem{
 
-	//ÓÃ»§Í·Ïñ£¬ÓÃ»§±í´æÎÄ¼şÂ·¾¶£¬´Ó´ÅÅÌÉÏÕÒÍ¼
+	//ç”¨æˆ·å¤´åƒï¼Œç”¨æˆ·è¡¨å­˜æ–‡ä»¶è·¯å¾„ï¼Œä»ç£ç›˜ä¸Šæ‰¾å›¾
 	private String avatarImgPath;
 	
-	//ÓÃ»§»ı·Ö
+	//ç”¨æˆ·ç§¯åˆ†
 	private String score;
 	
-	//ÓÃ»§µÈ¼¶
+	//ç”¨æˆ·ç­‰çº§
 	private String level;
 	
 	public TPicDetails() {

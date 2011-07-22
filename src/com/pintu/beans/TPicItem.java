@@ -3,8 +3,8 @@ package com.pintu.beans;
 import java.io.Serializable;
 
 /**
- * Ʒͼ�������ϣ�����Ʒͼ���ߡ�ʱ�䡢�ֻ����ͼλ�á�������Ŀ��������Ŀ�ȵ�
- * ������ͼ�б���Ԫ������ʷ�����б���Ԫ��չʾ
+ * 品图详情资料，包括品图作者、时间、手机浏览图位置、故事数目、评论数目等等
+ * 用在热图列表单元或者历史经典列表单元中展示
  * @author lwz
  *
  */
@@ -12,40 +12,40 @@ public class TPicItem implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
-	//��ͼID
+	//贴图ID
 	private String id;
-	//��ͼ���ƣ������ʵ�ò��ţ����Ű�
+	//贴图名称，这个其实用不着，留着吧
 	private String name;
-	//��ͼ����
+	//贴图作者
 	private String owner;
 	
-	//����ʱ�䣬���Ա���Ϊ������
-	//����ͻ���ʱ���ٸ�ʽ��Ϊxx���ӻ���xxСʱǰ
+	//发布时间，可以保存为毫秒数
+	//到达客户端时，再格式化为xx分钟或者xx小时前
 	private String publishTime;
 	
-	//��ͼ����
+	//贴图描述
 	private String description;
-	//��ͼ��ǩ
+	//贴图标签
 	private String tags;
-	//�Ƿ�����Ʒͼ
+	//是否允许品图
 	private String allowStory;
-	//���ɵ��ƶ�ͼID�����ID����pId+"_Mob"����
+	//生成的移动图ID，这个ID是由pId+"_Mob"构成
 	private String mobImgId;
-	//���ɵ��ƶ�ͼ�ļ���С����λ��KB
+	//生成的移动图文件大小，单位是KB
 	private String mobImgSize;
-	//���ɵ��ƶ�ͼ���̱���·��
+	//生成的移动图磁盘保存路径
 	private String mobImgPath;
-	//���ɵ�ԭʼͼID�����ID����pId+"_Raw"����
+	//生成的原始图ID，这个ID是由pId+"_Raw"构成
 	private String rawImgId;
-	//���ɵ�ԭʼͼ��С����λ��KB
+	//生成的原始图大小，单位是KB
 	private String rwoImgSize;
-	//���ɵ�ԭʼͼ���̱���·��
+	//生成的原始图磁盘保存路径
 	private String rawImgPath;
-	//�Ƿ����ͨ����Ĭ�϶���1����ͨ������ͨ����Ϊ0
+	//是否审核通过，默认都是1，即通过，不通过变为0
 	private String pass;
 	
-	//�Ƿ��Ѿ���ͬ����⣬����ͬ�������б�������ʱ�ж�
-	//���Ϊ���ʾ����⣬���Ϊ�ٱ�ʾΪ���
+	//是否已经被同步入库，用于同步过程中遍历缓存时判断
+	//如果为真表示已入库，如果为假表示为入库
 	private Boolean saved;
 	
 	

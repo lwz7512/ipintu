@@ -11,7 +11,7 @@ public class TaskTimer {
 	
 	private int min = 1;
 	
-	// Ò»ÌìµÄºÁÃëÊı
+	// ä¸€å¤©çš„æ¯«ç§’æ•°
 	long daySpan = 24 * 60 * 60 * 1000;
 
 	private CalculateTask task;
@@ -45,13 +45,13 @@ public class TaskTimer {
 	}
 
 	public void runAtFixTime(String timeToRun) {
-		// ¹æ¶¨µÄÃ¿ÌìÊ±¼ä00:00:00ÔËĞĞ
+		// è§„å®šçš„æ¯å¤©æ—¶é—´00:00:00è¿è¡Œ
 		// final SimpleDateFormat dateFormat = new
 		// SimpleDateFormat("yyyy-MM-dd '00:00:00'");
 		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd '"
 				+ timeToRun + "'");
 
-		// Ê×´ÎÔËĞĞÊ±¼ä
+		// é¦–æ¬¡è¿è¡Œæ—¶é—´
 		Date startTime = null;
 		try {
 			startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -61,11 +61,11 @@ public class TaskTimer {
 			e.printStackTrace();
 		}
 
-		// Èç¹û½ñÌìµÄÒÑ¾­¹ıÁË Ê×´ÎÔËĞĞÊ±¼ä¾Í¸ÄÎªÃ÷Ìì
+		// å¦‚æœä»Šå¤©çš„å·²ç»è¿‡äº† é¦–æ¬¡è¿è¡Œæ—¶é—´å°±æ”¹ä¸ºæ˜å¤©
 		if (System.currentTimeMillis() > startTime.getTime())
 			startTime = new Date(startTime.getTime() + daySpan);
 
-		// ÒÔÃ¿24Ğ¡Ê±Ö´ĞĞÒ»´Î
+		// ä»¥æ¯24å°æ—¶æ‰§è¡Œä¸€æ¬¡
 		timer.scheduleAtFixedRate(task, startTime, daySpan);
 	}
 
