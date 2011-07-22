@@ -23,7 +23,9 @@ public class CacheToDB {
 	public SyncExecute getExecutor() {
 		return executor;
 	}
-
+	
+	
+	//由spring注入详见app-config.xml
 	public void setExecutor(SyncExecute executor) {
 		this.executor = executor;		
 		executor.setSyncFlag(true);
