@@ -5,10 +5,10 @@ import com.pintu.dao.CacheAccessInterface;
 
 public class CacheAccessImplement implements CacheAccessInterface {
 
-	//ÓÉSpring×¢Èë
+	//Inject by Spring
 	private PintuCache pintuCache;
 	
-	//Constructor
+	//Inject by Spring
 	public CacheAccessImplement(){
 		
 	}
