@@ -1,6 +1,6 @@
 package com.pintu.beans;
 /**
- * test git 
+ * test git , pull request test by lwz7512
  */
 import java.io.Serializable;
 
