@@ -10,7 +10,7 @@ public class CalculateTask extends TimerTask {
 	}
 	
 	protected void calculate(){
-		//TODO, 子类可以覆盖这个方法来实现具体的任务
+		//TODO, sub class to override this method to implement specific task!
 		System.out.println(">>>>> calculate task executed...");
 	}
 	

@@ -4,13 +4,13 @@
 package com.pintu.facade;
 
 /**
- * Servlet调用服务的参数转换器，用来封装客户端参数并实现服务调用；
+ * Servlet璋冪敤鏈嶅姟鐨勫弬鏁拌浆鎹㈠櫒锛岀敤鏉ュ皝瑁呭鎴风鍙傛暟骞跺疄鐜版湇鍔¤皟鐢紱
  * @author lwz
  *
  */
 public class ServiceAdaptor {
 
-	//由Spring注入
+	//鐢盨pring娉ㄥ叆
 	private PintuServiceInterface pintuService;
 	
 	public ServiceAdaptor() {

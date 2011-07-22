@@ -18,10 +18,10 @@ public class WebEntrance extends GenericServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	//web.xmlÖĞÅäÖÃµÄ²ÎÊıÃû³Æ
+	//web.xmlä¸­é…ç½®çš„å‚æ•°åç§°
 	private String targetBean;
 
-	//´Ë´úÀíÀàÔÚapp-config.xmlÖĞ¶¨Òå:paramAnalyzer
+	//æ­¤ä»£ç†ç±»åœ¨app-config.xmlä¸­å®šä¹‰:paramAnalyzer
 	private Servlet proxy;
 
 	public WebEntrance() {
@@ -29,14 +29,14 @@ public class WebEntrance extends GenericServlet {
 		// TODO Auto-generated constructor stub
 	}
 
-	//ÇëÇóÊ±´¥·¢¸Ã·½·¨
+	//è¯·æ±‚æ—¶è§¦å‘è¯¥æ–¹æ³•
 	public void init() throws ServletException {		
 		this.targetBean = getInitParameter("targetBean");
 		
-		//Ö»²éÕÒÒ»´Î£¬²»ÖØ¸´²éÕÒBeanºÍ³õÊ¼»¯Servlet
+		//åªæŸ¥æ‰¾ä¸€æ¬¡ï¼Œä¸é‡å¤æŸ¥æ‰¾Beanå’Œåˆå§‹åŒ–Servlet
 		if(proxy==null){
 			getServletBean();
-			//Îª´úÀíServlet³õÊ¼»¯ÅäÖÃ
+			//ä¸ºä»£ç†Servletåˆå§‹åŒ–é…ç½®
 			proxy.init(getServletConfig());			
 		}
 		
@@ -44,7 +44,7 @@ public class WebEntrance extends GenericServlet {
 
 	public void service(ServletRequest req, ServletResponse res)
 			throws ServletException, IOException {
-		//Í¨¹ı´úÀíServlet½øĞĞ¾ßÌåµÄÇëÇóÏìÓ¦Âß¼­´¦Àí
+		//é€šè¿‡ä»£ç†Servletè¿›è¡Œå…·ä½“çš„è¯·æ±‚å“åº”é€»è¾‘å¤„ç†
 		proxy.service(req, res);
 	}
 

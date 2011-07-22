@@ -8,7 +8,6 @@ public class CacheToDB {
 	private SyncExecute executor;
 	
 	
-	
 	public CacheToDB() {
 		
 	}

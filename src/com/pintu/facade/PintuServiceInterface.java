@@ -22,101 +22,101 @@ public interface PintuServiceInterface {
 	
 	
 	/**
-	 * ¸Ã·½·¨ÓÃÓÚÓÃ»§ÉêÇë×¢²á£¬ÏµÍ³Éú³ÉÑûÇëÂë·¢ËÍµ½ÓÊÏäÖĞÍê³É×¢²á£»
-	 * ¿´ÆğÀ´ĞèÒªÁíÍâ½¨Á¢Ò»¸öÉêÇëÓÃ»§±ít_applyuser
+	 * è¯¥æ–¹æ³•ç”¨äºç”¨æˆ·ç”³è¯·æ³¨å†Œï¼Œç³»ç»Ÿç”Ÿæˆé‚€è¯·ç å‘é€åˆ°é‚®ç®±ä¸­å®Œæˆæ³¨å†Œï¼›
+	 * çœ‹èµ·æ¥éœ€è¦å¦å¤–å»ºç«‹ä¸€ä¸ªç”³è¯·ç”¨æˆ·è¡¨t_applyuser
 	 * 
-	 * @param realname ÕæÊµĞÕÃû
-	 * @param email µçÓÊ
-	 * @param intro ×ÔÎÒ½éÉÜ¼ÓÈëÀíÓÉ
+	 * @param realname çœŸå®å§“å
+	 * @param email ç”µé‚®
+	 * @param intro è‡ªæˆ‘ä»‹ç»åŠ å…¥ç†ç”±
 	 * @return
 	 */
 	public Boolean applyForUser(String realname,String email, String intro);
 	
 	/**
-	 * ¸Ã·½·¨ÔÚweb×¢²áÒ³ÃæÖĞµ÷ÓÃ
-	 * @param user ÓÃ»§Ãû£¬ÎªÓÊÏäµØÖ·
-	 * @param pswd ÃÜÂë
-	 * @param inviteCode ÑûÇëÂë
+	 * è¯¥æ–¹æ³•åœ¨webæ³¨å†Œé¡µé¢ä¸­è°ƒç”¨
+	 * @param user ç”¨æˆ·åï¼Œä¸ºé‚®ç®±åœ°å€
+	 * @param pswd å¯†ç 
+	 * @param inviteCode é‚€è¯·ç 
 	 * @return
 	 */
-	//ÓÃ»§×¢²á
+	//ç”¨æˆ·æ³¨å†Œ
 	public Boolean registerUser(String user,String pswd,String inviteCode);
 	
-	//Ê¹ÓÃÆ·Í¼ÕËºÅµÇÂ¼ÏµÍ³
+	//ä½¿ç”¨å“å›¾è´¦å·ç™»å½•ç³»ç»Ÿ
 	public Boolean loginSys(String user,String pswd);
 	
-	//Ê¹ÓÃÎ¢²©ÕËºÅµÇÂ¼ÏµÍ³
+	//ä½¿ç”¨å¾®åšè´¦å·ç™»å½•ç³»ç»Ÿ
 	public Boolean loginByWeibo(String user,String pswd);
 	
-	//·¢ËÍÒ»¸öÌùÍ¼µ½ÏµÍ³ÖĞ
+	//å‘é€ä¸€ä¸ªè´´å›¾åˆ°ç³»ç»Ÿä¸­
 	public Boolean createTastePic(TastePic pic,String user);
 	
-	//²é¿´×Ô¼ºµÄÌùÍ¼ÁĞ±í
+	//æŸ¥çœ‹è‡ªå·±çš„è´´å›¾åˆ—è¡¨
 	public List<TPicDesc> getTpicsByUser(String user,String pageNum);
 	
-	//²é¿´×Ô¼ºµÄ±´¿ÇÖÖÀàºÍÊıÁ¿
+	//æŸ¥çœ‹è‡ªå·±çš„è´å£³ç§ç±»å’Œæ•°é‡
 	public ShellDetails getShellDetails(String user);
 	
-	//ä¯ÀÀÉçÇø»­ÀÈ
+	//æµè§ˆç¤¾åŒºç”»å»Š
 	public List<TPicDesc> getCommunityTpics();
 	
-	//ä¯ÀÀÒ»¸öÆ·Í¼ÏêÇé
+	//æµè§ˆä¸€ä¸ªå“å›¾è¯¦æƒ…
 	public TPicDetails getTPicDetailsByID(String tpID);
 	
-	//²é¿´Ò»¸öÆ·Í¼µÄ¹ÊÊÂ
+	//æŸ¥çœ‹ä¸€ä¸ªå“å›¾çš„æ•…äº‹
 	public List<Story> getStoriesOfPic(String tpID);
 	
-	//²é¿´Ò»¸öÆ·Í¼µÄÆÀÂÛ
+	//æŸ¥çœ‹ä¸€ä¸ªå“å›¾çš„è¯„è®º
 	public List<Comment> getCommentsOfPic(String tpID);
 	
-	//²é¿´½ñÈÕÈÈÍ¼£¨µã»÷Á¿¡¢¹ÊÊÂÊı¡¢ÆÀÂÛÊı£©
-	//ÏµÍ³¶¨Ê±Í³¼Æ³öÀ´²¢±£³Ö£¬È»ºó·µ»ØÈıÀàÍ¼ÅÅÃû10ÒÔÄÚµÄ30ÕÅÍ¼£»
+	//æŸ¥çœ‹ä»Šæ—¥çƒ­å›¾ï¼ˆç‚¹å‡»é‡ã€æ•…äº‹æ•°ã€è¯„è®ºæ•°ï¼‰
+	//ç³»ç»Ÿå®šæ—¶ç»Ÿè®¡å‡ºæ¥å¹¶ä¿æŒï¼Œç„¶åè¿”å›ä¸‰ç±»å›¾æ’å10ä»¥å†…çš„30å¼ å›¾ï¼›
 	public List<TPicDesc> getHotTpics();
 	
-	//²é¿´½ñÈÕÌî´ÊÑûÇë
-	//FIXME, Õâ¸ö¹¦ÄÜ½çÃæÉÏÃ»ÓĞÉè¼Æ£¬ÔİÊ±ÏÈ²»ÊµÏÖ£»
+	//æŸ¥çœ‹ä»Šæ—¥å¡«è¯é‚€è¯·
+	//FIXME, è¿™ä¸ªåŠŸèƒ½ç•Œé¢ä¸Šæ²¡æœ‰è®¾è®¡ï¼Œæš‚æ—¶å…ˆä¸å®ç°ï¼›
 	public List<TPicDesc> getInviteTpicsToday();
 	
-	//²é¿´¾­µäÍ¼ÎÄ¹ÊÊÂ
+	//æŸ¥çœ‹ç»å…¸å›¾æ–‡æ•…äº‹
 	public List<TPicDesc> getClassicTpics();
 	
-	//²é¿´ÓÃ»§»ù±¾ĞÅÏ¢£¨Î¢²©ÕËºÅ£©
+	//æŸ¥çœ‹ç”¨æˆ·åŸºæœ¬ä¿¡æ¯ï¼ˆå¾®åšè´¦å·ï¼‰
 	public WeiboUsr getUsrBasInfo(String user);
 	
-	//²é¿´ÓÃ»§µÈ¼¶ºÍÓµÓĞ±´¿ÇÊı
+	//æŸ¥çœ‹ç”¨æˆ·ç­‰çº§å’Œæ‹¥æœ‰è´å£³æ•°
 	public UsrEstate getUsrEstate(String user);
 	
-	//Õ¹Ê¾½ñÈÕµÄ¿É¶Ò»»ÀñÎïĞÅÏ¢
+	//å±•ç¤ºä»Šæ—¥çš„å¯å…‘æ¢ç¤¼ç‰©ä¿¡æ¯
 	public List<Gift> getGiftsToday();
 	
-	//¶ÔÆäËûÓÃ»§ÌùÍ¼½øĞĞÆÀ¼Û
+	//å¯¹å…¶ä»–ç”¨æˆ·è´´å›¾è¿›è¡Œè¯„ä»·
 	public Boolean commentPintu(Comment cmt);
 	
-	//ÎªÉçÇøÖĞµÄÆ·Í¼ÂÛ×ãÑûÇëÌí¼ÓÆ·ÆÀ
+	//ä¸ºç¤¾åŒºä¸­çš„å“å›¾è®ºè¶³é‚€è¯·æ·»åŠ å“è¯„
 	public Boolean addStoryToTpic(Story story);
 	
-	//ÎªÉçÇøÖĞµÄÆ·ÆÀÍ¶Æ±£¨°üÀ¨¾­µä±êÊ¶£©
+	//ä¸ºç¤¾åŒºä¸­çš„å“è¯„æŠ•ç¥¨ï¼ˆåŒ…æ‹¬ç»å…¸æ ‡è¯†ï¼‰
 	public Boolean addPollToTpic(Vote vote);
 	
-	//²é¿´½ñÈÕÉçÇøÊÂ¼ş
+	//æŸ¥çœ‹ä»Šæ—¥ç¤¾åŒºäº‹ä»¶
 	public List<TPEvent> getCommunityEvents();
 	
-	//²é¿´×Ô¼ºµÄÊÕ²ØÍ¼Æ¬
+	//æŸ¥çœ‹è‡ªå·±çš„æ”¶è—å›¾ç‰‡
 	public List<TPicDesc> getFavoriteTpics(String user,String pageNum);
 	
-	//»ñÈ¡Ò»¸öËõÂÔÍ¼
+	//è·å–ä¸€ä¸ªç¼©ç•¥å›¾
 	public Byte[] getTPicThumbnail(String thumbnailId);
 	
-	//»ñÈ¡Ô­Ê¼´óÍ¼£¬Õâ¸öÍ¼ÓÃÓÚweb°æä¯ÀÀ
+	//è·å–åŸå§‹å¤§å›¾ï¼Œè¿™ä¸ªå›¾ç”¨äºwebç‰ˆæµè§ˆ
 	public Byte[] getTPicBig(String tpID);
 	
-	//»ñÈ¡Ò»ÕÅĞ¡³ß´çÍ¼£¬ÓÃÓÚÊÖ»úä¯ÀÀ
+	//è·å–ä¸€å¼ å°å°ºå¯¸å›¾ï¼Œç”¨äºæ‰‹æœºæµè§ˆ
 	public Byte[] getTPicMoile(String tpID);
 	
-	//·¢ËÍÒ»¸öÏûÏ¢
+	//å‘é€ä¸€ä¸ªæ¶ˆæ¯
 	public Boolean sendMessage(Message msg);
 	
-	//²é¿´×Ô¼ºµÄÏûÏ¢
+	//æŸ¥çœ‹è‡ªå·±çš„æ¶ˆæ¯
 	public List<Message> getUserMessages(String user);
 	
 	
@@ -124,51 +124,51 @@ public interface PintuServiceInterface {
 	//ANYMORE NECESSARY???
 	
 	
-	//************************  ÒÔÏÂÎª¿Í»§¶Ë2.0°æ±¾¹¦ÄÜ  *********************************
+	//************************  ä»¥ä¸‹ä¸ºå®¢æˆ·ç«¯2.0ç‰ˆæœ¬åŠŸèƒ½  *********************************
 	
-	//ä¯ÀÀÉçÇø´ïÈË(´ïÈË£¬Get Talent)
+	//æµè§ˆç¤¾åŒºè¾¾äºº(è¾¾äººï¼ŒGet Talent)
 	public GTStatics getCommunityGTs();
 	
-	//ÔÚÒ¹ÊĞ¶Ò»»ÀñÎï
+	//åœ¨å¤œå¸‚å…‘æ¢ç¤¼ç‰©
 	public Boolean exchangeGifts(String user,String giftIds);
 	
-	//ÔùËÍÁÚ¾ÓÀñÎï
+	//èµ é€é‚»å±…ç¤¼ç‰©
 	public Boolean giveGifts(String user,String giftIds);
 	
-	//ÔÚÒ¹ÊĞÌùÌõ×Ó
+	//åœ¨å¤œå¸‚è´´æ¡å­
 	public Boolean pasteNote(String user,String content);
 	
-	//¿´Ò¹ÊĞÌõ×Ó
+	//çœ‹å¤œå¸‚æ¡å­
 	public List<Note> getMarketNotes();
 	
-	//°´Í¼Æ¬¹Ø¼ü×ÖËÑË÷
+	//æŒ‰å›¾ç‰‡å…³é”®å­—æœç´¢
 	public List<TPicDesc> searchTpicByTags(String tags);
 	
-	//²é¿´ĞĞÒµ¶¯Ì¬
+	//æŸ¥çœ‹è¡Œä¸šåŠ¨æ€
 	public List<News> getIndustryNews();
 	
 
-	//********************  ºóÌ¨¹ÜÀíÓÃ·½·¨  **************************************
+	//********************  åå°ç®¡ç†ç”¨æ–¹æ³•  **************************************
 	
-	//²é¿´×î½üÒ»¶ÎÊ±¼äµÄÌùÍ¼£¨×Ô¶¯Ë¢ĞÂ£©
+	//æŸ¥çœ‹æœ€è¿‘ä¸€æ®µæ—¶é—´çš„è´´å›¾ï¼ˆè‡ªåŠ¨åˆ·æ–°ï¼‰
 	public List<TPicDesc> getLatestTpics(String timeLength);
 	
-	//É¾³ıÀ¬»øÌùÍ¼
+	//åˆ é™¤åƒåœ¾è´´å›¾
 	public Boolean deleteTasetPic(String tpID);
 	
-	//É¾³ı¹àË®¹ÊÊÂ
+	//åˆ é™¤çŒæ°´æ•…äº‹
 	public Boolean deleteStoryOfPic(String storyId,String tpicID);
 	
-	//·¢²¼¿ÉÑ¡ÀñÎïĞÅÏ¢
+	//å‘å¸ƒå¯é€‰ç¤¼ç‰©ä¿¡æ¯
 	public Boolean publishAvailableGift(Gift gift);
 	
 	
-	//********************* ºóÌ¨¹ÜÀí2.0¹¦ÄÜ *************************************
+	//********************* åå°ç®¡ç†2.0åŠŸèƒ½ *************************************
 	
-	//·¢²¼ÉçÇøÊÂ¼ş
+	//å‘å¸ƒç¤¾åŒºäº‹ä»¶
 	public Boolean publishTpEvent(TPEvent tpEvent);
 	
-	//·¢²¼ĞĞÒµ¶¯Ì¬
+	//å‘å¸ƒè¡Œä¸šåŠ¨æ€
 	public Boolean publishIndustryEvent(TPEvent tpEvent);
 	
 	

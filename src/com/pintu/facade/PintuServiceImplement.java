@@ -22,9 +22,9 @@ import com.pintu.dao.DBAccessInterface;
 
 public class PintuServiceImplement implements PintuServiceInterface{
 
-	//由Spring注入
+	//Inject by Spring
 	private DBAccessInterface dbVisitor;
-	//由Spring注入
+	//Inject by Spring
 	private CacheAccessInterface cacheVisitor;
 	
 	
