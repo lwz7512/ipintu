@@ -1,8 +1,13 @@
 package com.pintu.beans;
 
+/**
+ * 绀惧尯浜嬩欢锛屾垨鑰呰涓氫簨浠剁被
+ * @author lwz
+ *
+ */
 public class TPEvent {
 
-	//社区事件，或者行业事件类
+	
 	public TPEvent() {
 		
 	}

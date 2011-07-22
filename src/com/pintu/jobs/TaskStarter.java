@@ -2,13 +2,12 @@ package com.pintu.jobs;
 
 import com.pintu.dao.CacheAccessInterface;
 import com.pintu.dao.DBAccessInterface;
-import com.pintu.facade.PintuServiceInterface;
 
 
 
 /**
  * Application Lifecycle Listener implementation class AppStarter
- * ÓÃÀ´Æô¶¯Ó¦ÓÃºó£¬¿ªÆô×Ô¶¯¼ÆËãÈÎÎñ
+ * ç”¨æ¥å¯åŠ¨åº”ç”¨åï¼Œå¼€å¯è‡ªåŠ¨è®¡ç®—ä»»åŠ¡
  */
 public class TaskStarter  {
 
@@ -16,12 +15,12 @@ public class TaskStarter  {
 	
 	private TaskTimer fixRunTimer;
 	
-	//³£¹æ¼ÆËã¶¼ÊÇÃ¿¸ô1Ğ¡Ê±¼ÆËãÒ»´Î
+	//å¸¸è§„è®¡ç®—éƒ½æ˜¯æ¯éš”1å°æ—¶è®¡ç®—ä¸€æ¬¡
 	private int calculateInterval = 60;
 	
-	//ÓÉSpring×¢Èë
+	//ç”±Springæ³¨å…¥
 	private DBAccessInterface dbVisitor;
-	//ÓÉSpring×¢Èë
+	//ç”±Springæ³¨å…¥
 	private CacheAccessInterface cacheVisitor;
 
 	
@@ -57,14 +56,14 @@ public class TaskStarter  {
     	
     	generalTimer = new TaskTimer();
     	generalTimer.setMin(calculateInterval);
-    	//¼ÆËãÇ°ÏÈÖÆ¶¨¼ÆËãÈÎÎñ£¬¿ÉÒÔÊÇËã»ı·ÖºÍµÈ¼¶
+    	//è®¡ç®—å‰å…ˆåˆ¶å®šè®¡ç®—ä»»åŠ¡ï¼Œå¯ä»¥æ˜¯ç®—ç§¯åˆ†å’Œç­‰çº§
     	generalTimer.setTask(new ScoreLevelTask());
     	generalTimer.start();
     	
-    	//¹Ì¶¨ÈÎÎñÓÃÀ´ËãÀñÎï
+    	//å›ºå®šä»»åŠ¡ç”¨æ¥ç®—ç¤¼ç‰©
     	fixRunTimer = new TaskTimer();
     	fixRunTimer.setTask(new UserEstateTask());
-    	//Ã¿Ìì0µãÔËĞĞ
+    	//æ¯å¤©0ç‚¹è¿è¡Œ
     	fixRunTimer.runAtFixTime("00:00:00");
 
     }

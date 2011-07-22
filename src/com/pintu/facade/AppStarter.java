@@ -15,7 +15,7 @@ import com.pintu.jobs.TaskStarter;
 import com.pintu.sync.CacheToDB;
 
 /**
- * ÕæÕý´¦Àí¿Í»§¶Ë´«²Îµ½·þÎñ¶ËµÄÂß¼­£¬ÓëÊÊÅäÆ÷´ò½»µÀ£¬ÊÊÅäÆ÷ÔÙÓë·þÎñ´ò½»µÀ£»
+ * çœŸæ­£å¤„ç†å®¢æˆ·ç«¯ä¼ å‚åˆ°æœåŠ¡ç«¯çš„é€»è¾‘ï¼Œä¸Žé€‚é…å™¨æ‰“äº¤é“ï¼Œé€‚é…å™¨å†ä¸ŽæœåŠ¡æ‰“äº¤é“ï¼›
  * @author lwz
  *
  */
@@ -25,10 +25,10 @@ public class AppStarter extends GenericServlet implements Servlet,ExtVisitorInte
 	
 	private static final long serialVersionUID = 1L;
 	
-	//ÓÉSpring×¢Èë
+	//ç”±Springæ³¨å…¥
 	private ServiceAdaptor apiAdaptor;
 	
-	//Æô¶¯×Ô¶¯ÈÎÎñ£¬ÓÉSpring×¢Èë
+	//å¯åŠ¨è‡ªåŠ¨ä»»åŠ¡ï¼Œç”±Springæ³¨å…¥
 	private TaskStarter taskStarter;
 	
 	private CacheToDB synchProcess;
@@ -51,7 +51,7 @@ public class AppStarter extends GenericServlet implements Servlet,ExtVisitorInte
 	}
 
 
-	//Õâ¸ö·½·¨±»WebEntranceµÄ³õÊ¼»¯·½·¨µ÷ÓÃ
+	//è¿™ä¸ªæ–¹æ³•è¢«WebEntranceçš„åˆå§‹åŒ–æ–¹æ³•è°ƒç”¨
 	public void init(ServletConfig config){
 		try {
 			super.init(config);
@@ -59,10 +59,10 @@ public class AppStarter extends GenericServlet implements Servlet,ExtVisitorInte
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//Æô¶¯ÈÎÎñ¶¨Ê±Æ÷
+		//å¯åŠ¨ä»»åŠ¡å®šæ—¶å™¨
 		if(taskStarter!=null) taskStarter.runAutoTasks();
 		
-		//Æô¶¯Êý¾Ý¿âÍ¬²½ÈÎÎñ
+		//å¯åŠ¨æ•°æ®åº“åŒæ­¥ä»»åŠ¡
 		if(synchProcess!=null) synchProcess.start();
 		
 	}
@@ -72,12 +72,12 @@ public class AppStarter extends GenericServlet implements Servlet,ExtVisitorInte
 	public void service(ServletRequest request, ServletResponse response)
 			throws ServletException, IOException {
 		
-		//TODO, ÕâÀï½«¿Í»§¶Ë²ÎÊý½âÎö³öÀ´´«¸øapiAdaptor
-		//ÓÉapiAdaptor×é×°²ÎÊý¸ø·þÎñ
+		//TODO, è¿™é‡Œå°†å®¢æˆ·ç«¯å‚æ•°è§£æžå‡ºæ¥ä¼ ç»™apiAdaptor
+		//ç”±apiAdaptorç»„è£…å‚æ•°ç»™æœåŠ¡
 		String action = request.getParameter("method");
 		
 		if(action==null){
-			log.warn(">>> ¿Í»§Ã»ÓÐ´«µÝ method ²ÎÊý£¬²»×öÈÎºÎ²Ù×÷£¬·µ»Ø£¡");
+			log.warn(">>> å®¢æˆ·æ²¡æœ‰ä¼ é€’ method å‚æ•°ï¼Œä¸åšä»»ä½•æ“ä½œï¼Œè¿”å›žï¼");
 			return;
 		}
 		

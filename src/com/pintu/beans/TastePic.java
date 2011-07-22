@@ -2,28 +2,25 @@ package com.pintu.beans;
 
 
 /**
- * ÓÃ»§ÉÏ´«µÄÆ·Í¼ÄÚÈİ¶ÔÏó£¬ÓÃÀ´´«¸ø·şÎñ¶Ë´¦Àí
+ * ç”¨æˆ·ä¸Šä¼ çš„å“å›¾å†…å®¹å¯¹è±¡ï¼Œç”¨æ¥ä¼ ç»™æœåŠ¡ç«¯å¤„ç†
  * 
  * @author lwz
  *
  */
 public class TastePic {
-
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 1L;
-	//ÌùÍ¼×÷Õß
+	//è´´å›¾ä½œè€…
 	private String user;
-	//ÃèÊö
+	//æè¿°
 	private String description;
-	//±êÇ©
+	//æ ‡ç­¾
 	private String tags;
-	//ÊÇ·ñÔÊĞíÆ·Í¼
+	//æ˜¯å¦å…è®¸å“å›¾
 	private String allowStory;
 	
-	//Ô­Ê¼ÉÏ´«Í¼ÏñÊı¾İ£¬ÊÇÍ¼Æ¬ÎÄ¼şÉú³ÉµÄÒÀ¾İ
-	//FIXME, Õâ¸öºóÃæÒª²âÒ»ÏÂÒÔµ÷ÕûÇ°ºóÌ¨½Ó¿Ú
+	//åŸå§‹ä¸Šä¼ å›¾åƒæ•°æ®ï¼Œæ˜¯å›¾ç‰‡æ–‡ä»¶ç”Ÿæˆçš„ä¾æ®
+	//FIXME, è¿™ä¸ªåé¢è¦æµ‹ä¸€ä¸‹ä»¥è°ƒæ•´å‰åå°æ¥å£
 	private Byte[] rawImageData;
 	
 

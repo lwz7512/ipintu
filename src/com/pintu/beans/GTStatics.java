@@ -1,6 +1,6 @@
 package com.pintu.beans;
 
-//达人统计数据
+//active user statistic data, namely DA REN
 public class GTStatics {
 
 	public GTStatics() {

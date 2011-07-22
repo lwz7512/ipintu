@@ -4,23 +4,23 @@ import java.util.List;
 
 public class Story {
 
-	//Æ·Í¼£¨¹ÊÊÂ£©Î¨Ò»±êÊ¶
+	//å“å›¾ï¼ˆæ•…äº‹ï¼‰å”¯ä¸€æ ‡è¯†
 	private String id;
-	//ÌùÍ¼ID£¬¶ÔÓ¦ÓÚTPicItem.id
+	//è´´å›¾IDï¼Œå¯¹åº”äºTPicItem.id
 	private String followId;
-	//Æ·Í¼×÷Õß
+	//å“å›¾ä½œè€…
 	private String owner;
-	//·¢±íÊ±¼ä
+	//å‘è¡¨æ—¶é—´
 	private String publishTime;
-	//Æ·Í¼ÄÚÈİ
+	//å“å›¾å†…å®¹
 	private String content;
-	//ÊÇ·ñ±»Í¶Æ±Îª¾­µä
+	//æ˜¯å¦è¢«æŠ•ç¥¨ä¸ºç»å…¸
 	private String classical;
-	//ËùÓĞÍ¶Æ±
+	//æ‰€æœ‰æŠ•ç¥¨
 	private List<Vote> votes;
 	
-	//ÊÇ·ñÒÑ¾­±»Í¬²½Èë¿â£¬ÓÃÓÚÍ¬²½¹ı³ÌÖĞ±éÀú»º´æÊ±ÅĞ¶Ï
-	//Èç¹ûÎªÕæ±íÊ¾ÒÑÈë¿â£¬Èç¹ûÎª¼Ù±íÊ¾ÎªÈë¿â
+	//æ˜¯å¦å·²ç»è¢«åŒæ­¥å…¥åº“ï¼Œç”¨äºåŒæ­¥è¿‡ç¨‹ä¸­éå†ç¼“å­˜æ—¶åˆ¤æ–­
+	//å¦‚æœä¸ºçœŸè¡¨ç¤ºå·²å…¥åº“ï¼Œå¦‚æœä¸ºå‡è¡¨ç¤ºä¸ºå…¥åº“
 	private Boolean saved;
 
 	

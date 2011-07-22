@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Servlet implementation class ImageUploader
- * 似乎不能用这个上传类，而应该统一到一个外部访问接口中
+ * 浼间箮涓嶈兘鐢ㄨ繖涓笂浼犵被锛岃�屽簲璇ョ粺涓�鍒颁竴涓閮ㄨ闂帴鍙ｄ腑
  */
 public class ImageUploader extends HttpServlet {
 	private static final long serialVersionUID = 1L;

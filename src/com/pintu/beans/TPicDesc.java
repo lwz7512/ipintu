@@ -1,21 +1,21 @@
 package com.pintu.beans;
 
 /**
- * Ʒͼ�������ݣ�����ԭͼ������ͼ��ָ��һ��������Ʒͼ
- * ������ҳ������
+ * 品图缩略内容，包括原图的缩略图，指向一个真正的品图
+ * 用在首页画廊中
  * @author lwz
  *
  */
 public class TPicDesc {
 
-	//ƷͼID
+	//品图ID
 	private String tpId;
 	
-	//Ʒͼ����ͼ������ͼ���ͼһ�����ɣ���������ͼֻ������ڴ��У���д��������
+	//品图缩略图，缩略图与大图一起生成，但是缩略图只存放在内存中，不写到磁盘上
 	private String thumbnailId;
 	
-	//Ʒͼ״̬���·��������۶ࡢ���¶ࡢ��ͼ�����߶��ࣩ
-	//���״̬�����ڶ�ʱ��������
+	//品图状态：新发布、评论多、故事多、热图（两者都多）
+	//这个状态来自于定时计算任务
 	private String status;
 	
 	public TPicDesc() {

@@ -6,11 +6,11 @@ import com.pintu.dao.DBAccessInterface;
 public class SyncExecute implements Runnable {
 
 	
-	//ÓÉSpring×¢Èë
+	//ç”±Springæ³¨å…¥
 	private DBAccessInterface dbVisitor;
-	//ÓÉSpring×¢Èë
+	//ç”±Springæ³¨å…¥
 	private CacheAccessInterface cacheVisitor;
-	//Í¬²½ÔËĞĞ¿ª¹Ø
+	//åŒæ­¥è¿è¡Œå¼€å…³
 	private Boolean syncFlag = true;
 	
 	
@@ -33,11 +33,11 @@ public class SyncExecute implements Runnable {
 
 
 	
-	//TODO, Í¬²½²Ù×÷£¬±éÀú»º´æ²éÕÒÎ´Èë¿â¶ÔÏó£¨savedÊôĞÔÎªfalse£©Èë¿â
-	//Í¬²½ÄÚÈİ°üÀ¨£ºTPicItem, Story, Vote, Comment
-	//¶ÔÓÚTPicItem¶ÔÏó£¬ÒªÅĞ¶ÏÎÄ¼şÊôĞÔÊÇ·ñÒÑ¾­Ìî³ä
-	//Èç¹ûÃ»ÓĞÌî³ä¾ÍÏÈ²»Èë¿â£¬Èç¹û¶¼ÒÑ¾­ÓĞÖµ¾ÍÈë¿â
-	//Í¬Ê±½«¸Ã¶ÔÏóµÄsavedÖµ£¬ÖÃÎªtrue£»	
+	//TODO, åŒæ­¥æ“ä½œï¼Œéå†ç¼“å­˜æŸ¥æ‰¾æœªå…¥åº“å¯¹è±¡ï¼ˆsavedå±æ€§ä¸ºfalseï¼‰å…¥åº“
+	//åŒæ­¥å†…å®¹åŒ…æ‹¬ï¼šTPicItem, Story, Vote, Comment
+	//å¯¹äºTPicItemå¯¹è±¡ï¼Œè¦åˆ¤æ–­æ–‡ä»¶å±æ€§æ˜¯å¦å·²ç»å¡«å……
+	//å¦‚æœæ²¡æœ‰å¡«å……å°±å…ˆä¸å…¥åº“ï¼Œå¦‚æœéƒ½å·²ç»æœ‰å€¼å°±å…¥åº“
+	//åŒæ—¶å°†è¯¥å¯¹è±¡çš„savedå€¼ï¼Œç½®ä¸ºtrueï¼›	
 	@Override
 	public void run() {		
 		while(syncFlag){	

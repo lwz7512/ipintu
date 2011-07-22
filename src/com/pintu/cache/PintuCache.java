@@ -7,9 +7,9 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
 /**
- * ÕâÀïÊÇÕæÕıµÄ»º´æÂß¼­£¬»º´æÄÚÈİÓĞ£º
- * ÉÏ´«Í¼Æ¬µÄËõÂÔÍ¼¡¢ÌùÍ¼¶ÔÏó¡¢¹ÊÊÂ¡¢Í¶Æ±¡¢ÆÀÂÛ
- * Éú³ÉµÄÍ¼Æ¬¾ù·ÅÔÚ´ÅÅÌÉÏ²»»º´æÎª¶ÔÏó£»
+ * è¿™é‡Œæ˜¯çœŸæ­£çš„ç¼“å­˜é€»è¾‘ï¼Œç¼“å­˜å†…å®¹æœ‰ï¼š
+ * ä¸Šä¼ å›¾ç‰‡çš„ç¼©ç•¥å›¾ã€è´´å›¾å¯¹è±¡ã€æ•…äº‹ã€æŠ•ç¥¨ã€è¯„è®º
+ * ç”Ÿæˆçš„å›¾ç‰‡å‡æ”¾åœ¨ç£ç›˜ä¸Šä¸ç¼“å­˜ä¸ºå¯¹è±¡ï¼›
  * @author lwz
  *
  */
@@ -24,7 +24,7 @@ public class PintuCache {
 	private Cache storyCache;
 	
 	public PintuCache(){
-		//ÅäÖÃÎÄ¼şÀïÅäÖÃ¸÷ÖÖ»º´æÊµÀı²ÎÊı
+		//é…ç½®æ–‡ä»¶é‡Œé…ç½®å„ç§ç¼“å­˜å®ä¾‹å‚æ•°
 		URL url = getClass().getResource("pintucache.xml");
 		manager = new CacheManager(url);
 		ptCache = manager.getCache("pintucache");
