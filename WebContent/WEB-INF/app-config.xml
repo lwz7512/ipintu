@@ -45,6 +45,7 @@
 		  class="com.pintu.facade.PintuServiceImplement">
 		<property name="dbVisitor" ref="dbAcess"/>
 		<property name="cacheVisitor" ref="cacheAccess"/>
+		<property name="imgProcessor" ref="imgProcessor"/>
 	</bean>	
 		<!-- 同步缓存对象到数据库操作 -->
     <bean id="executor"

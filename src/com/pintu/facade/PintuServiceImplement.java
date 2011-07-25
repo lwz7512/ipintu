@@ -19,6 +19,7 @@ import com.pintu.beans.Vote;
 import com.pintu.beans.User;
 import com.pintu.dao.CacheAccessInterface;
 import com.pintu.dao.DBAccessInterface;
+import com.pintu.tools.ImgDataProcessor;
 
 public class PintuServiceImplement implements PintuServiceInterface{
 
@@ -27,14 +28,21 @@ public class PintuServiceImplement implements PintuServiceInterface{
 	//由Spring注入
 	private CacheAccessInterface cacheVisitor;
 	
+	//由Spring注入
+	private ImgDataProcessor imgProcessor;
+	
 	
 	//Constructor
 	public PintuServiceImplement(){
 		//DO NOTHING CURRENTLY
-	}
-		
+	}		
 
 	
+	public void setImgProcessor(ImgDataProcessor imgProcessor) {
+		this.imgProcessor = imgProcessor;
+	}
+
+
 	//TODO, Spring injection
 	public void setDbVisitor(DBAccessInterface dbVisitor) {
 		this.dbVisitor = dbVisitor;
