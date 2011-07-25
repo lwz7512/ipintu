@@ -26,7 +26,7 @@ public class AppStarter extends GenericServlet implements Servlet,ExtVisitorInte
 	private static final long serialVersionUID = 1L;
 	
 	//由Spring注入
-	private ServiceAdaptor apiAdaptor;
+	private ApiAdaptor apiAdaptor;
 	
 	//启动自动任务，由Spring注入
 	private TaskStarter taskStarter;
@@ -38,7 +38,7 @@ public class AppStarter extends GenericServlet implements Servlet,ExtVisitorInte
 	}	
 	
 
-	public void setApiAdaptor(ServiceAdaptor apiAdaptor) {
+	public void setApiAdaptor(ApiAdaptor apiAdaptor) {
 		this.apiAdaptor = apiAdaptor;
 	}
 		

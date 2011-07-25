@@ -31,10 +31,9 @@
 		<property name="apiAdaptor" ref="apiAdaptor"/>
 		<property name="taskStarter" ref="taskStarter"/>
 		<property name="synchProcess" ref="synchProcess"/>
-	</bean>
-	 
+	</bean>	 
 	<bean id="apiAdaptor"
-		  class="com.pintu.facade.ServiceAdaptor">
+		  class="com.pintu.facade.ApiAdaptor">
 		<property name="pintuService" ref="pintuService"/>
 	</bean>
 	<bean id="taskStarter"
