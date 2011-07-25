@@ -48,6 +48,10 @@ public class TaskTimer {
 		// 规定的每天时间00:00:00运行
 		// final SimpleDateFormat dateFormat = new
 		// SimpleDateFormat("yyyy-MM-dd '00:00:00'");
+		/**
+		 * 这里设定一个时间点，查看上一个小时的活跃用户，并为其计算积分等级。这里活跃用户的识别方式需要用到用户在
+		 * 登录、发图片、写故事的时候记录一下时间即最后更新时间
+		 */
 		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd '"
 				+ timeToRun + "'");
 
