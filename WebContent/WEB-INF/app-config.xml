@@ -25,14 +25,15 @@
 	</bean>
 	
 	<!-- WebEntrance servlet调用，负责处理客户端请求参数并启动任务-->
+	
 	<bean id="appStarter"
 		  class="com.pintu.facade.AppStarter">
 		<property name="apiAdaptor" ref="apiAdaptor"/>
 		<property name="taskStarter" ref="taskStarter"/>
 		<property name="synchProcess" ref="synchProcess"/>
-	</bean>
+	</bean>	 
 	<bean id="apiAdaptor"
-		  class="com.pintu.facade.ServiceAdaptor">
+		  class="com.pintu.facade.ApiAdaptor">
 		<property name="pintuService" ref="pintuService"/>
 	</bean>
 	<bean id="taskStarter"
