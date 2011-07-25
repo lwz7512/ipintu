@@ -1,5 +1,6 @@
 package com.pintu.dao.impl;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import com.pintu.beans.Comment;
@@ -16,7 +17,10 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	
 	//Inject by Spring
 	public CacheAccessImplement(){
-		
+		//初始化要缓存对象ID的类型及容器，同步第一个完成后删掉第一个
+		toSavedCacheIds.put(PICTURE_TYPE, new LinkedList<String>());
+		toSavedCacheIds.put(STORY_TYPE, new LinkedList<String>());
+		toSavedCacheIds.put(COMMENT_TYPE, new LinkedList<String>());		
 	}
 		
 	public void setPintuCache(PintuCache pintuCache){
@@ -73,6 +77,18 @@ public class CacheAccessImplement implements CacheAccessInterface {
 
 	@Override
 	public User getSpecificUser(String userAccount) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteSavedObj(String type) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Object getUnSavedObj(String type) {
 		// TODO Auto-generated method stub
 		return null;
 	}
