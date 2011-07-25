@@ -56,11 +56,11 @@ public interface CacheAccessInterface {
 	//读取评论
 	public Comment getSpecificComment(String cid);
 	
-	//读取未入库的第一个对象
-	public Object getUnSavedObj(String type);
+	//读取未入库的所有对象
+	public List<Object> getUnSavedObj(String type);
 	
-	//删掉未入库第一个对象
-	public void deleteSavedObj(String type);
+	//删掉已入库的所有对象
+	public Boolean deleteSavedObj(String type);
 	
 	
 }

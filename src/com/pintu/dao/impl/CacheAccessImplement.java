@@ -82,13 +82,13 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	}
 
 	@Override
-	public void deleteSavedObj(String type) {
+	public Boolean deleteSavedObj(String type) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public Object getUnSavedObj(String type) {
+	public List<Object> getUnSavedObj(String type) {
 		// TODO Auto-generated method stub
 		return null;
 	}
