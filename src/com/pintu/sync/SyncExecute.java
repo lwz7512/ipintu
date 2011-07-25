@@ -42,7 +42,14 @@ public class SyncExecute implements Runnable {
 	public void run() {		
 		while(syncFlag){	
 			
-			//TODO, synchronize...
+			//TODO, 批量同步图片
+			
+			
+			//TODO, 批量同步故事
+			
+			
+			//TODO, 批量同步评论
+			
 			
 			try {
 				Thread.sleep(100);
