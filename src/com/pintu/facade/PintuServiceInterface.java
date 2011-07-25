@@ -16,7 +16,7 @@ import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TastePic;
 import com.pintu.beans.UsrEstate;
 import com.pintu.beans.Vote;
-import com.pintu.beans.WeiboUsr;
+import com.pintu.beans.User;
 
 public interface PintuServiceInterface {
 	
@@ -81,7 +81,7 @@ public interface PintuServiceInterface {
 	public List<TPicDesc> getClassicTpics();
 	
 	//查看用户基本信息（微博账号）
-	public WeiboUsr getUsrBasInfo(String user);
+	public User getUsrBasInfo(String user);
 	
 	//查看用户等级和拥有贝壳数
 	public UsrEstate getUsrEstate(String user);
