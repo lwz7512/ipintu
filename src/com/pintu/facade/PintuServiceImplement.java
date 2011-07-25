@@ -22,9 +22,9 @@ import com.pintu.dao.DBAccessInterface;
 
 public class PintuServiceImplement implements PintuServiceInterface{
 
-	//Inject by Spring
+	//ç”±Springæ³¨å…¥
 	private DBAccessInterface dbVisitor;
-	//Inject by Spring
+	//ç”±Springæ³¨å…¥
 	private CacheAccessInterface cacheVisitor;
 	
 	
@@ -123,7 +123,7 @@ public class PintuServiceImplement implements PintuServiceInterface{
 
 	@Override
 	public Boolean exchangeGifts(String user, String giftIds) {
-		// 2.0 ¹¦ÄÜÔİÊ±²»ÊµÏÖ
+		// 2.0 åŠŸèƒ½æš‚æ—¶ä¸å®ç°
 		return null;
 	}
 
@@ -141,7 +141,7 @@ public class PintuServiceImplement implements PintuServiceInterface{
 
 	@Override
 	public GTStatics getCommunityGTs() {
-		// 2.0 ¹¦ÄÜÔİÊ±²»ÊµÏÖ
+		// 2.0 åŠŸèƒ½æš‚æ—¶ä¸å®ç°
 		return null;
 	}
 
@@ -171,13 +171,13 @@ public class PintuServiceImplement implements PintuServiceInterface{
 
 	@Override
 	public List<News> getIndustryNews() {
-		// 2.0¹¦ÄÜÔİ²»ÊµÏÖ
+		// 2.0åŠŸèƒ½æš‚ä¸å®ç°
 		return null;
 	}
 
 	@Override
 	public List<TPicDesc> getInviteTpicsToday() {
-		// Õâ¸ö¹¦ÄÜÔİÊ±²»ÔÚ1.0ÖĞÊµÏÖ£¬½çÃæÖĞÃ»ÓĞÉè¼Æ
+		// è¿™ä¸ªåŠŸèƒ½æš‚æ—¶ä¸åœ¨1.0ä¸­å®ç°ï¼Œç•Œé¢ä¸­æ²¡æœ‰è®¾è®¡
 		return null;
 	}
 
@@ -189,7 +189,7 @@ public class PintuServiceImplement implements PintuServiceInterface{
 
 	@Override
 	public List<Note> getMarketNotes() {
-		// 2.0¹¦ÄÜÔİ²»ÊµÏÖ
+		// 2.0åŠŸèƒ½æš‚ä¸å®ç°
 		return null;
 	}
 
@@ -219,13 +219,13 @@ public class PintuServiceImplement implements PintuServiceInterface{
 
 	@Override
 	public Boolean giveGifts(String user, String giftIds) {
-		// 2.0¹¦ÄÜÔİ²»ÊµÏÖ
+		// 2.0åŠŸèƒ½æš‚ä¸å®ç°
 		return null;
 	}
 
 	@Override
 	public Boolean pasteNote(String user, String content) {
-		// 2.0¹¦ÄÜÔİ²»ÊµÏÖ
+		// 2.0åŠŸèƒ½æš‚ä¸å®ç°
 		return null;
 	}
 
@@ -237,19 +237,19 @@ public class PintuServiceImplement implements PintuServiceInterface{
 
 	@Override
 	public Boolean publishIndustryEvent(TPEvent tpEvent) {
-		// 2.0¹¦ÄÜÔİ²»ÊµÏÖ
+		// 2.0åŠŸèƒ½æš‚ä¸å®ç°
 		return null;
 	}
 
 	@Override
 	public Boolean publishTpEvent(TPEvent tpEvent) {
-		// 2.0¹¦ÄÜÔİ²»ÊµÏÖ
+		// 2.0åŠŸèƒ½æš‚ä¸å®ç°
 		return null;
 	}
 
 	@Override
 	public List<TPicDesc> searchTpicByTags(String tags) {
-		// 2.0¹¦ÄÜÔİ²»ÊµÏÖ
+		// 2.0åŠŸèƒ½æš‚ä¸å®ç°
 		return null;
 	}
 
@@ -301,6 +301,6 @@ public class PintuServiceImplement implements PintuServiceInterface{
 	
 	
 	
-	//TODO, ÊµÏÖÆäËû½Ó¿Ú·½·¨
+	//TODO, å®ç°å…¶ä»–æ¥å£æ–¹æ³•
 	
 }

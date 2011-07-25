@@ -8,12 +8,12 @@ package com.pintu.facade;
  * @author lwz
  *
  */
-public class ServiceAdaptor {
+public class ApiAdaptor {
 
 	//由Spring注入
 	private PintuServiceInterface pintuService;
 	
-	public ServiceAdaptor() {
+	public ApiAdaptor() {
 		// TODO Auto-generated constructor stub
 	}
 

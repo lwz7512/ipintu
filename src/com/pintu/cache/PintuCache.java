@@ -25,8 +25,7 @@ public class PintuCache {
 	
 	public PintuCache(){
 		//配置文件里配置各种缓存实例参数
-		URL url = getClass().getResource("pintucache.xml");
-		manager = new CacheManager(url);
+		manager = CacheManager.getInstance();
 		ptCache = manager.getCache("pintucache");
 		commentCache = manager.getCache("commentcache");
 		storyCache = manager.getCache("storycache");

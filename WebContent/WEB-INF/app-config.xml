@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
+<beans xmlns="http://www.springframework.org/schema/beans"	
 	xmlns:security="http://www.springframework.org/schema/security"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
@@ -10,7 +10,8 @@
 		http://www.springframework.org/schema/security/spring-security-3.0.xsd
 		http://www.springframework.org/schema/context
 		http://www.springframework.org/schema/context/spring-context-3.0.xsd">
-
+	
+	
 	<!-- dataSource for MySQL -->
 	<bean id="dataSource"
 		  class="org.apache.commons.dbcp.BasicDataSource"
@@ -24,26 +25,37 @@
 	</bean>
 	
 	<!-- WebEntrance servlet调用，负责处理客户端请求参数并启动任务-->
+	
 	<bean id="appStarter"
 		  class="com.pintu.facade.AppStarter">
 		<property name="apiAdaptor" ref="apiAdaptor"/>
 		<property name="taskStarter" ref="taskStarter"/>
 		<property name="synchProcess" ref="synchProcess"/>
-	</bean>
+	</bean>	 
 	<bean id="apiAdaptor"
-		  class="com.pintu.facade.ServiceAdaptor">
+		  class="com.pintu.facade.ApiAdaptor">
 		<property name="pintuService" ref="pintuService"/>
 	</bean>
 	<bean id="taskStarter"
 		  class="com.pintu.jobs.TaskStarter">
 		<property name="dbVisitor" ref="dbAcess"/>
-		<property name="cacheVisitor" ref="pintuCache"/>		  
+		<property name="cacheVisitor" ref="cacheAccess"/>		  
 	</bean>
 	<bean id="pintuService"
 		  class="com.pintu.facade.PintuServiceImplement">
 		<property name="dbVisitor" ref="dbAcess"/>
-		<property name="cacheVisitor" ref="pintuCache"/>
-	</bean>			  	   
+		<property name="cacheVisitor" ref="cacheAccess"/>
+	</bean>	
+		<!-- 同步缓存对象到数据库操作 -->
+    <bean id="executor"
+    	  class="com.pintu.sync.SyncExecute">
+		<property name="dbVisitor" ref="dbAcess"/>
+		<property name="cacheVisitor" ref="cacheAccess"/>    	
+    </bean>
+    <bean id="synchProcess"
+    	  class="com.pintu.sync.CacheToDB">
+    	<property name="executor" ref="executor"/>
+    </bean>		  	   
     <!--将共享的DataSource实例注入到DAO中，JdbcTemplate实例在DataSource的setter方法中被创建-->
     <bean id = "dbAcess" 
           class = "com.pintu.dao.impl.DBAccessImplement"> 
@@ -58,15 +70,5 @@
     <bean id="imgProcessor"
     	  class="com.pintu.tools.ImgDataProcessor">
     	<constructor-arg type="int" value="10"/>
-    </bean>
-	<!-- 同步缓存对象到数据库操作 -->
-    <bean id="executor"
-    	  class="com.pintu.sync.SyncExecute">
-		<property name="dbVisitor" ref="dbAcess"/>
-		<property name="cacheVisitor" ref="pintuCache"/>    	
-    </bean>
-    <bean id="synchProcess"
-    	  class="com.pintu.sync.CacheToDB">
-    	<property name="executor" ref="executor"/>
     </bean>
 </beans>
