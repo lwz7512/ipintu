@@ -23,9 +23,17 @@ public class PintuCache {
 	
 	private Cache storyCache;
 	
-	public PintuCache(){
+	private Cache userCache;
+	
+	
+	public PintuCache(){			
+		
 		//配置文件里配置各种缓存实例参数
 		manager = CacheManager.getInstance();
+		//用户使用默认缓存
+		manager.addCache("userCache");
+		userCache = manager.getCache("userCache");
+		
 		ptCache = manager.getCache("pintucache");
 		commentCache = manager.getCache("commentcache");
 		storyCache = manager.getCache("storycache");

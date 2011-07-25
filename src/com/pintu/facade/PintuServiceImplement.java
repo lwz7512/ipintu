@@ -16,7 +16,7 @@ import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TastePic;
 import com.pintu.beans.UsrEstate;
 import com.pintu.beans.Vote;
-import com.pintu.beans.WeiboUsr;
+import com.pintu.beans.User;
 import com.pintu.dao.CacheAccessInterface;
 import com.pintu.dao.DBAccessInterface;
 
@@ -206,7 +206,7 @@ public class PintuServiceImplement implements PintuServiceInterface{
 	}
 
 	@Override
-	public WeiboUsr getUsrBasInfo(String user) {
+	public User getUsrBasInfo(String user) {
 		// TODO Auto-generated method stub
 		return null;
 	}

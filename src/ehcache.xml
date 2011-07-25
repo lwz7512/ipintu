@@ -16,12 +16,12 @@
     -->
     <defaultCache
             maxElementsInMemory="10000"
+            maxElementsOnDisk="100000"
             eternal="false"
-            timeToIdleSeconds="120"
-            timeToLiveSeconds="120"
+            timeToIdleSeconds="3600"
+            timeToLiveSeconds="7200"
             overflowToDisk="true"
-            diskSpoolBufferSizeMB="30"
-            maxElementsOnDisk="10000000"
+            diskSpoolBufferSizeMB="30"            
             diskPersistent="false"
             diskExpiryThreadIntervalSeconds="120"
             memoryStoreEvictionPolicy="LRU"
