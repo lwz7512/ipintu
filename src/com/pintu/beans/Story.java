@@ -1,9 +1,12 @@
 package com.pintu.beans;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Story {
+public class Story implements Serializable{
 
+	private static final long serialVersionUID = 1L;
+	
 	//品图（故事）唯一标识
 	private String id;
 	//贴图ID，对应于TPicItem.id

@@ -1,5 +1,7 @@
 package com.pintu.beans;
 
+import java.io.Serializable;
+
 
 /**
  * 用户上传的品图内容对象，用来传给服务端处理
@@ -7,7 +9,7 @@ package com.pintu.beans;
  * @author lwz
  *
  */
-public class TastePic {
+public class TastePic implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	//贴图作者
