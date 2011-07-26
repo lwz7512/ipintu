@@ -1,6 +1,7 @@
 package com.pintu.beans;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 public class Story implements Serializable{
@@ -8,17 +9,17 @@ public class Story implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	//品图（故事）唯一标识
-	private String id;
+	private int id;
 	//贴图ID，对应于TPicItem.id
-	private String followId;
+	private int followId;
 	//品图作者
-	private String owner;
+	private int owner;
 	//发表时间
-	private String publishTime;
+	private Date publishTime;
 	//品图内容
 	private String content;
 	//是否被投票为经典
-	private String classical;
+	private int classical;
 	//所有投票
 	private List<Vote> votes;
 	
@@ -33,44 +34,53 @@ public class Story implements Serializable{
 	}
 
 
-	public String getId() {
+
+	public int getId() {
 		return id;
 	}
 
 
-	public void setId(String id) {
+
+	public void setId(int id) {
 		this.id = id;
 	}
 
 
-	public String getFollowId() {
+
+	public int getFollowId() {
 		return followId;
 	}
 
 
-	public void setFollowId(String followId) {
+
+	public void setFollowId(int followId) {
 		this.followId = followId;
 	}
 
 
-	public String getOwner() {
+
+	public int getOwner() {
 		return owner;
 	}
 
 
-	public void setOwner(String owner) {
+
+	public void setOwner(int owner) {
 		this.owner = owner;
 	}
 
 
-	public String getPublishTime() {
+
+	public Date getPublishTime() {
 		return publishTime;
 	}
 
 
-	public void setPublishTime(String publishTime) {
+
+	public void setPublishTime(Date publishTime) {
 		this.publishTime = publishTime;
 	}
+
 
 
 	public String getContent() {
@@ -78,19 +88,23 @@ public class Story implements Serializable{
 	}
 
 
+
 	public void setContent(String content) {
 		this.content = content;
 	}
 
 
-	public String getClassical() {
+
+	public int getClassical() {
 		return classical;
 	}
 
 
-	public void setClassical(String classical) {
+
+	public void setClassical(int classical) {
 		this.classical = classical;
 	}
+
 
 
 	public List<Vote> getVotes() {
@@ -98,9 +112,11 @@ public class Story implements Serializable{
 	}
 
 
+
 	public void setVotes(List<Vote> votes) {
 		this.votes = votes;
 	}
+
 
 
 	public Boolean getSaved() {
@@ -108,10 +124,11 @@ public class Story implements Serializable{
 	}
 
 
+
 	public void setSaved(Boolean saved) {
 		this.saved = saved;
 	}
 
-	
+
 	
 }
