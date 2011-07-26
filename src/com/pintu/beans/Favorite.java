@@ -5,6 +5,7 @@ import java.util.Date;
 public class Favorite {
 
 	private int id;
+	private int owner;
 	private int picture;
 	private Date collectTime;
 	
@@ -18,6 +19,14 @@ public class Favorite {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public int getOwner() {
+		return owner;
+	}
+
+	public void setOwner(int owner) {
+		this.owner = owner;
 	}
 
 	public int getPicture() {
