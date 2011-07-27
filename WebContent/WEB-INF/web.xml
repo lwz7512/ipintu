@@ -40,13 +40,22 @@
     	<display-name>ImageUploader</display-name>
     	<servlet-name>ImageUploader</servlet-name>
     	<servlet-class>com.pintu.tools.ImageUploader</servlet-class>
-    </servlet>  	    
+    	<init-param> 
+            <param-name>filepath</param-name> 
+            <param-value>/WEB-INF/uploadFile</param-value> 
+        </init-param> 
+        <init-param> 
+            <param-name>temppath</param-name> 
+            <param-value>/WEB-INF/temp</param-value> 
+        </init-param>    	
+    </servlet>  
+    <!-- servlet mapping declaration -->	    
     <servlet-mapping>
     	<servlet-name>WebEntrance</servlet-name>
     	<url-pattern>/pintuapi</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
     	<servlet-name>ImageUploader</servlet-name>
-    	<url-pattern>/ImageUploader</url-pattern>
+    	<url-pattern>/upload</url-pattern>
     </servlet-mapping>
 </web-app>
