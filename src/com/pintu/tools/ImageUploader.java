@@ -79,7 +79,7 @@ public class ImageUploader extends HttpServlet {
 		
 		try {
 			DiskFileItemFactory diskFactory = new DiskFileItemFactory();
-			// threshold 极限、临界值，即硬盘缓存 1M
+			// threshold 极限、临界值，即内存缓存 空间大小
 			diskFactory.setSizeThreshold(fileMaxSize);
 			// repository 贮藏室，即临时文件目录
 			diskFactory.setRepository(new File(tempPath));
@@ -132,7 +132,13 @@ public class ImageUploader extends HttpServlet {
 			throws Exception {
 		// 此时的文件名包含了完整的路径，得注意加工一下
 		String fileName = item.getName();
-		System.out.println("完整的文件名：" + fileName);
+		int dotPos = fileName.lastIndexOf(".");
+		String fileType = fileName.substring(dotPos+1);
+		if(!fileType.equals("png") || !fileType.equals("jpg") || fileType.equals("gif")){
+			System.out.println(">>> 文件不是图片文件，当前文件类型为："+fileType);
+			pw.println(">>> 当前文件不是图片文件，不予生成");
+			return;
+		}
 
 		// 如果是用IE上传就需要处理下文件名，否则是全路径了
 		if (fileName != null) {
