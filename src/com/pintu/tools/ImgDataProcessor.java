@@ -6,15 +6,38 @@ import java.util.concurrent.Executors;
 import org.apache.commons.fileupload.FileItem;
 
 import com.pintu.beans.TPicItem;
+import com.pintu.dao.CacheAccessInterface;
 
 public class ImgDataProcessor {
 
 	
 	private ExecutorService pool;
 	
+	//只存放缩略图字节数组
+	private CacheAccessInterface cacheAccess;
+	
+	private String filePath; // 文件存放目录
+	private String tempPath; // 临时文件目录
+
+	
 	//线程多少由Spring配置
 	public ImgDataProcessor(int threadNumber) {
 		pool = Executors.newFixedThreadPool(threadNumber);
+	}
+		
+	//Spring inject this
+	public void setCacheAccess(CacheAccessInterface cacheAccess) {
+		this.cacheAccess = cacheAccess;
+	}
+
+	//Spring inject this
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+
+	//Spring inject this
+	public void setTempPath(String tempPath) {
+		this.tempPath = tempPath;
 	}
 
 	//只管往里扔数据就行了，任务队列自动会排队执行

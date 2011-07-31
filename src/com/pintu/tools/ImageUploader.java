@@ -19,6 +19,7 @@ public class ImageUploader extends HttpServlet {
 
 	private String filePath; // 文件存放目录
 	private String tempPath; // 临时文件目录
+	
 	// 最大文件上传尺寸设置
 	private int fileMaxSize = 4 * 1024 * 1024;
 
@@ -124,6 +125,7 @@ public class ImageUploader extends HttpServlet {
 			throws Exception {
 		String name = item.getFieldName();
 		String value = item.getString();
+		System.out.println(name + " : " + value + "\r\n");
 		pw.println(name + " : " + value + "\r\n");
 	}
 
@@ -134,10 +136,12 @@ public class ImageUploader extends HttpServlet {
 		String fileName = item.getName();
 		int dotPos = fileName.lastIndexOf(".");
 		String fileType = fileName.substring(dotPos+1);
-		if(!fileType.equals("png") || !fileType.equals("jpg") || fileType.equals("gif")){
-			System.out.println(">>> 文件不是图片文件，当前文件类型为："+fileType);
+		
+		if(fileType.equals("png") || fileType.equals("jpg") || fileType.equals("gif")){
+			System.out.println(">>> 当前图片文件类型为："+fileType);
+		}else{
 			pw.println(">>> 当前文件不是图片文件，不予生成");
-			return;
+			return;			
 		}
 
 		// 如果是用IE上传就需要处理下文件名，否则是全路径了
@@ -156,7 +160,9 @@ public class ImageUploader extends HttpServlet {
 		File uploadFile = new File(filePath + File.separator + fileName);
 		// 生成文件
 		item.write(uploadFile);
-
+		
+		System.out.println(fileName + " 文件保存完毕 ...");
+		
 		// 返回客户端信息
 		pw.println(fileName + " 文件保存完毕 ...");
 		pw.println("文件大小为 ：" + sizeInK);
