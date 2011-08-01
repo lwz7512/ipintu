@@ -21,9 +21,8 @@ public class TastePic implements Serializable{
 	//是否允许品图
 	private String allowStory;
 	
-	//原始上传图像数据，是图片文件生成的依据
-	//FIXME, 这个后面要测一下以调整前后台接口
-	private Byte[] rawImageData;
+	//原始上传图像数据，是图片文件生成的依据	
+	private byte[] rawImageData;
 	
 
 	
@@ -81,13 +80,13 @@ public class TastePic implements Serializable{
 
 
 
-	public Byte[] getRawImageData() {
+	public byte[] getRawImageData() {
 		return rawImageData;
 	}
 
 
 
-	public void setRawImageData(Byte[] rawImageData) {
+	public void setRawImageData(byte[] rawImageData) {
 		this.rawImageData = rawImageData;
 	}
 	

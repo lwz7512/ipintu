@@ -66,10 +66,12 @@
     	  class="com.pintu.dao.impl.CacheAccessImplement">
     	<property name="pintuCache" ref="pintuCache"/>
     </bean>
-    <bean id="pintuCache" class="com.pintu.cache.PintuCache"/>
-    <!-- 线程池个数配置 -->
+    <!-- 图片处理配置 -->
     <bean id="imgProcessor"
     	  class="com.pintu.tools.ImgDataProcessor">
+    	<!-- 线程池个数 -->  
     	<constructor-arg type="int" value="10"/>
+    	<property name="cacheAccess" ref="cacheAccess"/>
     </bean>
+    <bean id="pintuCache" class="com.pintu.cache.PintuCache"/>
 </beans>

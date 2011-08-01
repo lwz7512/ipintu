@@ -10,10 +10,11 @@ package com.pintu.facade;
  */
 public interface ExtVisitorInterface {
 
+	public static final String UPLOADPICTURE = "upload";
 	
-	public static String APPLYFORUSER = "applyForUser";
+	public static final String APPLYFORUSER = "applyForUser";
 	
-	public static String OTHERMETHOD = "otherMethod";
+	public static final String OTHERMETHOD = "otherMethod";
 	
 	//TODO, TO ADD MORE METHOD DEFINITION...
 	

@@ -305,7 +305,12 @@ public class PintuServiceImplement implements PintuServiceInterface{
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
+
+	@Override
+	public void saveImagePathToProcessor(String filePath, String tempPath) {
+		this.imgProcessor.setImagePath(filePath, tempPath);
+	}	
 	
 	
 	//TODO, 实现其他接口方法
