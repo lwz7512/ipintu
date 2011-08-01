@@ -6,4 +6,9 @@ public class UserEstateTask extends CalculateTask {
 		super();
 	}
 
+	protected void calculate(){
+		//TODO, sub class to override this method to implement specific task!
+		System.out.println(">>>>> calculate task executed...");
+	}
+	
 }

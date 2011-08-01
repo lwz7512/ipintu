@@ -1,4 +1,5 @@
 package com.pintu.beans;
+import java.io.Serializable;
 
 import org.apache.commons.fileupload.FileItem;
 
@@ -9,7 +10,7 @@ import org.apache.commons.fileupload.FileItem;
  * @author lwz
  *
  */
-public class TastePic {
+public class TastePic implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	//贴图作者

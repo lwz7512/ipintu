@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+#Thu Jul 21 19:40:01 CST 2011
+=======
 #Fri Jul 22 12:53:45 CST 2011
+>>>>>>> upstream/master
 eclipse.preferences.version=1
 encoding//src/com/pintu/beans=UTF-8
 encoding//src/com/pintu/beans/Comment.java=UTF-8

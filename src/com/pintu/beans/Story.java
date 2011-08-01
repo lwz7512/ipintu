@@ -112,6 +112,5 @@ public class Story implements Serializable{
 		this.votes = votes;
 	}
 
-
 	
 }
