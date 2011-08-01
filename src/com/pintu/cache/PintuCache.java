@@ -25,6 +25,8 @@ public class PintuCache {
 	
 	private Cache userCache;
 	
+	private Cache voteCache;
+	
 	
 	public PintuCache(){			
 		
@@ -37,6 +39,7 @@ public class PintuCache {
 		ptCache = manager.getCache("pintucache");
 		commentCache = manager.getCache("commentcache");
 		storyCache = manager.getCache("storycache");
+		voteCache = manager.getCache("votecache");
 	}
 	
 	public void cachePintuObject(String key, Object value){

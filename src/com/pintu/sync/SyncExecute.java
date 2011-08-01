@@ -37,19 +37,19 @@ public class SyncExecute implements Runnable {
 	//同步内容包括：TPicItem, Story, Vote, Comment
 	//对于TPicItem对象，要判断文件属性是否已经填充
 	//如果没有填充就先不入库，如果都已经有值就入库
-	//同时将该对象的saved值，置为true；	
+	
 	@Override
 	public void run() {		
 		while(syncFlag){	
 			
 			//TODO, 批量同步图片
-			
+			//并删除已同步的对象ID；
 			
 			//TODO, 批量同步故事
-			
+			//并删除已同步的对象ID；
 			
 			//TODO, 批量同步评论
-			
+			//并删除已同步的对象ID；
 			
 			try {
 				Thread.sleep(100);

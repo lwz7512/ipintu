@@ -64,7 +64,10 @@ public class PintuServiceImplement implements PintuServiceInterface{
 
 	@Override
 	public Boolean createTastePic(TastePic pic, String user) {
-		// TODO Auto-generated method stub
+		// 1. 构造TPicItem对象
+		//2. 放入缓存
+		//3. 提交imgProcessor生成文件
+		
 		return null;
 	}
 

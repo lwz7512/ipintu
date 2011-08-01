@@ -23,7 +23,7 @@ public interface CacheAccessInterface {
 	
 	public static String COMMENT_TYPE = "comment";
 	
-	
+	public static String VOTE_TYPE = "vote";
 	
 	//缓存登录用户	
 	public void cacheLoggedInUser();
@@ -58,8 +58,8 @@ public interface CacheAccessInterface {
 	//读取未入库的所有对象
 	public List<Object> getUnSavedObj(String type);
 	
-	//删掉已入库的所有对象
-	public Boolean deleteSavedObj(String type);
+	//删掉已入库的所有对象ID: LinkedList中的所有ID
+	public Boolean deleteSavedObjIDs(String type);
 	
 	
 }

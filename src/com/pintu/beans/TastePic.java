@@ -1,6 +1,10 @@
 package com.pintu.beans;
 
+<<<<<<< HEAD
 import java.io.Serializable;
+=======
+import org.apache.commons.fileupload.FileItem;
+>>>>>>> upstream/master
 
 
 /**
@@ -22,7 +26,7 @@ public class TastePic implements Serializable{
 	private String allowStory;
 	
 	//原始上传图像数据，是图片文件生成的依据	
-	private byte[] rawImageData;
+	private FileItem rawImageData;
 	
 
 	
@@ -80,13 +84,13 @@ public class TastePic implements Serializable{
 
 
 
-	public byte[] getRawImageData() {
+	public FileItem getRawImageData() {
 		return rawImageData;
 	}
 
 
 
-	public void setRawImageData(byte[] rawImageData) {
+	public void setRawImageData(FileItem rawImageData) {
 		this.rawImageData = rawImageData;
 	}
 	

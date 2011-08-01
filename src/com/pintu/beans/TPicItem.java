@@ -44,9 +44,6 @@ public class TPicItem implements Serializable{
 	//是否审核通过，默认都是1，即通过，不通过变为0
 	private int pass;
 	
-	//是否已经被同步入库，用于同步过程中遍历缓存时判断
-	//如果为真表示已入库，如果为假表示为入库
-	private Boolean saved;
 	
 	
 	public TPicItem(){
@@ -191,16 +188,6 @@ public class TPicItem implements Serializable{
 
 	public void setPass(int pass) {
 		this.pass = pass;
-	}
-
-
-	public Boolean getSaved() {
-		return saved;
-	}
-
-
-	public void setSaved(Boolean saved) {
-		this.saved = saved;
 	}
 	
 	

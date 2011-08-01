@@ -58,7 +58,7 @@ public class ApiAdaptor {
 				
 			}else{
 				//图片数据
-				pic.setRawImageData(item.get());
+				pic.setRawImageData(item);
 			}
 		}
 		this.pintuService.createTastePic(pic, pic.getUser());
