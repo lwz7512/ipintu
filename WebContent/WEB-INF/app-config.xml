@@ -71,8 +71,6 @@
     	  class="com.pintu.tools.ImgDataProcessor">
     	<!-- 线程池个数 -->  
     	<constructor-arg type="int" value="10"/>
-    	<property name="filePath" value="/WEB-INF/uploadFile"/>
-    	<property name="tempPath" value="/WEB-INF/temp"/>
     	<property name="cacheAccess" ref="cacheAccess"/>
     </bean>
     <bean id="pintuCache" class="com.pintu.cache.PintuCache"/>

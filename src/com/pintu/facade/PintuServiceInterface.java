@@ -3,23 +3,25 @@ package com.pintu.facade;
 import java.util.List;
 
 import com.pintu.beans.Comment;
+import com.pintu.beans.Event;
 import com.pintu.beans.GTStatics;
 import com.pintu.beans.Gift;
 import com.pintu.beans.Message;
 import com.pintu.beans.News;
 import com.pintu.beans.Note;
-import com.pintu.beans.ShellDetails;
 import com.pintu.beans.Story;
-import com.pintu.beans.TPEvent;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TastePic;
-import com.pintu.beans.UsrEstate;
-import com.pintu.beans.Vote;
 import com.pintu.beans.User;
+import com.pintu.beans.Vote;
+import com.pintu.beans.Wealth;
 
 public interface PintuServiceInterface {
 	
+	//设置图片文件保存路径，由ApiAdaptor赋值
+	public void saveImagePathToProcessor(String filePath, String tempPath);
+
 	
 	/**
 	 * 该方法用于用户申请注册，系统生成邀请码发送到邮箱中完成注册；
@@ -55,7 +57,7 @@ public interface PintuServiceInterface {
 	public List<TPicDesc> getTpicsByUser(String user,String pageNum);
 	
 	//查看自己的贝壳种类和数量
-	public ShellDetails getShellDetails(String user);
+	public List<Wealth> getShellDetails(String user);
 	
 	//浏览社区画廊
 	public List<TPicDesc> getCommunityTpics();
@@ -84,7 +86,7 @@ public interface PintuServiceInterface {
 	public User getUsrBasInfo(String user);
 	
 	//查看用户等级和拥有贝壳数
-	public UsrEstate getUsrEstate(String user);
+	public Wealth getUsrEstate(String user);
 	
 	//展示今日的可兑换礼物信息
 	public List<Gift> getGiftsToday();
@@ -99,7 +101,7 @@ public interface PintuServiceInterface {
 	public Boolean addPollToTpic(Vote vote);
 	
 	//查看今日社区事件
-	public List<TPEvent> getCommunityEvents();
+	public List<Event> getCommunityEvents();
 	
 	//查看自己的收藏图片
 	public List<TPicDesc> getFavoriteTpics(String user,String pageNum);
@@ -166,10 +168,10 @@ public interface PintuServiceInterface {
 	//********************* 后台管理2.0功能 *************************************
 	
 	//发布社区事件
-	public Boolean publishTpEvent(TPEvent tpEvent);
+	public Boolean publishTpEvent(Event tpEvent);
 	
 	//发布行业动态
-	public Boolean publishIndustryEvent(TPEvent tpEvent);
+	public Boolean publishIndustryEvent(Event tpEvent);
 	
 	
 	

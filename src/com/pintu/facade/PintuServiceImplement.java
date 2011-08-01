@@ -8,13 +8,12 @@ import com.pintu.beans.Gift;
 import com.pintu.beans.Message;
 import com.pintu.beans.News;
 import com.pintu.beans.Note;
-import com.pintu.beans.ShellDetails;
 import com.pintu.beans.Story;
-import com.pintu.beans.TPEvent;
+import com.pintu.beans.Event;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TastePic;
-import com.pintu.beans.UsrEstate;
+import com.pintu.beans.Wealth;
 import com.pintu.beans.Vote;
 import com.pintu.beans.User;
 import com.pintu.dao.CacheAccessInterface;
@@ -142,7 +141,7 @@ public class PintuServiceImplement implements PintuServiceInterface{
 	}
 
 	@Override
-	public List<TPEvent> getCommunityEvents() {
+	public List<Event> getCommunityEvents() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -202,7 +201,7 @@ public class PintuServiceImplement implements PintuServiceInterface{
 	}
 
 	@Override
-	public ShellDetails getShellDetails(String user) {
+	public List<Wealth> getShellDetails(String user) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -220,7 +219,7 @@ public class PintuServiceImplement implements PintuServiceInterface{
 	}
 
 	@Override
-	public UsrEstate getUsrEstate(String user) {
+	public Wealth getUsrEstate(String user) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -244,13 +243,13 @@ public class PintuServiceImplement implements PintuServiceInterface{
 	}
 
 	@Override
-	public Boolean publishIndustryEvent(TPEvent tpEvent) {
+	public Boolean publishIndustryEvent(Event tpEvent) {
 		// 2.0功能暂不实现
 		return null;
 	}
 
 	@Override
-	public Boolean publishTpEvent(TPEvent tpEvent) {
+	public Boolean publishTpEvent(Event tpEvent) {
 		// 2.0功能暂不实现
 		return null;
 	}
@@ -306,7 +305,12 @@ public class PintuServiceImplement implements PintuServiceInterface{
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
+
+	@Override
+	public void saveImagePathToProcessor(String filePath, String tempPath) {
+		this.imgProcessor.setImagePath(filePath, tempPath);
+	}	
 	
 	
 	//TODO, 实现其他接口方法

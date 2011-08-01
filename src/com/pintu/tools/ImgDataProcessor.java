@@ -16,8 +16,10 @@ public class ImgDataProcessor {
 	//只存放缩略图字节数组
 	private CacheAccessInterface cacheAccess;
 	
-	private String filePath; // 文件存放目录
-	private String tempPath; // 临时文件目录
+	 // 图片文件存放的绝对路径，由apiAdaptor.setImagePath()设置
+	private String filePath;
+	// 临时文件存放的绝对路径，由apiAdaptor.setImagePath()设置
+	private String tempPath; 
 
 	
 	//线程多少由Spring配置
@@ -30,15 +32,11 @@ public class ImgDataProcessor {
 		this.cacheAccess = cacheAccess;
 	}
 
-	//Spring inject this
-	public void setFilePath(String filePath) {
+	public void setImagePath(String filePath, String tempPath) {
 		this.filePath = filePath;
-	}
-
-	//Spring inject this
-	public void setTempPath(String tempPath) {
 		this.tempPath = tempPath;
 	}
+
 
 	//只管往里扔数据就行了，任务队列自动会排队执行
 	public void createImageFile(FileItem file, TPicItem picObj){
