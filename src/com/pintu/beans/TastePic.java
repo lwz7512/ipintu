@@ -1,5 +1,7 @@
 package com.pintu.beans;
 
+import org.apache.commons.fileupload.FileItem;
+
 
 /**
  * 用户上传的品图内容对象，用来传给服务端处理
@@ -20,7 +22,7 @@ public class TastePic {
 	private String allowStory;
 	
 	//原始上传图像数据，是图片文件生成的依据	
-	private byte[] rawImageData;
+	private FileItem rawImageData;
 	
 
 	
@@ -78,13 +80,13 @@ public class TastePic {
 
 
 
-	public byte[] getRawImageData() {
+	public FileItem getRawImageData() {
 		return rawImageData;
 	}
 
 
 
-	public void setRawImageData(byte[] rawImageData) {
+	public void setRawImageData(FileItem rawImageData) {
 		this.rawImageData = rawImageData;
 	}
 	

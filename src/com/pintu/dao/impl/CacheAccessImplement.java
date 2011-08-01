@@ -17,10 +17,11 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	
 	//Inject by Spring
 	public CacheAccessImplement(){
-		//初始化要缓存对象ID的类型及容器，同步第一个完成后删掉第一个
+		//初始化要缓存对象ID的类型及容器，单个缓存，批量入库，批量删除
 		toSavedCacheIds.put(PICTURE_TYPE, new LinkedList<String>());
 		toSavedCacheIds.put(STORY_TYPE, new LinkedList<String>());
-		toSavedCacheIds.put(COMMENT_TYPE, new LinkedList<String>());		
+		toSavedCacheIds.put(COMMENT_TYPE, new LinkedList<String>());
+		toSavedCacheIds.put(VOTE_TYPE, new LinkedList<String>());
 	}
 		
 	public void setPintuCache(PintuCache pintuCache){
@@ -41,8 +42,8 @@ public class CacheAccessImplement implements CacheAccessInterface {
 
 	@Override
 	public void cachePicture(TPicItem pic) {
-		// TODO Auto-generated method stub
-		
+		// 1. 把对象放到pintuCache中
+		//2. 把ID放到toSavedCacheIds中的LinkedList中		
 	}
 
 	@Override
@@ -82,7 +83,7 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	}
 
 	@Override
-	public Boolean deleteSavedObj(String type) {
+	public Boolean deleteSavedObjIDs(String type) {
 		// TODO Auto-generated method stub
 		return null;
 	}

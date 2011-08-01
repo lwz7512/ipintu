@@ -28,7 +28,7 @@ public class TPicItem implements Serializable{
 	//贴图标签
 	private String tags;
 	//是否允许品图
-	private String allowStory;
+	private int allowStory;
 	//生成的移动图ID，这个ID是由pId+"_Mob"构成
 	private String mobImgId;
 	//生成的移动图文件大小，单位是KB
@@ -38,15 +38,12 @@ public class TPicItem implements Serializable{
 	//生成的原始图ID，这个ID是由pId+"_Raw"构成
 	private String rawImgId;
 	//生成的原始图大小，单位是KB
-	private String rwoImgSize;
+	private String rawImgSize;
 	//生成的原始图磁盘保存路径
 	private String rawImgPath;
 	//是否审核通过，默认都是1，即通过，不通过变为0
-	private String pass;
+	private int pass;
 	
-	//是否已经被同步入库，用于同步过程中遍历缓存时判断
-	//如果为真表示已入库，如果为假表示为入库
-	private Boolean saved;
 	
 	
 	public TPicItem(){
@@ -114,12 +111,12 @@ public class TPicItem implements Serializable{
 	}
 
 
-	public String getAllowStory() {
+	public int getAllowStory() {
 		return allowStory;
 	}
 
 
-	public void setAllowStory(String allowStory) {
+	public void setAllowStory(int allowStory) {
 		this.allowStory = allowStory;
 	}
 
@@ -164,13 +161,13 @@ public class TPicItem implements Serializable{
 	}
 
 
-	public String getRwoImgSize() {
-		return rwoImgSize;
+	public String getRawImgSize() {
+		return rawImgSize;
 	}
 
 
-	public void setRwoImgSize(String rwoImgSize) {
-		this.rwoImgSize = rwoImgSize;
+	public void setRawImgSize(String rawImgSize) {
+		this.rawImgSize = rawImgSize;
 	}
 
 
@@ -184,23 +181,13 @@ public class TPicItem implements Serializable{
 	}
 
 
-	public String getPass() {
+	public int getPass() {
 		return pass;
 	}
 
 
-	public void setPass(String pass) {
+	public void setPass(int pass) {
 		this.pass = pass;
-	}
-
-
-	public Boolean getSaved() {
-		return saved;
-	}
-
-
-	public void setSaved(Boolean saved) {
-		this.saved = saved;
 	}
 	
 	
