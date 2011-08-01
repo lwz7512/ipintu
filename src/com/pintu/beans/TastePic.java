@@ -1,10 +1,7 @@
 package com.pintu.beans;
-
-<<<<<<< HEAD
 import java.io.Serializable;
-=======
+
 import org.apache.commons.fileupload.FileItem;
->>>>>>> upstream/master
 
 
 /**

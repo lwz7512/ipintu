@@ -112,21 +112,5 @@ public class Story implements Serializable{
 		this.votes = votes;
 	}
 
-
-<<<<<<< HEAD
-
-	public Boolean getSaved() {
-		return saved;
-	}
-
-
-
-	public void setSaved(Boolean saved) {
-		this.saved = saved;
-	}
-
-
-=======
->>>>>>> upstream/master
 	
 }
