@@ -9,11 +9,11 @@ public class Story implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	//品图（故事）唯一标识
-	private int id;
+	private String id;
 	//贴图ID，对应于TPicItem.id
-	private int followId;
+	private String follow;
 	//品图作者
-	private int owner;
+	private String owner;
 	//发表时间
 	private Date publishTime;
 	//品图内容
@@ -35,37 +35,37 @@ public class Story implements Serializable{
 
 
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
 
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
 
 
-	public int getFollowId() {
-		return followId;
+	public String getFollow() {
+		return follow;
 	}
 
 
 
-	public void setFollowId(int followId) {
-		this.followId = followId;
+	public void setFollow(String follow) {
+		this.follow = follow;
 	}
 
 
 
-	public int getOwner() {
+	public String getOwner() {
 		return owner;
 	}
 
 
 
-	public void setOwner(int owner) {
+	public void setOwner(String owner) {
 		this.owner = owner;
 	}
 

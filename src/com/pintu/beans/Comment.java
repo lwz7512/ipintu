@@ -14,9 +14,9 @@ public class Comment implements Serializable{
 	//如果为真表示已入库，如果为假表示为入库
 	private Boolean saved;
 
-	private int id;
-	private int follow;
-	private int owner;
+	private String id;
+	private String follow;
+	private String owner;
 	private Date publishTime;
 	private String content;
 	
@@ -35,32 +35,32 @@ public class Comment implements Serializable{
 	}
 
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
 
-	public int getFollow() {
+	public String getFollow() {
 		return follow;
 	}
 
 
-	public void setFollow(int follow) {
+	public void setFollow(String follow) {
 		this.follow = follow;
 	}
 
 
-	public int getOwner() {
+	public String getOwner() {
 		return owner;
 	}
 
 
-	public void setOwner(int owner) {
+	public void setOwner(String owner) {
 		this.owner = owner;
 	}
 

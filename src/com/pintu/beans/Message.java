@@ -7,38 +7,38 @@ package com.pintu.beans;
  */
 public class Message {
 
-	private int id;
-	private int sender;
-	private int receiver;
+	private String id;
+	private String sender;
+	private String receiver;
 	private String content;
-	private String wirteTime;
+	private String writeTime;
 	private int read;
 	
 	public Message() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
-	public int getSender() {
+	public String getSender() {
 		return sender;
 	}
 
-	public void setSender(int sender) {
+	public void setSender(String sender) {
 		this.sender = sender;
 	}
 
-	public int getReceiver() {
+	public String getReceiver() {
 		return receiver;
 	}
 
-	public void setReceiver(int receiver) {
+	public void setReceiver(String receiver) {
 		this.receiver = receiver;
 	}
 
@@ -50,12 +50,12 @@ public class Message {
 		this.content = content;
 	}
 
-	public String getWirteTime() {
-		return wirteTime;
+	public String getWriteTime() {
+		return writeTime;
 	}
 
-	public void setWirteTime(String wirteTime) {
-		this.wirteTime = wirteTime;
+	public void setWriteTime(String wirteTime) {
+		this.writeTime = wirteTime;
 	}
 
 	public int getRead() {

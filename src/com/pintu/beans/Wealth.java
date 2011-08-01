@@ -2,24 +2,25 @@ package com.pintu.beans;
 
 public class Wealth {
 
-	private int id;
-	private int owner;
+	private String id;
+	private String owner;
 	private String type;
 	private int amount;
 	
-	public int getId() {
+
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
-	public int getOwner() {
+	public String getOwner() {
 		return owner;
 	}
 
-	public void setOwner(int owner) {
+	public void setOwner(String owner) {
 		this.owner = owner;
 	}
 

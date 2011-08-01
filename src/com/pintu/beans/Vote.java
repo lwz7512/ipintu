@@ -8,9 +8,9 @@ public class Vote implements Serializable{
 	
 	private Boolean saved;
 
-	private int id;
+	private String id;
 	//是对哪个故事的投票
-	private int follow;
+	private String follow;
 	//投票的类型
 	private String type;
 	//数量
@@ -32,22 +32,22 @@ public class Vote implements Serializable{
 	}
 
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
 
-	public int getFollow() {
+	public String getFollow() {
 		return follow;
 	}
 
 
-	public void setFollow(int follow) {
+	public void setFollow(String follow) {
 		this.follow = follow;
 	}
 
