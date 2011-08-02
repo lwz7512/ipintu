@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.FileUploadBase.SizeLimitExceededException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
@@ -164,7 +165,13 @@ public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 			log.debug("<<< Uploading complete!");
 			//送由适配器解析参数
 			apiAdaptor.createTastePic(fileItems);
-		} catch (FileUploadException e) {
+		} catch (SizeLimitExceededException e) {
+			
+			System.out.println(">>> 文件尺寸超过限制，不能上传！");
+			pw.println(">>> 文件尺寸超过限制，不能上传！");
+			return;
+			
+		}catch (FileUploadException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
