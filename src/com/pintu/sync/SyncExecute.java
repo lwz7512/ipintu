@@ -1,5 +1,8 @@
 package com.pintu.sync;
 
+import java.util.List;
+
+import com.pintu.beans.TPicItem;
 import com.pintu.dao.CacheAccessInterface;
 import com.pintu.dao.DBAccessInterface;
 
@@ -44,6 +47,14 @@ public class SyncExecute implements Runnable {
 			
 			//TODO, 批量同步图片
 			//并删除已同步的对象ID；
+			List<Object> objList=cacheVisitor.getUnSavedObj(cacheVisitor.PICTURE_TYPE);
+			if(objList != null && objList.size() != 0){
+				System.out.println("要入库的对象："+(TPicItem)objList.get(0));
+				dbVisitor.insertPicture(objList);
+				cacheVisitor.toSavedCacheIds.get(cacheVisitor.PICTURE_TYPE).remove();
+				System.out.println("#########删除已入库的id"+cacheVisitor.toSavedCacheIds.values());
+			}
+     	
 			
 			//TODO, 批量同步故事
 			//并删除已同步的对象ID；

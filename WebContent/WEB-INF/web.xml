@@ -29,11 +29,6 @@
     	<display-name>WebEntrance</display-name>
     	<servlet-name>WebEntrance</servlet-name>
     	<servlet-class>com.pintu.facade.WebEntrance</servlet-class>
-    	<init-param>
-	    	<param-name>targetBean</param-name>
-	    	<!-- 这是个bean实例id，在app-config.xml中定义 -->
-	    	<param-value>appStarter</param-value>
-	    </init-param>
     	<init-param> 
             <param-name>filepath</param-name> 
             <param-value>/WEB-INF/uploadFile</param-value> 
@@ -41,7 +36,13 @@
         <init-param> 
             <param-name>temppath</param-name> 
             <param-value>/WEB-INF/temp</param-value> 
-        </init-param>    		    
+        </init-param>
+        
+    	<init-param>
+	    	<param-name>targetBean</param-name>
+	    	<!-- 这是个bean实例id，在app-config.xml中定义 -->
+	    	<param-value>appStarter</param-value>
+	    </init-param>
     </servlet>
     <servlet>
     	<description>此类用于测试文件上传并保存</description>

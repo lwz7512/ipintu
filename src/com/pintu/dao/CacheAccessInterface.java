@@ -55,7 +55,7 @@ public interface CacheAccessInterface {
 	//读取评论
 	public Comment getSpecificComment(String cid);
 	
-	//读取未入库的所有对象
+	//读取未入库的所有某type的对象
 	public List<Object> getUnSavedObj(String type);
 	
 	//删掉已入库的所有对象ID: LinkedList中的所有ID

@@ -1,59 +1,119 @@
 package com.pintu.cache;
 
-import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
+import com.pintu.beans.Comment;
+import com.pintu.beans.Story;
+import com.pintu.beans.Vote;
+import com.pintu.dao.CacheAccessInterface;
+
 /**
- * 这里是真正的缓存逻辑，缓存内容有：
- * 上传图片的缩略图、贴图对象、故事、投票、评论
- * 生成的图片均放在磁盘上不缓存为对象；
+ * 这里是真正的缓存逻辑，缓存内容有： 上传图片的缩略图、贴图对象、故事、投票、评论 生成的图片均放在磁盘上不缓存为对象；
+ * 
  * @author lwz
- *
+ * 
  */
 public class PintuCache {
-	
+
 	private CacheManager manager;
-	
-	private Cache ptCache;
-	
+
+	private Cache pictureCache;
+
 	private Cache commentCache;
-	
+
 	private Cache storyCache;
-	
+
 	private Cache userCache;
-	
+
 	private Cache voteCache;
-	
-	
-	public PintuCache(){			
-		
-		//配置文件里配置各种缓存实例参数
+
+	public PintuCache() {
+
+		// 配置文件里配置各种缓存实例参数
 		manager = CacheManager.getInstance();
-		//用户使用默认缓存
+		// 用户使用默认缓存
 		manager.addCache("userCache");
 		userCache = manager.getCache("userCache");
-		
-		ptCache = manager.getCache("pintucache");
+
+		pictureCache = manager.getCache("picturecache");
 		commentCache = manager.getCache("commentcache");
 		storyCache = manager.getCache("storycache");
 		voteCache = manager.getCache("votecache");
 	}
+
 	
-	public void cachePintuObject(String key, Object value){
-		Element elmt = new Element(key,value);
-		ptCache.put(elmt);
-	}
-	
-	public Object getCachedPintu(String key){
-		Element pintu = ptCache.get(key);
-		if(pintu!=null){
-			return pintu.getObjectValue();
+	//根据类型不同，存入不同的缓存中
+	public void cacheObject(String type, String key, Object value) {
+		Element ele = new Element(key, value);
+		if(type.equals(CacheAccessInterface.PICTURE_TYPE)){
+			pictureCache.put(ele);
+		}else if(type.equals(CacheAccessInterface.COMMENT_TYPE)){
+			commentCache.put(ele);
+		}else if(type.equals(CacheAccessInterface.STORY_TYPE)){
+			storyCache.put(ele);
+		}else if(type.equals(CacheAccessInterface.VOTE_TYPE)){
+			voteCache.put(ele);
 		}
-		return null;
 	}
+
 	
+//	public Object getCachedPintu(String key){
+//		Element pintu = pictureCache.get(key);
+//		if(pintu!=null){
+//			return pintu.getObjectValue();
+//		}
+//		return null;
+//	}
+
 	
+	//根据传入的类型不同，返回存中的相应数据
+	public List<Object> getCachedObj(String type, List<String> keys) {
+		List<Object> list = new ArrayList<Object>();
+		if(type.equals(CacheAccessInterface.PICTURE_TYPE)){
+//		    pictureCache
+			list.clear();
+			for(int i=0;i<keys.size();i++){
+				Element picture=pictureCache.get(keys.get(i));
+				if(picture != null){
+					list.add(picture.getObjectValue());
+				}
+			}
+			
+		}else if(type.equals(CacheAccessInterface.COMMENT_TYPE)){
+//			commentCache
+			list.clear();
+			for(int i=0;i<keys.size();i++){
+				Element picture=commentCache.get(keys.get(i));
+				if(picture != null){
+					list.add(picture.getObjectValue());
+				}
+			}
+		}else if(type.equals(CacheAccessInterface.STORY_TYPE)){
+//			storyCache
+			list.clear();
+			for(int i=0;i<keys.size();i++){
+				Element picture=storyCache.get(keys.get(i));
+				if(picture != null){
+					list.add(picture.getObjectValue());
+				}
+			}
+		}else if(type.equals(CacheAccessInterface.VOTE_TYPE)){
+//			voteCache
+			list.clear();
+			for(int i=0;i<keys.size();i++){
+				Element picture=voteCache.get(keys.get(i));
+				if(picture != null){
+					list.add(picture.getObjectValue());
+				}
+			}
+		}
+		return list;
+	}
+
 }

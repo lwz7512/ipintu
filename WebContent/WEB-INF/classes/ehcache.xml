@@ -29,7 +29,7 @@
             />
 
 
-    <cache name="pintucache"
+    <cache name="picturecache"
            maxElementsInMemory="1000"
            maxElementsOnDisk="10000"
            eternal="false"

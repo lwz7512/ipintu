@@ -37,6 +37,7 @@ public class ApiAdaptor {
 	}
 	
 	public void createTastePic(List<FileItem> fileItems) {		
+		System.out.println("2 分析图片对象apiadaptor createTastePic");
 		TastePic pic = new TastePic();
 		Iterator<FileItem> iter = fileItems.iterator();
 		while(iter.hasNext()){

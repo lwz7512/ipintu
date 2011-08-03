@@ -2,10 +2,12 @@ package com.pintu.dao.impl;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.UUID;
 
 import javax.sql.DataSource;
 
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 
@@ -71,41 +73,38 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public String insertOnePicture(TPicItem picture) {
-		final String pid = UUID.randomUUID().toString().replace("-", "")
-				.substring(16);
-		System.out.println("自动生成的UUID：(截取了自动生成的UUID后面16位)" + pid);
-		String sql = "INSERT INTO t_pic "
-				+ "(p_id,p_name,p_owner,p_publishTime,p_description,p_tags,p_allowStory,p_mobImgId,p_mobImgSize,p_mobImgPath,p_rawImgId,p_rawImgSize,p_rawImgPath,p_memo) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?, ?, ?, ?, ?)";
-		final TPicItem pic = picture;
-		//TODO 这里需要确认一下再写
-		jdbcTemplate.update(sql, new PreparedStatementSetter() {
-			public void setValues(PreparedStatement ps) {
-				try {
-					ps.setString(1, pid);
-					ps.setString(2, pic.getName());
-					ps.setString(3, pic.getOwner());
-					ps.setString(4, pic.getPublishTime());
-					ps.setString(5, pic.getDescription());
-					ps.setString(6, pic.getTags());
-					ps.setInt(7, pic.getAllowStory());
-					ps.setString(8, pic.getMobImgId());
-					ps.setString(9, pic.getMobImgSize());
-					ps.setString(10, pic.getMobImgPath());
-					ps.setString(11, pic.getRawImgId());
-					ps.setString(12, pic.getRawImgSize());
-					ps.setString(13, pic.getRawImgPath());
-					ps.setString(14, "");
+	public String insertPicture(final List<Object> objList) {
+		String sql = "INSERT INTO t_picture "
+				+ "(p_id,p_name,p_owner,p_publishTime,p_tags,p_description,p_allowStory,p_mobImgId,p_mobImgSize,p_mobImgPath,p_rawImgId,p_rawImgSize,p_rawImgPath,p_pass,p_memo) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		
+		jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+			public void setValues(PreparedStatement ps, int i)
+					throws SQLException {
+				TPicItem picture = (TPicItem) objList.get(i);
+				ps.setString(1, picture.getId());
+				ps.setString(2, picture.getName());
+				ps.setString(3, picture.getOwner());
+				ps.setDate(4, picture.getPublishTime());
+				ps.setString(5, picture.getDescription());
+				ps.setString(6, picture.getTags());
+				ps.setInt(7, picture.getAllowStory());
+				ps.setString(8, picture.getMobImgId());
+				ps.setString(9, picture.getMobImgSize());
+				ps.setString(10, picture.getMobImgPath());
+				ps.setString(11, picture.getRawImgId());
+				ps.setString(12, picture.getRawImgSize());
+				ps.setString(13, picture.getRawImgPath());
+				ps.setInt(14, picture.getPass());
+				ps.setString(15, "");
+			}
 
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
+			public int getBatchSize() {
+				return objList.size();
 			}
 		});
 
-		return null;
+		return objList.size() + "";
 	}
 
 	@Override
@@ -125,7 +124,7 @@ public class DBAccessImplement implements DBAccessInterface {
 					ps.setString(1, sid);
 					ps.setString(2, stor.getFollow());
 					ps.setString(3, stor.getOwner());
-					ps.setString(4, stor.getPublishTime()+"");
+					ps.setString(4, stor.getPublishTime() + "");
 					ps.setString(5, stor.getContent());
 					ps.setInt(6, stor.getClassical());
 					ps.setString(7, "");
@@ -156,7 +155,7 @@ public class DBAccessImplement implements DBAccessInterface {
 					ps.setString(1, cid);
 					ps.setString(2, comm.getFollow());
 					ps.setString(3, comm.getOwner());
-					ps.setString(4, comm.getPublishTime()+"");
+					ps.setString(4, comm.getPublishTime() + "");
 					ps.setString(5, comm.getContent());
 					ps.setString(6, "");
 
@@ -232,15 +231,15 @@ public class DBAccessImplement implements DBAccessInterface {
 	@Override
 	public String updateOneWealth(String id, Wealth wealth) {
 		String sql = "update t_wealth set type=?, amount=?, where owner=?";
-		final Wealth wea=wealth;
-		jdbcTemplate.update(sql,new PreparedStatementSetter(){
-			public void setValues(PreparedStatement ps){
-				
-				try{
+		final Wealth wea = wealth;
+		jdbcTemplate.update(sql, new PreparedStatementSetter() {
+			public void setValues(PreparedStatement ps) {
+
+				try {
 					ps.setString(1, wea.getType());
 					ps.setInt(2, wea.getAmount());
 					ps.setString(3, wea.getOwner());
-				}catch(Exception e){
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
@@ -265,7 +264,7 @@ public class DBAccessImplement implements DBAccessInterface {
 					ps.setString(1, eid);
 					ps.setString(2, eve.getTitle());
 					ps.setString(3, eve.getDetail());
-					ps.setString(4, eve.getEventTime()+"");
+					ps.setString(4, eve.getEventTime() + "");
 					ps.setString(5, "");
 
 				} catch (SQLException e) {
@@ -325,7 +324,7 @@ public class DBAccessImplement implements DBAccessInterface {
 					ps.setString(1, fid);
 					ps.setString(2, favor.getOwner());
 					ps.setString(3, favor.getPicture());
-					ps.setString(4, favor.getCollectTime()+"");
+					ps.setString(4, favor.getCollectTime() + "");
 					ps.setString(5, "");
 
 				} catch (SQLException e) {

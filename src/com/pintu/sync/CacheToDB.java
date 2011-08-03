@@ -13,7 +13,9 @@ public class CacheToDB {
 	}
 	
 	public void start(){
-		if(synchronizer!=null) synchronizer.start();
+		if(synchronizer!=null  && !synchronizer.isAlive()) {
+			synchronizer.start();
+		}
 	}
 	
 	public void stop(){

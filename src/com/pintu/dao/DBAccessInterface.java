@@ -1,5 +1,7 @@
 package com.pintu.dao;
 
+import java.util.List;
+
 import com.pintu.beans.Comment;
 import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
@@ -17,7 +19,7 @@ public interface DBAccessInterface {
 	public String insertOneUser(User user);
 	
 	//品图入库
-	public String insertOnePicture(TPicItem picture);
+	public String insertPicture(List<Object> objList);
 	
 	//故事入库
 	public String insertOneStory(Story story);

@@ -5,13 +5,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-import javax.servlet.GenericServlet;
-import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,10 +40,10 @@ public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 	//同步任务，由Spring注入
 	private CacheToDB synchProcess;
 	
-	//图片文件保存路径
-	private String filePath;
-	//图片文件暂存路径
-	private String tempPath;
+//	//图片文件保存路径
+//	private String filePath;
+//	//图片文件暂存路径
+//	private String tempPath;
 	
 	// 最大文件上传尺寸设置
 	private int fileMaxSize = 4 * 1024 * 1024;
@@ -62,9 +57,13 @@ public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 	
 	//由WebEntrance设置
 	public void setImagePath(String filePath, String tempPath) {
-		this.filePath = filePath;
-		this.tempPath = tempPath;
+//		this.filePath = filePath;
+//		this.tempPath = tempPath;
 		apiAdaptor.setImagePath(filePath, tempPath);
+		
+		//初始化文件上传组件参数
+		initUploadComponent(tempPath);
+		
 	}
 
 	public void setApiAdaptor(ApiAdaptor apiAdaptor) {
@@ -82,6 +81,7 @@ public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 
 	//这个方法被WebEntrance的初始化方法调用
 	public void init(ServletConfig config){
+		System.out.println("初始化配置config:"+taskStarter.toString()+"--"+synchProcess.toString());
 		try {
 			super.init(config);
 		} catch (ServletException e) {
@@ -94,13 +94,11 @@ public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 		
 		//启动数据库同步任务
 		if(synchProcess!=null) synchProcess.start();
-		
-		//初始化文件上传组件参数
-		initUploadComponent();
+	
 		
 	}
 	
-	private void initUploadComponent(){
+	private void initUploadComponent(String tempPath){
 		DiskFileItemFactory diskFactory = new DiskFileItemFactory();
 		// threshold 极限、临界值，即内存缓存 空间大小
 		diskFactory.setSizeThreshold(fileMaxSize);
@@ -117,22 +115,23 @@ public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 	@Override
 	public void service(HttpServletRequest req, HttpServletResponse res)
 			throws ServletException, IOException {
-		
+		System.out.println("1 appstater 开始解析表单");
 		res.setContentType("text/plain;charset=UTF-8");
 		PrintWriter pw = res.getWriter();
 		
 		//这里将客户端参数解析出来传给apiAdaptor
 		//由apiAdaptor组装参数给服务
 		String action = req.getParameter("method");
+		System.out.println("method:"+action);
 		
-		if(action==null){
-			log.warn(">>> 客户没有传递 method 参数，不做任何操作，返回！");
-			return;
-		}
+	    boolean isMultipart = ServletFileUpload.isMultipartContent(req);
+		System.out.println("isMultipart value is:"+isMultipart);
 		
-		//解析操作，分发到apiAdaptor
-		if(action.equals(AppStarter.UPLOADPICTURE)){
-			processMultiPart(req,pw);			
+		
+		if(action==null && isMultipart){
+			
+			processMultiPart(req,pw);	
+			
 		}else if(action.equals(AppStarter.APPLYFORUSER)){
 			//TODO, ...
 			
@@ -141,7 +140,6 @@ public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 			
 		}
 		
-		//返回客户端结果
 		pw.close();
 
 	}
@@ -149,16 +147,6 @@ public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 	
 	@SuppressWarnings("unchecked")
 	private void processMultiPart(HttpServletRequest req, PrintWriter pw){
-		// Check that we have a file upload request
-		boolean isMultipart = ServletFileUpload.isMultipartContent(req);
-		// 不是文件上传请求
-		if (!isMultipart) {
-			System.out.println(">>> 无效请求，不予处理！！！");
-			pw.write(">>> 无效请求，不予处理！！！");
-			pw.close();
-			return;
-		}			
-		
 		try {
 			log.debug(">>> Starting uploading...");			
 			List<FileItem> fileItems = (List<FileItem>)upload.parseRequest(req);
