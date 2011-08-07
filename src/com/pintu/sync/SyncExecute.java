@@ -2,13 +2,16 @@ package com.pintu.sync;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.pintu.beans.TPicItem;
 import com.pintu.dao.CacheAccessInterface;
 import com.pintu.dao.DBAccessInterface;
 
 public class SyncExecute implements Runnable {
 
-	
+	Logger log = LoggerFactory.getLogger(SyncExecute.class);
 	//由Spring注入
 	private DBAccessInterface dbVisitor;
 	//由Spring注入
@@ -49,10 +52,13 @@ public class SyncExecute implements Runnable {
 			//并删除已同步的对象ID；
 			List<Object> objList=cacheVisitor.getUnSavedObj(cacheVisitor.PICTURE_TYPE);
 			if(objList != null && objList.size() != 0){
-				System.out.println("要入库的对象："+(TPicItem)objList.get(0));
-				dbVisitor.insertPicture(objList);
-				cacheVisitor.toSavedCacheIds.get(cacheVisitor.PICTURE_TYPE).remove();
-				System.out.println("#########删除已入库的id"+cacheVisitor.toSavedCacheIds.values());
+				int m = dbVisitor.insertPicture(objList);
+				if(m > 0){
+					//成功入库后删除已入库的对象id
+					cacheVisitor.toSavedCacheIds.get(cacheVisitor.PICTURE_TYPE).remove();
+				}
+			}else{
+				//log.info("当前没有需要入库的图片！");
 			}
      	
 			

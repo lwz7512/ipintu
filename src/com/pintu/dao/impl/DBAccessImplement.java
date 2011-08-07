@@ -1,7 +1,10 @@
 package com.pintu.dao.impl;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.UUID;
 
@@ -73,19 +76,19 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public String insertPicture(final List<Object> objList) {
+	public int insertPicture(final List<Object> objList) {
 		String sql = "INSERT INTO t_picture "
 				+ "(p_id,p_name,p_owner,p_publishTime,p_tags,p_description,p_allowStory,p_mobImgId,p_mobImgSize,p_mobImgPath,p_rawImgId,p_rawImgSize,p_rawImgPath,p_pass,p_memo) "
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		
-		jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+		int[] res=jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 			public void setValues(PreparedStatement ps, int i)
 					throws SQLException {
 				TPicItem picture = (TPicItem) objList.get(i);
 				ps.setString(1, picture.getId());
 				ps.setString(2, picture.getName());
 				ps.setString(3, picture.getOwner());
-				ps.setDate(4, picture.getPublishTime());
+		    	ps.setString(4,picture.getPublishTime());
 				ps.setString(5, picture.getDescription());
 				ps.setString(6, picture.getTags());
 				ps.setInt(7, picture.getAllowStory());
@@ -103,8 +106,7 @@ public class DBAccessImplement implements DBAccessInterface {
 				return objList.size();
 			}
 		});
-
-		return objList.size() + "";
+		return res[0];
 	}
 
 	@Override

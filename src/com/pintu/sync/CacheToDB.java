@@ -19,7 +19,7 @@ public class CacheToDB {
 	}
 	
 	public void stop(){
-		if(synchronizer!=null) executor.setSyncFlag(false);
+		if(synchronizer==null) executor.setSyncFlag(false);
 	}
 
 	public SyncExecute getExecutor() {

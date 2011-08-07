@@ -7,10 +7,13 @@ import java.util.concurrent.Executors;
 import org.apache.commons.fileupload.FileItem;
 
 import com.pintu.beans.TPicItem;
+import com.pintu.cache.PintuCache;
 import com.pintu.dao.CacheAccessInterface;
 
 public class ImgDataProcessor {
 
+	private PintuCache pintuCache;
+	
 	private ExecutorService pool;
 
 	// 只存放缩略图字节数组
@@ -31,6 +34,10 @@ public class ImgDataProcessor {
 		this.cacheAccess = cacheAccess;
 	}
 
+	public void setPintuCache(PintuCache pintuCache) {
+		this.pintuCache = pintuCache;
+	}
+
 	public void setImagePath(String filePath, String tempPath) {
 		this.filePath = filePath;
 		this.tempPath = tempPath;
@@ -46,6 +53,7 @@ public class ImgDataProcessor {
 		thumbnailTask.setPath(filePath);
 		thumbnailTask.setImgType("thumbnail");
 		thumbnailTask.setPicObj(picObj);
+		thumbnailTask.setCacheAccess(cacheAccess);
 		pool.execute(thumbnailTask);
 		
 		//创建手机访问图片

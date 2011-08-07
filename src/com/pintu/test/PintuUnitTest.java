@@ -1,5 +1,6 @@
 package com.pintu.test;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.sql.Date;
 import java.util.List;
@@ -56,12 +57,15 @@ public class PintuUnitTest {
 	public void insertPicture(){
 		List<Object> list = new ArrayList<Object>();
 		TPicItem pic = new TPicItem();
-		pic.setId("1234567890abcdef");
+		pic.setId("12edddddddf");
 		pic.setName("1234567890abcdef.jpg");
 		pic.setOwner("aa");
-		pic.setPublishTime(new Date(0));
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		 java.util.Date ud = new java.util.Date();
+		 Date sd = new java.sql.Date(ud.getTime());
+		pic.setPublishTime(sdf.format(sd));
 		pic.setTags("33333333");
-		pic.setDescription("900--9999999932");
+		pic.setDescription("中文问题");
 		pic.setAllowStory(1);
 		pic.setMobImgId("1");
 		pic.setMobImgSize("121");
@@ -71,7 +75,7 @@ public class PintuUnitTest {
 		pic.setRawImgPath("rawImgPath");
 		pic.setPass(1);
 		list.add(pic);
-		String size=dbAccess.insertPicture(list);
+		int size=dbAccess.insertPicture(list);
 		System.out.println("插入数据库成功！"+size);
 	}
 	

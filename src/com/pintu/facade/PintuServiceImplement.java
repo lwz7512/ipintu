@@ -1,7 +1,8 @@
 package com.pintu.facade;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -78,10 +79,14 @@ public class PintuServiceImplement implements PintuServiceInterface{
 			tpicItem.setId(pid);
 			tpicItem.setName(pid+"."+pic.getFileType());
 			tpicItem.setOwner(user);
-			SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
-			tpicItem.setPublishTime(sdf.format(new Date(0)));
+			
+			SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			tpicItem.setPublishTime(sdf.format(new Date()));
+			System.out.println("publishTime:"+tpicItem.getPublishTime());
+			
 			tpicItem.setDescription(pic.getDescription());
 			tpicItem.setTags(pic.getTags());
+			
 			if(pic.getAllowStory() != null){
 				tpicItem.setAllowStory(Integer.parseInt(pic.getAllowStory()));
 			}else{
@@ -101,6 +106,12 @@ public class PintuServiceImplement implements PintuServiceInterface{
 		
 		return null;
 	}
+
+	private Date TO_DATE(String format, String string) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 	@Override
 	public List<TPicDesc> getTpicsByUser(String user, String pageNum) {

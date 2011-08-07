@@ -19,7 +19,7 @@ public interface DBAccessInterface {
 	public String insertOneUser(User user);
 	
 	//品图入库
-	public String insertPicture(List<Object> objList);
+	public int insertPicture(List<Object> objList);
 	
 	//故事入库
 	public String insertOneStory(Story story);

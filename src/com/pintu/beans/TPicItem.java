@@ -22,7 +22,7 @@ public class TPicItem implements Serializable{
 	
 	//发布时间，可以保存为毫秒数
 	//到达客户端时，再格式化为xx分钟或者xx小时前
-	private Date publishTime;
+	private String publishTime;
 	
 	//贴图描述
 	private String description;
@@ -104,13 +104,13 @@ public class TPicItem implements Serializable{
 	}
 
 
-	public Date getPublishTime() {
+	public String getPublishTime() {
 		return publishTime;
 	}
 
 
-	public void setPublishTime(Date publishTime) {
-		this.publishTime = publishTime;
+	public void setPublishTime(String string) {
+		this.publishTime = string;
 	}
 
 
@@ -193,12 +193,4 @@ public class TPicItem implements Serializable{
 		this.pass = pass;
 	}
 
-
-	public void setPublishTime(String format) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	
-	
 }

@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.pintu.beans.Comment;
 import com.pintu.beans.Story;
+import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicItem;
 import com.pintu.beans.User;
 import com.pintu.cache.PintuCache;
@@ -23,6 +24,7 @@ public class CacheAccessImplement implements CacheAccessInterface {
 		toSavedCacheIds.put(STORY_TYPE, new LinkedList<String>());
 		toSavedCacheIds.put(COMMENT_TYPE, new LinkedList<String>());
 		toSavedCacheIds.put(VOTE_TYPE, new LinkedList<String>());
+		toSavedCacheIds.put(THUMBNAIL_TYPE, new LinkedList<String>());
 	}
 
 	public void setPintuCache(PintuCache pintuCache) {
@@ -111,5 +113,13 @@ public class CacheAccessImplement implements CacheAccessInterface {
 			list =  pintuCache.getCachedObj(type,ids);
 		
 		return list;
+	}
+
+	@Override
+	public void cacheThumbnail(TPicDesc tpicDesc) {
+		pintuCache.cacheObject(THUMBNAIL_TYPE, tpicDesc.getThumbnailId(), tpicDesc);
+		LinkedList ids = new LinkedList();
+		ids.addLast(tpicDesc.getThumbnailId());
+		CacheAccessInterface.toSavedCacheIds.get(CacheAccessInterface.THUMBNAIL_TYPE).addAll(ids);
 	}
 }

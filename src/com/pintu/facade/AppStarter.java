@@ -129,7 +129,7 @@ public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 		
 		
 		if(action==null && isMultipart){
-			
+			//授理上传图片的请求
 			processMultiPart(req,pw);	
 			
 		}else if(action.equals(AppStarter.APPLYFORUSER)){
