@@ -9,6 +9,7 @@ import java.util.List;
 import org.apache.commons.fileupload.FileItem;
 
 import com.pintu.beans.TastePic;
+import com.pintu.utils.UTF8Formater;
 
 /**
  * Servlet调用服务的参数转换器，用来封装客户端参数并实现服务调用；
@@ -37,6 +38,7 @@ public class ApiAdaptor {
 	}
 	
 	public void createTastePic(List<FileItem> fileItems) {		
+		System.out.println("2 分析图片对象apiadaptor createTastePic");
 		TastePic pic = new TastePic();
 		Iterator<FileItem> iter = fileItems.iterator();
 		while(iter.hasNext()){
@@ -47,10 +49,12 @@ public class ApiAdaptor {
 					pic.setUser(item.getString());
 				}
 				if(item.getFieldName().equals("description")){
-					pic.setDescription(item.getString());
+					pic.setDescription(UTF8Formater.changeToWord(item.getString()));
+					System.out.println("description:"+pic.getDescription());
 				}
 				if(item.getFieldName().equals("tags")){
-					pic.setTags(item.getString());
+					pic.setTags(UTF8Formater.changeToWord(item.getString()));
+					System.out.println("tags:"+pic.getTags());
 				}
 				if(item.getFieldName().equals("allowStory")){
 					pic.setAllowStory(item.getString());

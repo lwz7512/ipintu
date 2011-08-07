@@ -1,6 +1,7 @@
 package com.pintu.beans;
 
 import java.io.Serializable;
+import java.sql.Date;
 
 /**
  * 品图详情资料，包括品图作者、时间、手机浏览图位置、故事数目、评论数目等等
@@ -81,14 +82,6 @@ public class TPicItem implements Serializable{
 	}
 
 
-	public String getPublishTime() {
-		return publishTime;
-	}
-
-
-	public void setPublishTime(String publishTime) {
-		this.publishTime = publishTime;
-	}
 
 
 	public String getDescription() {
@@ -108,6 +101,16 @@ public class TPicItem implements Serializable{
 
 	public void setTags(String tags) {
 		this.tags = tags;
+	}
+
+
+	public String getPublishTime() {
+		return publishTime;
+	}
+
+
+	public void setPublishTime(String string) {
+		this.publishTime = string;
 	}
 
 
@@ -189,7 +192,5 @@ public class TPicItem implements Serializable{
 	public void setPass(int pass) {
 		this.pass = pass;
 	}
-	
-	
-	
+
 }

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.pintu.beans.Comment;
 import com.pintu.beans.Story;
+import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicItem;
 import com.pintu.beans.User;
 
@@ -24,6 +25,8 @@ public interface CacheAccessInterface {
 	public static String COMMENT_TYPE = "comment";
 	
 	public static String VOTE_TYPE = "vote";
+	
+	public static String THUMBNAIL_TYPE="thumbnail";
 	
 	//缓存登录用户	
 	public void cacheLoggedInUser();
@@ -55,11 +58,13 @@ public interface CacheAccessInterface {
 	//读取评论
 	public Comment getSpecificComment(String cid);
 	
-	//读取未入库的所有对象
+	//读取未入库的所有某type的对象
 	public List<Object> getUnSavedObj(String type);
 	
 	//删掉已入库的所有对象ID: LinkedList中的所有ID
 	public Boolean deleteSavedObjIDs(String type);
+
+	public void cacheThumbnail(TPicDesc tpicDesc);
 	
 	
 }

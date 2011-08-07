@@ -1,21 +1,26 @@
 package com.pintu.facade;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import com.pintu.beans.Comment;
+import com.pintu.beans.Event;
 import com.pintu.beans.GTStatics;
 import com.pintu.beans.Gift;
 import com.pintu.beans.Message;
 import com.pintu.beans.News;
 import com.pintu.beans.Note;
 import com.pintu.beans.Story;
-import com.pintu.beans.Event;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicDetails;
+import com.pintu.beans.TPicItem;
 import com.pintu.beans.TastePic;
-import com.pintu.beans.Wealth;
-import com.pintu.beans.Vote;
 import com.pintu.beans.User;
+import com.pintu.beans.Vote;
+import com.pintu.beans.Wealth;
 import com.pintu.dao.CacheAccessInterface;
 import com.pintu.dao.DBAccessInterface;
 import com.pintu.tools.ImgDataProcessor;
@@ -64,17 +69,55 @@ public class PintuServiceImplement implements PintuServiceInterface{
 
 	@Override
 	public Boolean createTastePic(TastePic pic, String user) {
-		// 1. 构造TPicItem对象
-		//2. 放入缓存
-		//3. 提交imgProcessor生成文件
+		System.out.println("3 构造对象 pintuservice createTastePic");
+		System.out.println("TastePic:"+pic.getFileType()+"   user:"+user);
+//		if(pic !=null && user!=null){
+		if(pic !=null){
+			// 1. 构造TPicItem对象
+			TPicItem  tpicItem = new TPicItem();
+			String pid = UUID.randomUUID().toString().replace("-", "").substring(16);
+			tpicItem.setId(pid);
+			tpicItem.setName(pid+"."+pic.getFileType());
+			tpicItem.setOwner(user);
+			
+			SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			tpicItem.setPublishTime(sdf.format(new Date()));
+			System.out.println("publishTime:"+tpicItem.getPublishTime());
+			
+			tpicItem.setDescription(pic.getDescription());
+			tpicItem.setTags(pic.getTags());
+			
+			if(pic.getAllowStory() != null){
+				tpicItem.setAllowStory(Integer.parseInt(pic.getAllowStory()));
+			}else{
+				tpicItem.setAllowStory(1);
+			}
+			tpicItem.setPass(1);
+			
+			//2. 放入缓存
+			cacheVisitor.cachePicture(tpicItem);
+			
+			//3. 提交imgProcessor生成文件
+			imgProcessor.createImageFile(pic.getRawImageData(), tpicItem);
+			
+		}else{
+		     //TODO
+		}
 		
 		return null;
 	}
+
+	private Date TO_DATE(String format, String string) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 	@Override
 	public List<TPicDesc> getTpicsByUser(String user, String pageNum) {
 		// TODO Auto-generated method stub
 		return null;
+		
 	}
 
 	@Override

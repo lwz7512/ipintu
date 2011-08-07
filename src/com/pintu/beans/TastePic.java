@@ -31,13 +31,22 @@ public class TastePic implements Serializable{
 		
 	}
 
-
+	public String getFileType( ){
+		String fileType = "";
+		if(rawImageData != null){
+			String fileName = rawImageData.getName();
+			int dotPos = fileName.lastIndexOf(".");
+			fileType = fileName.substring(dotPos+1);
+		}
+		return fileType;
+	}
 
 	public String getUser() {
 		return user;
 	}
 
 
+	
 
 	public void setUser(String user) {
 		this.user = user;

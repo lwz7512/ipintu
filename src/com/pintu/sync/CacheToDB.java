@@ -13,13 +13,13 @@ public class CacheToDB {
 	}
 	
 	public void start(){
-		if(synchronizer!=null && !synchronizer.isAlive()) {			
+		if(synchronizer!=null  && !synchronizer.isAlive()) {
 			synchronizer.start();
 		}
 	}
 	
 	public void stop(){
-		if(synchronizer!=null) executor.setSyncFlag(false);
+		if(synchronizer==null) executor.setSyncFlag(false);
 	}
 
 	public SyncExecute getExecutor() {
