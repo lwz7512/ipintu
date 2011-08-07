@@ -2,7 +2,6 @@ package com.pintu.tools;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.LinkedList;
 
 import org.apache.commons.fileupload.FileItem;
 
@@ -32,12 +31,12 @@ public class ImageFileCreationTask implements Runnable {
 			String route =path + File.separator ;
 			File uploadFile = new File(route+picObj.getName());
 			if(imgType.equals("raw")){
-				picObj.setRawImgId(picObj.getId()+"_Raw");
-				picObj.setRawImgSize(fileItem.getSize()/1024+"");
-				picObj.setRawImgPath(route+picObj.getRawImgId()+getFileType());
 				// 文件写入到系统中
 				try {
 					fileItem.write(uploadFile);
+					picObj.setRawImgId(picObj.getId()+"_Raw");
+					picObj.setRawImgSize(fileItem.getSize()/1024+"");
+					picObj.setRawImgPath(route+picObj.getRawImgId()+getFileType());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

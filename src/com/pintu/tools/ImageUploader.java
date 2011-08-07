@@ -91,7 +91,7 @@ public class ImageUploader extends HttpServlet {
 			
 			
 			// 解析HTTP请求消息头
-			List fileItems = upload.parseRequest(request);
+			List<FileItem> fileItems = upload.parseRequest(request);
 			Iterator<FileItem> iter = fileItems.iterator();
 			while (iter.hasNext()) {
 				FileItem item = iter.next();

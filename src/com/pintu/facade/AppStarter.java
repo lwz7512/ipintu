@@ -59,7 +59,7 @@ public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 	public void setImagePath(String filePath, String tempPath) {
 //		this.filePath = filePath;
 //		this.tempPath = tempPath;
-		apiAdaptor.setImagePath(filePath, tempPath);
+		apiAdaptor.setImagePath(filePath);
 		
 		//初始化文件上传组件参数
 		initUploadComponent(tempPath);

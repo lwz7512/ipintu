@@ -5,7 +5,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.pintu.beans.TPicItem;
 import com.pintu.dao.CacheAccessInterface;
 import com.pintu.dao.DBAccessInterface;
 
@@ -50,12 +49,12 @@ public class SyncExecute implements Runnable {
 			
 			//TODO, 批量同步图片
 			//并删除已同步的对象ID；
-			List<Object> objList=cacheVisitor.getUnSavedObj(cacheVisitor.PICTURE_TYPE);
+			List<Object> objList=cacheVisitor.getUnSavedObj(CacheAccessInterface.PICTURE_TYPE);
 			if(objList != null && objList.size() != 0){
 				int m = dbVisitor.insertPicture(objList);
 				if(m > 0){
 					//成功入库后删除已入库的对象id
-					cacheVisitor.toSavedCacheIds.get(cacheVisitor.PICTURE_TYPE).remove();
+					CacheAccessInterface.toSavedCacheIds.get(CacheAccessInterface.PICTURE_TYPE).remove();
 				}
 			}else{
 				//log.info("当前没有需要入库的图片！");

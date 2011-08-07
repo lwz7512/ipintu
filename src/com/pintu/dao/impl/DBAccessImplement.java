@@ -1,10 +1,8 @@
 package com.pintu.dao.impl;
 
-import java.sql.Date;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,7 +19,6 @@ import com.pintu.beans.Gift;
 import com.pintu.beans.Message;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicItem;
-import com.pintu.beans.TastePic;
 import com.pintu.beans.User;
 import com.pintu.beans.Wealth;
 import com.pintu.dao.DBAccessInterface;
