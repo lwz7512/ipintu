@@ -37,12 +37,14 @@ public class ImgDataProcessor {
 	public void createImageFile(FileItem file, TPicItem picObj){
 		System.out.println("5 生成图片文件保存（原图和手机图入库，缩略图放缓存）");
 		
-		//缩略图可以不用写文件，存到缓存中
+		
 		ImageFileCreationTask thumbnailTask = new ImageFileCreationTask();
 		thumbnailTask.setFile(file);
-		thumbnailTask.setPath(filePath);
+		//缩略图可以不用写文件
+//		thumbnailTask.setPath(filePath);
 		thumbnailTask.setImgType("thumbnail");
 		thumbnailTask.setPicObj(picObj);
+		//存到缓存中
 		thumbnailTask.setCacheAccess(cacheAccess);
 		pool.execute(thumbnailTask);
 		

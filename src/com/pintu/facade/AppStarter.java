@@ -55,12 +55,10 @@ public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 		// TODO Auto-generated constructor stub
 	}	
 	
-	//由WebEntrance设置
+	//由WebEntrance在init时设置
 	public void setImagePath(String filePath, String tempPath) {
-//		this.filePath = filePath;
-//		this.tempPath = tempPath;
-		apiAdaptor.setImagePath(filePath);
-		
+		//将磁盘文件保存路径传进来
+		apiAdaptor.setImagePath(filePath);		
 		//初始化文件上传组件参数
 		initUploadComponent(tempPath);
 		

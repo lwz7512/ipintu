@@ -98,6 +98,8 @@ public class PintuServiceImplement implements PintuServiceInterface{
 			//3. 提交imgProcessor生成文件
 			imgProcessor.createImageFile(pic.getRawImageData(), tpicItem);
 			
+			//4. 入库的事情就交由同步工具CacheToDB来处理，这里就结束了！
+			
 		}else{
 		     //TODO
 		}

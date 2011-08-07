@@ -33,6 +33,7 @@ public class ApiAdaptor {
 		this.pintuService = pintuService;
 	}
 	
+	//由AppStarter调用
 	public void setImagePath(String filePath) {
 		this.pintuService.saveImagePathToProcessor(filePath);
 	}
@@ -64,8 +65,18 @@ public class ApiAdaptor {
 				//图片数据
 				pic.setRawImageData(item);
 			}
-		}
+		} // 参数解析完成
+		
+		//将新发送的贴图对象放入服务处理		
 		this.pintuService.createTastePic(pic, pic.getUser());
+		//贴图处理完成OYEAR!		
 	}
+	
+	
+	
+	
+	
+	
+	
 
-}
+} //end of class
