@@ -1,6 +1,5 @@
 package com.pintu.facade;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -71,8 +70,7 @@ public class PintuServiceImplement implements PintuServiceInterface{
 	public Boolean createTastePic(TastePic pic, String user) {
 		System.out.println("3 构造对象 pintuservice createTastePic");
 		System.out.println("TastePic:"+pic.getFileType()+"   user:"+user);
-//		if(pic !=null && user!=null){
-		if(pic !=null){
+		if(pic !=null && user!=null){
 			// 1. 构造TPicItem对象
 			TPicItem  tpicItem = new TPicItem();
 			String pid = UUID.randomUUID().toString().replace("-", "").substring(16);
@@ -354,8 +352,8 @@ public class PintuServiceImplement implements PintuServiceInterface{
 
 
 	@Override
-	public void saveImagePathToProcessor(String filePath, String tempPath) {
-		this.imgProcessor.setImagePath(filePath, tempPath);
+	public void saveImagePathToProcessor(String filePath) {
+		this.imgProcessor.setImagePath(filePath);
 	}	
 	
 	

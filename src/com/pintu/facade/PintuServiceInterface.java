@@ -20,7 +20,7 @@ import com.pintu.beans.Wealth;
 public interface PintuServiceInterface {
 	
 	//设置图片文件保存路径，由ApiAdaptor赋值
-	public void saveImagePathToProcessor(String filePath, String tempPath);
+	public void saveImagePathToProcessor(String filePath);
 
 	
 	/**

@@ -48,7 +48,7 @@ public class CacheAccessImplement implements CacheAccessInterface {
 		System.out.println("4 图片信息放缓存");
 		// 1. 把对象放到pintuCache中
 		// 2. 把ID放到toSavedCacheIds中的LinkedList中
-		pintuCache.cacheObject(PICTURE_TYPE, pic.getId(), pic);
+		pintuCache.cachePicture(pic.getId(), pic);
 		LinkedList<String> ids = new LinkedList<String>();
 		ids.addLast(pic.getId());
 		toSavedCacheIds.get(PICTURE_TYPE).addAll(ids);
@@ -110,14 +110,14 @@ public class CacheAccessImplement implements CacheAccessInterface {
 			}else if(type.equals(VOTE_TYPE)){
 				ids = toSavedCacheIds.get(VOTE_TYPE);
 			}
-			list =  pintuCache.getCachedObj(type,ids);
+			list =  pintuCache.getCachedPicture(ids);
 		
 		return list;
 	}
 
 	@Override
 	public void cacheThumbnail(TPicDesc tpicDesc) {
-		pintuCache.cacheObject(THUMBNAIL_TYPE, tpicDesc.getThumbnailId(), tpicDesc);
+		pintuCache.cacheThumbnail(tpicDesc.getThumbnailId(), tpicDesc);
 		LinkedList<String> ids = new LinkedList<String>();
 		ids.addLast(tpicDesc.getThumbnailId());
 		CacheAccessInterface.toSavedCacheIds.get(CacheAccessInterface.THUMBNAIL_TYPE).addAll(ids);

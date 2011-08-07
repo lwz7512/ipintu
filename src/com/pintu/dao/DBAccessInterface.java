@@ -8,7 +8,6 @@ import com.pintu.beans.Favorite;
 import com.pintu.beans.Gift;
 import com.pintu.beans.Message;
 import com.pintu.beans.Story;
-import com.pintu.beans.TPicItem;
 import com.pintu.beans.User;
 import com.pintu.beans.Wealth;
 

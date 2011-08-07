@@ -33,8 +33,8 @@ public class ApiAdaptor {
 		this.pintuService = pintuService;
 	}
 	
-	public void setImagePath(String filePath, String tempPath) {
-		this.pintuService.saveImagePathToProcessor(filePath,tempPath);
+	public void setImagePath(String filePath) {
+		this.pintuService.saveImagePathToProcessor(filePath);
 	}
 	
 	public void createTastePic(List<FileItem> fileItems) {		

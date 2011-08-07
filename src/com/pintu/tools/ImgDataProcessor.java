@@ -7,12 +7,9 @@ import java.util.concurrent.Executors;
 import org.apache.commons.fileupload.FileItem;
 
 import com.pintu.beans.TPicItem;
-import com.pintu.cache.PintuCache;
 import com.pintu.dao.CacheAccessInterface;
 
 public class ImgDataProcessor {
-
-	private PintuCache pintuCache;
 	
 	private ExecutorService pool;
 
@@ -21,8 +18,6 @@ public class ImgDataProcessor {
 
 	// 图片文件存放的绝对路径，由apiAdaptor.setImagePath()设置
 	private String filePath;
-	// 临时文件存放的绝对路径，由apiAdaptor.setImagePath()设置
-	private String tempPath;
 
 	// 线程多少由Spring配置
 	public ImgDataProcessor(int threadNumber) {
@@ -34,13 +29,8 @@ public class ImgDataProcessor {
 		this.cacheAccess = cacheAccess;
 	}
 
-	public void setPintuCache(PintuCache pintuCache) {
-		this.pintuCache = pintuCache;
-	}
-
-	public void setImagePath(String filePath, String tempPath) {
+	public void setImagePath(String filePath) {
 		this.filePath = filePath;
-		this.tempPath = tempPath;
 	}
 
 	// 只管往里扔数据就行了，任务队列自动会排队执行

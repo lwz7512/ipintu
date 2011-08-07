@@ -133,7 +133,7 @@ public class ImageHelper {
 				.parseFloat(String.valueOf(theImgHeight));
 		float theImgWidthFloat = Float.parseFloat(String.valueOf(theImgWidth));
 
-		if ((type.equals("mobile") && theImgWidth < defWidth)
+		if ((type.equals("mobile") && theImgWidth <= defWidth)
 				|| (type.equals("thumbnail") && theImgWidth < defWidth)) {
 			size[0] = theImgWidth;
 			size[1] = theImgHeight;
