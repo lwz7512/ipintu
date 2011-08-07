@@ -34,6 +34,8 @@ public class PintuCache {
 	private Cache voteCache;
 	
 	private Cache thumbnailCache;
+	
+
 
 	public PintuCache() {
 
@@ -52,19 +54,20 @@ public class PintuCache {
 
 	
 	//根据类型不同，存入不同的缓存中
-	public void cacheObject(String type, String key, Object value) {
-		Element ele = new Element(key, value);
-		if(type.equals(CacheAccessInterface.PICTURE_TYPE)){
-			pictureCache.put(ele);
-		}else if(type.equals(CacheAccessInterface.COMMENT_TYPE)){
-			commentCache.put(ele);
-		}else if(type.equals(CacheAccessInterface.STORY_TYPE)){
-			storyCache.put(ele);
-		}else if(type.equals(CacheAccessInterface.VOTE_TYPE)){
-			voteCache.put(ele);
-		}else if(type.equals(CacheAccessInterface.THUMBNAIL_TYPE)){
-			thumbnailCache.put(ele);
-		}
+	public  void cacheObject(String type, String key, Object value) {
+//		TODO synchronized 
+			Element ele = new Element(key, value);
+			if(type.equals(CacheAccessInterface.PICTURE_TYPE)){
+					pictureCache.put(ele);
+			}else if(type.equals(CacheAccessInterface.COMMENT_TYPE)){
+					commentCache.put(ele);
+			}else if(type.equals(CacheAccessInterface.STORY_TYPE)){
+				storyCache.put(ele);
+			}else if(type.equals(CacheAccessInterface.VOTE_TYPE)){
+				voteCache.put(ele);
+			}else if(type.equals(CacheAccessInterface.THUMBNAIL_TYPE)){
+				thumbnailCache.put(ele);
+			}
 	}
 
 	
@@ -78,7 +81,7 @@ public class PintuCache {
 
 	
 	//根据传入的类型不同，返回存中的相应数据
-	public List<Object> getCachedObj(String type, List<String> keys) {
+	public  List<Object>  getCachedObj(String type, List<String> keys) {
 		List<Object> list = new ArrayList<Object>();
 		if(type.equals(CacheAccessInterface.PICTURE_TYPE)){
 //		    pictureCache

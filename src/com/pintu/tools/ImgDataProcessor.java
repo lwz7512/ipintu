@@ -45,7 +45,7 @@ public class ImgDataProcessor {
 
 	// 只管往里扔数据就行了，任务队列自动会排队执行
 	public void createImageFile(FileItem file, TPicItem picObj){
-		System.out.println("5 生成图片文件保存(这里只处理保存原始图)");
+		System.out.println("5 生成图片文件保存（原图和手机图入库，缩略图放缓存）");
 		
 		//缩略图可以不用写文件，存到缓存中
 		ImageFileCreationTask thumbnailTask = new ImageFileCreationTask();
