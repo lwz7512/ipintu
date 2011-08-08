@@ -24,7 +24,8 @@ public class CacheAccessImplement implements CacheAccessInterface {
 		toSavedCacheIds.put(STORY_TYPE, new LinkedList<String>());
 		toSavedCacheIds.put(COMMENT_TYPE, new LinkedList<String>());
 		toSavedCacheIds.put(VOTE_TYPE, new LinkedList<String>());
-		toSavedCacheIds.put(THUMBNAIL_TYPE, new LinkedList<String>());
+		//缩略图不入库，所以不用存ID
+//		toSavedCacheIds.put(THUMBNAIL_TYPE, new LinkedList<String>());
 	}
 
 	public void setPintuCache(PintuCache pintuCache) {
@@ -49,9 +50,9 @@ public class CacheAccessImplement implements CacheAccessInterface {
 		// 1. 把对象放到pintuCache中
 		// 2. 把ID放到toSavedCacheIds中的LinkedList中
 		pintuCache.cachePicture(pic.getId(), pic);
-		LinkedList<String> ids = new LinkedList<String>();
-		ids.addLast(pic.getId());
-		toSavedCacheIds.get(PICTURE_TYPE).addAll(ids);
+		//注意：要把新建立的对象ID存起来，以便入库线程处理
+		toSavedCacheIds.get(PICTURE_TYPE).add(pic.getId());
+		
 	}
 
 	@Override
@@ -100,26 +101,35 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	public List<Object> getUnSavedObj(String type) {
 		List<Object> list = new ArrayList<Object>();
 		List<String> ids = new ArrayList<String>();
-		
-			if (type.equals(PICTURE_TYPE)) {
-				 ids = toSavedCacheIds.get(PICTURE_TYPE);
-			}else if(type.equals(COMMENT_TYPE)){
-				 ids = toSavedCacheIds.get(COMMENT_TYPE);
-			}else if(type.equals(STORY_TYPE)){
-				ids = toSavedCacheIds.get(STORY_TYPE);
-			}else if(type.equals(VOTE_TYPE)){
-				ids = toSavedCacheIds.get(VOTE_TYPE);
-			}
-			list =  pintuCache.getCachedPicture(ids);
-		
+
+		if (type.equals(PICTURE_TYPE)) {
+			ids = toSavedCacheIds.get(PICTURE_TYPE);
+			list = pintuCache.getCachedPicture(ids);
+		} else if (type.equals(COMMENT_TYPE)) {
+			ids = toSavedCacheIds.get(COMMENT_TYPE);
+			list = pintuCache.getCachedComment(ids);
+		} else if (type.equals(STORY_TYPE)) {
+			ids = toSavedCacheIds.get(STORY_TYPE);
+			list = pintuCache.getCachedStory(ids);
+		} else if (type.equals(VOTE_TYPE)) {
+			ids = toSavedCacheIds.get(VOTE_TYPE);
+			list = pintuCache.getCachedVote(ids);
+		}
+
 		return list;
 	}
 
+	// 在ImageFileCreationTask中生成缩略图后，调用此方法
 	@Override
 	public void cacheThumbnail(TPicDesc tpicDesc) {
+		// 缓存缩略图对象
 		pintuCache.cacheThumbnail(tpicDesc.getThumbnailId(), tpicDesc);
-		LinkedList<String> ids = new LinkedList<String>();
-		ids.addLast(tpicDesc.getThumbnailId());
-		CacheAccessInterface.toSavedCacheIds.get(CacheAccessInterface.THUMBNAIL_TYPE).addAll(ids);
+
 	}
-}
+
+	@Override
+	public List<Object> getCachedThumbnail(List<String> ids) {
+		return pintuCache.getCachedThumbnail(ids);
+	}
+
+} // end of class

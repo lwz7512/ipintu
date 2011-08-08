@@ -160,6 +160,7 @@ public class ImageUploader extends HttpServlet {
 		File uploadFile = new File(filePath + File.separator + fileName);
 		// 生成文件
 		item.write(uploadFile);
+	
 		
 		System.out.println(fileName + " 文件保存完毕 ...");
 		

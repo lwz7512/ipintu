@@ -55,12 +55,10 @@ public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 		// TODO Auto-generated constructor stub
 	}	
 	
-	//由WebEntrance设置
+	//由WebEntrance在init时设置
 	public void setImagePath(String filePath, String tempPath) {
-//		this.filePath = filePath;
-//		this.tempPath = tempPath;
-		apiAdaptor.setImagePath(filePath);
-		
+		//将磁盘文件保存路径传进来
+		apiAdaptor.setImagePath(filePath);		
 		//初始化文件上传组件参数
 		initUploadComponent(tempPath);
 		
@@ -132,6 +130,13 @@ public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 			//授理上传图片的请求
 			processMultiPart(req,pw);	
 			
+		}else if(action.equals(AppStarter.GETGALLERYBYTIME)){
+			//处理取长廊缩略图信息的请求
+			String startTime = req.getParameter("startTime");
+			String endTime = req.getParameter("endTime");
+			pw.println(AppStarter.GETGALLERYBYTIME);
+			pw.println(apiAdaptor.getGalleryByTime(startTime, endTime));
+			
 		}else if(action.equals(AppStarter.APPLYFORUSER)){
 			//TODO, ...
 			
@@ -165,16 +170,6 @@ public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 		}
 		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	public void destroy(){

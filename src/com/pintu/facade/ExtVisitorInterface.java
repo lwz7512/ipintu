@@ -16,6 +16,7 @@ public interface ExtVisitorInterface {
 	
 	public static final String OTHERMETHOD = "otherMethod";
 	
+	public static final String GETGALLERYBYTIME = "getGalleryByTime";
 	//TODO, TO ADD MORE METHOD DEFINITION...
 	
 	
