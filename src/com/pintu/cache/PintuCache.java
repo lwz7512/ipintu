@@ -3,6 +3,8 @@ package com.pintu.cache;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
@@ -30,6 +32,8 @@ public class PintuCache {
 
 	private Cache thumbnailCache;
 
+	private Logger log = Logger.getLogger(PintuCache.class);
+	
 	public PintuCache() {
 
 		// 配置文件里配置各种缓存实例参数
@@ -43,6 +47,39 @@ public class PintuCache {
 		storyCache = manager.getCache("storycache");
 		voteCache = manager.getCache("votecache");
 		thumbnailCache = manager.getCache("thumbnailcache");
+	}
+	
+	public void traceAll(){
+		System.out.println("--------------- trace begin: -----------------");
+		System.out.println(">>> thumbnailCache status: "+thumbnailCache.getStatus()+" thumbnailCache size: "+thumbnailCache.getSize());
+		System.out.println(">>> pictureCache status: "+pictureCache.getStatus()+" pictureCache size: "+pictureCache.getSize());
+		printCacheKeys();
+		System.out.println("--------------- trace end --------------------");
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void printCacheKeys(){
+		List<String> keys = thumbnailCache.getKeys();
+		StringBuffer sb = new StringBuffer();
+		sb.append("thumbnail keys: ");
+		for(String key : keys){
+			Element o = thumbnailCache.get(key);
+			boolean exist = (o==null)?false:true;
+			sb.append(key).append(": ").append(exist).append(", ");
+		}
+		sb.append("\n");
+		
+		//打印贴图对象ID，以便对比
+		keys = pictureCache.getKeys();
+		sb.append("tpicitem keys: ");
+		for(String key : keys){
+			Element o = pictureCache.get(key);
+			boolean exist = (o==null)?false:true;
+			sb.append(key).append(": ").append(exist).append(", ");
+		}
+		sb.append("\n");
+		
+		System.out.println(sb.toString());
 	}
 
 	public void cachePicture(String key, Object value) {
@@ -139,14 +176,22 @@ public class PintuCache {
 	}
 
 	public List<Object> getCachedThumbnail(List<String> keys) {
+		
 		List<Object> list = new ArrayList<Object>();
-		System.out.println("PintuCache---thumbnailCache"
-				+ thumbnailCache.getSize());
+		
+		System.out.println("PintuCache---thumbnailCache"+ thumbnailCache.getSize());
+		
+		//FIXME, 缓存数已经测过，不为0，有可能是同步的原因吗？
 		synchronized (thumbnailCache) {
 			for (int i = 0; i < keys.size(); i++) {
+				//FIXME, 有可能是key的问题，对应不上，所以取不到元素
+				System.out.println(">>> 要获取元素的KEY为："+keys.get(i));
 				Element thumbnail = thumbnailCache.get(keys.get(i));
 				if (thumbnail != null) {
 					list.add(thumbnail.getObjectValue());
+				}else{
+					System.out.println(">>> 哇塞，没取到缓存对象："+keys.get(i)+" 哪来的呢？");
+					log.warn(">>> 哇塞，没取到缓存对象："+keys.get(i)+" 哪来的呢？");
 				}
 			}
 		}

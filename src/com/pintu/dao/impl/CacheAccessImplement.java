@@ -133,4 +133,9 @@ public class CacheAccessImplement implements CacheAccessInterface {
 		return pintuCache.getCachedThumbnail(ids);
 	}
 
+	@Override
+	public void traceCache() {
+		pintuCache.traceAll();		
+	}
+
 } // end of class

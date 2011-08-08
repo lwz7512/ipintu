@@ -70,4 +70,8 @@ public interface CacheAccessInterface {
 	//读取缓存中的缩略图
 	public List<Object> getCachedThumbnail(List<String> ids);
 	
+	//查看缓存中的对象数目
+	public void traceCache();
+	
+	
 }

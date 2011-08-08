@@ -1,5 +1,6 @@
 package com.pintu.sync;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -50,11 +51,15 @@ public class SyncExecute implements Runnable {
 			//TODO, 批量同步图片
 			//并删除已同步的对象ID；
 			List<Object> objList=cacheVisitor.getUnSavedObj(CacheAccessInterface.PICTURE_TYPE);
-			if(objList != null && objList.size() != 0){
-				int m = dbVisitor.insertPicture(objList);
+			int m = 0;
+			if(objList != null && objList.size() != 0){				
+				m = dbVisitor.insertPicture(objList);
 				if(m > 0){
-					//成功入库后删除已入库的对象id
-					CacheAccessInterface.toSavedCacheIds.get(CacheAccessInterface.PICTURE_TYPE).remove();
+					//FIXME, 成功入库后，全部删除已入库的对象id
+					LinkedList<String> cachedPicIDs = CacheAccessInterface.toSavedCacheIds.get(CacheAccessInterface.PICTURE_TYPE);
+					while(cachedPicIDs.size()>0){
+						cachedPicIDs.remove();
+					}
 				}
 			}else{
 				//log.info("当前没有需要入库的图片！");
@@ -67,8 +72,12 @@ public class SyncExecute implements Runnable {
 			//TODO, 批量同步评论
 			//并删除已同步的对象ID；
 			
+			
+			//FIXME, TEST CACHE AVAILABILITY...
+			cacheVisitor.traceCache();
+			
 			try {
-				Thread.sleep(100);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
