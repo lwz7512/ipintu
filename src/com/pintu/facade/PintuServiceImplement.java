@@ -224,6 +224,9 @@ public class PintuServiceImplement implements PintuServiceInterface{
 				thumbnailIds.add(thumbnailId);
 			}
 		}
+		
+		//FIXME  老大看这里，取不到缓存的缩略图对象，
+		//主要问题应该在PintuCache,各种传参和存的方法都测过没有问题，只是取的时候没有
 		List<Object> thumbnailList = cacheVisitor.getCachedThumbnail(thumbnailIds);
 		
 		System.out.println("取出缓存对象："+thumbnailList.size());
