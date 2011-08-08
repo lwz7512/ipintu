@@ -64,7 +64,10 @@ public interface CacheAccessInterface {
 	//删掉已入库的所有对象ID: LinkedList中的所有ID
 	public Boolean deleteSavedObjIDs(String type);
 
+	//缓存缩略图
 	public void cacheThumbnail(TPicDesc tpicDesc);
 	
+	//读取缓存中的缩略图
+	public List<Object> getCachedThumbnail(List<String> ids);
 	
 }

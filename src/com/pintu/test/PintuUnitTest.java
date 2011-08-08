@@ -1,8 +1,8 @@
 package com.pintu.test;
 
+import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.sql.Date;
 import java.util.List;
 
 import org.junit.After;
@@ -14,11 +14,14 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.pintu.beans.TPicItem;
 import com.pintu.beans.User;
 import com.pintu.dao.DBAccessInterface;
+import com.pintu.facade.PintuServiceInterface;
 
 
 public class PintuUnitTest {
 
 	private DBAccessInterface dbAccess;
+	
+	private PintuServiceInterface pintuService;
 	
 	@Before
 	public void setUp() throws Exception {		
@@ -26,6 +29,7 @@ public class PintuUnitTest {
 //		ApplicationContext context = new FileSystemXmlApplicationContext("D:/workspace/ipintu/WebContent/WEB-INF/app-comfig.xml");
 		//pintuDao = (PintuDao)context.getBean("pintuDao")
 		dbAccess = (DBAccessInterface) context.getBean("dbAcess");
+		pintuService = (PintuServiceInterface) context.getBean("pintuService");
 		//TODO, GET BEAN INSTANCE FROM CONTEXT
 	}
 	
@@ -35,6 +39,13 @@ public class PintuUnitTest {
 		//Hi, xiaoming:
 		//TODO, this is your method has implemented, now to test here!
 		
+	}
+	
+	@Test
+	public void getThumbnailData(){
+	String begin = new Date().getTime()-11000000+"";
+	String end = new Date().getTime()+"";
+	 System.out.println("测试结果："+pintuService.getTpicsByTime(begin,end));
 	}
 
 
@@ -77,6 +88,19 @@ public class PintuUnitTest {
 		list.add(pic);
 		int size=dbAccess.insertPicture(list);
 		System.out.println("插入数据库成功！"+size);
+	}
+	
+
+	@Test
+	public void getThumbnail(){
+		String startTime = "2011-08-01 15:28:12";
+		String endTime =  "2011-08-09 15:28:12";
+		List<String> list = dbAccess.getPicIdsByTime(startTime, endTime);
+		if(list != null){
+			for(int i = 0; i<list.size();i++){
+				System.out.println(list.get(i));
+			}
+		}
 	}
 	
 	@After

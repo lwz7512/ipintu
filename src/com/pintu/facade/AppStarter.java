@@ -130,6 +130,13 @@ public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 			//授理上传图片的请求
 			processMultiPart(req,pw);	
 			
+		}else if(action.equals(AppStarter.GETGALLERYBYTIME)){
+			//处理取长廊缩略图信息的请求
+			String startTime = req.getParameter("startTime");
+			String endTime = req.getParameter("endTime");
+			pw.println(AppStarter.GETGALLERYBYTIME);
+			pw.println(apiAdaptor.getGalleryByTime(startTime, endTime));
+			
 		}else if(action.equals(AppStarter.APPLYFORUSER)){
 			//TODO, ...
 			
@@ -163,16 +170,6 @@ public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 		}
 		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	public void destroy(){

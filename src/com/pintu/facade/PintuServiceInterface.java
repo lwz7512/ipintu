@@ -62,6 +62,15 @@ public interface PintuServiceInterface {
 	//浏览社区画廊
 	public List<TPicDesc> getCommunityTpics();
 	
+
+	/**
+	 * 根据传入的开始时间和结束时间查询这一时间段内的缩略图返回，做为社区画廊数据源
+	 * @param stratTime
+	 * @param endTime
+	 * @return
+	 */
+	public String getTpicsByTime(String startTime,String endTime);
+	
 	//浏览一个品图详情
 	public TPicDetails getTPicDetailsByID(String tpID);
 	
@@ -76,7 +85,7 @@ public interface PintuServiceInterface {
 	public List<TPicDesc> getHotTpics();
 	
 	//查看今日填词邀请
-	//FIXME, 这个功能界面上没有设计，暂时先不实现；
+	// 这个功能界面上没有设计，暂时先不实现；
 	public List<TPicDesc> getInviteTpicsToday();
 	
 	//查看经典图文故事

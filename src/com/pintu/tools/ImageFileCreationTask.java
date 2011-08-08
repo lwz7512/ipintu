@@ -61,7 +61,7 @@ public class ImageFileCreationTask implements Runnable {
 				
 				//构造出缩略图对象，用于放到缓存中
 				TPicDesc tpicDesc = new TPicDesc();
-				//缩略图对象ID与贴图对象ID相同，方便对应
+				//缩略图对象中存放贴图对象ID，方便对应
 				tpicDesc.setTpId(picObj.getId());
 				tpicDesc.setThumbnailId(thumbnailId);
 				tpicDesc.setBufferedImage(buffer);

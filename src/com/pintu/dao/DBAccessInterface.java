@@ -44,5 +44,6 @@ public interface DBAccessInterface {
 	//添加收藏图片信息入库
 	public String insertOneFavorite(Favorite favorite);
 	
-	
+	//获取一个时间段内的图片id信息
+	public List<String> getPicIdsByTime(String startTime, String endTime);
 }

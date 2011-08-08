@@ -1,14 +1,18 @@
 package com.pintu.facade;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+
+import net.sf.json.JSONArray;
 
 import com.pintu.beans.Comment;
 import com.pintu.beans.Event;
 import com.pintu.beans.GTStatics;
 import com.pintu.beans.Gift;
+import com.pintu.beans.JsonTPicDesc;
 import com.pintu.beans.Message;
 import com.pintu.beans.News;
 import com.pintu.beans.Note;
@@ -203,6 +207,58 @@ public class PintuServiceImplement implements PintuServiceInterface{
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public String getTpicsByTime(String startTime, String endTime) {
+		//这里传的参数是毫秒数，在jdbcTemplate的操作中需要的是类似“2011-08-09 15:28:12”
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String start = sdf.format(Long.parseLong(startTime));
+		String end = sdf.format(Long.parseLong(endTime));
+		//得到图片id
+		List<String>	picIds = dbVisitor.getPicIdsByTime(start, end);
+		List<String> thumbnailIds = new ArrayList<String>();
+		if(picIds != null){
+			for(int i=0;i<picIds.size();i++){
+				String thumbnailId = picIds.get(i)+"_Thumbnail";
+				//构造出缩略图id
+				thumbnailIds.add(thumbnailId);
+			}
+		}
+		
+		//FIXME  老大看这里，取不到缓存的缩略图对象，
+		//主要问题应该在PintuCache,各种传参和存的方法都测过没有问题，只是取的时候没有
+		List<Object> thumbnailList = cacheVisitor.getCachedThumbnail(thumbnailIds);
+		
+		System.out.println("取出缓存对象："+thumbnailList.size());
+		
+		List<JsonTPicDesc> list = new ArrayList<JsonTPicDesc>(); 
+		
+		if(thumbnailList != null){
+			for(Object obj:thumbnailList){
+				TPicDesc tpicDesc = (TPicDesc) obj;
+				
+				JsonTPicDesc jsonTpic = new JsonTPicDesc();
+				jsonTpic.setTpId(tpicDesc.getTpId());
+				jsonTpic.setThumbnailId(tpicDesc.getThumbnailId());
+				jsonTpic.setStatus(tpicDesc.getStatus());
+				
+				list.add(jsonTpic);
+			}
+		}
+		
+//     测试json返回输出到浏览器		
+//		list.clear();
+//		JsonTPicDesc jsonTpic = new JsonTPicDesc();
+//		jsonTpic.setTpId("82609fd96afa630d");
+//		jsonTpic.setThumbnailId("82609fd96afa630d_Thumbnail");
+//		jsonTpic.setStatus("0");
+//		list.add(jsonTpic);
+		
+		JSONArray ja = JSONArray.fromCollection(list);
+		
+		
+		return ja.toString();
+	}	
 
 	@Override
 	public List<TPicDesc> getFavoriteTpics(String user, String pageNum) {
@@ -356,9 +412,9 @@ public class PintuServiceImplement implements PintuServiceInterface{
 	@Override
 	public void saveImagePathToProcessor(String filePath) {
 		this.imgProcessor.setImagePath(filePath);
-	}	
-	
-	
+	}
+
+
 	//TODO, 实现其他接口方法
 	
 }

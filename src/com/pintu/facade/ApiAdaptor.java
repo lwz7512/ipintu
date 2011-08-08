@@ -49,12 +49,15 @@ public class ApiAdaptor {
 				if(item.getFieldName().equals("user")){
 					pic.setUser(item.getString());
 				}
+				//FIXME 这里注意，应用手机时需要用到 UTF8Formater
 				if(item.getFieldName().equals("description")){
-					pic.setDescription(UTF8Formater.changeToWord(item.getString()));
+					pic.setDescription(item.getString());
+//					pic.setDescription(UTF8Formater.changeToWord(item.getString()));
 					System.out.println("description:"+pic.getDescription());
 				}
 				if(item.getFieldName().equals("tags")){
-					pic.setTags(UTF8Formater.changeToWord(item.getString()));
+					pic.setTags(item.getString());
+//					pic.setTags(UTF8Formater.changeToWord(item.getString()));
 					System.out.println("tags:"+pic.getTags());
 				}
 				if(item.getFieldName().equals("allowStory")){
@@ -73,8 +76,15 @@ public class ApiAdaptor {
 	}
 	
 	
-	
-	
+	/**
+	 * 获取社区长廊的缓存图片信息
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
+	public String getGalleryByTime(String startTime,String endTime){
+		return pintuService.getTpicsByTime(startTime, endTime);
+	}
 	
 	
 	

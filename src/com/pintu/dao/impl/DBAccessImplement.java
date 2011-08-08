@@ -3,7 +3,9 @@ package com.pintu.dao.impl;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.sql.DataSource;
@@ -105,6 +107,19 @@ public class DBAccessImplement implements DBAccessInterface {
 		});
 		return res[0];
 	}
+	
+	@Override
+	public List<String> getPicIdsByTime(String startTime, String endTime) {
+		String sql = "select p_id from t_picture where p_publishTime >='"+startTime+"' and p_publishTime <='"+endTime+"'";
+		System.out.println(sql);
+		List<String> idList = new ArrayList<String>();
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		for(int i=0;i<rows.size();i++){
+			Map<String, Object> map = (Map<String, Object>) rows.get(i);
+			idList.add(map.get("p_id").toString());
+		}
+		return idList;
+	}
 
 	@Override
 	public String insertOneStory(Story story) {
@@ -114,25 +129,6 @@ public class DBAccessImplement implements DBAccessInterface {
 		String sql = "INSERT INTO t_story "
 				+ "(s_id,s_follow,s_owner,s_publishTime,s_content,s_classical,s_memo) "
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-		final Story stor = story;
-
-		jdbcTemplate.update(sql, new PreparedStatementSetter() {
-			public void setValues(PreparedStatement ps) {
-				try {
-					ps.setString(1, sid);
-					ps.setString(2, stor.getFollow());
-					ps.setString(3, stor.getOwner());
-					ps.setString(4, stor.getPublishTime() + "");
-					ps.setString(5, stor.getContent());
-					ps.setInt(6, stor.getClassical());
-					ps.setString(7, "");
-
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		});
 
 		return sid;
 	}
@@ -146,24 +142,6 @@ public class DBAccessImplement implements DBAccessInterface {
 				+ "(c_id,c_follow,c_owner,c_publishTime,c_content,c_memo) "
 				+ "VALUES (?, ?, ?, ?, ?, ?)";
 
-		final Comment comm = comment;
-
-		jdbcTemplate.update(sql, new PreparedStatementSetter() {
-			public void setValues(PreparedStatement ps) {
-				try {
-					ps.setString(1, cid);
-					ps.setString(2, comm.getFollow());
-					ps.setString(3, comm.getOwner());
-					ps.setString(4, comm.getPublishTime() + "");
-					ps.setString(5, comm.getContent());
-					ps.setString(6, "");
-
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		});
-
 		return cid;
 	}
 
@@ -176,25 +154,6 @@ public class DBAccessImplement implements DBAccessInterface {
 				+ "(g_id,g_name,g_type,g_value,g_imgPath,g_amount,g_memo) "
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-		final Gift gft = gift;
-
-		jdbcTemplate.update(sql, new PreparedStatementSetter() {
-			public void setValues(PreparedStatement ps) {
-				try {
-					ps.setString(1, gid);
-					ps.setString(2, gft.getName());
-					ps.setString(3, gft.getType());
-					ps.setInt(4, gft.getValue());
-					ps.setString(5, gft.getImgPath());
-					ps.setInt(6, gft.getAmount());
-					ps.setString(7, "");
-
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		});
-
 		return gid;
 	}
 
@@ -204,25 +163,7 @@ public class DBAccessImplement implements DBAccessInterface {
 				.substring(16);
 		System.out.println("自动生成的UUID：(截取了自动生成的UUID后面16位)" + wid);
 		String sql = "INSERT INTO t_wealth "
-				+ "(w_id,w_owner,w_type,w_amount,w_memo) "
-				+ "VALUES (?, ?, ?, ?, ?)";
-
-		final Wealth weal = wealth;
-
-		jdbcTemplate.update(sql, new PreparedStatementSetter() {
-			public void setValues(PreparedStatement ps) {
-				try {
-					ps.setString(1, wid);
-					ps.setString(2, weal.getOwner());
-					ps.setString(3, weal.getType());
-					ps.setInt(4, weal.getAmount());
-					ps.setString(5, "");
-
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		});
+				+ "(w_id,w_owner,w_type,w_amount,w_memo) ";
 
 		return wid;
 	}
@@ -254,24 +195,6 @@ public class DBAccessImplement implements DBAccessInterface {
 		String sql = "INSERT INTO t_comment "
 				+ "(e_id,e_title,e_detail,e_eventTime,e_memo) "
 				+ "VALUES (?, ?, ?, ?, ?)";
-
-		final Event eve = event;
-
-		jdbcTemplate.update(sql, new PreparedStatementSetter() {
-			public void setValues(PreparedStatement ps) {
-				try {
-					ps.setString(1, eid);
-					ps.setString(2, eve.getTitle());
-					ps.setString(3, eve.getDetail());
-					ps.setString(4, eve.getEventTime() + "");
-					ps.setString(5, "");
-
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		});
-
 		return eid;
 	}
 
@@ -281,28 +204,8 @@ public class DBAccessImplement implements DBAccessInterface {
 				.substring(16);
 		System.out.println("自动生成的UUID：(截取了自动生成的UUID后面16位)" + mid);
 		String sql = "INSERT INTO t_message "
-				+ "(m_id,m_sender,m_receiver,m_content,m_wir,m_memo) "
-				+ "VALUES (?, ?, ?, ?, ?)";
-
-		final Message msg = message;
-
-		jdbcTemplate.update(sql, new PreparedStatementSetter() {
-			public void setValues(PreparedStatement ps) {
-				try {
-					ps.setString(1, mid);
-					ps.setString(2, msg.getSender());
-					ps.setString(3, msg.getReceiver());
-					ps.setString(4, msg.getContent());
-					ps.setString(5, msg.getWriteTime());
-					ps.setInt(6, msg.getRead());
-					ps.setString(7, "");
-
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		});
-
+				+ "(m_id,m_sender,m_receiver,m_content,m_wir,m_memo) ";
+		
 		return mid;
 	}
 
@@ -315,24 +218,8 @@ public class DBAccessImplement implements DBAccessInterface {
 				+ "(f_id,f_owner,f_picture,f_collectTime,f_memo) "
 				+ "VALUES (?, ?, ?, ?, ?)";
 
-		final Favorite favor = favorite;
-
-		jdbcTemplate.update(sql, new PreparedStatementSetter() {
-			public void setValues(PreparedStatement ps) {
-				try {
-					ps.setString(1, fid);
-					ps.setString(2, favor.getOwner());
-					ps.setString(3, favor.getPicture());
-					ps.setString(4, favor.getCollectTime() + "");
-					ps.setString(5, "");
-
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		});
-
 		return fid;
 	}
+
 
 }

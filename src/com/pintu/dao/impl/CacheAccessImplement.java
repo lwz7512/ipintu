@@ -53,10 +53,6 @@ public class CacheAccessImplement implements CacheAccessInterface {
 		//注意：要把新建立的对象ID存起来，以便入库线程处理
 		toSavedCacheIds.get(PICTURE_TYPE).add(pic.getId());
 		
-		//FIXME, 小明，怎么这么添加元素呢，不啰嗦吗？
-//		LinkedList<String> ids = new LinkedList<String>();
-//		ids.addLast(pic.getId());		
-//		toSavedCacheIds.get(PICTURE_TYPE).addAll(ids);
 	}
 
 	@Override
@@ -130,11 +126,11 @@ public class CacheAccessImplement implements CacheAccessInterface {
 		// 缓存缩略图对象
 		pintuCache.cacheThumbnail(tpicDesc.getThumbnailId(), tpicDesc);
 
-		// FIXME, 小明，缩略图ID不用缓存吧，又不入库？
-		// LinkedList<String> ids = new LinkedList<String>();
-		// ids.addLast(tpicDesc.getThumbnailId());
-		// CacheAccessInterface.toSavedCacheIds.get(CacheAccessInterface.THUMBNAIL_TYPE).addAll(ids);
+	}
 
+	@Override
+	public List<Object> getCachedThumbnail(List<String> ids) {
+		return pintuCache.getCachedThumbnail(ids);
 	}
 
 } // end of class
