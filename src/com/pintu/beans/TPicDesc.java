@@ -23,9 +23,26 @@ public class TPicDesc {
 	//这个状态来自于定时计算任务
 	private String status;
 	
+	//生成时间，保存毫秒数
+	private String creationTime;
+	
 	public TPicDesc() {
 		
 	}
+	
+	
+
+	public String getCreationTime() {
+		return creationTime;
+	}
+
+
+
+	public void setCreationTime(String creationTime) {
+		this.creationTime = creationTime;
+	}
+
+
 
 	public String getTpId() {
 		return tpId;

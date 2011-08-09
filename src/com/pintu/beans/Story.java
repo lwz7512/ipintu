@@ -14,6 +14,8 @@ public class Story implements Serializable{
 	private String follow;
 	//品图作者
 	private String owner;
+	
+	//FIXME, 这个怎么是Date类型呢？TPicItem是字符串的，都应该统一吧？
 	//发表时间
 	private Date publishTime;
 	//品图内容
