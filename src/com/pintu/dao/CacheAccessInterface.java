@@ -68,7 +68,7 @@ public interface CacheAccessInterface {
 	public void cacheThumbnail(TPicDesc tpicDesc);
 	
 	//读取缓存中的缩略图
-	public List<Object> getCachedThumbnail(List<String> ids);
+	public List<TPicDesc> getCachedThumbnail(String createTime);
 	
 	//查看缓存中的对象数目
 	public void traceCache();

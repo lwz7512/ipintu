@@ -1,13 +1,21 @@
 package com.pintu.cache;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-
-import org.apache.log4j.Logger;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+
+import org.apache.log4j.Logger;
+
+import com.pintu.beans.TPicDesc;
+import com.pintu.utils.PintuUtils;
 
 /**
  * 这里是真正的缓存逻辑，缓存内容有： 上传图片的缩略图、贴图对象、故事、投票、评论
@@ -33,6 +41,7 @@ public class PintuCache {
 	private Cache thumbnailCache;
 
 	private Logger log = Logger.getLogger(PintuCache.class);
+	
 	
 	public PintuCache() {
 
@@ -82,6 +91,7 @@ public class PintuCache {
 		System.out.println(sb.toString());
 	}
 
+	
 	public void cachePicture(String key, Object value) {
 		Element ele = new Element(key, value);
 		synchronized (pictureCache) {
@@ -107,13 +117,6 @@ public class PintuCache {
 		Element ele = new Element(key, value);
 		synchronized (voteCache) {
 			voteCache.put(ele);
-		}
-	}
-
-	public void cacheThumbnail(String key, Object value) {
-		Element ele = new Element(key, value);
-		synchronized (thumbnailCache) {
-			thumbnailCache.put(ele);
 		}
 	}
 
@@ -175,27 +178,82 @@ public class PintuCache {
 		return list;
 	}
 
-	public List<Object> getCachedThumbnail(List<String> keys) {
-		
-		List<Object> list = new ArrayList<Object>();
-		
-		System.out.println("PintuCache---thumbnailCache"+ thumbnailCache.getSize());
-		
-		//FIXME, 缓存数已经测过，不为0，有可能是同步的原因吗？
-		synchronized (thumbnailCache) {
-			for (int i = 0; i < keys.size(); i++) {
-				//FIXME, 有可能是key的问题，对应不上，所以取不到元素
-				System.out.println(">>> 要获取元素的KEY为："+keys.get(i));
-				Element thumbnail = thumbnailCache.get(keys.get(i));
-				if (thumbnail != null) {
-					list.add(thumbnail.getObjectValue());
-				}else{
-					System.out.println(">>> 哇塞，没取到缓存对象："+keys.get(i)+" 哪来的呢？");
-					log.warn(">>> 哇塞，没取到缓存对象："+keys.get(i)+" 哪来的呢？");
-				}
+
+//	public void cacheThumbnail(String key, Object value) {
+//		Element ele = new Element(key, value);
+//		synchronized (thumbnailCache) {
+//			thumbnailCache.put(ele);
+//		}
+//	}
+	
+	
+	/**
+	 * 缓存缩略图 thumbnailCache  <分钟数，<thumbnailId,TpicDesc>>
+	 * @param pic
+	 */
+	public void cacheThumbnail(TPicDesc pic){
+		Long pubTime = Long.parseLong(pic.getCreationTime());
+		long minlong = pubTime/(60*1000);
+		int min = Math.round(minlong);
+		String key = String.valueOf(min);
+		Element savedMinute = thumbnailCache.get(key);
+
+		if(savedMinute==null){
+			Element elmt = new Element(key,new HashMap<String, TPicDesc>());
+			@SuppressWarnings("unchecked")
+			HashMap<String, TPicDesc>  picsInOneMinute = (HashMap<String, TPicDesc>) elmt.getObjectValue();
+			picsInOneMinute.put(pic.getThumbnailId(), pic);
+			thumbnailCache.put(elmt);
+		}else{
+			@SuppressWarnings("unchecked")
+			HashMap<String, TPicDesc>  savedMap = (HashMap<String, TPicDesc>) savedMinute.getObjectValue();
+			savedMap.put(pic.getThumbnailId(), pic);
+			Element ele = new Element(key,savedMap);
+			thumbnailCache.put(ele);
+		}
+	}
+	
+	/**
+	 * 根据发布时间取图片
+	 * @param pubTime 格式化的时间字符串
+	 * @param picId
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<TPicDesc> getCachedThumbnail(String createTime){
+//		String key = getMinutesByFormatTime(pubTime);
+		List<TPicDesc> list=new ArrayList<TPicDesc>();
+		Element savedMinute = thumbnailCache.get(createTime);
+		if(savedMinute!=null){
+			HashMap<String, TPicDesc>  savedMap = (HashMap<String, TPicDesc>) savedMinute.getObjectValue();
+			if(savedMap != null){
+					list.addAll(savedMap.values());
 			}
 		}
 		return list;
 	}
+
+//	public List<Object> getCachedThumbnail(List<String> keys) {
+//		
+//		List<Object> list = new ArrayList<Object>();
+//		
+//		System.out.println("PintuCache---thumbnailCache"+ thumbnailCache.getSize());
+//		
+//		//FIXME, 缓存数已经测过，不为0，有可能是同步的原因吗？
+//		synchronized (thumbnailCache) {
+//			for (int i = 0; i < keys.size(); i++) {
+//				//FIXME, 有可能是key的问题，对应不上，所以取不到元素
+//				System.out.println(">>> 要获取元素的KEY为："+keys.get(i));
+//				Element thumbnail = thumbnailCache.get(keys.get(i));
+//				if (thumbnail != null) {
+//					list.add(thumbnail.getObjectValue());
+//				}else{
+//					System.out.println(">>> 哇塞，没取到缓存对象："+keys.get(i)+" 哪来的呢？");
+//					log.warn(">>> 哇塞，没取到缓存对象："+keys.get(i)+" 哪来的呢？");
+//				}
+//			}
+//		}
+//		return list;
+//	}
 
 }

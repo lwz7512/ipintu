@@ -2,6 +2,7 @@ package com.pintu.facade;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.List;
 
@@ -12,8 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.FileUploadBase.SizeLimitExceededException;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
@@ -114,8 +115,8 @@ public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 	public void service(HttpServletRequest req, HttpServletResponse res)
 			throws ServletException, IOException {
 		System.out.println("1 appstater 开始解析表单");
-		res.setContentType("text/plain;charset=UTF-8");
-		PrintWriter pw = res.getWriter();
+
+		
 		
 		//这里将客户端参数解析出来传给apiAdaptor
 		//由apiAdaptor组装参数给服务
@@ -127,15 +128,23 @@ public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 		
 		
 		if(action==null && isMultipart){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
 			//授理上传图片的请求
 			processMultiPart(req,pw);	
-			
+			pw.close();
 		}else if(action.equals(AppStarter.GETGALLERYBYTIME)){
+			res.setContentType("text/plain;charset=UTF-8");
 			//处理取长廊缩略图信息的请求
 			String startTime = req.getParameter("startTime");
 			String endTime = req.getParameter("endTime");
-			pw.println(AppStarter.GETGALLERYBYTIME);
+			PrintWriter pw = res.getWriter();
 			pw.println(apiAdaptor.getGalleryByTime(startTime, endTime));
+			pw.close();
+			
+		}else if(action.equals(AppStarter.GETIMAGEFILE)){			
+			String picId = req.getParameter("picId");
+			apiAdaptor.getImageFile(picId, res);
 			
 		}else if(action.equals(AppStarter.APPLYFORUSER)){
 			//TODO, ...
@@ -145,7 +154,6 @@ public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 			
 		}
 		
-		pw.close();
 
 	}
 	

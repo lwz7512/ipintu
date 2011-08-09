@@ -40,8 +40,7 @@ public class ImgDataProcessor {
 		
 		ImageFileCreationTask thumbnailTask = new ImageFileCreationTask();
 		thumbnailTask.setFile(file);
-		//缩略图可以不用写文件
-//		thumbnailTask.setPath(filePath);
+		thumbnailTask.setPath(filePath);
 		thumbnailTask.setImgType("thumbnail");
 		thumbnailTask.setPicObj(picObj);
 		//存到缓存中

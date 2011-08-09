@@ -1,9 +1,18 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%@ page language="java" import="java.util.*"
+	contentType="text/html; charset=utf-8"%>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>this is a upload file test page</title>
-<script type="text/javascript" language="javascript">
+	<head>
+		<title>My JSP 'login_sys.jsp' starting page</title>
+
+		<meta http-equiv="pragma" content="no-cache">
+		<meta http-equiv="cache-control" content="no-cache">
+		<meta http-equiv="expires" content="0">
+		<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+		<meta http-equiv="description" content="This is my page">
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		</head>
+		<script type="text/javascript" language="javascript">
 	function CheckFileType() {		 
 		var objFileUpload = document.getElementById('file1');//FileUpload 
 		var objMSG = document.getElementById('msg');//显示提示信息用的DIV 
@@ -53,15 +62,15 @@
 	}
 	
 </script>
-</head>
-<body>
-<form name="uploadForm" id="uploadForm" 
+		<body>
+		
+				<form name="uploadForm" id="uploadForm" 
 	onsubmit="return checkBlank();" onreset="clearMsg();"
 	action="pintuapi" method="post" enctype="multipart/form-data">
 	<div id="msg"></div>
 	<input type="hidden" name ="user"  value="lml"/><br/>
 	<input type="hidden" name = "tags"  value="123"/><br/>
-	<input type="hidden" name = "description" value="神奇的力量"/><br/>
+	<input type="hidden" name = "description" value="test"/><br/>
 	
 	上传文件：
 	<input type="file" name="file1" id="file1" size="30" onchange="CheckFileType();"/><br />
@@ -69,5 +78,4 @@
 	<input type="reset" name="reset" value="重置"><br />
 
 </form>
-</body>
 </html>

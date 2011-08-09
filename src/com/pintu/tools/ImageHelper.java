@@ -50,33 +50,14 @@ public class ImageHelper {
 				}
 				StringBuffer strBuffer = new StringBuffer();
 				strBuffer.append(fileName);
-				if (type.equals("mobile")) {
-					writeFile(image, size[0], size[1], strBuffer.toString(),
-							fileType);
-					return true;
-				} else {
-					return getThumbnailStream(image, size[0], size[1]);
-				}
+				writeFile(image, size[0], size[1], strBuffer.toString(),fileType);
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 		return null;
-	}
-
-	// 得到生成的缩略图的bufferedImage信息
-	private static BufferedImage getThumbnailStream(Image image, int width,
-			int height) {
-
-		if (image == null)
-			return null;
-
-		BufferedImage tag = new BufferedImage(width, height,
-				BufferedImage.TYPE_INT_RGB);
-		tag.getGraphics().drawImage(image, 0, 0, width, height, null);
-		return tag;
-
 	}
 
 	/**
@@ -96,20 +77,21 @@ public class ImageHelper {
 			return;
 
 		if (fileType.toLowerCase().equals("png")) {
-//			PngEncoder encoder = new PngEncoder(PngEncoder.COLOR_TRUECOLOR_ALPHA);
-//			try {
-//				encoder.encode(image, new FileOutputStream(strBuffer));
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-		
+			// PngEncoder encoder = new
+			// PngEncoder(PngEncoder.COLOR_TRUECOLOR_ALPHA);
+			// try {
+			// encoder.encode(image, new FileOutputStream(strBuffer));
+			// } catch (IOException e) {
+			// e.printStackTrace();
+			// }
+
 			try {
 				File file = new File(strBuffer);
 				ImageIO.write((RenderedImage) image, "png", file);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+
 		} else {
 			BufferedImage tag = new BufferedImage(width, height,
 					BufferedImage.TYPE_INT_RGB);
@@ -122,7 +104,7 @@ public class ImageHelper {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-	}
+		}
 	}
 
 	private static int[] adjustImageSize(int theImgWidth, int theImgHeight,

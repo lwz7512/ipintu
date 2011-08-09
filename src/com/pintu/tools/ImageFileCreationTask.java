@@ -2,6 +2,7 @@ package com.pintu.tools;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Date;
 
 import org.apache.commons.fileupload.FileItem;
 
@@ -26,15 +27,17 @@ public class ImageFileCreationTask implements Runnable {
 
 		@Override
 		public void run() {
-			// TODO 生成图片文件，并将路径存在picObj中
+			//生成图片文件，并将路径存在picObj中
 			//route值：ipintu/WebContent/WEB-INF/uploadFile/
 			String route =path + File.separator ;
-			File uploadFile = new File(route+picObj.getName());
+//			File uploadFile = new File(route+picObj.getName());
+			picObj.setRawImgId(picObj.getId()+"_Raw");
+			File uploadFile = new File(route+picObj.getRawImgId()+getFileType());
 			if(imgType.equals("raw")){
 				// 文件写入到系统中
 				try {
 					fileItem.write(uploadFile);
-					picObj.setRawImgId(picObj.getId()+"_Raw");
+//					picObj.setRawImgId(picObj.getId()+"_Raw");
 					picObj.setRawImgSize(fileItem.getSize()/1024+"");
 					picObj.setRawImgPath(route+picObj.getRawImgId()+getFileType());
 				} catch (Exception e) {
@@ -57,18 +60,18 @@ public class ImageFileCreationTask implements Runnable {
 				String thumbnailId=picObj.getId()+"_Thumbnail";
 				//函数设计传参需要，因不写文件，帮用不到
 				String thumbnailPath=route+thumbnailId+getFileType();
-				BufferedImage  buffer =  (BufferedImage) ImageHelper.thumbnailHandler(fileItem, 100, 100, true,imgType,thumbnailPath);
+				ImageHelper.thumbnailHandler(fileItem, 100, 100, true,imgType,thumbnailPath);
 				
 				//构造出缩略图对象，用于放到缓存中
 				TPicDesc tpicDesc = new TPicDesc();
 				//缩略图对象中存放贴图对象ID，方便对应
 				tpicDesc.setTpId(picObj.getId());
 				tpicDesc.setThumbnailId(thumbnailId);
-				tpicDesc.setBufferedImage(buffer);
+				tpicDesc.setThumbnailPath(thumbnailPath);
+				tpicDesc.setCreationTime(String.valueOf(new Date().getTime()));
+				
 				tpicDesc.setStatus("0");
 				
-				System.out.println(thumbnailId);
-			   
 				//将缩略图放到缓存中
 				cacAccess.cacheThumbnail(tpicDesc);
 				

@@ -1,13 +1,12 @@
 package com.pintu.beans;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 public class Story implements Serializable{
 
-	private static final long serialVersionUID = 1L;
 	
+	private static final long serialVersionUID = 8714518954157101889L;
 	//品图（故事）唯一标识
 	private String id;
 	//贴图ID，对应于TPicItem.id
@@ -17,7 +16,7 @@ public class Story implements Serializable{
 	
 	//FIXME, 这个怎么是Date类型呢？TPicItem是字符串的，都应该统一吧？
 	//发表时间
-	private Date publishTime;
+	private String publishTime;
 	//品图内容
 	private String content;
 	//是否被投票为经典
@@ -68,13 +67,13 @@ public class Story implements Serializable{
 
 
 
-	public Date getPublishTime() {
+	public String getPublishTime() {
 		return publishTime;
 	}
 
 
 
-	public void setPublishTime(Date publishTime) {
+	public void setPublishTime(String publishTime) {
 		this.publishTime = publishTime;
 	}
 

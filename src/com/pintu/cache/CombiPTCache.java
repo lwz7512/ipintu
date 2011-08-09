@@ -81,10 +81,10 @@ public class CombiPTCache {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void cachePicture(TPicItem pic){
+	public void cacheThumbnail(TPicItem pic){
 		String pubTime = pic.getPublishTime();
 		String key = getMinutesByFormatTime(pubTime);
-		Element savedMinute = pictureCache.get(key);
+		Element savedMinute = thumbnailCache.get(key);
 		if(savedMinute==null){
 			Element elmt = new Element(key,new HashMap<String, TPicItem>());
 			HashMap<String, TPicItem>  picsInOnMinute = (HashMap<String, TPicItem>) elmt.getObjectValue();
@@ -102,9 +102,9 @@ public class CombiPTCache {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public TPicItem getCachedPicture(String pubTime, String picId){
+	public TPicItem getCachedThumbnail(String pubTime, String picId){
 		String key = getMinutesByFormatTime(pubTime);
-		Element savedMinute = pictureCache.get(key);
+		Element savedMinute = thumbnailCache.get(key);
 		if(savedMinute!=null){
 			HashMap<String, TPicItem>  savedMap = (HashMap<String, TPicItem>) savedMinute.getObjectValue();
 			return savedMap.get(picId);
@@ -113,11 +113,9 @@ public class CombiPTCache {
 	}
 	
 	public List<TPicItem> getCachedPics(String startTime, String endTime){
-		
+		//写一个for循环，用分钟数全取
 		return null;
 	}
-	
-	
-	
+
 	
 } //end of class

@@ -17,7 +17,7 @@
 		
 				<form action="pintuapi" method="post"  >
 				<input type="hidden" name="method" value="getGalleryByTime"/>
-				开始时间：<input type="text"  name="startTime" value ="<%=new Date().getTime()-11000000 %>"/>
+				开始时间：<input type="text"  name="startTime" value ="<%=new Date().getTime()-120000000 %>"/>
 				结束时间：<input type="text"  name="endTime" value ="<%=	new Date().getTime() %>"/>
 				<input type="submit" name="submit" value="测试">
 				</form>

@@ -124,13 +124,13 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	@Override
 	public void cacheThumbnail(TPicDesc tpicDesc) {
 		// 缓存缩略图对象
-		pintuCache.cacheThumbnail(tpicDesc.getThumbnailId(), tpicDesc);
+		pintuCache.cacheThumbnail(tpicDesc);
 
 	}
 
 	@Override
-	public List<Object> getCachedThumbnail(List<String> ids) {
-		return pintuCache.getCachedThumbnail(ids);
+	public List<TPicDesc> getCachedThumbnail(String createTime) {
+		return pintuCache.getCachedThumbnail(createTime);
 	}
 
 	@Override

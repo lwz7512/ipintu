@@ -1,6 +1,9 @@
 package com.pintu.facade;
 
+import java.io.OutputStream;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import com.pintu.beans.Comment;
 import com.pintu.beans.Event;
@@ -181,6 +184,9 @@ public interface PintuServiceInterface {
 	
 	//发布行业动态
 	public Boolean publishIndustryEvent(Event tpEvent);
+
+
+	public void getImageFile(String picId,HttpServletResponse res);
 	
 	
 	

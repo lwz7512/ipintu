@@ -1,6 +1,7 @@
 package com.pintu.beans;
 
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 
 /**
  * 品图缩略内容，包括原图的缩略图，指向一个真正的品图
@@ -8,7 +9,10 @@ import java.awt.image.BufferedImage;
  * @author lwz
  *
  */
-public class TPicDesc {
+public class TPicDesc implements Serializable{
+
+	
+	private static final long serialVersionUID = 5476127095951218320L;
 
 	//品图ID
 	private String tpId;
@@ -17,13 +21,23 @@ public class TPicDesc {
 	private String thumbnailId;
 	
 	//存储的生成的缩略图
-	private BufferedImage bufferedImage;
+	private String thumbnailPath;
 	
+	public String getThumbnailPath() {
+		return thumbnailPath;
+	}
+
+
+
+	public void setThumbnailPath(String thumbnailPath) {
+		this.thumbnailPath = thumbnailPath;
+	}
+
 	//品图状态：新发布、评论多、故事多、热图（两者都多）
 	//这个状态来自于定时计算任务
 	private String status;
 	
-	//生成时间，保存毫秒数
+	//生成时间，保存毫秒数 (图片文件的最后修改时间)
 	private String creationTime;
 	
 	public TPicDesc() {
@@ -68,14 +82,5 @@ public class TPicDesc {
 		this.status = status;
 	}
 
-	public BufferedImage getBufferedImage() {
-		return bufferedImage;
-	}
-
-	public void setBufferedImage(BufferedImage bufferedImage) {
-		this.bufferedImage = bufferedImage;
-	}
-	
-	
 
 }

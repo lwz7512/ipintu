@@ -19,5 +19,6 @@ public interface ExtVisitorInterface {
 	public static final String GETGALLERYBYTIME = "getGalleryByTime";
 	//TODO, TO ADD MORE METHOD DEFINITION...
 	
+	public static final String GETIMAGEFILE = "getImageFile";
 	
 }

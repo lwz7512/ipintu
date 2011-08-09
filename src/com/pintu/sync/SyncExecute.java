@@ -74,7 +74,7 @@ public class SyncExecute implements Runnable {
 			
 			
 			//FIXME, TEST CACHE AVAILABILITY...
-			cacheVisitor.traceCache();
+//			cacheVisitor.traceCache();
 			
 			try {
 				Thread.sleep(1000);

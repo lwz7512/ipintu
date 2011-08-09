@@ -3,8 +3,11 @@
  */
 package com.pintu.facade;
 
+import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
 
@@ -87,6 +90,8 @@ public class ApiAdaptor {
 	}
 	
 	
-	
+	public void getImageFile(String picId, HttpServletResponse res){
+		 pintuService.getImageFile(picId,res);
+	}
 
 } //end of class
