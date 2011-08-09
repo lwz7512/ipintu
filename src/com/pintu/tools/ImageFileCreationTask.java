@@ -67,7 +67,6 @@ public class ImageFileCreationTask implements Runnable {
 				//缩略图对象中存放贴图对象ID，方便对应
 				tpicDesc.setTpId(picObj.getId());
 				tpicDesc.setThumbnailId(thumbnailId);
-				tpicDesc.setThumbnailPath(thumbnailPath);
 				tpicDesc.setCreationTime(String.valueOf(new Date().getTime()));
 				
 				tpicDesc.setStatus("0");
