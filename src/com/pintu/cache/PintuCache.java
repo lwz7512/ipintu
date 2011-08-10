@@ -179,14 +179,6 @@ public class PintuCache {
 	}
 
 
-//	public void cacheThumbnail(String key, Object value) {
-//		Element ele = new Element(key, value);
-//		synchronized (thumbnailCache) {
-//			thumbnailCache.put(ele);
-//		}
-//	}
-	
-	
 	/**
 	 * 缓存缩略图 thumbnailCache  <分钟数，<thumbnailId,TpicDesc>>
 	 * @param pic
@@ -221,7 +213,6 @@ public class PintuCache {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<TPicDesc> getCachedThumbnail(String createTime){
-//		String key = getMinutesByFormatTime(pubTime);
 		List<TPicDesc> list=new ArrayList<TPicDesc>();
 		Element savedMinute = thumbnailCache.get(createTime);
 		if(savedMinute!=null){
@@ -232,28 +223,6 @@ public class PintuCache {
 		}
 		return list;
 	}
-
-//	public List<Object> getCachedThumbnail(List<String> keys) {
-//		
-//		List<Object> list = new ArrayList<Object>();
-//		
-//		System.out.println("PintuCache---thumbnailCache"+ thumbnailCache.getSize());
-//		
-//		//FIXME, 缓存数已经测过，不为0，有可能是同步的原因吗？
-//		synchronized (thumbnailCache) {
-//			for (int i = 0; i < keys.size(); i++) {
-//				//FIXME, 有可能是key的问题，对应不上，所以取不到元素
-//				System.out.println(">>> 要获取元素的KEY为："+keys.get(i));
-//				Element thumbnail = thumbnailCache.get(keys.get(i));
-//				if (thumbnail != null) {
-//					list.add(thumbnail.getObjectValue());
-//				}else{
-//					System.out.println(">>> 哇塞，没取到缓存对象："+keys.get(i)+" 哪来的呢？");
-//					log.warn(">>> 哇塞，没取到缓存对象："+keys.get(i)+" 哪来的呢？");
-//				}
-//			}
-//		}
-//		return list;
-//	}
-
+	
+	
 }

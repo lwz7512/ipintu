@@ -68,7 +68,6 @@ public class ImageFileCreationTask implements Runnable {
 				tpicDesc.setTpId(picObj.getId());
 				tpicDesc.setThumbnailId(thumbnailId);
 				tpicDesc.setCreationTime(String.valueOf(new Date().getTime()));
-				
 				tpicDesc.setStatus("0");
 				
 				//将缩略图放到缓存中

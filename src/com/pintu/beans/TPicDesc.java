@@ -1,6 +1,5 @@
 package com.pintu.beans;
 
-import java.awt.image.BufferedImage;
 import java.io.Serializable;
 
 /**

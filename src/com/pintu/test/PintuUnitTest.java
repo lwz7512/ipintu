@@ -26,7 +26,6 @@ public class PintuUnitTest {
 	@Before
 	public void setUp() throws Exception {		
 		ApplicationContext context = new ClassPathXmlApplicationContext("app-config.xml");	
-//		ApplicationContext context = new FileSystemXmlApplicationContext("D:/workspace/ipintu/WebContent/WEB-INF/app-comfig.xml");
 		//pintuDao = (PintuDao)context.getBean("pintuDao")
 		dbAccess = (DBAccessInterface) context.getBean("dbAcess");
 		pintuService = (PintuServiceInterface) context.getBean("pintuService");

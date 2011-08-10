@@ -1,7 +1,6 @@
 package com.pintu.beans;
 
 import java.io.Serializable;
-import java.sql.Date;
 
 /**
  * 品图详情资料，包括品图作者、时间、手机浏览图位置、故事数目、评论数目等等
