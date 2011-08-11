@@ -9,6 +9,7 @@ import com.pintu.beans.Story;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicItem;
 import com.pintu.beans.User;
+import com.pintu.beans.Vote;
 import com.pintu.cache.PintuCache;
 import com.pintu.dao.CacheAccessInterface;
 
@@ -32,18 +33,18 @@ public class CacheAccessImplement implements CacheAccessInterface {
 		this.pintuCache = pintuCache;
 	}
 
-	@Override
-	public void cacheComment(Comment comment) {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public void cacheLoggedInUser() {
 		// TODO Auto-generated method stub
-
 	}
-
+	
+	@Override
+	public List<User> getActiveUser() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	@Override
 	public void cachePicture(TPicItem pic) {
 		System.out.println("4 图片信息放缓存");
@@ -52,19 +53,41 @@ public class CacheAccessImplement implements CacheAccessInterface {
 		pintuCache.cachePicture(pic.getId(), pic);
 		//注意：要把新建立的对象ID存起来，以便入库线程处理
 		toSavedCacheIds.get(PICTURE_TYPE).add(pic.getId());
-		
+	}
+	
+	
+	
+	@Override
+	public void cacheComment(Comment comment) {
+			pintuCache.cacheComment(comment.getId(), comment);
+			toSavedCacheIds.get(COMMENT_TYPE).add(comment.getId());
 	}
 
 	@Override
 	public void cacheStory(Story story) {
-		// TODO Auto-generated method stub
-
+			pintuCache.cacheStory(story.getId(), story);
+			toSavedCacheIds.get(STORY_TYPE).add(story.getId());
 	}
 
+
 	@Override
-	public List<User> getActiveUser() {
-		// TODO Auto-generated method stub
-		return null;
+	public void cacheVote(Vote vote) {
+			pintuCache.cacheVote(vote.getId(), vote);
+			toSavedCacheIds.get(VOTE_TYPE).add(vote.getId());
+	}
+
+	// 在ImageFileCreationTask中生成缩略图后，调用此方法
+	@Override
+	public void cacheThumbnail(TPicDesc tpicDesc) {
+		// 缓存缩略图对象
+		pintuCache.cacheThumbnail(tpicDesc);
+
+	}
+	
+
+	@Override
+	public List<TPicDesc> getCachedThumbnail(String createTime) {
+		return pintuCache.getCachedThumbnail(createTime);
 	}
 
 	@Override
@@ -87,6 +110,12 @@ public class CacheAccessImplement implements CacheAccessInterface {
 
 	@Override
 	public User getSpecificUser(String userAccount) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Vote getSpecificVote(String vid) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -120,22 +149,32 @@ public class CacheAccessImplement implements CacheAccessInterface {
 		return list;
 	}
 
-	// 在ImageFileCreationTask中生成缩略图后，调用此方法
-	@Override
-	public void cacheThumbnail(TPicDesc tpicDesc) {
-		// 缓存缩略图对象
-		pintuCache.cacheThumbnail(tpicDesc);
-
-	}
-
-	@Override
-	public List<TPicDesc> getCachedThumbnail(String createTime) {
-		return pintuCache.getCachedThumbnail(createTime);
-	}
 
 	@Override
 	public void traceCache() {
 		pintuCache.traceAll();		
 	}
+
+	@Override
+	public void syncDBPictureToCache(TPicItem tpicItem) {
+		System.out.println("将数据库图片同步到缓存"+tpicItem.getId());
+		pintuCache.cachePicture(tpicItem.getId(), tpicItem);
+	}
+
+	@Override
+	public void syncDBCommnetToCache(Comment comment) {
+		pintuCache.cacheComment(comment.getId(), comment);
+	}
+
+	@Override
+	public void syncDBStoryToCache(Story story) {
+		pintuCache.cacheStory(story.getId(), story);
+	}
+
+	@Override
+	public void syncDBVoteToCache(Vote vote) {
+		pintuCache.cacheVote(vote.getId(), vote);
+	}
+
 
 } // end of class

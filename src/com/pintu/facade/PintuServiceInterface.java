@@ -1,6 +1,5 @@
 package com.pintu.facade;
 
-import java.io.OutputStream;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -74,6 +73,13 @@ public interface PintuServiceInterface {
 	 */
 	public String getTpicsByTime(String startTime,String endTime);
 	
+	/**
+	 * 根据图片id返回图片流到OutputStream中
+	 * @param picId
+	 * @param res
+	 */
+	public void getImageFile(String picId,HttpServletResponse res);
+
 	//浏览一个品图详情
 	public TPicDetails getTPicDetailsByID(String tpID);
 	
@@ -186,7 +192,6 @@ public interface PintuServiceInterface {
 	public Boolean publishIndustryEvent(Event tpEvent);
 
 
-	public void getImageFile(String picId,HttpServletResponse res);
 	
 	
 	

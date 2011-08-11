@@ -53,9 +53,9 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	private ImgDataProcessor imgProcessor;
 
 	private String imagePath;
-
-	private static final String GIF = "image/gif;charset=UTF-8";
 	// 设定输出的类型
+	private static final String GIF = "image/gif;charset=UTF-8";
+	
 	private static final String JPG = "image/jpeg;charset=UTF-8";
 
 	private static final String PNG = "image/png;charset=UTF-8";
@@ -116,10 +116,9 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 			// 2. 放入缓存
 			cacheVisitor.cachePicture(tpicItem);
-
 			// 3. 提交imgProcessor生成文件
 			imgProcessor.createImageFile(pic.getRawImageData(), tpicItem);
-
+		
 			// 4. 入库的事情就交由同步工具CacheToDB来处理，这里就结束了！
 
 		} else {
@@ -129,10 +128,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		return null;
 	}
 
-	private Date TO_DATE(String format, String string) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public List<TPicDesc> getTpicsByUser(String user, String pageNum) {
@@ -240,18 +235,25 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 	@Override
 	public String getTpicsByTime(String startTime, String endTime) {
+		List<TPicDesc> resultList = new ArrayList<TPicDesc>();
 		List<TPicDesc> thumbnailList = new ArrayList<TPicDesc>();
-
 		int start = getMinutes(startTime);
 		int end = getMinutes(endTime);
 
 		for (int i = start; i <= end; i++) {
-			thumbnailList = cacheVisitor.getCachedThumbnail(String.valueOf(i));
+			List<TPicDesc> cacheList = cacheVisitor.getCachedThumbnail(String.valueOf(i));
+			 thumbnailList.addAll(cacheList);
 		}
 
 		System.out.println("取出缓存对象：" + thumbnailList.size());
 
-		JSONArray ja = JSONArray.fromCollection(thumbnailList);
+		if(thumbnailList != null){
+			for(int j=thumbnailList.size()-1;j>=0;j--){
+				resultList.add(thumbnailList.get(j));
+			}
+		}
+		
+		JSONArray ja = JSONArray.fromCollection(resultList);
 
 		return ja.toString();
 	}
@@ -457,16 +459,15 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	private void writeGIFImage(File file, HttpServletResponse res) {
 		res.setContentType(GIF);
 		getOutInfo(file,  res);
-			
 	}
 	
 	private void getOutInfo(File file, HttpServletResponse res) {
-		
 		try {
+			OutputStream out = res.getOutputStream();
 			InputStream imageIn = new FileInputStream(file);
 			BufferedInputStream bis=new BufferedInputStream(imageIn);
 	        //输入缓冲流   
-	        BufferedOutputStream bos=new BufferedOutputStream(res.getOutputStream());
+	        BufferedOutputStream bos=new BufferedOutputStream(out);
 	        //输出缓冲流   
 	        byte data[]=new byte[4096];
 	        //缓冲字节数   

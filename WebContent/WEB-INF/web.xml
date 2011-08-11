@@ -7,7 +7,11 @@
 	<filter-mapping>
 		<filter-name>character</filter-name>
 		<servlet-name>WebEntrance</servlet-name>
-	</filter-mapping>  -->
+	</filter-mapping> 
+	
+	<listener>
+		<listener-class>net.sf.ehcache.constructs.web.ShutdownListener</listener-class>
+	</listener> -->
 	
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

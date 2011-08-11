@@ -68,12 +68,14 @@
 	onsubmit="return checkBlank();" onreset="clearMsg();"
 	action="pintuapi" method="post" enctype="multipart/form-data">
 	<div id="msg"></div>
+		<input type="hidden" name ="method"  value="upload"/><br/>
 	<input type="hidden" name ="user"  value="lml"/><br/>
 	<input type="hidden" name = "tags"  value="123"/><br/>
 	<input type="hidden" name = "description" value="test"/><br/>
 	
 	上传文件：
 	<input type="file" name="file1" id="file1" size="30" onchange="CheckFileType();"/><br />
+
 	<input type="submit" name="submit" value="上传">
 	<input type="reset" name="reset" value="重置"><br />
 

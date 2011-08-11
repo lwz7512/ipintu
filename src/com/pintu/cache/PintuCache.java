@@ -1,10 +1,7 @@
 package com.pintu.cache;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -15,7 +12,6 @@ import net.sf.ehcache.Element;
 import org.apache.log4j.Logger;
 
 import com.pintu.beans.TPicDesc;
-import com.pintu.utils.PintuUtils;
 
 /**
  * 这里是真正的缓存逻辑，缓存内容有： 上传图片的缩略图、贴图对象、故事、投票、评论
@@ -60,8 +56,8 @@ public class PintuCache {
 	
 	public void traceAll(){
 		System.out.println("--------------- trace begin: -----------------");
-		System.out.println(">>> thumbnailCache status: "+thumbnailCache.getStatus()+" thumbnailCache size: "+thumbnailCache.getSize());
-		System.out.println(">>> pictureCache status: "+pictureCache.getStatus()+" pictureCache size: "+pictureCache.getSize());
+		System.out.println(">>> thumbnailCache status: "+thumbnailCache.getStatus()+" thumbnailCache size: "+thumbnailCache.getKeysNoDuplicateCheck().size());
+		System.out.println(">>> pictureCache status: "+pictureCache.getStatus()+" pictureCache size: "+pictureCache.getKeysNoDuplicateCheck().size());
 		printCacheKeys();
 		System.out.println("--------------- trace end --------------------");
 	}
@@ -195,13 +191,17 @@ public class PintuCache {
 			@SuppressWarnings("unchecked")
 			HashMap<String, TPicDesc>  picsInOneMinute = (HashMap<String, TPicDesc>) elmt.getObjectValue();
 			picsInOneMinute.put(pic.getThumbnailId(), pic);
-			thumbnailCache.put(elmt);
+			synchronized(thumbnailCache){
+				thumbnailCache.put(elmt);
+			}
 		}else{
 			@SuppressWarnings("unchecked")
 			HashMap<String, TPicDesc>  savedMap = (HashMap<String, TPicDesc>) savedMinute.getObjectValue();
 			savedMap.put(pic.getThumbnailId(), pic);
 			Element ele = new Element(key,savedMap);
-			thumbnailCache.put(ele);
+			synchronized(thumbnailCache){
+				thumbnailCache.put(ele);
+			}
 		}
 	}
 	
@@ -214,11 +214,13 @@ public class PintuCache {
 	@SuppressWarnings("unchecked")
 	public List<TPicDesc> getCachedThumbnail(String createTime){
 		List<TPicDesc> list=new ArrayList<TPicDesc>();
-		Element savedMinute = thumbnailCache.get(createTime);
-		if(savedMinute!=null){
-			HashMap<String, TPicDesc>  savedMap = (HashMap<String, TPicDesc>) savedMinute.getObjectValue();
-			if(savedMap != null){
-					list.addAll(savedMap.values());
+		synchronized(thumbnailCache){
+			Element savedMinute = thumbnailCache.get(createTime);
+			if(savedMinute!=null){
+				HashMap<String, TPicDesc>  savedMap = (HashMap<String, TPicDesc>) savedMinute.getObjectValue();
+				if(savedMap != null){
+						list.addAll(savedMap.values());
+				}
 			}
 		}
 		return list;

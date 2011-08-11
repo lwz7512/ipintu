@@ -3,13 +3,11 @@ package com.pintu.dao;
 import java.util.List;
 
 import com.pintu.beans.Comment;
-import com.pintu.beans.Event;
-import com.pintu.beans.Favorite;
-import com.pintu.beans.Gift;
-import com.pintu.beans.Message;
+
 import com.pintu.beans.Story;
+import com.pintu.beans.TPicItem;
 import com.pintu.beans.User;
-import com.pintu.beans.Wealth;
+import com.pintu.beans.Vote;
 
 
 public interface DBAccessInterface {
@@ -18,32 +16,52 @@ public interface DBAccessInterface {
 	public String insertOneUser(User user);
 	
 	//品图入库
-	public int insertPicture(List<Object> objList);
+	public int insertPicture(List<TPicItem> objList);
 	
-	//故事入库
-	public String insertOneStory(Story story);
-	
-	//评论入库
-	public String insertOneComment(Comment comment);
-	
-	//礼物入库
-	public String insertOneGift(Gift gift);
-	
-	//将计算好的财富值入库
-	public String insertOneWealth(Wealth wealth);
-	
-	//更新财富值
-	public String updateOneWealth(String id,Wealth wealth);
-	
-	//社区事件入库
-	public String insertOneEvent(Event event);
-	
-	//消息入库
-	public String insertOneMessage(Message message);
-
-	//添加收藏图片信息入库
-	public String insertOneFavorite(Favorite favorite);
+//	//故事入库
+//	public String insertOneStory(Story story);
+//	
+//	//评论入库
+//	public String insertOneComment(Comment comment);
+//	
+//	//礼物入库
+//	public String insertOneGift(Gift gift);
+//	
+//	//将计算好的财富值入库
+//	public String insertOneWealth(Wealth wealth);
+//	
+//	//更新财富值
+//	public String updateOneWealth(String id,Wealth wealth);
+//	
+//	//社区事件入库
+//	public String insertOneEvent(Event event);
+//	
+//	//消息入库
+//	public String insertOneMessage(Message message);
+//
+//	//添加收藏图片信息入库
+//	public String insertOneFavorite(Favorite favorite);
 	
 	//获取一个时间段内的图片id信息
 	public List<String> getPicIdsByTime(String startTime, String endTime);
+	
+	/**
+	 * 取数据库中的图片数据到缓存
+	 * @param today 格式"yyyy-MM-dd HH:mm:ss"
+	 * @return
+	 */
+
+	public List<TPicItem> getPictureForCache(String today);
+	
+	public List<Story> getStoryForCache(String today);
+	
+	public List<Comment> getCommentForCache(String today);
+
+	/**
+	 * 根据故事的id来取评论到缓存
+	 * @param storyIds
+	 * @return
+	 */
+	public List<Vote> getVoteForCache(String storyIds);
+
 }

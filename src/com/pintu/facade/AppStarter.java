@@ -2,7 +2,6 @@ package com.pintu.facade;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.List;
 
@@ -21,54 +20,56 @@ import org.apache.log4j.Logger;
 
 import com.pintu.jobs.TaskStarter;
 import com.pintu.sync.CacheToDB;
+import com.pintu.sync.DBToCache;
 
 /**
  * 真正处理客户端传参到服务端的逻辑，与适配器打交道，适配器再与服务打交道；
+ * 
  * @author lwz
- *
+ * 
  */
 public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 
 	private Logger log = Logger.getLogger(AppStarter.class);
-	
+
 	private static final long serialVersionUID = 1L;
-	
-	//由Spring注入
+
+	// 由Spring注入
 	private ApiAdaptor apiAdaptor;
-	
-	//启动自动任务，由Spring注入
+
+	// 启动自动任务，由Spring注入
 	private TaskStarter taskStarter;
-	//同步任务，由Spring注入
+	// 同步任务，由Spring注入
 	private CacheToDB synchProcess;
-	
-//	//图片文件保存路径
-//	private String filePath;
-//	//图片文件暂存路径
-//	private String tempPath;
-	
+
+	private DBToCache dailySync;
+	// //图片文件保存路径
+	// private String filePath;
+	// //图片文件暂存路径
+	// private String tempPath;
+
 	// 最大文件上传尺寸设置
 	private int fileMaxSize = 4 * 1024 * 1024;
-	//上传组件
+	// 上传组件
 	private ServletFileUpload upload;
-	
-	
+
 	public AppStarter() {
 		// TODO Auto-generated constructor stub
-	}	
-	
-	//由WebEntrance在init时设置
+	}
+
+	// 由WebEntrance在init时设置
 	public void setImagePath(String filePath, String tempPath) {
-		//将磁盘文件保存路径传进来
-		apiAdaptor.setImagePath(filePath);		
-		//初始化文件上传组件参数
+		// 将磁盘文件保存路径传进来
+		apiAdaptor.setImagePath(filePath);
+		// 初始化文件上传组件参数
 		initUploadComponent(tempPath);
-		
+
 	}
 
 	public void setApiAdaptor(ApiAdaptor apiAdaptor) {
 		this.apiAdaptor = apiAdaptor;
 	}
-		
+
 	public void setTaskStarter(TaskStarter taskStarter) {
 		this.taskStarter = taskStarter;
 	}
@@ -77,27 +78,36 @@ public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 		this.synchProcess = synchProcess;
 	}
 
+	public void setDailySync(DBToCache dailySync) {
+		this.dailySync = dailySync;
+	}
 
-	//这个方法被WebEntrance的初始化方法调用
-	public void init(ServletConfig config){
-		System.out.println("初始化配置config:"+taskStarter.toString()+"--"+synchProcess.toString());
+	// 这个方法被WebEntrance的初始化方法调用
+	public void init(ServletConfig config) {
+		System.out.println("初始化配置config:" + taskStarter.toString() + "--C2D"
+				+ synchProcess.toString());
 		try {
 			super.init(config);
 		} catch (ServletException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-				
-		//启动任务定时器
-		if(taskStarter!=null) taskStarter.runAutoTasks();
-		
-		//启动数据库同步任务
-		if(synchProcess!=null) synchProcess.start();
-	
-		
+
+		// 启动任务定时器
+		if (taskStarter != null)
+			taskStarter.runAutoTasks();
+
+		// 启动同步当天零点开始数据数据到缓存
+		if (dailySync != null)
+			dailySync.start();
+
+		// 启动缓存同步入库任务
+		if (synchProcess != null)
+			synchProcess.start();
+
 	}
-	
-	private void initUploadComponent(String tempPath){
+
+	private void initUploadComponent(String tempPath) {
 		DiskFileItemFactory diskFactory = new DiskFileItemFactory();
 		// threshold 极限、临界值，即内存缓存 空间大小
 		diskFactory.setSizeThreshold(fileMaxSize);
@@ -107,81 +117,83 @@ public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 		upload = new ServletFileUpload(diskFactory);
 		// 设置允许上传的最大文件大小 4M
 		upload.setSizeMax(fileMaxSize);
-		
+
 	}
 
-	
 	@Override
 	public void service(HttpServletRequest req, HttpServletResponse res)
 			throws ServletException, IOException {
 		System.out.println("1 appstater 开始解析表单");
 
-		
-		
-		//这里将客户端参数解析出来传给apiAdaptor
-		//由apiAdaptor组装参数给服务
+		// 这里将客户端参数解析出来传给apiAdaptor
+		// 由apiAdaptor组装参数给服务
 		String action = req.getParameter("method");
-		System.out.println("method:"+action);
-		
-	    boolean isMultipart = ServletFileUpload.isMultipartContent(req);
-		System.out.println("isMultipart value is:"+isMultipart);
-		
-		
-		if(action==null && isMultipart){
+		System.out.println("method:" + action);
+
+		boolean isMultipart = ServletFileUpload.isMultipartContent(req);
+		System.out.println("isMultipart value is:" + isMultipart);
+
+		if ((action == null || "".equals(action) || "null".equals(action))
+				&& !isMultipart) {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
-			//授理上传图片的请求
-			processMultiPart(req,pw);	
-			pw.close();
-		}else if(action.equals(AppStarter.GETGALLERYBYTIME)){
+			pw.write("请求有误！");
+		}else if (action == null && isMultipart) {
+			// 因上传文件enctype的特殊处理，所以得不到参数，故只判断isMultipart
 			res.setContentType("text/plain;charset=UTF-8");
-			//处理取长廊缩略图信息的请求
+			PrintWriter pw = res.getWriter();
+			// 授理上传图片的请求
+			processMultiPart(req, pw);
+			pw.close();
+		} else if (action.equals(AppStarter.GETGALLERYBYTIME)) {
+			res.setContentType("text/plain;charset=UTF-8");
+			// 处理取长廊缩略图信息的请求
 			String startTime = req.getParameter("startTime");
 			String endTime = req.getParameter("endTime");
 			PrintWriter pw = res.getWriter();
 			pw.println(apiAdaptor.getGalleryByTime(startTime, endTime));
 			pw.close();
-			
-		}else if(action.equals(AppStarter.GETIMAGEFILE)){			
+
+		} else if (action.equals(AppStarter.GETIMAGEFILE)) {
 			String picId = req.getParameter("picId");
 			apiAdaptor.getImageFile(picId, res);
-			
-		}else if(action.equals(AppStarter.APPLYFORUSER)){
-			//TODO, ...
-			
-		}else if(action.equals(AppStarter.OTHERMETHOD)){
-			//TODO, ...
-			
-		}
-		
 
+		} else if (action.equals(AppStarter.APPLYFORUSER)) {
+			// TODO, ...
+
+		} else if (action.equals(AppStarter.OTHERMETHOD)) {
+			// TODO, ...
+
+		} else {
+
+		}
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
-	private void processMultiPart(HttpServletRequest req, PrintWriter pw){
+	private void processMultiPart(HttpServletRequest req, PrintWriter pw) {
 		try {
-			log.debug(">>> Starting uploading...");			
-			List<FileItem> fileItems = (List<FileItem>)upload.parseRequest(req);
+			log.debug(">>> Starting uploading...");
+			List<FileItem> fileItems = (List<FileItem>) upload
+					.parseRequest(req);
 			log.debug("<<< Uploading complete!");
-			//送由适配器解析参数
+			// 送由适配器解析参数
 			apiAdaptor.createTastePic(fileItems);
 		} catch (SizeLimitExceededException e) {
-			
+
 			System.out.println(">>> 文件尺寸超过限制，不能上传！");
 			pw.println(">>> 文件尺寸超过限制，不能上传！");
 			return;
-			
-		}catch (FileUploadException e) {
+
+		} catch (FileUploadException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
-	
-	
-	public void destroy(){
-		if(taskStarter!=null) taskStarter.stopTask();
+
+	public void destroy() {
+		if (taskStarter != null)
+			taskStarter.stopTask();
 	}
 
 }

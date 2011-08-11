@@ -3,7 +3,6 @@
  */
 package com.pintu.facade;
 
-import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
 
@@ -12,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 
 import com.pintu.beans.TastePic;
-import com.pintu.utils.UTF8Formater;
+//import com.pintu.utils.UTF8Formater;
 
 /**
  * Servlet调用服务的参数转换器，用来封装客户端参数并实现服务调用；
@@ -89,7 +88,11 @@ public class ApiAdaptor {
 		return pintuService.getTpicsByTime(startTime, endTime);
 	}
 	
-	
+	/**
+	 * 获取特定的图片
+	 * @param picId
+	 * @param res
+	 */
 	public void getImageFile(String picId, HttpServletResponse res){
 		 pintuService.getImageFile(picId,res);
 	}

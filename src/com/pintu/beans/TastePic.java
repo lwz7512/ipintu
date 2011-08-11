@@ -12,7 +12,7 @@ import org.apache.commons.fileupload.FileItem;
  */
 public class TastePic implements Serializable{
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -3991078371255576563L;
 	//贴图作者
 	private String user;
 	//描述

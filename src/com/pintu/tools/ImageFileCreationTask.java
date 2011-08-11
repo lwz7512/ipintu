@@ -1,6 +1,5 @@
 package com.pintu.tools;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Date;
 
@@ -38,7 +37,7 @@ public class ImageFileCreationTask implements Runnable {
 				try {
 					fileItem.write(uploadFile);
 //					picObj.setRawImgId(picObj.getId()+"_Raw");
-					picObj.setRawImgSize(fileItem.getSize()/1024+"");
+					picObj.setRawImgSize(String.valueOf(fileItem.getSize()/1024));
 					picObj.setRawImgPath(route+picObj.getRawImgId()+getFileType());
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -50,7 +49,11 @@ public class ImageFileCreationTask implements Runnable {
 					 ImageHelper.thumbnailHandler(fileItem, 440, 300, true,imgType,picObj.getMobImgPath());
 //					先生成小图片后写文件再给size赋值
 					 File file= new File(picObj.getMobImgPath());
-					 picObj.setMobImgSize(file.length()/1024+"");
+					 if(file.length() > 0){
+						 picObj.setMobImgSize(String.valueOf(file.length()/1024));
+					 }else{
+						 picObj.setMobImgSize("00");
+					 }
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

@@ -4,9 +4,7 @@ import java.io.Serializable;
 
 public class Vote implements Serializable{
 
-	private static final long serialVersionUID = 1L;
-	
-
+	private static final long serialVersionUID = -2728077033301616771L;
 	private String id;
 	//是对哪个故事的投票
 	private String follow;

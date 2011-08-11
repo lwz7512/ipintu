@@ -1,16 +1,17 @@
 package com.pintu.test;
 
-import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 
+import com.pintu.beans.Comment;
 import com.pintu.beans.TPicItem;
 import com.pintu.beans.User;
 import com.pintu.dao.DBAccessInterface;
@@ -25,8 +26,11 @@ public class PintuUnitTest {
 	
 	@Before
 	public void setUp() throws Exception {		
-		ApplicationContext context = new ClassPathXmlApplicationContext("app-config.xml");	
+		
+//		ApplicationContext context = new ClassPathXmlApplicationContext("app-config.xml");	
+	    ApplicationContext  context = new FileSystemXmlApplicationContext("D:\\workspace\\ipintu\\WebContent\\WEB-INF\\app-config.xml");
 		//pintuDao = (PintuDao)context.getBean("pintuDao")
+
 		dbAccess = (DBAccessInterface) context.getBean("dbAcess");
 		pintuService = (PintuServiceInterface) context.getBean("pintuService");
 		//TODO, GET BEAN INSTANCE FROM CONTEXT
@@ -65,7 +69,7 @@ public class PintuUnitTest {
 	
 	@Test
 	public void insertPicture(){
-		List<Object> list = new ArrayList<Object>();
+		List<TPicItem> list = new ArrayList<TPicItem>();
 		TPicItem pic = new TPicItem();
 		pic.setId("12edddddddf");
 		pic.setName("1234567890abcdef.jpg");
@@ -95,6 +99,19 @@ public class PintuUnitTest {
 		String startTime = "2011-08-01 15:28:12";
 		String endTime =  "2011-08-09 15:28:12";
 		List<String> list = dbAccess.getPicIdsByTime(startTime, endTime);
+		if(list != null){
+			for(int i = 0; i<list.size();i++){
+				System.out.println(list.get(i));
+			}
+		}
+	}
+	
+	@Test
+	public void getDBPicture(){
+		String today = "2011-08-09 00:00:00";
+//		List<TPicItem> list = dbAccess.getPictureForCache(today);
+//			List<Story> list=dbAccess.getStoryForCache(today);
+	List<Comment> list = dbAccess.getCommentForCache(today);
 		if(list != null){
 			for(int i = 0; i<list.size();i++){
 				System.out.println(list.get(i));

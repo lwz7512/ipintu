@@ -3,7 +3,8 @@
 	xsi:noNamespaceSchemaLocation="ehcache.xsd" updateCheck="true"
 	monitoring="autodetect" dynamicConfig="true">
 
-	<diskStore path="D:/cachedata" />
+<!--  <diskStore path="D:/cachedata" />-->	
+ <diskStore path="java.io.tmpdir"/>
 
 	<!-- Default Cache configuration. These settings will be applied to caches 
 		created programmatically using CacheManager.add(String cacheName). This element 
@@ -12,42 +13,42 @@
 		which is a reserved cache name. -->
 	<defaultCache maxElementsInMemory="10000"
 		maxElementsOnDisk="100000" eternal="false" timeToIdleSeconds="3600"
-		timeToLiveSeconds="7200" overflowToDisk="true" diskSpoolBufferSizeMB="30"
+		timeToLiveSeconds="7200" overflowToDisk="false" diskSpoolBufferSizeMB="30"
 		diskPersistent="false" diskExpiryThreadIntervalSeconds="120"
 		memoryStoreEvictionPolicy="LRU" statistics="false" />
 
 
 	<cache name="picturecache" maxElementsInMemory="1000"
-		maxElementsOnDisk="10000" eternal="false" overflowToDisk="true"
-		diskPersistent="true" diskSpoolBufferSizeMB="20" timeToIdleSeconds="3600"
+		maxElementsOnDisk="10000" eternal="false" overflowToDisk="false"
+		diskPersistent="false" diskSpoolBufferSizeMB="20" timeToIdleSeconds="3600"
 		timeToLiveSeconds="7200" diskExpiryThreadIntervalSeconds="120"
 		memoryStoreEvictionPolicy="LFU">
 	</cache>
 
 	<cache name="storycache" maxElementsInMemory="10000"
-		maxElementsOnDisk="100000" diskPersistent="true" eternal="false"
-		timeToIdleSeconds="3600" timeToLiveSeconds="7200" overflowToDisk="true"
+		maxElementsOnDisk="100000" diskPersistent="false" eternal="false"
+		timeToIdleSeconds="3600" timeToLiveSeconds="7200" overflowToDisk="false"
 		diskSpoolBufferSizeMB="30" diskExpiryThreadIntervalSeconds="120"
-		memoryStoreEvictionPolicy="LRU" statistics="false" >
+		memoryStoreEvictionPolicy="LRU"  >
 	</cache>
 
 	<cache name="commentcache" maxElementsInMemory="10000"
-		maxElementsOnDisk="100000" diskPersistent="true" eternal="false"
-		timeToIdleSeconds="3600" timeToLiveSeconds="7200" overflowToDisk="true"
+		maxElementsOnDisk="100000" diskPersistent="false" eternal="false"
+		timeToIdleSeconds="3600" timeToLiveSeconds="7200" overflowToDisk="false"
 		diskSpoolBufferSizeMB="30" diskExpiryThreadIntervalSeconds="120"
-		memoryStoreEvictionPolicy="LRU" statistics="false" >
+		memoryStoreEvictionPolicy="LRU" >
 	</cache>
 
 	<cache name="votecache" maxElementsInMemory="10000"
-		maxElementsOnDisk="100000" diskPersistent="true" eternal="false"
-		timeToIdleSeconds="3600" timeToLiveSeconds="7200" overflowToDisk="true"
+		maxElementsOnDisk="100000" diskPersistent="false" eternal="false"
+		timeToIdleSeconds="3600" timeToLiveSeconds="7200" overflowToDisk="false"
 		diskSpoolBufferSizeMB="30" diskExpiryThreadIntervalSeconds="120"
-		memoryStoreEvictionPolicy="LRU" statistics="false" >
+		memoryStoreEvictionPolicy="LRU" >
 	</cache>
 
 	<cache name="thumbnailcache" maxElementsInMemory="10000"
-		maxElementsOnDisk="100000" diskPersistent="true" eternal="false"
-		timeToIdleSeconds="3600" timeToLiveSeconds="7200" overflowToDisk="true"
+		maxElementsOnDisk="100000" diskPersistent="false" eternal="false"
+		timeToIdleSeconds="3600" timeToLiveSeconds="7200" overflowToDisk="false"
 		diskSpoolBufferSizeMB="30" diskExpiryThreadIntervalSeconds="120"
 		memoryStoreEvictionPolicy="LRU" >
 	</cache>

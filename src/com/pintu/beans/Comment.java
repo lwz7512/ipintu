@@ -3,7 +3,6 @@ package com.pintu.beans;
  * test git push, no origin and master by lwz7512
  */
 import java.io.Serializable;
-import java.util.Date;
 
 public class Comment implements Serializable{
 
@@ -12,7 +11,7 @@ public class Comment implements Serializable{
 	private String id;
 	private String follow;
 	private String owner;
-	private Date publishTime;
+	private String publishTime;
 	private String content;
 	
 	public Comment() {
@@ -43,12 +42,12 @@ public class Comment implements Serializable{
 		this.owner = owner;
 	}
 
-	public Date getPublishTime() {
+	public String getPublishTime() {
 		return publishTime;
 	}
 
-	public void setPublishTime(Date publishTime) {
-		this.publishTime = publishTime;
+	public void setPublishTime(String string) {
+		this.publishTime = string;
 	}
 
 	public String getContent() {

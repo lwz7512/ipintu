@@ -31,6 +31,7 @@
 		<property name="apiAdaptor" ref="apiAdaptor"/>
 		<property name="taskStarter" ref="taskStarter"/>
 		<property name="synchProcess" ref="synchProcess"/>
+		<property name="dailySync"  ref="dailySync"/>
 	</bean>	 
 	<bean id="apiAdaptor"
 		  class="com.pintu.facade.ApiAdaptor">
@@ -56,7 +57,17 @@
     <bean id="synchProcess"
     	  class="com.pintu.sync.CacheToDB">
     	<property name="executor" ref="executor"/>
-    </bean>		  	   
+    </bean>		  
+	<bean id="worker"
+    	  class="com.pintu.sync.DailySync">
+		<property name="dbVisitor" ref="dbAcess"/>
+		<property name="cacheVisitor" ref="cacheAccess"/>   
+    </bean> 
+    <bean id="dailySync"
+    	  class="com.pintu.sync.DBToCache">
+    	<property name="executor" ref="worker"/>
+    </bean>	
+    
     <!--将共享的DataSource实例注入到DAO中，JdbcTemplate实例在DataSource的setter方法中被创建-->
     <bean id = "dbAcess" 
           class = "com.pintu.dao.impl.DBAccessImplement"> 

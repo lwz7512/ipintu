@@ -10,8 +10,8 @@ import java.io.Serializable;
  */
 public class TPicItem implements Serializable{
 	
-	private static final long serialVersionUID = 1L;
-	
+
+	private static final long serialVersionUID = -2683679418482593677L;
 	//贴图ID
 	private String id;
 	//贴图名称，这个其实用不着，留着吧
