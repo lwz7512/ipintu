@@ -9,6 +9,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.pintu.beans.Comment;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicItem;
@@ -21,7 +23,8 @@ public class DailySync implements Runnable{
 		private DBAccessInterface dbVisitor;
 		//由Spring注入
 		private CacheAccessInterface cacheVisitor;
-
+		
+		private Logger log = Logger.getLogger(DailySync.class);
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
@@ -55,7 +58,7 @@ public class DailySync implements Runnable{
 
 		
 		private void syncVoteTask(String storyIds) {
-			
+				log.info("同步数据库投票到缓存开始...");
 				List<Vote> voteList=dbVisitor.getVoteForCache(storyIds);
 				if(voteList != null){
 					for(int i=0;i<voteList.size();i++){
@@ -63,10 +66,12 @@ public class DailySync implements Runnable{
 						cacheVisitor.syncDBVoteToCache(vote);
 					}
 				}
+				log.info("同步投票到缓存结束，voteSize:"+voteList.size());
 		}
 
 
 		private String syncStoryTask(String today) {
+			log.info("同步数据库故事到缓存开始...");
 			// 这里因是要取出story的id给vote用，构造出一个类似('storyId','storyId')的串给sql语句用
 			StringBuffer storyIds= new StringBuffer();
 			List<Story> storyList=dbVisitor.getStoryForCache(today);
@@ -83,11 +88,13 @@ public class DailySync implements Runnable{
 					cacheVisitor.syncDBStoryToCache(story);
 				}
 			}
+			log.info("同步故事到缓存结束，storySize:"+storyList.size()+"storyIds:"+storyIds.toString());
 			return storyIds.toString();
 		}
 
 
 		private void syncCommentTask(String today) {
+			log.info("同步数据库评论到缓存开始...");
 			List<Comment> commList=dbVisitor.getCommentForCache(today);
 			if(commList != null){
 				for(int i=0;i<commList.size();i++){
@@ -95,11 +102,12 @@ public class DailySync implements Runnable{
 					cacheVisitor.syncDBCommnetToCache(comm);
 				}
 			}
-			
+			log.info("同步评论到缓存结束，commentSize:"+commList.size());
 		}
 
 
 		private void syncPictureTask(String today){
+			log.info("同步数据库图片到缓存开始...");
 			List<TPicItem> picList=dbVisitor.getPictureForCache(today);
 			if(picList != null){
 				for(int i=0;i<picList.size();i++){
@@ -107,6 +115,7 @@ public class DailySync implements Runnable{
 					cacheVisitor.syncDBPictureToCache(pic);
 				}
 			}
+			log.info("同步图片到缓存结束，pictureSize:"+picList.size());
 		}
 		
 		public void setDbVisitor(DBAccessInterface dbVisitor) {
