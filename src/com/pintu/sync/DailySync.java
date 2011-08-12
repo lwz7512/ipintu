@@ -4,8 +4,8 @@ package com.pintu.sync;
  * @author liumingli
  *
  */
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -22,19 +22,19 @@ public class DailySync implements Runnable{
 		//由Spring注入
 		private CacheAccessInterface cacheVisitor;
 
-		SimpleDateFormat simpledf = new SimpleDateFormat("yyyy-MM-dd");
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		public void run() {
 			
-				Date date = null;
-				try {
-					date = simpledf.parse(simpledf.format(new Date().getTime()));
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-			
+				
+				Calendar c = Calendar.getInstance();
+			    int   year=c.get(Calendar.YEAR); 
+			    int   month=c.get(Calendar.MONTH); 
+			    int   day=c.get(Calendar.DATE); 
+				c.set(year, month, day, 0, 0, 0);
+				Date date = c.getTime();
+				//得到当天零点即 "2011-08-12 00:00:00"
 				String today = sdf.format(date);
 				
 				//同步当日零点开始数据库图片到缓存
@@ -55,7 +55,7 @@ public class DailySync implements Runnable{
 
 		
 		private void syncVoteTask(String storyIds) {
-			//TODO 需要进一步测试
+			
 				List<Vote> voteList=dbVisitor.getVoteForCache(storyIds);
 				if(voteList != null){
 					for(int i=0;i<voteList.size();i++){
@@ -67,7 +67,7 @@ public class DailySync implements Runnable{
 
 
 		private String syncStoryTask(String today) {
-			//TODO 这里因是要取出story的id给vote用
+			// 这里因是要取出story的id给vote用，构造出一个类似('storyId','storyId')的串给sql语句用
 			StringBuffer storyIds= new StringBuffer();
 			List<Story> storyList=dbVisitor.getStoryForCache(today);
 			if(storyList != null){
@@ -76,7 +76,9 @@ public class DailySync implements Runnable{
 					if(storyIds.length()>0){
 						storyIds.append(",");
 					}
+					storyIds.append("'");
 					storyIds.append(story.getId());
+					storyIds.append("'");
 					
 					cacheVisitor.syncDBStoryToCache(story);
 				}

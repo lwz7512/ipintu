@@ -56,6 +56,9 @@ public class PintuCache {
 	
 	public void traceAll(){
 		System.out.println("--------------- trace begin: -----------------");
+		System.out.println(">>> commentCache status: "+pictureCache.getStatus()+" commentCache size: "+commentCache.getKeysNoDuplicateCheck().size());
+		System.out.println(">>> storyCache status: "+storyCache.getStatus()+" pictureCache size: "+storyCache.getKeysNoDuplicateCheck().size());
+		System.out.println(">>> voteCache status: "+pictureCache.getStatus()+" voteCache size: "+voteCache.getKeysNoDuplicateCheck().size());
 		System.out.println(">>> thumbnailCache status: "+thumbnailCache.getStatus()+" thumbnailCache size: "+thumbnailCache.getKeysNoDuplicateCheck().size());
 		System.out.println(">>> pictureCache status: "+pictureCache.getStatus()+" pictureCache size: "+pictureCache.getKeysNoDuplicateCheck().size());
 		printCacheKeys();
