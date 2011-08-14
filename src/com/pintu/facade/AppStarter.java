@@ -17,6 +17,9 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 
 import com.pintu.jobs.TaskStarter;
 import com.pintu.sync.CacheToDB;
@@ -28,7 +31,8 @@ import com.pintu.sync.DBToCache;
  * @author lwz
  * 
  */
-public class AppStarter extends HttpServlet implements ExtVisitorInterface {
+@SuppressWarnings("rawtypes")
+public class AppStarter extends HttpServlet implements  ApplicationListener,ExtVisitorInterface  {
 
 	private Logger log = Logger.getLogger(AppStarter.class);
 
@@ -41,12 +45,8 @@ public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 	private TaskStarter taskStarter;
 	// 同步任务，由Spring注入
 	private CacheToDB synchProcess;
-
+	//同步任务，由Spring注入
 	private DBToCache dailySync;
-	// //图片文件保存路径
-	// private String filePath;
-	// //图片文件暂存路径
-	// private String tempPath;
 
 	// 最大文件上传尺寸设置
 	private int fileMaxSize = 4 * 1024 * 1024;
@@ -54,17 +54,9 @@ public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 	private ServletFileUpload upload;
 
 	public AppStarter() {
-		// TODO Auto-generated constructor stub
+		//do nothing...
 	}
 
-	// 由WebEntrance在init时设置
-	public void setImagePath(String filePath, String tempPath) {
-		// 将磁盘文件保存路径传进来
-		apiAdaptor.setImagePath(filePath);
-		// 初始化文件上传组件参数
-		initUploadComponent(tempPath);
-
-	}
 
 	public void setApiAdaptor(ApiAdaptor apiAdaptor) {
 		this.apiAdaptor = apiAdaptor;
@@ -82,43 +74,6 @@ public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 		this.dailySync = dailySync;
 	}
 
-	// 这个方法被WebEntrance的初始化方法调用
-	public void init(ServletConfig config) {
-		System.out.println("初始化配置config:" + taskStarter.toString() + "--C2D"
-				+ synchProcess.toString());
-		try {
-			super.init(config);
-		} catch (ServletException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		// 启动任务定时器
-		if (taskStarter != null)
-			taskStarter.runAutoTasks();
-
-		// 启动同步当天零点开始数据数据到缓存
-		if (dailySync != null)
-			dailySync.start();
-
-		// 启动缓存同步入库任务
-		if (synchProcess != null)
-			synchProcess.start();
-
-	}
-
-	private void initUploadComponent(String tempPath) {
-		DiskFileItemFactory diskFactory = new DiskFileItemFactory();
-		// threshold 极限、临界值，即内存缓存 空间大小
-		diskFactory.setSizeThreshold(fileMaxSize);
-		// repository 贮藏室，即临时文件目录
-		diskFactory.setRepository(new File(tempPath));
-
-		upload = new ServletFileUpload(diskFactory);
-		// 设置允许上传的最大文件大小 4M
-		upload.setSizeMax(fileMaxSize);
-
-	}
 
 	@Override
 	public void service(HttpServletRequest req, HttpServletResponse res)
@@ -151,8 +106,18 @@ public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 			String startTime = req.getParameter("startTime");
 			String endTime = req.getParameter("endTime");
 			PrintWriter pw = res.getWriter();
-			pw.println(apiAdaptor.getGalleryByTime(startTime, endTime));
+			long queryTimeSpan = Long.valueOf(endTime)-Long.valueOf(startTime);
+			System.out.println(">>> query time span: "+queryTimeSpan/60*1000+" minutes;");
+			
+			long oneDayMiliSeconds = 24*60*60*1000;
+			if(queryTimeSpan>oneDayMiliSeconds){
+				//如果跨越了1天，就只给返回一天的数据
+				startTime = String.valueOf(Long.valueOf(endTime)-oneDayMiliSeconds);
+			}
+			String galleryData = apiAdaptor.getGalleryByTime(startTime, endTime);
+			pw.println(galleryData);
 			pw.close();
+			System.out.println(">>> Gallery data: "+galleryData);
 
 		} else if (action.equals(AppStarter.GETIMAGEFILE)) {
 			String picId = req.getParameter("picId");
@@ -191,9 +156,64 @@ public class AppStarter extends HttpServlet implements ExtVisitorInterface {
 
 	}
 
-	public void destroy() {
-		if (taskStarter != null)
-			taskStarter.stopTask();
+
+	@Override
+	public void onApplicationEvent(ApplicationEvent event) {
+		
+		//ApplicationContext 已经准备好，Spring配置初始化完成，可以启动任务了
+		if(event instanceof ContextRefreshedEvent){
+			
+			System.out.println(">>>>>>>> Server 启动完成， 开始启动自动任务 <<<<<<<");
+			
+			//上传文件保存路径
+			String filePath = System.getProperty("filePath");
+			// 初始化文件上传组件参数
+			String tempPath = System.getProperty("tempPath");
+			if(tempPath!=null){
+				System.out.println(">>>>> init file upload component...");
+				initUploadComponent(tempPath);				
+			}else{
+				log.warn(">>>>> !!! 文件上传路径tempPath环境变量为空，不能初始化上传组件!");
+			}
+			
+			if(apiAdaptor!=null){
+				System.out.println(">>> apiAdaptor is ready to use...");
+				// 将磁盘文件保存路径传进来
+				if(filePath!=null){
+					apiAdaptor.setImagePath(filePath);					
+				}else{
+					log.warn(">>>>> !!! 文件上传路径filePath环境变量为空，不能初始化上传路径!");
+				}
+			}
+			if(taskStarter!=null){
+				System.out.println(">>> taskStarter is ready to start...");
+				taskStarter.runAutoTasks();
+			}
+			if(synchProcess!=null){
+				System.out.println(">>> synchProcess is ready to start...");
+				synchProcess.start();
+			}
+			if(dailySync!=null){
+				System.out.println(">>> dailySync is ready to start...");
+				dailySync.start();
+			}
+
+		}
+		
+	} //end of onApplicationEvent
+	
+	private void initUploadComponent(String tempPath) {
+		DiskFileItemFactory diskFactory = new DiskFileItemFactory();
+		// threshold 极限、临界值，即内存缓存 空间大小
+		diskFactory.setSizeThreshold(fileMaxSize);
+		// repository 贮藏室，即临时文件目录
+		diskFactory.setRepository(new File(tempPath));
+
+		upload = new ServletFileUpload(diskFactory);
+		// 设置允许上传的最大文件大小 4M
+		upload.setSizeMax(fileMaxSize);
+
 	}
+	
 
 }
