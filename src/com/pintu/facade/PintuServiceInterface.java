@@ -1,5 +1,6 @@
 package com.pintu.facade;
 
+import java.io.File;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -79,6 +80,8 @@ public interface PintuServiceInterface {
 	 * @param res
 	 */
 	public void getImageFile(String picId,HttpServletResponse res);
+	
+	public File getThumbnail(String thumbnailName);
 
 	//浏览一个品图详情
 	public TPicDetails getTPicDetailsByID(String tpID);

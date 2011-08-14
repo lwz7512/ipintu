@@ -21,7 +21,19 @@
 		<welcome-file>default.htm</welcome-file>
 		<welcome-file>default.jsp</welcome-file>
 	</welcome-file-list>
-	
+	<!-- File upload path configuration -->
+	<context-param>
+		<param-name>filepath</param-name>
+		<param-value>
+			/WEB-INF/uploadFile
+		</param-value>
+	</context-param>
+	<context-param>
+		<param-name>temppath</param-name>
+		<param-value>
+			/WEB-INF/temp
+		</param-value>
+	</context-param>		
 	<!-- Spring configuration file declaration -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
@@ -29,6 +41,12 @@
 			/WEB-INF/app-config.xml
 		</param-value>
 	</context-param>	
+	<!-- Server status listener to init upload path -->
+	<listener>
+		<listener-class>
+			com.pintu.facade.ServerListener
+		</listener-class>
+	</listener>
 	<!-- Spring Bean configuration loader-->
 	<listener>
 		<listener-class>
@@ -42,15 +60,6 @@
     	<display-name>WebEntrance</display-name>
     	<servlet-name>WebEntrance</servlet-name>
     	<servlet-class>com.pintu.facade.WebEntrance</servlet-class>
-    	<init-param> 
-            <param-name>filepath</param-name> 
-            <param-value>/WEB-INF/uploadFile</param-value> 
-        </init-param> 
-        <init-param> 
-            <param-name>temppath</param-name> 
-            <param-value>/WEB-INF/temp</param-value> 
-        </init-param>
-        
     	<init-param>
 	    	<param-name>targetBean</param-name>
 	    	<!-- 这是个bean实例id，在app-config.xml中定义 -->

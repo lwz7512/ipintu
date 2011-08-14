@@ -83,7 +83,7 @@ public class SyncExecute implements Runnable {
 			// 并删除已同步的对象ID；
 
 			// FIXME, TEST CACHE AVAILABILITY...
-			cacheVisitor.traceCache();
+		cacheVisitor.traceCache();
 
 			
 			
