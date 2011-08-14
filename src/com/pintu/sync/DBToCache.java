@@ -5,7 +5,7 @@ public class DBToCache {
 	private Thread threader;
 	
 	private DailySync worker;
-
+	
 	public DBToCache() {
 		
 	}
@@ -22,8 +22,8 @@ public class DBToCache {
 
 	//由Spring注入
 	public void setExecutor(DailySync worker) {
-		this.worker = worker;		
+		this.worker = worker;	
 		threader = new Thread(worker);
 	}
-	
+
 }

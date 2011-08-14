@@ -62,7 +62,6 @@
     	  class="com.pintu.sync.DailySync">
 		<property name="dbVisitor" ref="dbAcess"/>
 		<property name="cacheVisitor" ref="cacheAccess"/>   
-		<property name="pintuService" ref="pintuService"/>
     </bean> 
     <bean id="dailySync"
     	  class="com.pintu.sync.DBToCache">

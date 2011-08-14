@@ -195,15 +195,20 @@ public class DBAccessImplement implements DBAccessInterface {
 		return resList;
 	}
 
-	//TODO 需要进一步測試
 	@Override
 	public List<Vote> getVoteForCache(String storyIds) {
 		List<Vote> resList = new ArrayList<Vote>();
-		String sql = "select * from t_vote where t_owner in'" + storyIds + "'";
+		String sql = "select * from t_vote where v_follow in (" + storyIds + ")";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
-			
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Vote vote = new Vote();
+				vote.setId(map.get("v_id").toString());
+				vote.setFollow(map.get("v_follow").toString());
+				vote.setType(map.get("v_type").toString());
+				vote.setAmount(Integer.parseInt(map.get("v_amount").toString()));
+				resList.add(vote);
 			}
 		}
 		return resList;

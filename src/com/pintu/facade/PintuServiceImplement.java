@@ -239,7 +239,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		List<TPicDesc> thumbnailList = new ArrayList<TPicDesc>();
 		int start = getMinutes(startTime);
 		int end = getMinutes(endTime);
-
+		
 		for (int i = start; i <= end; i++) {
 			List<TPicDesc> cacheList = cacheVisitor.getCachedThumbnail(String.valueOf(i));
 			 thumbnailList.addAll(cacheList);
@@ -487,6 +487,16 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			e.printStackTrace();
 		}
 
+	}
+
+	/**
+	 * 根据综略图的文件名得到系统路径下的文件信息
+	 */
+	@Override
+	public File getThumbnail(String thumbnailName) {
+		String thumbnail = imagePath + File.separator + thumbnailName;
+		File file = new File(thumbnail);
+		return file;
 	}
 
 	// TODO, 实现其他接口方法
