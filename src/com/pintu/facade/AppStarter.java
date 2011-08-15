@@ -3,7 +3,10 @@ package com.pintu.facade;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -20,6 +23,8 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
+import com.pintu.beans.Comment;
+import com.pintu.beans.Story;
 import com.pintu.jobs.TaskStarter;
 import com.pintu.sync.CacheToDB;
 import com.pintu.sync.DBToCache;
@@ -51,6 +56,9 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 	private int fileMaxSize = 4 * 1024 * 1024;
 	// 上传组件
 	private ServletFileUpload upload;
+	
+	
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	public AppStarter() {
 		//do nothing...
@@ -77,7 +85,8 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 	@Override
 	public void service(HttpServletRequest req, HttpServletResponse res)
 			throws ServletException, IOException {
-		System.out.println("1 appstater 开始解析表单");
+		
+		System.out.println(">>> appstater 开始解析表单");
 
 		// 这里将客户端参数解析出来传给apiAdaptor
 		// 由apiAdaptor组装参数给服务
@@ -86,13 +95,16 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 
 		boolean isMultipart = ServletFileUpload.isMultipartContent(req);
 		System.out.println("isMultipart value is:" + isMultipart);
-
-		if ((action == null || "".equals(action) || "null".equals(action))
-				&& !isMultipart) {
+		
+		if(action==null && isMultipart==false){
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
-			pw.write("请求有误！");
-		}else if (action == null && isMultipart) {
+			pw.write("请求无效！");	
+			pw.close();
+			return;
+		}
+
+		if (action == null && isMultipart) {
 			// 因上传文件enctype的特殊处理，所以得不到参数，故只判断isMultipart
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
@@ -122,7 +134,43 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			String picId = req.getParameter("picId");
 			apiAdaptor.getImageFile(picId, res);
 
-		} else if (action.equals(AppStarter.APPLYFORUSER)) {
+		}else if (action.equals(AppStarter.GETPICDETAIL)) {
+			String tpId = req.getParameter("tpId");
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String details = apiAdaptor.getTPicDetailsById(tpId);
+			pw.write(details);	
+			pw.close();
+
+		}else if (action.equals(AppStarter.ADDSTORY)) {
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			Story story = new Story();
+			String sid = UUID.randomUUID().toString().replace("-", "").substring(16);
+			story.setId(sid);
+			story.setFollow(req.getParameter("follow"));
+			story.setOwner(req.getParameter("owner"));
+			story.setPublishTime(sdf.format(new Date().getTime()));
+			story.setContent(req.getParameter("content"));
+			story.setClassical(Integer.parseInt(req.getParameter("classical")));
+			apiAdaptor.addStoryToPicture(story);
+			pw.write("添加故事成功！");	
+			pw.close();
+		} else if (action.equals(AppStarter.ADDCOMMENT)) {
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			Comment cmt = new Comment();
+			String cid = UUID.randomUUID().toString().replace("-", "").substring(16);
+			cmt.setId(cid);
+			cmt.setFollow(req.getParameter("follow"));
+			cmt.setOwner(req.getParameter("owner"));
+			cmt.setPublishTime(sdf.format(new Date().getTime()));
+			cmt.setContent(req.getParameter("content"));
+			apiAdaptor.addCommentToPicture(cmt);
+			pw.write("添加评论成功！");	
+			pw.close();
+
+		}else if (action.equals(AppStarter.APPLYFORUSER)) {
 			// TODO, ...
 
 		} else if (action.equals(AppStarter.OTHERMETHOD)) {

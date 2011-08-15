@@ -70,7 +70,7 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public int insertPicture(final List<TPicItem> objList) {
+	public int insertPicture(final List<Object> objList) {
 		String sql = "INSERT INTO t_picture "
 				+ "(p_id,p_name,p_owner,p_publishTime,p_tags,p_description,p_allowStory,p_mobImgId,p_mobImgSize,p_mobImgPath,p_rawImgId,p_rawImgSize,p_rawImgPath,p_pass,p_memo) "
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -79,7 +79,7 @@ public class DBAccessImplement implements DBAccessInterface {
 				new BatchPreparedStatementSetter() {
 					public void setValues(PreparedStatement ps, int i)
 							throws SQLException {
-						TPicItem picture = objList.get(i);
+						TPicItem picture = (TPicItem) objList.get(i);
 						ps.setString(1, picture.getId());
 						ps.setString(2, picture.getName());
 						ps.setString(3, picture.getOwner());
@@ -214,30 +214,77 @@ public class DBAccessImplement implements DBAccessInterface {
 		return resList;
 	}
 
-	// @Override
-	// public String insertOneStory(Story story) {
-	// final String sid = UUID.randomUUID().toString().replace("-", "")
-	// .substring(16);
-	// System.out.println("自动生成的UUID：(截取了自动生成的UUID后面16位)" + sid);
-	// String sql = "INSERT INTO t_story "
-	// + "(s_id,s_follow,s_owner,s_publishTime,s_content,s_classical,s_memo) "
-	// + "VALUES (?, ?, ?, ?, ?, ?, ?)";
-	//
-	// return sid;
-	// }
-	//
-	// @Override
-	// public String insertOneComment(Comment comment) {
-	// final String cid = UUID.randomUUID().toString().replace("-", "")
-	// .substring(16);
-	// System.out.println("自动生成的UUID：(截取了自动生成的UUID后面16位)" + cid);
-	// String sql = "INSERT INTO t_comment "
-	// + "(c_id,c_follow,c_owner,c_publishTime,c_content,c_memo) "
-	// + "VALUES (?, ?, ?, ?, ?, ?)";
-	//
-	// return cid;
-	// }
-	//
+	@Override
+	public User getUserById(String id) {
+		User user = new User();
+		String sql = "select * from t_user where u_id = '"+id+"'";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if(rows!=null && rows.size()>0){
+			Map<String, Object> map = (Map<String, Object>) rows.get(0);
+			user.setId(map.get("u_id").toString());
+			user.setAvatar(map.get("u_account").toString());
+			user.setRole(map.get("u_role").toString());
+			user.setLevel(Integer.parseInt(map.get("u_level").toString()));
+			user.setScore(Integer.parseInt(map.get("u_score").toString()));
+			user.setExchangeScore(Integer.parseInt(map.get("u_exchangeScore").toString()));
+		}
+		return user;
+	}
+
+	@Override
+	public int insertComment(final List<Object> objList) {
+		String sql = "INSERT INTO t_comment "
+				 + "(c_id,c_follow,c_owner,c_publishTime,c_content,c_memo) "
+				 + "VALUES (?, ?, ?, ?, ?, ?)";
+
+		int[] res = jdbcTemplate.batchUpdate(sql,
+				new BatchPreparedStatementSetter() {
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+						Comment cmt = (Comment) objList.get(i);
+						ps.setString(1, cmt.getId());
+						ps.setString(2, cmt.getFollow());
+						ps.setString(3, cmt.getOwner());
+						ps.setString(4, cmt.getPublishTime());
+						ps.setString(5, cmt.getContent());
+						ps.setString(6, "");
+					}
+
+					public int getBatchSize() {
+						return objList.size();
+					}
+				});
+		return res[0];
+	}
+
+	@Override
+	public int insertStory(final List<Object> objList) {
+		String sql = "INSERT INTO t_story "
+				 + "(s_id,s_follow,s_owner,s_publishTime,s_content,s_classical,s_memo) "
+				 + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+				
+		int[] res = jdbcTemplate.batchUpdate(sql,
+				new BatchPreparedStatementSetter() {
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+						Story story = (Story) objList.get(i);
+						ps.setString(1, story.getId());
+						ps.setString(2, story.getFollow());
+						ps.setString(3, story.getOwner());
+						ps.setString(4, story.getPublishTime());
+						ps.setString(5, story.getContent());
+						ps.setInt(6, story.getClassical());
+						ps.setString(7, "");
+					}
+
+					public int getBatchSize() {
+						return objList.size();
+					}
+				});
+		return res[0];
+	}
+
+
 	// @Override
 	// public String insertOneGift(Gift gift) {
 	// final String gid = UUID.randomUUID().toString().replace("-", "")

@@ -16,14 +16,11 @@ public interface DBAccessInterface {
 	public String insertOneUser(User user);
 	
 	//品图入库
-	public int insertPicture(List<TPicItem> objList);
+	public int insertPicture(List<Object> objList);
 	
-//	//故事入库
-//	public String insertOneStory(Story story);
-//	
-//	//评论入库
-//	public String insertOneComment(Comment comment);
-//	
+	//根据userId取用户信息
+	public User getUserById(String id);
+	
 //	//礼物入库
 //	public String insertOneGift(Gift gift);
 //	
@@ -63,5 +60,9 @@ public interface DBAccessInterface {
 	 * @return
 	 */
 	public List<Vote> getVoteForCache(String storyIds);
+
+	public int insertComment(List<Object> objList);
+
+	public int insertStory(List<Object> objList);
 
 }

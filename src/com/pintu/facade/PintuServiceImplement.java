@@ -128,7 +128,20 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		return null;
 	}
 
+	
+	@Override
+	public Boolean addStoryToTpic(Story story) {
+		cacheVisitor.cacheStory(story);
+		return true;
+	}
 
+
+	@Override
+	public Boolean commentPintu(Comment cmt) {
+		cacheVisitor.cacheComment(cmt);
+		return true;
+	}
+	
 	@Override
 	public List<TPicDesc> getTpicsByUser(String user, String pageNum) {
 		// TODO Auto-generated method stub
@@ -161,19 +174,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public Boolean addStoryToTpic(Story story) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Boolean applyForUser(String realname, String email, String intro) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean commentPintu(Comment cmt) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -307,9 +308,28 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public TPicDetails getTPicDetailsByID(String tpID) {
-		// TODO Auto-generated method stub
-		return null;
+	public String getTPicDetailsById(String tpId) {
+		TPicDetails details = new TPicDetails();
+		TPicItem item = cacheVisitor.getSpecificPic(tpId);
+		if(item != null){
+			String uerId = item.getOwner();
+			User user = dbVisitor.getUserById(uerId);
+			if(user != null){
+				details.setUserName(user.getAccount());
+				details.setScore(user.getScore());
+				details.setLevel(user.getLevel());
+				details.setAvatarImgPath(user.getAvatar());
+				details.setId(item.getId());
+				details.setName(item.getName());
+				details.setOwner(uerId);
+				details.setPublishTime(item.getPublishTime());
+				details.setMobImgPath(item.getMobImgPath());
+				details.setRawImgPath(item.getRawImgPath());
+			}
+		}
+		
+		JSONArray ja = JSONArray.fromObject(details);
+		return ja.toString();
 	}
 
 	@Override
@@ -373,18 +393,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public Byte[] getTPicBig(String tpID) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Byte[] getTPicThumbnail(String thumbnailId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public List<Message> getUserMessages(String user) {
 		// TODO Auto-generated method stub
 		return null;
@@ -396,11 +404,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		return null;
 	}
 
-	@Override
-	public Byte[] getTPicMoile(String tpID) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public void saveImagePathToProcessor(String filePath) {

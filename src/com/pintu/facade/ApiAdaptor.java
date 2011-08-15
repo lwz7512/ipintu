@@ -10,8 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
 
+import com.pintu.beans.Comment;
+import com.pintu.beans.Story;
 import com.pintu.beans.TastePic;
-//import com.pintu.utils.UTF8Formater;
 
 /**
  * Servlet调用服务的参数转换器，用来封装客户端参数并实现服务调用；
@@ -95,6 +96,33 @@ public class ApiAdaptor {
 	 */
 	public void getImageFile(String picId, HttpServletResponse res){
 		 pintuService.getImageFile(picId,res);
+	}
+	
+	/**
+	 * 根据图片id获得详情
+	 * @param tpId
+	 * @return
+	 */
+	public String getTPicDetailsById(String tpId){
+		return pintuService.getTPicDetailsById(tpId);
+	}
+	
+	/**
+	 * 为品图添加故事
+	 * @param story
+	 * @return
+	 */
+	public boolean addStoryToPicture(Story story){
+		return pintuService.addStoryToTpic(story);
+	}
+	
+	/**
+	 * 为一个品图的故事添加评论
+	 * @param cmt
+	 * @return
+	 */
+	public boolean addCommentToPicture(Comment cmt){
+		return pintuService.commentPintu(cmt);
 	}
 
 } //end of class

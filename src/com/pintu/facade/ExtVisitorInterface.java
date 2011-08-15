@@ -17,8 +17,16 @@ public interface ExtVisitorInterface {
 	public static final String OTHERMETHOD = "otherMethod";
 	
 	public static final String GETGALLERYBYTIME = "getGalleryByTime";
-	//TODO, TO ADD MORE METHOD DEFINITION...
 	
 	public static final String GETIMAGEFILE = "getImageFile";
+	
+	public static final String GETPICDETAIL = "getPicDetail";
+	
+	public static final String ADDSTORY = "addStory";
+	
+	public static final String ADDCOMMENT ="addComment";
+	
+	//TODO, TO ADD MORE METHOD DEFINITION...
+
 	
 }

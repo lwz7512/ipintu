@@ -98,8 +98,14 @@ public class CacheAccessImplement implements CacheAccessInterface {
 
 	@Override
 	public TPicItem getSpecificPic(String pid) {
-		// TODO Auto-generated method stub
-		return null;
+		TPicItem tpicItem = new TPicItem();
+		List<String> list = new ArrayList<String>();
+		list.add(pid);
+		List<Object> resList = pintuCache.getCachedPicture(list);
+		if(resList != null && resList.size() > 0){
+			tpicItem = (TPicItem) resList.get(0);
+		}
+		return tpicItem;
 	}
 
 	@Override
@@ -126,7 +132,6 @@ public class CacheAccessImplement implements CacheAccessInterface {
 		return null;
 	}
 
-	// FIXME, MODIFIED BY LWZ7512, GET CACHEED OBJS BY TYPE
 	@Override
 	public List<Object> getUnSavedObj(String type) {
 		List<Object> list = new ArrayList<Object>();

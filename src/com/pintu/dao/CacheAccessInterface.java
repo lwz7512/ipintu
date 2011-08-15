@@ -39,28 +39,28 @@ public interface CacheAccessInterface {
 	public User getSpecificUser(String userAccount);
 
 	// 缓存图片信息
-	// TODO, 顺便把id存到toSavedCacheIds,picture中
+	//顺便把id存到toSavedCacheIds,picture中
 	public void cachePicture(TPicItem pic);
 
 	// 读取图片信息
 	public TPicItem getSpecificPic(String pid);
 
 	// 缓存故事
-	// TODO, 存ID到缓存方便同步
+	// 存ID到缓存方便同步
 	public void cacheStory(Story story);
 
 	// 读取故事
 	public Story getSpecificStory(String sid);
 
 	// 缓存评论
-	// TODO, 存ID到缓存方便同步
+	//存ID到缓存方便同步
 	public void cacheComment(Comment comment);
 
 	// 读取评论
 	public Comment getSpecificComment(String cid);
 
 	// 缓存投票
-	// TODO, 存ID到缓存方便同步
+	//  存ID到缓存方便同步
 	public void cacheVote(Vote vote);
 
 	// 读取投票
@@ -69,18 +69,18 @@ public interface CacheAccessInterface {
 	// 读取未入库的所有某type的对象
 	public List<Object> getUnSavedObj(String type);
 
-	// 删掉已入库的所有对象ID: LinkedList中的所有ID
+	// FIXME (这个好像没用了) 删掉已入库的所有对象ID: LinkedList中的所有ID
 	public Boolean deleteSavedObjIDs(String type);
+	
+
+	// 查看缓存中的对象数目
+	public void traceCache();
 
 	// 缓存缩略图
 	public void cacheThumbnail(TPicDesc tpicDesc);
 
 	// 读取缓存中的缩略图
 	public List<TPicDesc> getCachedThumbnail(String createTime);
-
-	// 查看缓存中的对象数目
-	public void traceCache();
-	
 	
 	public void syncDBPictureToCache(TPicItem tpicItem);
 	

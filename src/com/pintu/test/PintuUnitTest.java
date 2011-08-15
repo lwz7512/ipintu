@@ -69,7 +69,7 @@ public class PintuUnitTest {
 	
 	@Test
 	public void insertPicture(){
-		List<TPicItem> list = new ArrayList<TPicItem>();
+		List<Object> list = new ArrayList<Object>();
 		TPicItem pic = new TPicItem();
 		pic.setId("12edddddddf");
 		pic.setName("1234567890abcdef.jpg");
