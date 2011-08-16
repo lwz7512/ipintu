@@ -60,7 +60,7 @@ public interface PintuServiceInterface {
 	// -------------------------------下面是已做的
 
 	// 发送一个贴图到系统中
-	public Boolean createTastePic(TastePic pic, String user);
+	public void createTastePic(TastePic pic, String user);
 
 	// 浏览社区画廊（预留）
 	public List<TPicDesc> getCommunityTpics();
@@ -95,17 +95,17 @@ public interface PintuServiceInterface {
 	public String getTPicDetailsById(String tpId);
 
 	// 为社区中的品图论足邀请添加品评
-	public Boolean addStoryToTpic(Story story);
+	public void addStoryToPintu(Story story);
 
 	// 对其他用户贴图进行评价
-	public Boolean commentPintu(Comment cmt);
+	public void addCommentToPintu(Comment cmt);
 	
 
 	// 查看一个品图的故事
-	public List<Story> getStoriesOfPic(String tpID);
+	public String getStoriesOfPic(String tpID);
 
 	// 查看一个品图的评论
-	public List<Comment> getCommentsOfPic(String tpID);
+	public String getCommentsOfPic(String tpID);
 	
 
 	// 查看自己的贴图列表

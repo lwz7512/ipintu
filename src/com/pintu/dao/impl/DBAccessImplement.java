@@ -101,7 +101,7 @@ public class DBAccessImplement implements DBAccessInterface {
 						return objList.size();
 					}
 				});
-		return res[0];
+		return res.length;
 	}
 
 	@Override
@@ -254,7 +254,7 @@ public class DBAccessImplement implements DBAccessInterface {
 						return objList.size();
 					}
 				});
-		return res[0];
+		return res.length;
 	}
 
 	@Override
@@ -281,7 +281,48 @@ public class DBAccessImplement implements DBAccessInterface {
 						return objList.size();
 					}
 				});
-		return res[0];
+		return res.length;
+	}
+
+	@Override
+	public List<Comment> getCommentsOfPic(String storyIds) {
+		List<Comment> cmtList = new ArrayList<Comment>();
+		String sql = "select * from t_comment where c_follow in ("+storyIds+")";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if(rows!=null && rows.size()>0){
+			for(int i = 0;i<rows.size();i++){
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Comment comment = new Comment();
+				comment.setId(map.get("c_id").toString());
+				comment.setFollow(map.get("c_follow").toString());
+				comment.setOwner(map.get("c_owner").toString());
+				comment.setPublishTime(map.get("c_publishTime").toString());
+				comment.setContent(map.get("c_content").toString());
+				cmtList.add(comment);
+			}
+		}
+		return cmtList;
+	}
+
+	@Override
+	public List<Story> getStoriesOfPic(String tpID) {
+		List<Story> storyList = new ArrayList<Story>();
+		String sql = "select * from t_story where s_follow = '"+tpID+"'";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Story story = new Story();
+				story.setId(map.get("s_id").toString());
+				story.setFollow(map.get("s_follow").toString());
+				story.setOwner(map.get("s_owner").toString());
+				story.setPublishTime(map.get("s_publishTime").toString());
+				story.setContent(map.get("s_content").toString());
+				story.setClassical(Integer.parseInt(map.get("s_classical").toString()));
+				storyList.add(story);
+			}
+		}
+		return storyList;
 	}
 
 

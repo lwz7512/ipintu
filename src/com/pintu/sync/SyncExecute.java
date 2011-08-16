@@ -72,6 +72,8 @@ public class SyncExecute implements Runnable {
 			// TODO, 批量同步评论
 			// 并删除已同步的对象ID；
 			syncCommentToDB();
+			
+			cacheVisitor.traceCache();
 
 			try {
 				Thread.sleep(1000);
@@ -106,7 +108,7 @@ public class SyncExecute implements Runnable {
 				cachedObjIds.removeAll(needRemoveIds);
 			}
 		} else {
-//				log.info("当前没有需要入库的评论！");
+//			log.info("当前没有需要入库的评论！");
 		}
 
 	}

@@ -26,6 +26,12 @@ public interface ExtVisitorInterface {
 	
 	public static final String ADDCOMMENT ="addComment";
 	
+	
+	public static final String GETSTORIESOFPIC ="getStoriesOfPic";
+	
+	public static final String GETCOMMENTSOFPIC ="getCommentsOfPic";
+	
+	
 	//TODO, TO ADD MORE METHOD DEFINITION...
 
 	

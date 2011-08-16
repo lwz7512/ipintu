@@ -88,7 +88,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public Boolean createTastePic(TastePic pic, String user) {
+	public void createTastePic(TastePic pic, String user) {
 		System.out.println("3 构造对象 pintuservice createTastePic");
 		System.out.println("TastePic:" + pic.getFileType() + "   user:" + user);
 		if (pic != null && user != null) {
@@ -125,21 +125,18 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			// TODO
 		}
 
-		return null;
 	}
 
 	
 	@Override
-	public Boolean addStoryToTpic(Story story) {
+	public void addStoryToPintu(Story story) {
 		cacheVisitor.cacheStory(story);
-		return true;
 	}
 
 
 	@Override
-	public Boolean commentPintu(Comment cmt) {
+	public void addCommentToPintu(Comment cmt) {
 		cacheVisitor.cacheComment(cmt);
-		return true;
 	}
 	
 	@Override
@@ -331,7 +328,43 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		JSONArray ja = JSONArray.fromObject(details);
 		return ja.toString();
 	}
+	
+	
+	@Override
+	public String getStoriesOfPic(String tpID) {
+		List<Story> storyList = getStoryByPid(tpID);
+		JSONArray jarray = JSONArray.fromCollection(storyList);
+		return jarray.toString();
+	}
+	
+	private List<Story> getStoryByPid(String tpID){
+		return dbVisitor. getStoriesOfPic(tpID);
+	}
 
+	@Override
+	public String getCommentsOfPic(String tpID) {
+		List<Comment>  cmtList = new ArrayList<Comment>();
+		//根据品图id查到基下的所有故事再分离出故事的id
+		List<Story> storyList = getStoryByPid(tpID);
+		StringBuffer storyIds= new StringBuffer();
+		if(storyList != null){
+			for(int i=0;i<storyList.size();i++){
+				Story story = storyList.get(i);
+				if(storyIds.length()>0){
+					storyIds.append(",");
+				}
+				storyIds.append("'");
+				storyIds.append(story.getId());
+				storyIds.append("'"); 
+			}
+		}
+		//根据故事的id查评论
+		cmtList=dbVisitor.getCommentsOfPic(storyIds.toString());
+		JSONArray jarray = JSONArray.fromCollection(cmtList);
+		return jarray.toString();
+	}
+
+	
 	@Override
 	public User getUsrBasInfo(String user) {
 		// TODO Auto-generated method stub
@@ -380,17 +413,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		return null;
 	}
 
-	@Override
-	public List<Comment> getCommentsOfPic(String tpID) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Story> getStoriesOfPic(String tpID) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	@Override
 	public List<Message> getUserMessages(String user) {

@@ -112,8 +112,8 @@ public class ApiAdaptor {
 	 * @param story
 	 * @return
 	 */
-	public boolean addStoryToPicture(Story story){
-		return pintuService.addStoryToTpic(story);
+	public void addStoryToPicture(Story story){
+		 pintuService.addStoryToPintu(story);
 	}
 	
 	/**
@@ -121,8 +121,16 @@ public class ApiAdaptor {
 	 * @param cmt
 	 * @return
 	 */
-	public boolean addCommentToPicture(Comment cmt){
-		return pintuService.commentPintu(cmt);
+	public void addCommentToPicture(Comment cmt){
+		 pintuService.addCommentToPintu(cmt);
+	}
+	
+	public String getCommentsOfPic(String tpID){
+		return pintuService.getCommentsOfPic(tpID);
+	}
+	
+	public String getStoriesOfPic(String tpID){
+		return pintuService.getStoriesOfPic(tpID);
 	}
 
 } //end of class

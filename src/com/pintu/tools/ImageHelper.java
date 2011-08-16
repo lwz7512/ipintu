@@ -101,6 +101,7 @@ public class ImageHelper {
 				out = new FileOutputStream(strBuffer);
 				JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
 				encoder.encode(tag);
+				out.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

@@ -143,8 +143,8 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			pw.close();
 
 		}else if (action.equals(AppStarter.ADDSTORY)) {
+			
 			res.setContentType("text/plain;charset=UTF-8");
-			PrintWriter pw = res.getWriter();
 			Story story = new Story();
 			String sid = UUID.randomUUID().toString().replace("-", "").substring(16);
 			story.setId(sid);
@@ -153,12 +153,12 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			story.setPublishTime(sdf.format(new Date().getTime()));
 			story.setContent(req.getParameter("content"));
 			story.setClassical(Integer.parseInt(req.getParameter("classical")));
+			
 			apiAdaptor.addStoryToPicture(story);
-			pw.write("添加故事成功！");	
-			pw.close();
+			
 		} else if (action.equals(AppStarter.ADDCOMMENT)) {
+			//FIXME 这个添加评论的总有问题就是不插入到数据，好奇怪，老大您抽空看下，我先做投票的东西了
 			res.setContentType("text/plain;charset=UTF-8");
-			PrintWriter pw = res.getWriter();
 			Comment cmt = new Comment();
 			String cid = UUID.randomUUID().toString().replace("-", "").substring(16);
 			cmt.setId(cid);
@@ -166,11 +166,26 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			cmt.setOwner(req.getParameter("owner"));
 			cmt.setPublishTime(sdf.format(new Date().getTime()));
 			cmt.setContent(req.getParameter("content"));
+			
 			apiAdaptor.addCommentToPicture(cmt);
-			pw.write("添加评论成功！");	
-			pw.close();
 
-		}else if (action.equals(AppStarter.APPLYFORUSER)) {
+		}else if (action.equals(AppStarter.GETSTORIESOFPIC)) {
+			
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String tpID = req.getParameter("tpID");
+			pw.write(apiAdaptor.getStoriesOfPic(tpID));
+			pw.close();
+			
+		} else if (action.equals(AppStarter.GETCOMMENTSOFPIC)) {
+			
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String tpID = req.getParameter("tpID");
+			pw.write(apiAdaptor.getCommentsOfPic(tpID));
+			pw.close();
+			
+		} else if (action.equals(AppStarter.APPLYFORUSER)) {
 			// TODO, ...
 
 		} else if (action.equals(AppStarter.OTHERMETHOD)) {

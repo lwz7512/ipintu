@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.After;
 import org.junit.Before;
@@ -24,6 +25,7 @@ public class PintuUnitTest {
 	
 	private PintuServiceInterface pintuService;
 	
+	SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	@Before
 	public void setUp() throws Exception {		
 		
@@ -74,7 +76,7 @@ public class PintuUnitTest {
 		pic.setId("12edddddddf");
 		pic.setName("1234567890abcdef.jpg");
 		pic.setOwner("aa");
-		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	
 		 java.util.Date ud = new java.util.Date();
 		 Date sd = new java.sql.Date(ud.getTime());
 		pic.setPublishTime(sdf.format(sd));
@@ -117,6 +119,32 @@ public class PintuUnitTest {
 				System.out.println(list.get(i));
 			}
 		}
+	}
+	
+	@Test
+	public void testInsertComment(){
+		List<Object> objList = new ArrayList();
+		Comment cmt1 = new Comment();
+		String id = UUID.randomUUID().toString().replace("-", "").substring(16);
+		cmt1.setId(id);
+		cmt1.setFollow("b4f48a485bc6cece");
+		cmt1.setOwner("a053beae20125b5b");
+		cmt1.setPublishTime(sdf.format(new Date().getTime()));
+		cmt1.setContent("junitTestComment");
+		objList.add(cmt1);
+		Comment cmt2= new Comment();
+		String id2 = UUID.randomUUID().toString().replace("-", "").substring(16);
+		cmt2.setId(id2);
+		cmt2.setFollow("b4f48a485bc6cece");
+		cmt2.setOwner("a053beae20125b5b");
+		cmt2.setPublishTime(sdf.format(new Date().getTime()));
+		cmt2.setContent("junitTestComment");
+		objList.add(cmt2);
+		int i = dbAccess.insertComment(objList);
+		if(i>0){
+			System.out.println("插入数据库成功"+i);
+		}
+		
 	}
 	
 	@After

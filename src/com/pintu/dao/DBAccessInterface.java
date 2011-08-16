@@ -65,4 +65,8 @@ public interface DBAccessInterface {
 
 	public int insertStory(List<Object> objList);
 
+	public List<Comment> getCommentsOfPic(String tpID);
+
+	public List<Story> getStoriesOfPic(String tpID);
+
 }
