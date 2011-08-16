@@ -13,6 +13,7 @@ import org.apache.commons.fileupload.FileItem;
 import com.pintu.beans.Comment;
 import com.pintu.beans.Story;
 import com.pintu.beans.TastePic;
+import com.pintu.beans.Vote;
 
 /**
  * Servlet调用服务的参数转换器，用来封装客户端参数并实现服务调用；
@@ -117,7 +118,7 @@ public class ApiAdaptor {
 	}
 	
 	/**
-	 * 为一个品图的故事添加评论
+	 * 为一个品图添加评论
 	 * @param cmt
 	 * @return
 	 */
@@ -131,6 +132,10 @@ public class ApiAdaptor {
 	
 	public String getStoriesOfPic(String tpID){
 		return pintuService.getStoriesOfPic(tpID);
+	}
+
+	public void addVoteToStory(Vote vote) {
+		pintuService.addVoteToStory(vote);
 	}
 
 } //end of class

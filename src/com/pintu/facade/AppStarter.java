@@ -25,6 +25,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 
 import com.pintu.beans.Comment;
 import com.pintu.beans.Story;
+import com.pintu.beans.Vote;
 import com.pintu.jobs.TaskStarter;
 import com.pintu.sync.CacheToDB;
 import com.pintu.sync.DBToCache;
@@ -157,7 +158,7 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			apiAdaptor.addStoryToPicture(story);
 			
 		} else if (action.equals(AppStarter.ADDCOMMENT)) {
-			//FIXME 这个添加评论的总有问题就是不插入到数据，好奇怪，老大您抽空看下，我先做投票的东西了
+			//FIXME 这个添加评论的总有问题就是不插入到数据，好奇怪，老大您抽空看下
 			res.setContentType("text/plain;charset=UTF-8");
 			Comment cmt = new Comment();
 			String cid = UUID.randomUUID().toString().replace("-", "").substring(16);
@@ -185,10 +186,19 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			pw.write(apiAdaptor.getCommentsOfPic(tpID));
 			pw.close();
 			
+		} else if (action.equals(AppStarter.ADDVOTE)) {
+			Vote vote = new Vote();
+			String vid = UUID.randomUUID().toString().replace("-", "").substring(16);
+			vote.setId(vid);
+			vote.setFollow(req.getParameter("follow"));
+			vote.setType(req.getParameter("type"));
+			vote.setAmount(Integer.parseInt(req.getParameter("amount")));
+			apiAdaptor.addVoteToStory(vote);
+
 		} else if (action.equals(AppStarter.APPLYFORUSER)) {
 			// TODO, ...
 
-		} else if (action.equals(AppStarter.OTHERMETHOD)) {
+		}  else if (action.equals(AppStarter.OTHERMETHOD)) {
 			// TODO, ...
 
 		} else {

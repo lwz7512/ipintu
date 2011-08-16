@@ -199,6 +199,8 @@ public interface PintuServiceInterface {
 	// 发布行业动态
 	public Boolean publishIndustryEvent(Event tpEvent);
 
+	public void addVoteToStory(Vote vote);
+
 	// TO BE CONTINUED...
 
 }

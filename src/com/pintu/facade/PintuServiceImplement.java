@@ -139,6 +139,12 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		cacheVisitor.cacheComment(cmt);
 	}
 	
+
+	@Override
+	public void addVoteToStory(Vote vote) {
+		cacheVisitor.cacheVote(vote);
+	}
+	
 	@Override
 	public List<TPicDesc> getTpicsByUser(String user, String pageNum) {
 		// TODO Auto-generated method stub
@@ -332,34 +338,15 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	
 	@Override
 	public String getStoriesOfPic(String tpID) {
-		List<Story> storyList = getStoryByPid(tpID);
+		List<Story> storyList = dbVisitor. getStoriesOfPic(tpID);
 		JSONArray jarray = JSONArray.fromCollection(storyList);
 		return jarray.toString();
 	}
 	
-	private List<Story> getStoryByPid(String tpID){
-		return dbVisitor. getStoriesOfPic(tpID);
-	}
 
 	@Override
 	public String getCommentsOfPic(String tpID) {
-		List<Comment>  cmtList = new ArrayList<Comment>();
-		//根据品图id查到基下的所有故事再分离出故事的id
-		List<Story> storyList = getStoryByPid(tpID);
-		StringBuffer storyIds= new StringBuffer();
-		if(storyList != null){
-			for(int i=0;i<storyList.size();i++){
-				Story story = storyList.get(i);
-				if(storyIds.length()>0){
-					storyIds.append(",");
-				}
-				storyIds.append("'");
-				storyIds.append(story.getId());
-				storyIds.append("'"); 
-			}
-		}
-		//根据故事的id查评论
-		cmtList=dbVisitor.getCommentsOfPic(storyIds.toString());
+		List<Comment>  cmtList = dbVisitor.getCommentsOfPic(tpID);
 		JSONArray jarray = JSONArray.fromCollection(cmtList);
 		return jarray.toString();
 	}
@@ -524,6 +511,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		File file = new File(thumbnail);
 		return file;
 	}
+
 
 	// TODO, 实现其他接口方法
 

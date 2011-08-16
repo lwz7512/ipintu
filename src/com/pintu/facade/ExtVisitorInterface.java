@@ -26,10 +26,11 @@ public interface ExtVisitorInterface {
 	
 	public static final String ADDCOMMENT ="addComment";
 	
-	
 	public static final String GETSTORIESOFPIC ="getStoriesOfPic";
 	
 	public static final String GETCOMMENTSOFPIC ="getCommentsOfPic";
+	
+	public static final String  ADDVOTE= "addVote";
 	
 	
 	//TODO, TO ADD MORE METHOD DEFINITION...

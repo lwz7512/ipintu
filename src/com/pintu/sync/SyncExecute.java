@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import com.pintu.beans.Comment;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicItem;
+import com.pintu.beans.Vote;
 import com.pintu.dao.CacheAccessInterface;
 import com.pintu.dao.DBAccessInterface;
 
@@ -18,21 +19,22 @@ public class SyncExecute implements Runnable {
 	private DBAccessInterface dbVisitor;
 	// 由Spring注入
 	private CacheAccessInterface cacheVisitor;
+		
 	// 同步运行开关
 	private Boolean syncFlag = true;
 
 	private Logger log = Logger.getLogger(SyncExecute.class);
-	
-	//未入库的对象
+
+	// 未入库的对象
 	private List<Object> unSavedObjList = new ArrayList<Object>();
-	
-	//合法的可入库对象
+
+	// 合法的可入库对象
 	private List<Object> rightObjList = new ArrayList<Object>();
-	
-	//缓存的需要入库的对象id
+
+	// 缓存的需要入库的对象id
 	private LinkedList<String> cachedObjIds = new LinkedList<String>();
-	
-	//已入库的无用的数据对象id
+
+	// 已入库的无用的数据对象id
 	private List<String> needRemoveIds = new ArrayList<String>();
 
 	public SyncExecute() {
@@ -61,18 +63,22 @@ public class SyncExecute implements Runnable {
 
 		while (syncFlag) {
 
-			// TODO, 批量同步图片
+			// 批量同步图片
 			// 并删除已同步的对象ID；
 			syncPictureToDB();
 
-			// TODO, 批量同步故事
+			// 批量同步故事
 			// 并删除已同步的对象ID；
 			syncStoryToDB();
 
-			// TODO, 批量同步评论
+			// 批量同步评论
 			// 并删除已同步的对象ID；
 			syncCommentToDB();
-			
+
+			// TODO, 批量同步投票
+			// 并删除已同步的对象ID；
+			syncVoteToDB();
+
 			cacheVisitor.traceCache();
 
 			try {
@@ -82,6 +88,11 @@ public class SyncExecute implements Runnable {
 			}
 		}
 
+	}
+
+	//TODO 这个投票的缓存晚上想好了修改，明天早上提交（下午做的有问题，我先给删除了）
+	private void syncVoteToDB() {
+		
 	}
 
 	private void syncCommentToDB() {
@@ -108,7 +119,7 @@ public class SyncExecute implements Runnable {
 				cachedObjIds.removeAll(needRemoveIds);
 			}
 		} else {
-//			log.info("当前没有需要入库的评论！");
+			// log.info("当前没有需要入库的评论！");
 		}
 
 	}
@@ -137,7 +148,7 @@ public class SyncExecute implements Runnable {
 				cachedObjIds.removeAll(needRemoveIds);
 			}
 		} else {
-//				log.info("当前没有需要入库的故事！");
+			// log.info("当前没有需要入库的故事！");
 		}
 
 	}
@@ -149,7 +160,6 @@ public class SyncExecute implements Runnable {
 		cachedObjIds.clear();
 		cachedObjIds = CacheAccessInterface.toSavedCacheIds
 				.get(CacheAccessInterface.PICTURE_TYPE);
-
 
 		// 分离出可入库的正确图片对象
 		rightObjList = getVaildObj(unSavedObjList,
@@ -166,11 +176,9 @@ public class SyncExecute implements Runnable {
 				cachedObjIds.removeAll(needRemoveIds);
 			}
 		} else {
-//				log.info("当前没有需要入库的图片！");
+			// log.info("当前没有需要入库的图片！");
 		}
 	}
-	
-	
 
 	/**
 	 * 校验取出的对象，返回可入库的对象
@@ -212,6 +220,15 @@ public class SyncExecute implements Runnable {
 					} else {
 						// 有属性字段为空时为不全法的入库对象
 						log.warn("不能入库的评论对象，ID为：" + cmt.getId());
+					}
+				}else if (type.equals(CacheAccessInterface.VOTE_TYPE)) {
+					Vote vote = (Vote) objList.get(i);
+					if (vote.getFollow() != null && vote.getType() != null
+							&& vote.getAmount() >0) {
+						resList.add(vote);
+					} else {
+						// 有属性字段为空时为不全法的入库对象
+						log.warn("不能入库的投票对象，ID为：" + vote.getId());
 					}
 				}
 			}
