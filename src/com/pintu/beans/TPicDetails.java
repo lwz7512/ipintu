@@ -6,7 +6,7 @@ package com.pintu.beans;
  * @author lwz
  *
  */
-public class TPicDetails extends TPicItem{
+public class TPicDetails extends TPicItem {
 
 	private static final long serialVersionUID = -8555839266466344516L;
 	
@@ -22,6 +22,32 @@ public class TPicDetails extends TPicItem{
 	//用户等级
 	private int level;
 	
+	//品图数目（故事）数目
+	public String storiesNum;
+	//评论数目
+	public String commentsNum;
+
+	
+	public String getstoriesNum() {
+		return storiesNum;
+	}
+
+
+	public void setStoriesNum(String storiesNum) {
+		this.storiesNum = storiesNum;
+	}
+
+
+	public String getCommentsNum() {
+		return commentsNum;
+	}
+
+
+	public void setCommentsNum(String commentsNum) {
+		this.commentsNum = commentsNum;
+	}
+
+
 	public TPicDetails() {
 		
 	}

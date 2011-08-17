@@ -69,12 +69,10 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		this.imgProcessor = imgProcessor;
 	}
 
-	// TODO, Spring injection
 	public void setDbVisitor(DBAccessInterface dbVisitor) {
 		this.dbVisitor = dbVisitor;
 	}
 
-	// TODO, Spring injection
 	public void setCacheVisitor(CacheAccessInterface cacheVisitor) {
 		this.cacheVisitor = cacheVisitor;
 	}
@@ -311,12 +309,16 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public String getTPicDetailsById(String tpId) {
+	public TPicDetails getTPicDetailsById(String tpID) {
 		TPicDetails details = new TPicDetails();
-		TPicItem item = cacheVisitor.getSpecificPic(tpId);
+		TPicItem item = cacheVisitor.getSpecificPic(tpID);
 		if(item != null){
 			String uerId = item.getOwner();
 			User user = dbVisitor.getUserById(uerId);
+			int commentNum = this.getCommentsOfPic(tpID).size();
+			int storyNum = this.getStoriesOfPic(tpID).size();
+			details.setStoriesNum(String.valueOf(storyNum));
+			details.setCommentsNum(String.valueOf(commentNum));
 			if(user != null){
 				details.setUserName(user.getAccount());
 				details.setScore(user.getScore());
@@ -328,27 +330,29 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				details.setPublishTime(item.getPublishTime());
 				details.setMobImgPath(item.getMobImgPath());
 				details.setRawImgPath(item.getRawImgPath());
+				details.setDescription(item.getDescription());
+				details.setTags(item.getTags());
+				details.setAllowStory(item.getAllowStory());
 			}
-		}
 		
-		JSONArray ja = JSONArray.fromObject(details);
-		return ja.toString();
+		}
+		return details;
 	}
 	
 	
 	@Override
-	public String getStoriesOfPic(String tpID) {
+	public List<Story> getStoriesOfPic(String tpID) {
 		List<Story> storyList = dbVisitor. getStoriesOfPic(tpID);
-		JSONArray jarray = JSONArray.fromCollection(storyList);
-		return jarray.toString();
+//		JSONArray jarray = JSONArray.fromCollection(storyList);
+		return storyList;
 	}
 	
 
 	@Override
-	public String getCommentsOfPic(String tpID) {
+	public List<Comment> getCommentsOfPic(String tpID) {
 		List<Comment>  cmtList = dbVisitor.getCommentsOfPic(tpID);
-		JSONArray jarray = JSONArray.fromCollection(cmtList);
-		return jarray.toString();
+//		JSONArray jarray = JSONArray.fromCollection(cmtList);
+		return cmtList;
 	}
 
 	
@@ -454,6 +458,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			// 对图片进行输出编码
 			imageIn.close();
 			// 关闭文件流
+			out.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (ImageFormatException e) {
@@ -494,6 +499,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	        bos.flush();
 	        //清空输出缓冲流        
 	        bos.close(); 
+	        out.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -510,6 +516,29 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		String thumbnail = imagePath + File.separator + thumbnailName;
 		File file = new File(thumbnail);
 		return file;
+	}
+
+	/**
+	 * path里就包含了路径信息和图片名称
+	 */
+	@Override
+	public void getImageByPath(String path, HttpServletResponse res) {
+		File defaultFile = new File( imagePath + File.separator +"avatarImg"+File.separator+"defaultAvatar.jpg");
+		String type =  path.substring(path.lastIndexOf(".") + 1);
+		File file = new File(path);
+		if(file.exists()){
+			if(type.toLowerCase().equals("jpg")){
+				writeJPGImage(file,res);
+			}else if(type.toLowerCase().equals("png")){
+				writePNGImage(file,res);
+			}else if(type.toLowerCase().equals("gif")){
+				writeGIFImage(file,res);
+			}else{
+				writeJPGImage(defaultFile,res);
+			}
+		}
+	
+		
 	}
 
 

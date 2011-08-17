@@ -92,6 +92,43 @@ public class SyncExecute implements Runnable {
 
 	//TODO 这个投票的缓存晚上想好了修改，明天早上提交（下午做的有问题，我先给删除了）
 	private void syncVoteToDB() {
+		unSavedObjList.clear();
+		unSavedObjList = cacheVisitor
+				.getUnSavedObj(CacheAccessInterface.VOTE_TYPE);
+		cachedObjIds.clear();
+		cachedObjIds = CacheAccessInterface.toSavedCacheIds
+				.get(CacheAccessInterface.VOTE_TYPE);
+
+		rightObjList.clear();
+		rightObjList = getVaildObj(unSavedObjList,
+				CacheAccessInterface.VOTE_TYPE);
+
+		//对投票的入库做特殊处理，先查询是否对于某一故事的某一类投票的记录是否存在
+		if (rightObjList != null && rightObjList.size() > 0) {
+			for(int i = 0 ;i< rightObjList.size();i++){
+				Vote vote = (Vote) rightObjList.get(i);
+				//原则上，入库的投票，一个故事最多有是几个种类的有几条投票数据
+				List<Vote> resList = dbVisitor.getVoteByFollowAndType(vote.getFollow(),vote.getType());
+				int rows = 0;
+				//存在对于某一故事的这一种类的评论，则更新数据库中此条记录，否则插入新的记录
+				if(resList.size()>0){
+					rows = dbVisitor.updateVote(rightObjList);
+				}else{
+					rows = dbVisitor.insertVote(rightObjList);
+				}
+				if (rows>0) {
+					// 成功入库后，全部删除已入库的对象id
+					needRemoveIds.clear();
+					for (int j = 0; j < rightObjList.size(); j++) {
+						needRemoveIds.add(vote.getId());
+					}
+					cachedObjIds.removeAll(needRemoveIds);
+				}
+			}
+			
+		} else {
+			// log.info("当前没有需要入库的的投票！");
+		}
 		
 	}
 

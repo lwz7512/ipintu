@@ -8,10 +8,13 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONArray;
+
 import org.apache.commons.fileupload.FileItem;
 
 import com.pintu.beans.Comment;
 import com.pintu.beans.Story;
+import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TastePic;
 import com.pintu.beans.Vote;
 
@@ -99,12 +102,21 @@ public class ApiAdaptor {
 		 pintuService.getImageFile(picId,res);
 	}
 	
+	
+	/**
+	 * 根据图片文件路径返回图片
+	 * @param path
+	 * @param res
+	 */
+	public void getImageByPath(String path, HttpServletResponse res){
+		pintuService.getImageByPath(path, res);
+	}
 	/**
 	 * 根据图片id获得详情
 	 * @param tpId
 	 * @return
 	 */
-	public String getTPicDetailsById(String tpId){
+	public TPicDetails getTPicDetailsById(String tpId){
 		return pintuService.getTPicDetailsById(tpId);
 	}
 	
@@ -127,13 +139,17 @@ public class ApiAdaptor {
 	}
 	
 	public String getCommentsOfPic(String tpID){
-		return pintuService.getCommentsOfPic(tpID);
+		return JSONArray.fromCollection(pintuService.getCommentsOfPic(tpID)).toString();
 	}
 	
 	public String getStoriesOfPic(String tpID){
-		return pintuService.getStoriesOfPic(tpID);
+		return JSONArray.fromCollection(pintuService.getStoriesOfPic(tpID)).toString();
 	}
 
+	/**
+	 * 为品图故事添加评论
+	 * @param vote
+	 */
 	public void addVoteToStory(Vote vote) {
 		pintuService.addVoteToStory(vote);
 	}

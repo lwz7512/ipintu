@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONArray;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadBase.SizeLimitExceededException;
 import org.apache.commons.fileupload.FileUploadException;
@@ -25,6 +27,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 
 import com.pintu.beans.Comment;
 import com.pintu.beans.Story;
+import com.pintu.beans.TPicDetails;
 import com.pintu.beans.Vote;
 import com.pintu.jobs.TaskStarter;
 import com.pintu.sync.CacheToDB;
@@ -136,11 +139,15 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			apiAdaptor.getImageFile(picId, res);
 
 		}else if (action.equals(AppStarter.GETPICDETAIL)) {
+			//FIXME 这里分别反回头像图片和详情信息已测试通过
 			String tpId = req.getParameter("tpId");
-			res.setContentType("text/plain;charset=UTF-8");
+			TPicDetails details = apiAdaptor.getTPicDetailsById(tpId);
+			if(details != null){
+				String path = details.getAvatarImgPath();
+//				apiAdaptor.getImageByPath(path, res);
+			}
 			PrintWriter pw = res.getWriter();
-			String details = apiAdaptor.getTPicDetailsById(tpId);
-			pw.write(details);	
+			pw.write(JSONArray.fromObject(details).toString());	
 			pw.close();
 
 		}else if (action.equals(AppStarter.ADDSTORY)) {

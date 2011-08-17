@@ -15,6 +15,7 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 import com.pintu.beans.Comment;
 import com.pintu.beans.TPicItem;
 import com.pintu.beans.User;
+import com.pintu.beans.Vote;
 import com.pintu.dao.DBAccessInterface;
 import com.pintu.facade.PintuServiceInterface;
 
@@ -123,7 +124,7 @@ public class PintuUnitTest {
 	
 	@Test
 	public void testInsertComment(){
-		List<Object> objList = new ArrayList();
+		List<Object> objList = new ArrayList<Object>();
 		Comment cmt1 = new Comment();
 		String id = UUID.randomUUID().toString().replace("-", "").substring(16);
 		cmt1.setId(id);
@@ -145,6 +146,40 @@ public class PintuUnitTest {
 			System.out.println("插入数据库成功"+i);
 		}
 		
+	}
+	
+	@Test
+	public void insertVote(){
+		List<Object> list = new ArrayList<Object>();
+		Vote v=new Vote();
+		v.setId("1");
+		v.setFollow("2");
+		v.setType("heart");
+		v.setAmount(3);
+		list.add(v);
+		System.out.println("测试插入投票："+dbAccess.insertVote(list));
+	}
+	@Test
+	public void updateVote(){
+		List<Object> list = new ArrayList<Object>();
+		Vote v=new Vote();
+		v.setId("1");
+		v.setFollow("9ab9a9a19396bcfd");
+		v.setType("egg");
+		v.setAmount(3);
+		list.add(v);
+		int i = dbAccess.updateVote(list);
+		System.out.println("更新投票条数为："+i);
+	}
+	
+	@Test
+	public void getVoteOfStory(){
+		System.out.println("测试根据故事id得投票"+dbAccess.getVoteOfStory("9ab9a9a19396bcfd"));
+	}
+	
+	@Test
+	public void getVoteByFollowAndType(){
+		System.out.println("测试根据故事id和投票type得投票"+dbAccess.getVoteByFollowAndType("9ab9a9a19396bcfd","egg").size());
 	}
 	
 	@After

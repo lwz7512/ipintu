@@ -75,4 +75,6 @@ public interface DBAccessInterface {
 	
 	public List<Vote> getVoteOfStory(String storyID);
 
+	public List<Vote> getVoteByFollowAndType(String storyId, String type);
+
 }

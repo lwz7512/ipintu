@@ -222,7 +222,8 @@ public class DBAccessImplement implements DBAccessInterface {
 		if(rows!=null && rows.size()>0){
 			Map<String, Object> map = (Map<String, Object>) rows.get(0);
 			user.setId(map.get("u_id").toString());
-			user.setAvatar(map.get("u_account").toString());
+			user.setAccount(map.get("u_account").toString());
+			user.setAvatar(map.get("u_avatar").toString());
 			user.setRole(map.get("u_role").toString());
 			user.setLevel(Integer.parseInt(map.get("u_level").toString()));
 			user.setScore(Integer.parseInt(map.get("u_score").toString()));
@@ -287,7 +288,7 @@ public class DBAccessImplement implements DBAccessInterface {
 	@Override
 	public List<Comment> getCommentsOfPic(String tpID) {
 		List<Comment> cmtList = new ArrayList<Comment>();
-		String sql = "select * from t_comment where c_follow in ("+tpID+")";
+		String sql = "select * from t_comment where c_follow = '"+tpID+"'";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if(rows!=null && rows.size()>0){
 			for(int i = 0;i<rows.size();i++){
@@ -354,7 +355,7 @@ public class DBAccessImplement implements DBAccessInterface {
 	//TODO 这个还需要验证
 	@Override
 	public int updateVote(final List<Object> objList) {
-		String sql = "update t_vote  set amount =? where v_id = ? and v_follow = ?";
+		String sql = "update t_vote  set v_amount = v_amount +? where v_type = ? and v_follow = ?";
 
 		int[] res = jdbcTemplate.batchUpdate(sql,
 				new BatchPreparedStatementSetter() {
@@ -362,7 +363,7 @@ public class DBAccessImplement implements DBAccessInterface {
 							throws SQLException {
 						Vote vote = (Vote) objList.get(i);
 						ps.setInt(1, vote.getAmount());
-						ps.setString(2, vote.getId());
+						ps.setString(2, vote.getType());
 						ps.setString(3, vote.getFollow());
 						
 					}
@@ -379,6 +380,25 @@ public class DBAccessImplement implements DBAccessInterface {
 	public List<Vote> getVoteOfStory(String storyID) {
 		List<Vote> voteList = new ArrayList<Vote>();
 		String sql = "select * from t_vote where v_follow = '"+storyID+"'";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Vote vote = new Vote();
+				vote.setId(map.get("v_id").toString());
+				vote.setFollow(map.get("v_follow").toString());
+				vote.setType(map.get("v_type").toString());
+				vote.setAmount(Integer.parseInt(map.get("v_amount").toString()));
+				voteList.add(vote);
+			}
+		}
+		return voteList;
+	}
+
+	@Override
+	public List<Vote> getVoteByFollowAndType(String storyId, String type) {
+		List<Vote> voteList = new ArrayList<Vote>();
+		String sql = "select * from t_vote where v_follow = '"+storyId+"' and v_type = '"+type+"'";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {

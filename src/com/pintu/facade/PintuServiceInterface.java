@@ -14,6 +14,7 @@ import com.pintu.beans.News;
 import com.pintu.beans.Note;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicDesc;
+import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TastePic;
 import com.pintu.beans.User;
 import com.pintu.beans.Vote;
@@ -81,6 +82,8 @@ public interface PintuServiceInterface {
 	 * @param res
 	 */
 	public void getImageFile(String picId, HttpServletResponse res);
+	
+	public void getImageByPath(String path, HttpServletResponse res);
 
 	/**
 	 * 根据缩略图的名字找到相应的缩略图文件
@@ -92,7 +95,7 @@ public interface PintuServiceInterface {
 
 	// TODO FIXME 今天任务
 	// 浏览一个品图详情
-	public String getTPicDetailsById(String tpId);
+	public TPicDetails getTPicDetailsById(String tpId);
 
 	// 为社区中的品图论足邀请添加品评
 	public void addStoryToPintu(Story story);
@@ -102,10 +105,10 @@ public interface PintuServiceInterface {
 	
 
 	// 查看一个品图的故事
-	public String getStoriesOfPic(String tpID);
+	public List<Story> getStoriesOfPic(String tpID);
 
 	// 查看一个品图的评论
-	public String getCommentsOfPic(String tpID);
+	public List<Comment> getCommentsOfPic(String tpID);
 	
 
 	// 查看自己的贴图列表
@@ -200,6 +203,8 @@ public interface PintuServiceInterface {
 	public Boolean publishIndustryEvent(Event tpEvent);
 
 	public void addVoteToStory(Vote vote);
+
+
 
 	// TO BE CONTINUED...
 
