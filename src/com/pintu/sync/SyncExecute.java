@@ -242,8 +242,8 @@ public class SyncExecute implements Runnable {
 					}
 				} else if (type.equals(CacheAccessInterface.STORY_TYPE)) {
 					Story story = (Story) objList.get(i);
-					if (story.getFollow() != null && story.getOwner() != null
-							&& story.getContent() != null) {
+					if (story.getFollow() != null && story.getOwner() != null &&
+							story.getPublishTime() != null && story.getContent() != null) {
 						resList.add(story);
 					} else {
 						// 有属性字段为空时为不全法的入库对象
