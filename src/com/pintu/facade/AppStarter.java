@@ -77,7 +77,8 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 	@Override
 	public void service(HttpServletRequest req, HttpServletResponse res)
 			throws ServletException, IOException {
-		System.out.println("1 appstater 开始解析表单");
+		
+		System.out.println(">>> appstater 开始解析表单");
 
 		// 这里将客户端参数解析出来传给apiAdaptor
 		// 由apiAdaptor组装参数给服务
@@ -86,13 +87,16 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 
 		boolean isMultipart = ServletFileUpload.isMultipartContent(req);
 		System.out.println("isMultipart value is:" + isMultipart);
-
-		if ((action == null || "".equals(action) || "null".equals(action))
-				&& !isMultipart) {
+		
+		if(action==null && isMultipart==false){
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
-			pw.write("请求有误！");
-		}else if (action == null && isMultipart) {
+			pw.write("请求无效！");	
+			pw.close();
+			return;
+		}
+
+		if (action == null && isMultipart) {
 			// 因上传文件enctype的特殊处理，所以得不到参数，故只判断isMultipart
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();

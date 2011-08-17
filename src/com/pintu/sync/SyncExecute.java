@@ -81,10 +81,6 @@ public class SyncExecute implements Runnable {
 
 			// TODO, 批量同步评论
 			// 并删除已同步的对象ID；
-
-			// FIXME, TEST CACHE AVAILABILITY...
-		cacheVisitor.traceCache();
-
 			
 			
 			try {				
