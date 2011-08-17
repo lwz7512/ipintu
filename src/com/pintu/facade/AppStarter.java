@@ -3,12 +3,17 @@ package com.pintu.facade;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import net.sf.json.JSONArray;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadBase.SizeLimitExceededException;
@@ -20,6 +25,10 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
+import com.pintu.beans.Comment;
+import com.pintu.beans.Story;
+import com.pintu.beans.TPicDetails;
+import com.pintu.beans.Vote;
 import com.pintu.jobs.TaskStarter;
 import com.pintu.sync.CacheToDB;
 import com.pintu.sync.DBToCache;
@@ -51,6 +60,9 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 	private int fileMaxSize = 4 * 1024 * 1024;
 	// 上传组件
 	private ServletFileUpload upload;
+	
+	
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	public AppStarter() {
 		//do nothing...
@@ -126,10 +138,74 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			String picId = req.getParameter("picId");
 			apiAdaptor.getImageFile(picId, res);
 
+		}else if (action.equals(AppStarter.GETPICDETAIL)) {
+			//FIXME 这里分别反回头像图片和详情信息已测试通过
+			String tpId = req.getParameter("tpId");
+			TPicDetails details = apiAdaptor.getTPicDetailsById(tpId);
+			if(details != null){
+				String path = details.getAvatarImgPath();
+//				apiAdaptor.getImageByPath(path, res);
+			}
+			PrintWriter pw = res.getWriter();
+			pw.write(JSONArray.fromObject(details).toString());	
+			pw.close();
+
+		}else if (action.equals(AppStarter.ADDSTORY)) {
+			
+			res.setContentType("text/plain;charset=UTF-8");
+			Story story = new Story();
+			String sid = UUID.randomUUID().toString().replace("-", "").substring(16);
+			story.setId(sid);
+			story.setFollow(req.getParameter("follow"));
+			story.setOwner(req.getParameter("owner"));
+			story.setPublishTime(sdf.format(new Date().getTime()));
+			story.setContent(req.getParameter("content"));
+			story.setClassical(Integer.parseInt(req.getParameter("classical")));
+			
+			apiAdaptor.addStoryToPicture(story);
+			
+		} else if (action.equals(AppStarter.ADDCOMMENT)) {
+			//FIXME 这个添加评论的总有问题就是不插入到数据，好奇怪，老大您抽空看下
+			res.setContentType("text/plain;charset=UTF-8");
+			Comment cmt = new Comment();
+			String cid = UUID.randomUUID().toString().replace("-", "").substring(16);
+			cmt.setId(cid);
+			cmt.setFollow(req.getParameter("follow"));
+			cmt.setOwner(req.getParameter("owner"));
+			cmt.setPublishTime(sdf.format(new Date().getTime()));
+			cmt.setContent(req.getParameter("content"));
+			
+			apiAdaptor.addCommentToPicture(cmt);
+
+		}else if (action.equals(AppStarter.GETSTORIESOFPIC)) {
+			
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String tpID = req.getParameter("tpID");
+			pw.write(apiAdaptor.getStoriesOfPic(tpID));
+			pw.close();
+			
+		} else if (action.equals(AppStarter.GETCOMMENTSOFPIC)) {
+			
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String tpID = req.getParameter("tpID");
+			pw.write(apiAdaptor.getCommentsOfPic(tpID));
+			pw.close();
+			
+		} else if (action.equals(AppStarter.ADDVOTE)) {
+			Vote vote = new Vote();
+			String vid = UUID.randomUUID().toString().replace("-", "").substring(16);
+			vote.setId(vid);
+			vote.setFollow(req.getParameter("follow"));
+			vote.setType(req.getParameter("type"));
+			vote.setAmount(Integer.parseInt(req.getParameter("amount")));
+			apiAdaptor.addVoteToStory(vote);
+
 		} else if (action.equals(AppStarter.APPLYFORUSER)) {
 			// TODO, ...
 
-		} else if (action.equals(AppStarter.OTHERMETHOD)) {
+		}  else if (action.equals(AppStarter.OTHERMETHOD)) {
 			// TODO, ...
 
 		} else {

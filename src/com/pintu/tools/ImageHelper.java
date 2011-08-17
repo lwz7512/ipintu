@@ -101,7 +101,6 @@ public class ImageHelper {
 				out = new FileOutputStream(strBuffer);
 				JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
 				encoder.encode(tag);
-				//FIXME, 必须关闭，否则图片文件打不开
 				out.close();
 			} catch (Exception e) {
 				e.printStackTrace();

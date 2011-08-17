@@ -65,7 +65,7 @@ public class PintuCache {
 		System.out.println("--------------- trace end --------------------");
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "unused" })
 	private void printCacheKeys(){
 		List<String> keys = thumbnailCache.getKeys();
 		StringBuffer sb = new StringBuffer();

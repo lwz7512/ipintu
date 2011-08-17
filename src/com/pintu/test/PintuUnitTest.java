@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.After;
 import org.junit.Before;
@@ -14,6 +15,7 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 import com.pintu.beans.Comment;
 import com.pintu.beans.TPicItem;
 import com.pintu.beans.User;
+import com.pintu.beans.Vote;
 import com.pintu.dao.DBAccessInterface;
 import com.pintu.facade.PintuServiceInterface;
 
@@ -24,6 +26,7 @@ public class PintuUnitTest {
 	
 	private PintuServiceInterface pintuService;
 	
+	SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	@Before
 	public void setUp() throws Exception {		
 		
@@ -69,12 +72,12 @@ public class PintuUnitTest {
 	
 	@Test
 	public void insertPicture(){
-		List<TPicItem> list = new ArrayList<TPicItem>();
+		List<Object> list = new ArrayList<Object>();
 		TPicItem pic = new TPicItem();
 		pic.setId("12edddddddf");
 		pic.setName("1234567890abcdef.jpg");
 		pic.setOwner("aa");
-		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	
 		 java.util.Date ud = new java.util.Date();
 		 Date sd = new java.sql.Date(ud.getTime());
 		pic.setPublishTime(sdf.format(sd));
@@ -117,6 +120,66 @@ public class PintuUnitTest {
 				System.out.println(list.get(i));
 			}
 		}
+	}
+	
+	@Test
+	public void testInsertComment(){
+		List<Object> objList = new ArrayList<Object>();
+		Comment cmt1 = new Comment();
+		String id = UUID.randomUUID().toString().replace("-", "").substring(16);
+		cmt1.setId(id);
+		cmt1.setFollow("b4f48a485bc6cece");
+		cmt1.setOwner("a053beae20125b5b");
+		cmt1.setPublishTime(sdf.format(new Date().getTime()));
+		cmt1.setContent("junitTestComment");
+		objList.add(cmt1);
+		Comment cmt2= new Comment();
+		String id2 = UUID.randomUUID().toString().replace("-", "").substring(16);
+		cmt2.setId(id2);
+		cmt2.setFollow("b4f48a485bc6cece");
+		cmt2.setOwner("a053beae20125b5b");
+		cmt2.setPublishTime(sdf.format(new Date().getTime()));
+		cmt2.setContent("junitTestComment");
+		objList.add(cmt2);
+		int i = dbAccess.insertComment(objList);
+		if(i>0){
+			System.out.println("插入数据库成功"+i);
+		}
+		
+	}
+	
+	@Test
+	public void insertVote(){
+		List<Object> list = new ArrayList<Object>();
+		Vote v=new Vote();
+		v.setId("1");
+		v.setFollow("2");
+		v.setType("heart");
+		v.setAmount(3);
+		list.add(v);
+		System.out.println("测试插入投票："+dbAccess.insertVote(list));
+	}
+	@Test
+	public void updateVote(){
+		List<Object> list = new ArrayList<Object>();
+		Vote v=new Vote();
+		v.setId("1");
+		v.setFollow("9ab9a9a19396bcfd");
+		v.setType("egg");
+		v.setAmount(3);
+		list.add(v);
+		int i = dbAccess.updateVote(list);
+		System.out.println("更新投票条数为："+i);
+	}
+	
+	@Test
+	public void getVoteOfStory(){
+		System.out.println("测试根据故事id得投票"+dbAccess.getVoteOfStory("9ab9a9a19396bcfd"));
+	}
+	
+	@Test
+	public void getVoteByFollowAndType(){
+		System.out.println("测试根据故事id和投票type得投票"+dbAccess.getVoteByFollowAndType("9ab9a9a19396bcfd","egg").size());
 	}
 	
 	@After

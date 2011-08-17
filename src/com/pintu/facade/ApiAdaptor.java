@@ -8,10 +8,15 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONArray;
+
 import org.apache.commons.fileupload.FileItem;
 
+import com.pintu.beans.Comment;
+import com.pintu.beans.Story;
+import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TastePic;
-//import com.pintu.utils.UTF8Formater;
+import com.pintu.beans.Vote;
 
 /**
  * Servlet调用服务的参数转换器，用来封装客户端参数并实现服务调用；
@@ -95,6 +100,58 @@ public class ApiAdaptor {
 	 */
 	public void getImageFile(String picId, HttpServletResponse res){
 		 pintuService.getImageFile(picId,res);
+	}
+	
+	
+	/**
+	 * 根据图片文件路径返回图片
+	 * @param path
+	 * @param res
+	 */
+	public void getImageByPath(String path, HttpServletResponse res){
+		pintuService.getImageByPath(path, res);
+	}
+	/**
+	 * 根据图片id获得详情
+	 * @param tpId
+	 * @return
+	 */
+	public TPicDetails getTPicDetailsById(String tpId){
+		return pintuService.getTPicDetailsById(tpId);
+	}
+	
+	/**
+	 * 为品图添加故事
+	 * @param story
+	 * @return
+	 */
+	public void addStoryToPicture(Story story){
+		 pintuService.addStoryToPintu(story);
+	}
+	
+	/**
+	 * 为一个品图添加评论
+	 * @param cmt
+	 * @return
+	 */
+	public void addCommentToPicture(Comment cmt){
+		 pintuService.addCommentToPintu(cmt);
+	}
+	
+	public String getCommentsOfPic(String tpID){
+		return JSONArray.fromCollection(pintuService.getCommentsOfPic(tpID)).toString();
+	}
+	
+	public String getStoriesOfPic(String tpID){
+		return JSONArray.fromCollection(pintuService.getStoriesOfPic(tpID)).toString();
+	}
+
+	/**
+	 * 为品图故事添加评论
+	 * @param vote
+	 */
+	public void addVoteToStory(Vote vote) {
+		pintuService.addVoteToStory(vote);
 	}
 
 } //end of class

@@ -70,7 +70,7 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public int insertPicture(final List<TPicItem> objList) {
+	public int insertPicture(final List<Object> objList) {
 		String sql = "INSERT INTO t_picture "
 				+ "(p_id,p_name,p_owner,p_publishTime,p_tags,p_description,p_allowStory,p_mobImgId,p_mobImgSize,p_mobImgPath,p_rawImgId,p_rawImgSize,p_rawImgPath,p_pass,p_memo) "
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -79,7 +79,7 @@ public class DBAccessImplement implements DBAccessInterface {
 				new BatchPreparedStatementSetter() {
 					public void setValues(PreparedStatement ps, int i)
 							throws SQLException {
-						TPicItem picture = objList.get(i);
+						TPicItem picture = (TPicItem) objList.get(i);
 						ps.setString(1, picture.getId());
 						ps.setString(2, picture.getName());
 						ps.setString(3, picture.getOwner());
@@ -101,7 +101,7 @@ public class DBAccessImplement implements DBAccessInterface {
 						return objList.size();
 					}
 				});
-		return res[0];
+		return res.length;
 	}
 
 	@Override
@@ -214,30 +214,209 @@ public class DBAccessImplement implements DBAccessInterface {
 		return resList;
 	}
 
-	// @Override
-	// public String insertOneStory(Story story) {
-	// final String sid = UUID.randomUUID().toString().replace("-", "")
-	// .substring(16);
-	// System.out.println("自动生成的UUID：(截取了自动生成的UUID后面16位)" + sid);
-	// String sql = "INSERT INTO t_story "
-	// + "(s_id,s_follow,s_owner,s_publishTime,s_content,s_classical,s_memo) "
-	// + "VALUES (?, ?, ?, ?, ?, ?, ?)";
-	//
-	// return sid;
-	// }
-	//
-	// @Override
-	// public String insertOneComment(Comment comment) {
-	// final String cid = UUID.randomUUID().toString().replace("-", "")
-	// .substring(16);
-	// System.out.println("自动生成的UUID：(截取了自动生成的UUID后面16位)" + cid);
-	// String sql = "INSERT INTO t_comment "
-	// + "(c_id,c_follow,c_owner,c_publishTime,c_content,c_memo) "
-	// + "VALUES (?, ?, ?, ?, ?, ?)";
-	//
-	// return cid;
-	// }
-	//
+	@Override
+	public User getUserById(String id) {
+		User user = new User();
+		String sql = "select * from t_user where u_id = '"+id+"'";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if(rows!=null && rows.size()>0){
+			Map<String, Object> map = (Map<String, Object>) rows.get(0);
+			user.setId(map.get("u_id").toString());
+			user.setAccount(map.get("u_account").toString());
+			user.setAvatar(map.get("u_avatar").toString());
+			user.setRole(map.get("u_role").toString());
+			user.setLevel(Integer.parseInt(map.get("u_level").toString()));
+			user.setScore(Integer.parseInt(map.get("u_score").toString()));
+			user.setExchangeScore(Integer.parseInt(map.get("u_exchangeScore").toString()));
+		}
+		return user;
+	}
+
+	@Override
+	public int insertComment(final List<Object> objList) {
+		String sql = "INSERT INTO t_comment "
+				 + "(c_id,c_follow,c_owner,c_publishTime,c_content,c_memo) "
+				 + "VALUES (?, ?, ?, ?, ?, ?)";
+
+		int[] res = jdbcTemplate.batchUpdate(sql,
+				new BatchPreparedStatementSetter() {
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+						Comment cmt = (Comment) objList.get(i);
+						ps.setString(1, cmt.getId());
+						ps.setString(2, cmt.getFollow());
+						ps.setString(3, cmt.getOwner());
+						ps.setString(4, cmt.getPublishTime());
+						ps.setString(5, cmt.getContent());
+						ps.setString(6, "");
+					}
+
+					public int getBatchSize() {
+						return objList.size();
+					}
+				});
+		return res.length;
+	}
+
+	@Override
+	public int insertStory(final List<Object> objList) {
+		String sql = "INSERT INTO t_story "
+				 + "(s_id,s_follow,s_owner,s_publishTime,s_content,s_classical,s_memo) "
+				 + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+				
+		int[] res = jdbcTemplate.batchUpdate(sql,
+				new BatchPreparedStatementSetter() {
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+						Story story = (Story) objList.get(i);
+						ps.setString(1, story.getId());
+						ps.setString(2, story.getFollow());
+						ps.setString(3, story.getOwner());
+						ps.setString(4, story.getPublishTime());
+						ps.setString(5, story.getContent());
+						ps.setInt(6, story.getClassical());
+						ps.setString(7, "");
+					}
+
+					public int getBatchSize() {
+						return objList.size();
+					}
+				});
+		return res.length;
+	}
+
+	@Override
+	public List<Comment> getCommentsOfPic(String tpID) {
+		List<Comment> cmtList = new ArrayList<Comment>();
+		String sql = "select * from t_comment where c_follow = '"+tpID+"'";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if(rows!=null && rows.size()>0){
+			for(int i = 0;i<rows.size();i++){
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Comment comment = new Comment();
+				comment.setId(map.get("c_id").toString());
+				comment.setFollow(map.get("c_follow").toString());
+				comment.setOwner(map.get("c_owner").toString());
+				comment.setPublishTime(map.get("c_publishTime").toString());
+				comment.setContent(map.get("c_content").toString());
+				cmtList.add(comment);
+			}
+		}
+		return cmtList;
+	}
+
+	@Override
+	public List<Story> getStoriesOfPic(String tpID) {
+		List<Story> storyList = new ArrayList<Story>();
+		String sql = "select * from t_story where s_follow = '"+tpID+"'";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Story story = new Story();
+				story.setId(map.get("s_id").toString());
+				story.setFollow(map.get("s_follow").toString());
+				story.setOwner(map.get("s_owner").toString());
+				story.setPublishTime(map.get("s_publishTime").toString());
+				story.setContent(map.get("s_content").toString());
+				story.setClassical(Integer.parseInt(map.get("s_classical").toString()));
+				storyList.add(story);
+			}
+		}
+		return storyList;
+	}
+
+	@Override
+	public int insertVote(final List<Object> objList) {
+		String sql = "INSERT INTO t_vote "
+				 + "(v_id,v_follow,v_type,v_amount,v_memo) "
+				 + "VALUES (?, ?, ?, ?, ?)";
+
+		int[] res = jdbcTemplate.batchUpdate(sql,
+				new BatchPreparedStatementSetter() {
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+						Vote vote = (Vote) objList.get(i);
+						ps.setString(1, vote.getId());
+						ps.setString(2, vote.getFollow());
+						ps.setString(3, vote.getType());
+						ps.setInt(4, vote.getAmount());
+						ps.setString(5, "");
+					}
+
+					public int getBatchSize() {
+						return objList.size();
+					}
+				});
+		return res.length;
+	}
+	
+	
+	//TODO 这个还需要验证
+	@Override
+	public int updateVote(final List<Object> objList) {
+		String sql = "update t_vote  set v_amount = v_amount +? where v_type = ? and v_follow = ?";
+
+		int[] res = jdbcTemplate.batchUpdate(sql,
+				new BatchPreparedStatementSetter() {
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+						Vote vote = (Vote) objList.get(i);
+						ps.setInt(1, vote.getAmount());
+						ps.setString(2, vote.getType());
+						ps.setString(3, vote.getFollow());
+						
+					}
+
+					public int getBatchSize() {
+						return objList.size();
+					}
+				});
+		return res.length;
+	}
+
+
+	@Override
+	public List<Vote> getVoteOfStory(String storyID) {
+		List<Vote> voteList = new ArrayList<Vote>();
+		String sql = "select * from t_vote where v_follow = '"+storyID+"'";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Vote vote = new Vote();
+				vote.setId(map.get("v_id").toString());
+				vote.setFollow(map.get("v_follow").toString());
+				vote.setType(map.get("v_type").toString());
+				vote.setAmount(Integer.parseInt(map.get("v_amount").toString()));
+				voteList.add(vote);
+			}
+		}
+		return voteList;
+	}
+
+	@Override
+	public List<Vote> getVoteByFollowAndType(String storyId, String type) {
+		List<Vote> voteList = new ArrayList<Vote>();
+		String sql = "select * from t_vote where v_follow = '"+storyId+"' and v_type = '"+type+"'";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Vote vote = new Vote();
+				vote.setId(map.get("v_id").toString());
+				vote.setFollow(map.get("v_follow").toString());
+				vote.setType(map.get("v_type").toString());
+				vote.setAmount(Integer.parseInt(map.get("v_amount").toString()));
+				voteList.add(vote);
+			}
+		}
+		return voteList;
+	}
+
+	
+
+
 	// @Override
 	// public String insertOneGift(Gift gift) {
 	// final String gid = UUID.randomUUID().toString().replace("-", "")
