@@ -252,7 +252,7 @@ public class SyncExecute implements Runnable {
 				} else if (type.equals(CacheAccessInterface.COMMENT_TYPE)) {
 					Comment cmt = (Comment) objList.get(i);
 					if (cmt.getFollow() != null && cmt.getOwner() != null
-							&& cmt.getContent() != null) {
+				&&cmt.getPublishTime() != null && cmt.getContent() != null) {
 						resList.add(cmt);
 					} else {
 						// 有属性字段为空时为不全法的入库对象
