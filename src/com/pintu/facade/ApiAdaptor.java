@@ -19,6 +19,7 @@ import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TastePic;
 import com.pintu.beans.Vote;
 import com.pintu.utils.PintuUtils;
+import com.pintu.utils.UTF8Formater;
 
 /**
  * Servlet调用服务的参数转换器，用来封装客户端参数并实现服务调用；
@@ -62,13 +63,13 @@ public class ApiAdaptor {
 				}
 				//FIXME 这里注意，应用手机时需要用到 UTF8Formater
 				if(item.getFieldName().equals("description")){
-					pic.setDescription(item.getString());
-//					pic.setDescription(UTF8Formater.changeToWord(item.getString()));
+//					pic.setDescription(item.getString());
+				    pic.setDescription(UTF8Formater.changeToWord(item.getString()));
 					System.out.println("description:"+pic.getDescription());
 				}
 				if(item.getFieldName().equals("tags")){
-					pic.setTags(item.getString());
-//					pic.setTags(UTF8Formater.changeToWord(item.getString()));
+//					pic.setTags(item.getString());
+					pic.setTags(UTF8Formater.changeToWord(item.getString()));
 					System.out.println("tags:"+pic.getTags());
 				}
 				if(item.getFieldName().equals("allowStory")){
