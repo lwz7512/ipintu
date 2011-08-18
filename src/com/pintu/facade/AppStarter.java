@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadBase.SizeLimitExceededException;
@@ -135,21 +136,26 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			System.out.println(">>> Gallery data: "+galleryData);
 
 		} else if (action.equals(AppStarter.GETIMAGEFILE)) {
-			String picId = req.getParameter("picId");
-			apiAdaptor.getImageFile(picId, res);
+			String tpId = req.getParameter("tpId");
+			apiAdaptor.getImageFile(tpId, res);
 
 		}else if (action.equals(AppStarter.GETPICDETAIL)) {
-			//FIXME 这里分别反回头像图片和详情信息已测试通过
 			String tpId = req.getParameter("tpId");
 			TPicDetails details = apiAdaptor.getTPicDetailsById(tpId);
-			if(details != null){
-				String path = details.getAvatarImgPath();
-//				apiAdaptor.getImageByPath(path, res);
-			}
 			PrintWriter pw = res.getWriter();
-			pw.write(JSONArray.fromObject(details).toString());	
+			pw.write(JSONObject.fromObject(details).toString());	
 			pw.close();
 
+		}else if(action.equals(AppStarter.GETIMAGEBYPATH)) {
+//			String tpId = req.getParameter("tpId");
+//			TPicDetails details = apiAdaptor.getTPicDetailsById(tpId);
+//			if(details != null){
+//				String path = details.getAvatarImgPath();
+//				apiAdaptor.getImageByPath(path, res);
+//			}
+			String path = req.getParameter("path");
+			apiAdaptor.getImageByPath(path, res);
+			
 		}else if (action.equals(AppStarter.ADDSTORY)) {
 			
 			res.setContentType("text/plain;charset=UTF-8");
@@ -181,16 +187,16 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
-			String tpID = req.getParameter("tpID");
-			pw.write(apiAdaptor.getStoriesOfPic(tpID));
+			String tpId = req.getParameter("tpId");
+			pw.write(apiAdaptor.getStoriesOfPic(tpId));
 			pw.close();
 			
 		} else if (action.equals(AppStarter.GETCOMMENTSOFPIC)) {
 			
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
-			String tpID = req.getParameter("tpID");
-			pw.write(apiAdaptor.getCommentsOfPic(tpID));
+			String tpId = req.getParameter("tpId");
+			pw.write(apiAdaptor.getCommentsOfPic(tpId));
 			pw.close();
 			
 		} else if (action.equals(AppStarter.ADDVOTE)) {
