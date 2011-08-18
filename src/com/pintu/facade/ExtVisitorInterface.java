@@ -22,6 +22,8 @@ public interface ExtVisitorInterface {
 	
 	public static final String GETPICDETAIL = "getPicDetail";
 	
+	public static final String GETIMAGEBYPATH = "getImageByPath";
+	
 	public static final String ADDSTORY = "addStory";
 	
 	public static final String ADDCOMMENT ="addComment";

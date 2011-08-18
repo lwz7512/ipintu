@@ -75,12 +75,12 @@ public class SyncExecute implements Runnable {
 			// 并删除已同步的对象ID；
 			syncCommentToDB();
 
-			// TODO, 批量同步投票
+			// 批量同步投票
 			// 并删除已同步的对象ID；
 
 			syncVoteToDB();
 
-			cacheVisitor.traceCache();
+//			cacheVisitor.traceCache();
 
 			try {
 				Thread.sleep(1000);
@@ -91,7 +91,7 @@ public class SyncExecute implements Runnable {
 
 	}
 
-	//TODO 这个投票的缓存晚上想好了修改，明天早上提交（下午做的有问题，我先给删除了）
+
 	private void syncVoteToDB() {
 		unSavedObjList.clear();
 		unSavedObjList = cacheVisitor

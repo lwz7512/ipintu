@@ -328,8 +328,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				details.setName(item.getName());
 				details.setOwner(uerId);
 				details.setPublishTime(item.getPublishTime());
-				details.setMobImgPath(item.getMobImgPath());
-				details.setRawImgPath(item.getRawImgPath());
 				details.setDescription(item.getDescription());
 				details.setTags(item.getTags());
 				details.setAllowStory(item.getAllowStory());
