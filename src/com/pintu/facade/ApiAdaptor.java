@@ -3,7 +3,6 @@
  */
 package com.pintu.facade;
 
-import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
 
@@ -32,9 +31,6 @@ public class ApiAdaptor {
 
 	//由Spring注入
 	private PintuServiceInterface pintuService;
-	
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
 	
 	public ApiAdaptor() {
 		// TODO Auto-generated constructor stub

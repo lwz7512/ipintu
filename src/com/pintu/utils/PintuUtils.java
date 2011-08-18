@@ -21,5 +21,9 @@ public class PintuUtils {
 		String now = sdf.format(new Date().getTime());
 		return now;
 	}
+	
+	public static String formatDate(Date date){
+		return sdf.format(date);
+	}
 
 }

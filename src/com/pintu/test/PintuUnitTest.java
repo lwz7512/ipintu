@@ -1,6 +1,5 @@
 package com.pintu.test;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +26,6 @@ public class PintuUnitTest {
 	
 	private PintuServiceInterface pintuService;
 	
-	SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	@Before
 	public void setUp() throws Exception {		
 		
@@ -79,10 +77,7 @@ public class PintuUnitTest {
 		pic.setId("12edddddddf");
 		pic.setName("1234567890abcdef.jpg");
 		pic.setOwner("aa");
-	
-		 java.util.Date ud = new java.util.Date();
-		 Date sd = new java.sql.Date(ud.getTime());
-		pic.setPublishTime(sdf.format(sd));
+		pic.setPublishTime(PintuUtils.getFormatNowTime());
 		pic.setTags("33333333");
 		pic.setDescription("中文问题");
 		pic.setAllowStory(1);
@@ -132,7 +127,7 @@ public class PintuUnitTest {
 		cmt1.setId(id);
 		cmt1.setFollow("b4f48a485bc6cece");
 		cmt1.setOwner("a053beae20125b5b");
-		cmt1.setPublishTime(sdf.format(new Date().getTime()));
+		cmt1.setPublishTime(PintuUtils.getFormatNowTime());
 		cmt1.setContent("junitTestComment");
 		objList.add(cmt1);
 		Comment cmt2= new Comment();
@@ -140,7 +135,7 @@ public class PintuUnitTest {
 		cmt2.setId(id2);
 		cmt2.setFollow("b4f48a485bc6cece");
 		cmt2.setOwner("a053beae20125b5b");
-		cmt2.setPublishTime(sdf.format(new Date().getTime()));
+		cmt2.setPublishTime(PintuUtils.getFormatNowTime());
 		cmt2.setContent("junitTestComment");
 		objList.add(cmt2);
 		int i = dbAccess.insertComment(objList);

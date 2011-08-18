@@ -5,7 +5,6 @@ package com.pintu.sync;
  *
  */
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -21,6 +20,7 @@ import com.pintu.beans.Vote;
 import com.pintu.dao.CacheAccessInterface;
 import com.pintu.dao.DBAccessInterface;
 import com.pintu.facade.PintuServiceInterface;
+import com.pintu.utils.PintuUtils;
 
 public class DailySync implements Runnable{
 	    //由Spring注入
@@ -32,8 +32,6 @@ public class DailySync implements Runnable{
 		
 		private Logger log = Logger.getLogger(DailySync.class);
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		
 		public void run() {
 			
 				Calendar c = Calendar.getInstance();
@@ -43,7 +41,7 @@ public class DailySync implements Runnable{
 				c.set(year, month, day, 0, 0, 0);
 				Date date = c.getTime();
 				//得到当天零点即 "2011-08-12 00:00:00"
-				String today = sdf.format(date);
+				String today = PintuUtils.formatDate(date);
 				
 				//同步当日零点开始数据库图片到缓存
 				List<String> picNames=syncPictureTask(today);
