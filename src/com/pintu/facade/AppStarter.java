@@ -111,8 +111,9 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			String startTime = req.getParameter("startTime");
 			String endTime = req.getParameter("endTime");
 			PrintWriter pw = res.getWriter();
-			System.out.println(apiAdaptor.getGalleryByTime(startTime, endTime));
-			pw.println(apiAdaptor.getGalleryByTime(startTime, endTime));
+			String result = apiAdaptor.getGalleryByTime(startTime, endTime);
+			System.out.println(result);
+			pw.println(result);
 			pw.close();
 
 		} else if (action.equals(AppStarter.GETIMAGEFILE)) {
@@ -124,8 +125,9 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			//取得一副图片的详情
 			String tpId = req.getParameter("tpId");
 			PrintWriter pw = res.getWriter();
-			System.out.println(apiAdaptor.getTPicDetailsById(tpId));
-			pw.write(apiAdaptor.getTPicDetailsById(tpId));	
+			String result = apiAdaptor.getTPicDetailsById(tpId);
+			System.out.println(result);
+			pw.write(result);	
 			pw.close();
 
 		}else if(action.equals(AppStarter.GETIMAGEBYPATH)) {
@@ -156,8 +158,9 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String tpId = req.getParameter("tpId");
-			System.out.println(apiAdaptor.getStoriesOfPic(tpId));
-			pw.write(apiAdaptor.getStoriesOfPic(tpId));
+			String result = apiAdaptor.getStoriesOfPic(tpId);
+			System.out.println(result);
+			pw.write(result);
 			pw.close();
 			
 		} else if (action.equals(AppStarter.GETCOMMENTSOFPIC)) {
@@ -165,8 +168,9 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String tpId = req.getParameter("tpId");
-			System.out.println(apiAdaptor.getCommentsOfPic(tpId));
-			pw.write(apiAdaptor.getCommentsOfPic(tpId));
+			String result = apiAdaptor.getCommentsOfPic(tpId);
+			System.out.println(result);
+			pw.write(result);
 			pw.close();
 			
 		} else if (action.equals(AppStarter.ADDVOTE)) {

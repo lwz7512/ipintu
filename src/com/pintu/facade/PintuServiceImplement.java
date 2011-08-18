@@ -9,9 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,6 +35,7 @@ import com.pintu.beans.Wealth;
 import com.pintu.dao.CacheAccessInterface;
 import com.pintu.dao.DBAccessInterface;
 import com.pintu.tools.ImgDataProcessor;
+import com.pintu.utils.PintuUtils;
 import com.sun.image.codec.jpeg.ImageFormatException;
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGImageDecoder;
@@ -55,8 +54,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	private String imagePath;
 	
 
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	
 	// 设定输出的类型
 	private static final String GIF = "image/gif;charset=UTF-8";
 	
@@ -102,7 +99,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			tpicItem.setName(pid + "." + pic.getFileType());
 			tpicItem.setOwner(user);
 
-			tpicItem.setPublishTime(sdf.format(new Date()));
+			tpicItem.setPublishTime(PintuUtils.getFormatNowTime());
 			System.out.println("publishTime:" + tpicItem.getPublishTime());
 
 			tpicItem.setDescription(pic.getDescription());
