@@ -3,18 +3,12 @@ package com.pintu.facade;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadBase.SizeLimitExceededException;
@@ -26,10 +20,6 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
-import com.pintu.beans.Comment;
-import com.pintu.beans.Story;
-import com.pintu.beans.TPicDetails;
-import com.pintu.beans.Vote;
 import com.pintu.jobs.TaskStarter;
 import com.pintu.sync.CacheToDB;
 import com.pintu.sync.DBToCache;
@@ -121,6 +111,7 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			String startTime = req.getParameter("startTime");
 			String endTime = req.getParameter("endTime");
 			PrintWriter pw = res.getWriter();
+			System.out.println(apiAdaptor.getGalleryByTime(startTime, endTime));
 			pw.println(apiAdaptor.getGalleryByTime(startTime, endTime));
 			pw.close();
 
@@ -133,6 +124,7 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			//取得一副图片的详情
 			String tpId = req.getParameter("tpId");
 			PrintWriter pw = res.getWriter();
+			System.out.println(apiAdaptor.getTPicDetailsById(tpId));
 			pw.write(apiAdaptor.getTPicDetailsById(tpId));	
 			pw.close();
 
@@ -164,6 +156,7 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String tpId = req.getParameter("tpId");
+			System.out.println(apiAdaptor.getStoriesOfPic(tpId));
 			pw.write(apiAdaptor.getStoriesOfPic(tpId));
 			pw.close();
 			
@@ -172,6 +165,7 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String tpId = req.getParameter("tpId");
+			System.out.println(apiAdaptor.getCommentsOfPic(tpId));
 			pw.write(apiAdaptor.getCommentsOfPic(tpId));
 			pw.close();
 			
@@ -185,11 +179,7 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 
 		}  else if (action.equals(AppStarter.GETVOTEOFSTORY)) {
 			//取得故事的投票
-			String follow = req.getParameter("follow");
-			String type = req.getParameter("type");
-			String amount =req.getParameter("amount");
 			
-			apiAdaptor.createVote(follow, type, amount);
 
 		}else if (action.equals(AppStarter.APPLYFORUSER)) {
 			// TODO, ...

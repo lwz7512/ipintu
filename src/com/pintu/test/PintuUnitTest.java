@@ -18,6 +18,7 @@ import com.pintu.beans.User;
 import com.pintu.beans.Vote;
 import com.pintu.dao.DBAccessInterface;
 import com.pintu.facade.PintuServiceInterface;
+import com.pintu.utils.PintuUtils;
 
 
 public class PintuUnitTest {
@@ -58,6 +59,7 @@ public class PintuUnitTest {
 	@Test
 	public void insertOneUser(){
 		User u=new User();
+		u.setId(PintuUtils.generateUID());
 		u.setAccount("liumingli@163.com");
 		u.setPwd("flzx3qc");
 		u.setAvatar("aa");
