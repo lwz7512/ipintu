@@ -123,6 +123,7 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 
 		}else if (action.equals(AppStarter.GETPICDETAIL)) {
 			//取得一副图片的详情
+			res.setContentType("text/plain;charset=UTF-8");
 			String tpId = req.getParameter("tpId");
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getTPicDetailsById(tpId);
