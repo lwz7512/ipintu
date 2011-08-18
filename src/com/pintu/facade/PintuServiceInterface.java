@@ -105,11 +105,16 @@ public interface PintuServiceInterface {
 	
 
 	// 查看一个品图的故事
-	public List<Story> getStoriesOfPic(String tpID);
+	public List<Story> getStoriesOfPic(String tpId);
 
 	// 查看一个品图的评论
-	public List<Comment> getCommentsOfPic(String tpID);
+	public List<Comment> getCommentsOfPic(String tpId);
 	
+	//为故事投票
+	public void addVoteToStory(Vote vote);
+	
+	//返回一个故事的所有各类的投票
+	public List<Vote> getVotesOfStory(String storyId);
 
 	// 查看自己的贴图列表
 	public List<TPicDesc> getTpicsByUser(String user, String pageNum);
@@ -201,8 +206,6 @@ public interface PintuServiceInterface {
 
 	// 发布行业动态
 	public Boolean publishIndustryEvent(Event tpEvent);
-
-	public void addVoteToStory(Vote vote);
 
 
 

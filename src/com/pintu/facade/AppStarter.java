@@ -123,6 +123,7 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 
 		}else if (action.equals(AppStarter.GETPICDETAIL)) {
 			//取得一副图片的详情
+			res.setContentType("text/plain;charset=UTF-8");
 			String tpId = req.getParameter("tpId");
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getTPicDetailsById(tpId);
@@ -180,11 +181,7 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			String amount =req.getParameter("amount");
 			
 			apiAdaptor.createVote(follow, type, amount);
-
-		}  else if (action.equals(AppStarter.GETVOTEOFSTORY)) {
-			//取得故事的投票
 			
-
 		}else if (action.equals(AppStarter.APPLYFORUSER)) {
 			// TODO, ...
 

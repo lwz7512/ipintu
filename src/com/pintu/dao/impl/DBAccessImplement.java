@@ -286,9 +286,9 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public List<Comment> getCommentsOfPic(String tpID) {
+	public List<Comment> getCommentsOfPic(String tpId) {
 		List<Comment> cmtList = new ArrayList<Comment>();
-		String sql = "select * from t_comment where c_follow = '"+tpID+"'";
+		String sql = "select * from t_comment where c_follow = '"+tpId+"'";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if(rows!=null && rows.size()>0){
 			for(int i = 0;i<rows.size();i++){
@@ -306,9 +306,9 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public List<Story> getStoriesOfPic(String tpID) {
+	public List<Story> getStoriesOfPic(String tpId) {
 		List<Story> storyList = new ArrayList<Story>();
-		String sql = "select * from t_story where s_follow = '"+tpID+"'";
+		String sql = "select * from t_story where s_follow = '"+tpId+"'";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -377,9 +377,9 @@ public class DBAccessImplement implements DBAccessInterface {
 
 
 	@Override
-	public List<Vote> getVoteOfStory(String storyID) {
+	public List<Vote> getVoteOfStory(String storyId) {
 		List<Vote> voteList = new ArrayList<Vote>();
-		String sql = "select * from t_vote where v_follow = '"+storyID+"'";
+		String sql = "select * from t_vote where v_follow = '"+storyId+"'";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {

@@ -19,8 +19,6 @@ public class Story implements Serializable{
 	private String content;
 	//是否被投票为经典
 	private int classical;
-	//所有投票
-	private List<Vote> votes;
 		
 	
 	public Story() {
@@ -97,18 +95,6 @@ public class Story implements Serializable{
 
 	public void setClassical(int classical) {
 		this.classical = classical;
-	}
-
-
-
-	public List<Vote> getVotes() {
-		return votes;
-	}
-
-
-
-	public void setVotes(List<Vote> votes) {
-		this.votes = votes;
 	}
 
 	

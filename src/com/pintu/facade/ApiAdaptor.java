@@ -3,6 +3,7 @@
  */
 package com.pintu.facade;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import org.apache.commons.fileupload.FileItem;
 
 import com.pintu.beans.Comment;
 import com.pintu.beans.Story;
+import com.pintu.beans.StoryDetails;
 import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TastePic;
 import com.pintu.beans.Vote;
@@ -150,7 +152,42 @@ public class ApiAdaptor {
 	 * @return
 	 */
 	public String getStoriesOfPic(String tpID){
-		return JSONArray.fromCollection(pintuService.getStoriesOfPic(tpID)).toString();
+		List<StoryDetails> storyDeatilList = new ArrayList<StoryDetails>();
+		List<Story> storyList = pintuService.getStoriesOfPic(tpID);
+		if(storyList != null && storyList.size() > 0){
+			for(int i=0;i<storyList.size();i++){
+				StoryDetails storyDetail = new StoryDetails();
+				String storyId = storyList.get(i).getId();
+				storyDetail.setId(storyId);
+				storyDetail.setFollow( storyList.get(i).getFollow());
+				storyDetail.setOwner( storyList.get(i).getOwner());
+				storyDetail.setPublishTime(storyList.get(i).getPublishTime());
+				storyDetail.setContent(storyList.get(i).getContent());
+				storyDetail.setClassical(storyList.get(i).getClassical());
+				List<Vote> voteList = pintuService.getVotesOfStory(storyId);
+				if(voteList != null && voteList.size()>0){
+					for(int j=0;j<voteList.size();j++){
+						Vote vote = voteList.get(j);
+						if(vote.getType().equals("flower")){
+							storyDetail.setFlower(vote.getAmount());
+						}else if(vote.getType().equals("egg")){
+							storyDetail.setEgg(vote.getAmount());
+						}else if(vote.getType().equals("heart")){
+							storyDetail.setHeart(vote.getAmount());
+						}else if(vote.getType().equals("star")){
+							storyDetail.setStar(vote.getAmount());
+						}
+					}
+				}else{
+					storyDetail.setFlower(0);
+					storyDetail.setEgg(0);
+					storyDetail.setHeart(0);
+					storyDetail.setStar(0);
+				}
+				storyDeatilList.add(storyDetail);
+			}
+		}
+		return JSONArray.fromCollection(storyDeatilList).toString();
 	}
 	
 	public void createStory(String follow,String owner,String content,String classical){
