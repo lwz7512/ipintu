@@ -53,6 +53,10 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	private ImgDataProcessor imgProcessor;
 
 	private String imagePath;
+	
+
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	
 	// 设定输出的类型
 	private static final String GIF = "image/gif;charset=UTF-8";
 	
@@ -98,7 +102,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			tpicItem.setName(pid + "." + pic.getFileType());
 			tpicItem.setOwner(user);
 
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			tpicItem.setPublishTime(sdf.format(new Date()));
 			System.out.println("publishTime:" + tpicItem.getPublishTime());
 
@@ -311,9 +314,11 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	@Override
 	public TPicDetails getTPicDetailsById(String tpID) {
 		TPicDetails details = new TPicDetails();
+		//根据图片id到缓存中取图片的基本信息
 		TPicItem item = cacheVisitor.getSpecificPic(tpID);
 		if(item != null){
 			String uerId = item.getOwner();
+			//得到图片的所有者即userId,再到数据库里取出user的详细信息
 			User user = dbVisitor.getUserById(uerId);
 			int commentNum = this.getCommentsOfPic(tpID).size();
 			int storyNum = this.getStoriesOfPic(tpID).size();
@@ -327,6 +332,8 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				details.setId(item.getId());
 				details.setName(item.getName());
 				details.setOwner(uerId);
+				details.setMobImgId(item.getMobImgId());
+				details.setRawImgId(item.getRawImgId());
 				details.setPublishTime(item.getPublishTime());
 				details.setDescription(item.getDescription());
 				details.setTags(item.getTags());

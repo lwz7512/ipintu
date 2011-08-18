@@ -63,7 +63,6 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 	private ServletFileUpload upload;
 	
 	
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	public AppStarter() {
 		//do nothing...
@@ -117,74 +116,51 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			processMultiPart(req, pw);
 			pw.close();
 		} else if (action.equals(AppStarter.GETGALLERYBYTIME)) {
-			res.setContentType("text/plain;charset=UTF-8");
 			// 处理取长廊缩略图信息的请求
+			res.setContentType("text/plain;charset=UTF-8");
 			String startTime = req.getParameter("startTime");
 			String endTime = req.getParameter("endTime");
 			PrintWriter pw = res.getWriter();
-			long queryTimeSpan = Long.valueOf(endTime)-Long.valueOf(startTime);
-			System.out.println(">>> query time span: "+queryTimeSpan/60*1000+" minutes;");
-			
-			long oneDayMiliSeconds = 24*60*60*1000;
-			if(queryTimeSpan>oneDayMiliSeconds){
-				//如果跨越了1天，就只给返回一天的数据
-				startTime = String.valueOf(Long.valueOf(endTime)-oneDayMiliSeconds);
-			}
-			String galleryData = apiAdaptor.getGalleryByTime(startTime, endTime);
-			pw.println(galleryData);
+			pw.println(apiAdaptor.getGalleryByTime(startTime, endTime));
 			pw.close();
-			System.out.println(">>> Gallery data: "+galleryData);
 
 		} else if (action.equals(AppStarter.GETIMAGEFILE)) {
+			//要所图片id得到相应图片
 			String tpId = req.getParameter("tpId");
 			apiAdaptor.getImageFile(tpId, res);
 
 		}else if (action.equals(AppStarter.GETPICDETAIL)) {
+			//取得一副图片的详情
 			String tpId = req.getParameter("tpId");
-			TPicDetails details = apiAdaptor.getTPicDetailsById(tpId);
 			PrintWriter pw = res.getWriter();
-			pw.write(JSONObject.fromObject(details).toString());	
+			pw.write(apiAdaptor.getTPicDetailsById(tpId));	
 			pw.close();
 
 		}else if(action.equals(AppStarter.GETIMAGEBYPATH)) {
-//			String tpId = req.getParameter("tpId");
-//			TPicDetails details = apiAdaptor.getTPicDetailsById(tpId);
-//			if(details != null){
-//				String path = details.getAvatarImgPath();
-//				apiAdaptor.getImageByPath(path, res);
-//			}
+			//根据路径得img(主要用于得到头像图)
 			String path = req.getParameter("path");
 			apiAdaptor.getImageByPath(path, res);
 			
 		}else if (action.equals(AppStarter.ADDSTORY)) {
-			
+			//为图片添加故事
 			res.setContentType("text/plain;charset=UTF-8");
-			Story story = new Story();
-			String sid = UUID.randomUUID().toString().replace("-", "").substring(16);
-			story.setId(sid);
-			story.setFollow(req.getParameter("follow"));
-			story.setOwner(req.getParameter("owner"));
-			story.setPublishTime(sdf.format(new Date().getTime()));
-			story.setContent(req.getParameter("content"));
-			story.setClassical(Integer.parseInt(req.getParameter("classical")));
+			String follow = req.getParameter("follow");
+			String owner = req.getParameter("owner");
+			String content = req.getParameter("content");
+			String classical = req.getParameter("classical");
 			
-			apiAdaptor.addStoryToPicture(story);
+			apiAdaptor.createStory(follow, owner, content, classical);
 			
 		} else if (action.equals(AppStarter.ADDCOMMENT)) {
-			//FIXME 这个添加评论的总有问题就是不插入到数据，好奇怪，老大您抽空看下
-			res.setContentType("text/plain;charset=UTF-8");
-			Comment cmt = new Comment();
-			String cid = UUID.randomUUID().toString().replace("-", "").substring(16);
-			cmt.setId(cid);
-			cmt.setFollow(req.getParameter("follow"));
-			cmt.setOwner(req.getParameter("owner"));
-			cmt.setPublishTime(sdf.format(new Date().getTime()));
-			cmt.setContent(req.getParameter("content"));
+			//为图片添加评论
+			String follow = req.getParameter("follow");
+			String owner = req.getParameter("owner");
+			String content = req.getParameter("content");
 			
-			apiAdaptor.addCommentToPicture(cmt);
+			apiAdaptor.createComment(follow,owner,content);
 
 		}else if (action.equals(AppStarter.GETSTORIESOFPIC)) {
-			
+			//得到某副图片的所有故事
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String tpId = req.getParameter("tpId");
@@ -192,7 +168,7 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			pw.close();
 			
 		} else if (action.equals(AppStarter.GETCOMMENTSOFPIC)) {
-			
+			//得到某副图片的所有评论
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String tpId = req.getParameter("tpId");
@@ -200,15 +176,22 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			pw.close();
 			
 		} else if (action.equals(AppStarter.ADDVOTE)) {
-			Vote vote = new Vote();
-			String vid = UUID.randomUUID().toString().replace("-", "").substring(16);
-			vote.setId(vid);
-			vote.setFollow(req.getParameter("follow"));
-			vote.setType(req.getParameter("type"));
-			vote.setAmount(Integer.parseInt(req.getParameter("amount")));
-			apiAdaptor.addVoteToStory(vote);
+			//为故事添加投票
+			String follow = req.getParameter("follow");
+			String type = req.getParameter("type");
+			String amount =req.getParameter("amount");
+			
+			apiAdaptor.createVote(follow, type, amount);
 
-		} else if (action.equals(AppStarter.APPLYFORUSER)) {
+		}  else if (action.equals(AppStarter.GETVOTEOFSTORY)) {
+			//取得故事的投票
+			String follow = req.getParameter("follow");
+			String type = req.getParameter("type");
+			String amount =req.getParameter("amount");
+			
+			apiAdaptor.createVote(follow, type, amount);
+
+		}else if (action.equals(AppStarter.APPLYFORUSER)) {
 			// TODO, ...
 
 		}  else if (action.equals(AppStarter.OTHERMETHOD)) {

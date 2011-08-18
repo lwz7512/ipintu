@@ -3,12 +3,14 @@
  */
 package com.pintu.facade;
 
+import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 import org.apache.commons.fileupload.FileItem;
 
@@ -17,16 +19,22 @@ import com.pintu.beans.Story;
 import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TastePic;
 import com.pintu.beans.Vote;
+import com.pintu.utils.PintuUtils;
 
 /**
  * Servlet调用服务的参数转换器，用来封装客户端参数并实现服务调用；
  * @author lwz
  *
  */
+
+
 public class ApiAdaptor {
 
 	//由Spring注入
 	private PintuServiceInterface pintuService;
+	
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
 	
 	public ApiAdaptor() {
 		// TODO Auto-generated constructor stub
@@ -90,6 +98,14 @@ public class ApiAdaptor {
 	 * @return
 	 */
 	public String getGalleryByTime(String startTime,String endTime){
+		long queryTimeSpan = Long.valueOf(endTime)-Long.valueOf(startTime);
+		System.out.println(">>> query time span: "+queryTimeSpan/60*1000+" minutes;");
+		
+		long oneDayMiliSeconds = 24*60*60*1000;
+		if(queryTimeSpan>oneDayMiliSeconds){
+			//如果跨越了1天，就只给返回一天的数据
+			startTime = String.valueOf(Long.valueOf(endTime)-oneDayMiliSeconds);
+		}
 		return pintuService.getTpicsByTime(startTime, endTime);
 	}
 	
@@ -116,17 +132,59 @@ public class ApiAdaptor {
 	 * @param tpId
 	 * @return
 	 */
-	public TPicDetails getTPicDetailsById(String tpId){
-		return pintuService.getTPicDetailsById(tpId);
+	public String getTPicDetailsById(String tpId){
+		TPicDetails tpicDetails = pintuService.getTPicDetailsById(tpId);
+		return JSONObject.fromBean(tpicDetails).toString() ;
 	}
 	
 	/**
-	 * 为品图添加故事
+	 * 得到品图评论
 	 * @param story
 	 * @return
 	 */
+	
+	public String getCommentsOfPic(String tpID){
+		return JSONArray.fromCollection(pintuService.getCommentsOfPic(tpID)).toString();
+	}
+	
+	/**
+	 * 	得到品图故事
+	 * @param tpID
+	 * @return
+	 */
+	public String getStoriesOfPic(String tpID){
+		return JSONArray.fromCollection(pintuService.getStoriesOfPic(tpID)).toString();
+	}
+	
+	public void createStory(String follow,String owner,String content,String classical){
+		Story story = new Story();
+		story.setId(PintuUtils.generateUID());
+		story.setFollow(follow);
+		story.setOwner(owner);
+		story.setPublishTime(PintuUtils.getFormatNowTime());
+		story.setContent(content);
+		story.setClassical(Integer.parseInt(classical));
+		this.addStoryToPicture(story);
+	}
+
+
+	/**
+	 * 为一个品图添加故事
+	 * @param story
+	 */
 	public void addStoryToPicture(Story story){
 		 pintuService.addStoryToPintu(story);
+	}
+	
+	
+	public void createComment(String follow,String owner,String content ){
+		Comment cmt = new Comment();
+		cmt.setId(PintuUtils.generateUID());
+		cmt.setFollow(follow);
+		cmt.setOwner(owner);
+		cmt.setPublishTime(PintuUtils.getFormatNowTime());
+		cmt.setContent(content);
+		this.addCommentToPicture(cmt);
 	}
 	
 	/**
@@ -137,17 +195,19 @@ public class ApiAdaptor {
 	public void addCommentToPicture(Comment cmt){
 		 pintuService.addCommentToPintu(cmt);
 	}
-	
-	public String getCommentsOfPic(String tpID){
-		return JSONArray.fromCollection(pintuService.getCommentsOfPic(tpID)).toString();
-	}
-	
-	public String getStoriesOfPic(String tpID){
-		return JSONArray.fromCollection(pintuService.getStoriesOfPic(tpID)).toString();
-	}
 
+	
+	public void createVote(String follow,String type,String amount){
+		Vote vote = new Vote();
+		vote.setId(PintuUtils.generateUID());
+		vote.setFollow(follow);
+		vote.setType(type);
+		vote.setAmount(Integer.parseInt(amount));
+		this.addVoteToStory(vote);
+	}
+	
 	/**
-	 * 为品图故事添加评论
+	 * 为品图故事投票
 	 * @param vote
 	 */
 	public void addVoteToStory(Vote vote) {

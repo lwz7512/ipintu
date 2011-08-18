@@ -69,7 +69,7 @@
 	action="pintuapi" method="post" enctype="multipart/form-data">
 	<div id="msg"></div>
 		<input type="hidden" name ="method"  value="upload"/><br/>
-	<input type="hidden" name ="user"  value="lml"/><br/>
+	<input type="hidden" name ="user"  value="la053beae20125b5b"/><br/>
 	<input type="hidden" name = "tags"  value="123"/><br/>
 	<input type="hidden" name = "description" value="test"/><br/>
 	
