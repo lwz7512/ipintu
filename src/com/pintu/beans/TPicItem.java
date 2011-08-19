@@ -166,7 +166,7 @@ public class TPicItem implements Serializable {
 	 * @return
 	 */
 	public boolean isValid() {
-		boolean flag = true;
+		boolean flag = false;
 		if (this.id != null && this.allowStory > -1 && this.description != null
 				&& this.publishTime != null && this.mobImgId != null
 				&& this.mobImgPath != null && this.mobImgSize != null
@@ -174,10 +174,8 @@ public class TPicItem implements Serializable {
 				&& this.rawImgPath != null && this.tags != null
 				&& this.owner != null && this.name != null && this.pass > -1) {
 			flag = true;
-		} else {
-			flag = false;
-		}
-
+		} 
+		
 		return flag;
 	}
 }
