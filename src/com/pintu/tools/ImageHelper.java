@@ -50,7 +50,8 @@ public class ImageHelper {
 				}
 				StringBuffer strBuffer = new StringBuffer();
 				strBuffer.append(fileName);
-				writeFile(image, size[0], size[1], strBuffer.toString(),fileType);
+				writeFile(image, size[0], size[1], strBuffer.toString(),
+						fileType);
 
 			}
 		} catch (Exception e) {
@@ -95,7 +96,10 @@ public class ImageHelper {
 		} else {
 			BufferedImage tag = new BufferedImage(width, height,
 					BufferedImage.TYPE_INT_RGB);
-			tag.getGraphics().drawImage(image, 0, 0, width, height, null);
+			// tag.getGraphics().drawImage(image, 0, 0, width, height, null);
+			tag.getGraphics().drawImage(
+					image.getScaledInstance(width, height, Image.SCALE_SMOOTH),
+					0, 0, null);
 			FileOutputStream out = null;
 			try {
 				out = new FileOutputStream(strBuffer);

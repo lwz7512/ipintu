@@ -147,25 +147,21 @@ public class PintuUnitTest {
 	
 	@Test
 	public void insertVote(){
-		List<Object> list = new ArrayList<Object>();
 		Vote v=new Vote();
 		v.setId("1");
 		v.setFollow("2");
 		v.setType("heart");
 		v.setAmount(3);
-		list.add(v);
-		System.out.println("测试插入投票："+dbAccess.insertVote(list));
+		System.out.println("测试插入投票："+dbAccess.insertVote(v));
 	}
 	@Test
 	public void updateVote(){
-		List<Object> list = new ArrayList<Object>();
 		Vote v=new Vote();
 		v.setId("1");
 		v.setFollow("9ab9a9a19396bcfd");
 		v.setType("egg");
 		v.setAmount(3);
-		list.add(v);
-		int i = dbAccess.updateVote(list);
+		int i = dbAccess.updateVote(v);
 		System.out.println("更新投票条数为："+i);
 	}
 	
