@@ -327,7 +327,7 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public int insertVote(final List<Object> objList) {
+	public int insertVote(final Vote vote) {
 		String sql = "INSERT INTO t_vote "
 				 + "(v_id,v_follow,v_type,v_amount,v_memo) "
 				 + "VALUES (?, ?, ?, ?, ?)";
@@ -336,7 +336,6 @@ public class DBAccessImplement implements DBAccessInterface {
 				new BatchPreparedStatementSetter() {
 					public void setValues(PreparedStatement ps, int i)
 							throws SQLException {
-						Vote vote = (Vote) objList.get(i);
 						ps.setString(1, vote.getId());
 						ps.setString(2, vote.getFollow());
 						ps.setString(3, vote.getType());
@@ -344,9 +343,11 @@ public class DBAccessImplement implements DBAccessInterface {
 						ps.setString(5, "");
 					}
 
+					@Override
 					public int getBatchSize() {
-						return objList.size();
+						return 1;
 					}
+
 				});
 		return res.length;
 	}
@@ -354,14 +355,13 @@ public class DBAccessImplement implements DBAccessInterface {
 	
 	//TODO 这个还需要验证
 	@Override
-	public int updateVote(final List<Object> objList) {
+	public int updateVote(final Vote vote) {
 		String sql = "update t_vote  set v_amount = v_amount +? where v_type = ? and v_follow = ?";
 
 		int[] res = jdbcTemplate.batchUpdate(sql,
 				new BatchPreparedStatementSetter() {
 					public void setValues(PreparedStatement ps, int i)
 							throws SQLException {
-						Vote vote = (Vote) objList.get(i);
 						ps.setInt(1, vote.getAmount());
 						ps.setString(2, vote.getType());
 						ps.setString(3, vote.getFollow());
@@ -369,7 +369,7 @@ public class DBAccessImplement implements DBAccessInterface {
 					}
 
 					public int getBatchSize() {
-						return objList.size();
+						return 1;
 					}
 				});
 		return res.length;

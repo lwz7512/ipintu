@@ -59,6 +59,17 @@ public class Vote implements Serializable{
 		this.amount = amount;
 	}
 	
+	public boolean isValid() {
+		boolean flag = true;
+		if (this.id != null && this.follow != null
+				&& this.type != null && this.amount > -1){
+			flag = true;
+		} else {
+			flag = false;
+		}
+
+		return flag;
+	}
 	
 
 }

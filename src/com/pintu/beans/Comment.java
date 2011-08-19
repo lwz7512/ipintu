@@ -59,6 +59,17 @@ public class Comment implements Serializable{
 	}
 
 
+	public boolean isValid() {
+		boolean flag = true;
+		if (this.id != null && this.follow != null
+				&& this.owner != null && this.publishTime != null
+				&& this.content != null) {
+			flag = true;
+		} else {
+			flag = false;
+		}
 
+		return flag;
+	}
 
 }

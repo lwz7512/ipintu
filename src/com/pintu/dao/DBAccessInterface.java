@@ -65,9 +65,9 @@ public interface DBAccessInterface {
 
 	public int insertStory(List<Object> objList);
 	
-	public int insertVote(List<Object> objList);
+	public int insertVote(Vote vote);
 	
-	public int updateVote(List<Object> objList);
+	public int updateVote(Vote vote);
 
 	public List<Comment> getCommentsOfPic(String tpID);
 
