@@ -537,7 +537,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	 */
 	@Override
 	public void getImageByPath(String path, HttpServletResponse res) {
-		File defaultFile = new File( imagePath + File.separator +"avatarImg"+File.separator+"defaultAvatar.jpg");
+		File defaultFile = new File( imagePath + File.separator +"avatarImg"+File.separator+"defaultAvatar.png");
 		String type =  path.substring(path.lastIndexOf(".") + 1);
 		File file = new File(path);
 		if(file.exists()){
@@ -548,8 +548,10 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			}else if(type.toLowerCase().equals("gif")){
 				writeGIFImage(file,res);
 			}else{
-				writeJPGImage(defaultFile,res);
+				writePNGImage(defaultFile,res);
 			}
+		}else{
+			writePNGImage(defaultFile,res);
 		}
 	
 		
