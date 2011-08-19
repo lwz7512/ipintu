@@ -23,27 +23,27 @@ public class TPicDetails extends TPicItem {
 	private int level;
 	
 	//品图数目（故事）数目
-	public String storiesNum;
+	public int storiesNum;
 	//评论数目
-	public String commentsNum;
+	public int commentsNum;
 
 	
-	public String getstoriesNum() {
+	public int getStoriesNum() {
 		return storiesNum;
 	}
 
 
-	public void setStoriesNum(String storiesNum) {
+	public void setStoriesNum(int storiesNum) {
 		this.storiesNum = storiesNum;
 	}
 
 
-	public String getCommentsNum() {
+	public int getCommentsNum() {
 		return commentsNum;
 	}
 
 
-	public void setCommentsNum(String commentsNum) {
+	public void setCommentsNum(int commentsNum) {
 		this.commentsNum = commentsNum;
 	}
 

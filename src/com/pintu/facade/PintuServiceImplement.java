@@ -309,18 +309,18 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public TPicDetails getTPicDetailsById(String tpID) {
+	public TPicDetails getTPicDetailsById(String tpId) {
 		TPicDetails details = new TPicDetails();
 		//根据图片id到缓存中取图片的基本信息
-		TPicItem item = cacheVisitor.getSpecificPic(tpID);
+		TPicItem item = cacheVisitor.getSpecificPic(tpId);
 		if(item != null){
 			String uerId = item.getOwner();
 			//得到图片的所有者即userId,再到数据库里取出user的详细信息
 			User user = dbVisitor.getUserById(uerId);
-			int commentNum = this.getCommentsOfPic(tpID).size();
-			int storyNum = this.getStoriesOfPic(tpID).size();
-			details.setStoriesNum(String.valueOf(storyNum));
-			details.setCommentsNum(String.valueOf(commentNum));
+			int commentNum = this.getCommentsOfPic(tpId).size();
+			int storyNum = this.getStoriesOfPic(tpId).size();
+			details.setStoriesNum(storyNum);
+			details.setCommentsNum(commentNum);
 			if(user != null){
 				details.setUserName(user.getAccount());
 				details.setScore(user.getScore());
@@ -343,20 +343,25 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	
 	
 	@Override
-	public List<Story> getStoriesOfPic(String tpID) {
-		List<Story> storyList = dbVisitor. getStoriesOfPic(tpID);
+	public List<Story> getStoriesOfPic(String tpId) {
+		List<Story> storyList = dbVisitor. getStoriesOfPic(tpId);
 //		JSONArray jarray = JSONArray.fromCollection(storyList);
 		return storyList;
 	}
 	
 
 	@Override
-	public List<Comment> getCommentsOfPic(String tpID) {
-		List<Comment>  cmtList = dbVisitor.getCommentsOfPic(tpID);
+	public List<Comment> getCommentsOfPic(String tpId) {
+		List<Comment>  cmtList = dbVisitor.getCommentsOfPic(tpId);
 //		JSONArray jarray = JSONArray.fromCollection(cmtList);
 		return cmtList;
 	}
 
+	@Override
+	public List<Vote> getVotesOfStory(String storyId) {
+		List<Vote> voteList = dbVisitor.getVoteOfStory(storyId);
+		return voteList;
+	}
 	
 	@Override
 	public User getUsrBasInfo(String user) {
@@ -542,6 +547,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	
 		
 	}
+
 
 
 	// TODO, 实现其他接口方法

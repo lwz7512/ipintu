@@ -181,11 +181,7 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			String amount =req.getParameter("amount");
 			
 			apiAdaptor.createVote(follow, type, amount);
-
-		}  else if (action.equals(AppStarter.GETVOTEOFSTORY)) {
-			//取得故事的投票
 			
-
 		}else if (action.equals(AppStarter.APPLYFORUSER)) {
 			// TODO, ...
 

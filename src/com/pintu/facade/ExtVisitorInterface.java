@@ -34,7 +34,6 @@ public interface ExtVisitorInterface {
 	
 	public static final String  ADDVOTE= "addVote";
 	
-	public static final String GETVOTEOFSTORY = "getVoteOfStory";
 	
 	
 	//TODO, TO ADD MORE METHOD DEFINITION...
