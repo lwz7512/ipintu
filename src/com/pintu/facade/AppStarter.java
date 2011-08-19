@@ -182,9 +182,16 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			
 			apiAdaptor.createVote(follow, type, amount);
 			
-		}else if (action.equals(AppStarter.APPLYFORUSER)) {
-			// TODO, ...
-
+		}else if (action.equals(AppStarter.GETUSERDETAIL)) {
+			//根据用户id得到该用户详情
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String userId = req.getParameter("userId");
+			String result = apiAdaptor.getUserDetail(userId);
+			System.out.println(result);
+			pw.write(result);
+			pw.close();
+			
 		}  else if (action.equals(AppStarter.OTHERMETHOD)) {
 			// TODO, ...
 

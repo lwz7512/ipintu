@@ -363,6 +363,13 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		return voteList;
 	}
 	
+	
+	@Override
+	public User getUserInfo(String userId) {
+		User user = dbVisitor.getUserById(userId);
+		return user;
+	}
+
 	@Override
 	public User getUsrBasInfo(String user) {
 		// TODO Auto-generated method stub
@@ -547,7 +554,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	
 		
 	}
-
 
 
 	// TODO, 实现其他接口方法

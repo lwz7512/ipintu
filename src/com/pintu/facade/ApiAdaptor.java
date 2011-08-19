@@ -19,6 +19,7 @@ import com.pintu.beans.Story;
 import com.pintu.beans.StoryDetails;
 import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TastePic;
+import com.pintu.beans.User;
 import com.pintu.beans.Vote;
 import com.pintu.utils.PintuUtils;
 import com.pintu.utils.UTF8Formater;
@@ -158,12 +159,17 @@ public class ApiAdaptor {
 			for(int i=0;i<storyList.size();i++){
 				StoryDetails storyDetail = new StoryDetails();
 				String storyId = storyList.get(i).getId();
+				String userId = storyList.get(i).getOwner();
 				storyDetail.setId(storyId);
 				storyDetail.setFollow( storyList.get(i).getFollow());
-				storyDetail.setOwner( storyList.get(i).getOwner());
+				storyDetail.setOwner(userId);
 				storyDetail.setPublishTime(storyList.get(i).getPublishTime());
 				storyDetail.setContent(storyList.get(i).getContent());
 				storyDetail.setClassical(storyList.get(i).getClassical());
+				User user = pintuService.getUserInfo(userId);
+				if(user != null){
+					storyDetail.setAuthor(user.getAccount());
+				}
 				List<Vote> voteList = pintuService.getVotesOfStory(storyId);
 				if(voteList != null && voteList.size()>0){
 					for(int j=0;j<voteList.size();j++){
@@ -246,6 +252,16 @@ public class ApiAdaptor {
 	 */
 	public void addVoteToStory(Vote vote) {
 		pintuService.addVoteToStory(vote);
+	}
+	
+	/**
+	 * 获取用户详细信息
+	 * @param userId
+	 * @return
+	 */
+	public String getUserDetail(String userId){
+		User user = pintuService.getUserInfo(userId);
+		return JSONObject.fromObject(user).toString();
 	}
 
 } //end of class

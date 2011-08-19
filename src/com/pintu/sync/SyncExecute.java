@@ -1,7 +1,6 @@
 package com.pintu.sync;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -19,26 +18,14 @@ public class SyncExecute implements Runnable {
 	private DBAccessInterface dbVisitor;
 	// 由Spring注入
 	private CacheAccessInterface cacheVisitor;
-		
+
 	// 同步运行开关
 	private Boolean syncFlag = true;
 
 	private Logger log = Logger.getLogger(SyncExecute.class);
 
-	// 未入库的对象
-	private List<Object> unSavedObjList = new ArrayList<Object>();
-
-	// 合法的可入库对象
-	private List<Object> rightObjList = new ArrayList<Object>();
-
-	// 缓存的需要入库的对象id
-	private LinkedList<String> cachedObjIds = new LinkedList<String>();
-
-	// 已入库的无用的数据对象id
-	private List<String> needRemoveIds = new ArrayList<String>();
 
 	public SyncExecute() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public void setDbVisitor(DBAccessInterface dbVisitor) {
@@ -80,7 +67,7 @@ public class SyncExecute implements Runnable {
 
 			syncVoteToDB();
 
-//			cacheVisitor.traceCache();
+			// cacheVisitor.traceCache();
 
 			try {
 				Thread.sleep(1000);
@@ -91,127 +78,29 @@ public class SyncExecute implements Runnable {
 
 	}
 
-
-	private void syncVoteToDB() {
-		unSavedObjList.clear();
-		unSavedObjList = cacheVisitor
-				.getUnSavedObj(CacheAccessInterface.VOTE_TYPE);
-		cachedObjIds.clear();
-		cachedObjIds = CacheAccessInterface.toSavedCacheIds
-				.get(CacheAccessInterface.VOTE_TYPE);
-
-		rightObjList.clear();
-		rightObjList = getVaildObj(unSavedObjList,
-				CacheAccessInterface.VOTE_TYPE);
-
-		//对投票的入库做特殊处理，先查询是否对于某一故事的某一类投票的记录是否存在
-		if (rightObjList != null && rightObjList.size() > 0) {
-			for(int i = 0 ;i< rightObjList.size();i++){
-				Vote vote = (Vote) rightObjList.get(i);
-				//原则上，入库的投票，一个故事最多有是几个种类的有几条投票数据
-				List<Vote> resList = dbVisitor.getVoteByFollowAndType(vote.getFollow(),vote.getType());
-				int rows = 0;
-				//存在对于某一故事的这一种类的评论，则更新数据库中此条记录，否则插入新的记录
-				if(resList.size()>0){
-					rows = dbVisitor.updateVote(rightObjList);
-				}else{
-					rows = dbVisitor.insertVote(rightObjList);
-				}
-				if (rows>0) {
-					// 成功入库后，全部删除已入库的对象id
-					needRemoveIds.clear();
-					for (int j = 0; j < rightObjList.size(); j++) {
-						needRemoveIds.add(vote.getId());
-					}
-					cachedObjIds.removeAll(needRemoveIds);
-				}
-			}
-			
-		} else {
-			// log.info("当前没有需要入库的的投票！");
-		}
-		
-	}
-
-	private void syncCommentToDB() {
-		unSavedObjList.clear();
-		unSavedObjList = cacheVisitor
-				.getUnSavedObj(CacheAccessInterface.COMMENT_TYPE);
-		cachedObjIds.clear();
-		cachedObjIds = CacheAccessInterface.toSavedCacheIds
-				.get(CacheAccessInterface.COMMENT_TYPE);
-
-		rightObjList.clear();
-		rightObjList = getVaildObj(unSavedObjList,
-				CacheAccessInterface.COMMENT_TYPE);
-
-		if (rightObjList != null && rightObjList.size() > 0) {
-			int m = dbVisitor.insertComment(rightObjList);
-			if (m > 0) {
-				// 成功入库后，全部删除已入库的对象id
-				needRemoveIds.clear();
-				for (int j = 0; j < rightObjList.size(); j++) {
-					Comment cmt = (Comment) rightObjList.get(j);
-					needRemoveIds.add(cmt.getId());
-				}
-				cachedObjIds.removeAll(needRemoveIds);
-			}
-		} else {
-			// log.info("当前没有需要入库的评论！");
-		}
-
-	}
-
-	private void syncStoryToDB() {
-		unSavedObjList.clear();
-		unSavedObjList = cacheVisitor
-				.getUnSavedObj(CacheAccessInterface.STORY_TYPE);
-		cachedObjIds.clear();
-		cachedObjIds = CacheAccessInterface.toSavedCacheIds
-				.get(CacheAccessInterface.STORY_TYPE);
-
-		rightObjList.clear();
-		rightObjList = getVaildObj(unSavedObjList,
-				CacheAccessInterface.STORY_TYPE);
-
-		if (rightObjList != null && rightObjList.size() > 0) {
-			int m = dbVisitor.insertStory(rightObjList);
-			if (m > 0) {
-				// 成功入库后，全部删除已入库的对象id
-				needRemoveIds.clear();
-				for (int j = 0; j < rightObjList.size(); j++) {
-					Story story = (Story) rightObjList.get(j);
-					needRemoveIds.add(story.getId());
-				}
-				cachedObjIds.removeAll(needRemoveIds);
-			}
-		} else {
-			// log.info("当前没有需要入库的故事！");
-		}
-
-	}
-
 	private void syncPictureToDB() {
-		unSavedObjList.clear();
-		unSavedObjList = cacheVisitor
+		List<Object> unSavedObjList = cacheVisitor
 				.getUnSavedObj(CacheAccessInterface.PICTURE_TYPE);
-		cachedObjIds.clear();
-		cachedObjIds = CacheAccessInterface.toSavedCacheIds
+
+		List<String> cachedObjIds = CacheAccessInterface.toSavedCacheIds
 				.get(CacheAccessInterface.PICTURE_TYPE);
 
 		// 分离出可入库的正确图片对象
-		rightObjList = getVaildObj(unSavedObjList,
-				CacheAccessInterface.PICTURE_TYPE);
+		List<Object> rightObjList = getVaildPicture(unSavedObjList);
 
 		if (rightObjList != null && rightObjList.size() > 0) {
 			int m = dbVisitor.insertPicture(rightObjList);
-			if (m > 0) {
+			if (m == rightObjList.size()) {
+				List<String> needRemoveIds = new ArrayList<String>();
 				// 成功入库后，全部删除已入库的对象id
 				for (int j = 0; j < rightObjList.size(); j++) {
 					TPicItem tpic = (TPicItem) rightObjList.get(j);
 					needRemoveIds.add(tpic.getId());
+					log.info("即将删除已入库图片为："+tpic.getId());
 				}
 				cachedObjIds.removeAll(needRemoveIds);
+			} else {
+				log.warn("图片入库数目与实际不符");
 			}
 		} else {
 			// log.info("当前没有需要入库的图片！");
@@ -224,11 +113,10 @@ public class SyncExecute implements Runnable {
 	 * @param objList
 	 * @return
 	 */
-	private List<Object> getVaildObj(List<Object> objList, String type) {
+	private List<Object> getVaildPicture(List<Object> objList) {
 		List<Object> resList = new ArrayList<Object>();
 		if (objList != null && objList.size() > 0) {
 			for (int i = 0; i < objList.size(); i++) {
-				if (type.equals(CacheAccessInterface.PICTURE_TYPE)) {
 					TPicItem tpic = (TPicItem) objList.get(i);
 					if (tpic.getMobImgId() != null
 							&& tpic.getMobImgSize() != null
@@ -237,40 +125,170 @@ public class SyncExecute implements Runnable {
 							&& tpic.getRawImgSize() != null
 							&& tpic.getRawImgPath() != null) {
 						resList.add(tpic);
+						log.info("校验通过准备入库的故事："+tpic.getId());
 					} else {
 						// 有属性字段为空时为不全法的入库对象
 						log.warn("不能入库的图片对象，ID为：" + tpic.getId());
 					}
-				} else if (type.equals(CacheAccessInterface.STORY_TYPE)) {
-					Story story = (Story) objList.get(i);
-					if (story.getFollow() != null && story.getOwner() != null &&
-							story.getPublishTime() != null && story.getContent() != null) {
-						resList.add(story);
-					} else {
-						// 有属性字段为空时为不全法的入库对象
-						log.warn("不能入库的故事对象，ID为：" + story.getId());
-					}
-				} else if (type.equals(CacheAccessInterface.COMMENT_TYPE)) {
-					Comment cmt = (Comment) objList.get(i);
-					if (cmt.getFollow() != null && cmt.getOwner() != null
-				&&cmt.getPublishTime() != null && cmt.getContent() != null) {
-						resList.add(cmt);
-					} else {
-						// 有属性字段为空时为不全法的入库对象
-						log.warn("不能入库的评论对象，ID为：" + cmt.getId());
-					}
-				}else if (type.equals(CacheAccessInterface.VOTE_TYPE)) {
-					Vote vote = (Vote) objList.get(i);
-					if (vote.getFollow() != null && vote.getType() != null
-							&& vote.getAmount() >0) {
-						resList.add(vote);
-					} else {
-						// 有属性字段为空时为不全法的入库对象
-						log.warn("不能入库的投票对象，ID为：" + vote.getId());
-					}
+				}
+			}
+		return resList;
+	}
+	
+
+	private void syncCommentToDB() {
+		List<Object> unSavedObjList = cacheVisitor
+				.getUnSavedObj(CacheAccessInterface.COMMENT_TYPE);
+
+		List<String> cachedObjIds = CacheAccessInterface.toSavedCacheIds
+				.get(CacheAccessInterface.COMMENT_TYPE);
+
+		List<Object> rightObjList = getVaildComment(unSavedObjList);
+
+		if (rightObjList != null && rightObjList.size() > 0) {
+			int m = dbVisitor.insertComment(rightObjList);
+			if (m == rightObjList.size()) {
+				// 成功入库后，全部删除已入库的对象id
+				List<String> needRemoveIds = new ArrayList<String>();
+				for (int j = 0; j < rightObjList.size(); j++) {
+					Comment cmt = (Comment) rightObjList.get(j);
+					needRemoveIds.add(cmt.getId());
+					log.info("即将删除已入库评论为："+cmt.getId());
+				}
+				cachedObjIds.removeAll(needRemoveIds);
+			} else {
+				log.warn("评论入库失败");
+			}
+		} else {
+			// log.info("当前没有需要入库的评论！");
+		}
+
+	}
+
+	private List<Object> getVaildComment(List<Object> objList) {
+		List<Object> resList = new ArrayList<Object>();
+		if (objList != null && objList.size() > 0) {
+			for (int i = 0; i < objList.size(); i++) {
+				Comment cmt = (Comment) objList.get(i);
+				if (cmt.getFollow() != null && cmt.getOwner() != null
+						&& cmt.getPublishTime() != null
+						&& cmt.getContent() != null) {
+					resList.add(cmt);
+					log.info("校验通过准备入库的评论："+cmt.getId());
+				} else {
+					// 有属性字段为空时为不全法的入库对象
+					log.warn("不能入库的评论对象，ID为：" + cmt.getId());
 				}
 			}
 		}
+		return resList;
+	}
+
+	private void syncStoryToDB() {
+		List<Object> unSavedObjList = cacheVisitor
+				.getUnSavedObj(CacheAccessInterface.STORY_TYPE);
+		List<String> cachedObjIds = CacheAccessInterface.toSavedCacheIds
+				.get(CacheAccessInterface.STORY_TYPE);
+
+		List<Object> rightObjList = getVaildStory(unSavedObjList);
+
+		if (rightObjList != null && rightObjList.size() > 0) {
+			int m = dbVisitor.insertStory(rightObjList);
+			if (m == rightObjList.size()) {
+				// 成功入库后，全部删除已入库的对象id
+				List<String> needRemoveIds = new ArrayList<String>();
+				for (int j = 0; j < rightObjList.size(); j++) {
+					Story story = (Story) rightObjList.get(j);
+					needRemoveIds.add(story.getId());
+					log.info("即将删除已入库故事为："+story.getId());
+				}
+				cachedObjIds.removeAll(needRemoveIds);
+			} else {
+				log.warn("故事入库失败");
+			}
+		} else {
+			// log.info("当前没有需要入库的故事！");
+		}
+
+	}
+
+	private List<Object> getVaildStory(List<Object> objList) {
+		List<Object> resList = new ArrayList<Object>();
+		if (objList != null && objList.size() > 0) {
+			for (int i = 0; i < objList.size(); i++) {
+				Story story = (Story) objList.get(i);
+				if (story.getFollow() != null && story.getOwner() != null
+						&& story.getPublishTime() != null
+						&& story.getContent() != null) {
+					resList.add(story);
+					log.info("校验通过准备入库的故事："+story.getId());
+				} else {
+					// 有属性字段为空时为不全法的入库对象
+					log.warn("不能入库的故事对象，ID为：" + story.getId());
+				}
+			}
+		}
+		return resList;
+	}
+
+	private void syncVoteToDB() {
+		List<Object> unSavedObjList = cacheVisitor
+				.getUnSavedObj(CacheAccessInterface.VOTE_TYPE);
+		List<String> cachedObjIds = CacheAccessInterface.toSavedCacheIds
+				.get(CacheAccessInterface.VOTE_TYPE);
+
+		List<Object> rightObjList = getVaildVote(unSavedObjList);
+
+		// 对投票的入库做特殊处理，先查询是否对于某一故事的某一类投票的记录是否存在
+		if (rightObjList != null && rightObjList.size() > 0) {
+			for (int i = 0; i < rightObjList.size(); i++) {
+				Vote vote = (Vote) rightObjList.get(i);
+				// 原则上，入库的投票，一个故事最多有是几个种类的有几条投票数据
+				List<Vote> resList = dbVisitor.getVoteByFollowAndType(
+						vote.getFollow(), vote.getType());
+				int rows = 0;
+				// 存在对于某一故事的这一种类的评论，则更新数据库中此条记录，否则插入新的记录
+				if (resList.size() > 0) {
+					rows = dbVisitor.updateVote(rightObjList);
+				} else {
+					rows = dbVisitor.insertVote(rightObjList);
+				}
+				if (rows == rightObjList.size()) {
+					// 成功入库后，全部删除已入库的对象id
+					List<String> needRemoveIds = new ArrayList<String>();
+					for (int j = 0; j < rightObjList.size(); j++) {
+						needRemoveIds.add(vote.getId());
+						log.info("即将删除已入库投票为："+vote.getId());
+					}
+					cachedObjIds.removeAll(needRemoveIds);
+				} else {
+					log.warn("投票入库失败");
+				}
+			}
+
+		} else {
+			// log.info("当前没有需要入库的的投票！");
+		}
+
+	}
+
+	private List<Object> getVaildVote(List<Object> objList) {
+
+		List<Object> resList = new ArrayList<Object>();
+		if (objList != null && objList.size() > 0) {
+			for (int i = 0; i < objList.size(); i++) {
+				Vote vote = (Vote) objList.get(i);
+				if (vote.getFollow() != null && vote.getType() != null
+						&& vote.getAmount() > 0) {
+					resList.add(vote);
+					log.info("校验通过准备入库的投票："+vote.getId());
+				} else {
+					// 有属性字段为空时为不全法的入库对象
+					log.warn("不能入库的投票对象，ID为：" + vote.getId());
+				}
+			}
+		}
+
 		return resList;
 	}
 

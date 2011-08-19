@@ -71,7 +71,7 @@
 		<input type="hidden" name ="method"  value="upload"/><br/>
 	<input type="hidden" name ="user"  value="la053beae20125b5b"/><br/>
 	<input type="hidden" name = "tags"  value="123"/><br/>
-	<input type="hidden" name = "description" value="123456789"/><br/>
+	<input type="hidden" name = "description" value="1"/><br/>
 	
 	上传文件：
 	<input type="file" name="file1" id="file1" size="30" onchange="CheckFileType();"/><br />
