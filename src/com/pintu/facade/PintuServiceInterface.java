@@ -123,7 +123,8 @@ public interface PintuServiceInterface {
 	public List<TPicDesc> getFavoriteTpics(String user, String pageNum);
 	
 	
-	
+	// 查看用户息
+	public User getUserInfo(String userId);
 
 	// 查看今日热图（点击量、故事数、评论数）
 	// 系统定时统计出来并保持，然后返回三类图排名10以内的30张图；

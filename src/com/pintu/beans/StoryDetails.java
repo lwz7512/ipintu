@@ -4,6 +4,8 @@ public class StoryDetails extends Story{
 
 	private static final long serialVersionUID = 8075956658153137206L;
 
+	private String author;
+	
 	private int flower;
 	
 	private int heart;
@@ -11,6 +13,14 @@ public class StoryDetails extends Story{
 	private int egg;
 	
 	private int star;
+
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
+	}
 
 	public int getFlower() {
 		return flower;
