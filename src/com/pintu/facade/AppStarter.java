@@ -191,10 +191,45 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			pw.write(result);
 			pw.close();
 			
-		}  else if (action.equals(AppStarter.OTHERMETHOD)) {
-			// TODO, ...
-
-		} else {
+		}else if (action.equals(AppStarter.SENDMSG)) {
+			// 发消息 TODO, ...
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			
+			String sender = req.getParameter("user");
+			String receiver = req.getParameter("receiver");
+			String content = req.getParameter("content");
+			
+			boolean flag = apiAdaptor.sendMessage(sender, receiver, content);
+			System.out.println(flag);
+			
+			
+			if(flag){
+				pw.println("发送消息成功！");
+			}else{
+				pw.println("发送消息失败！");
+			}
+			
+			
+		} else if (action.equals(AppStarter.GETUSERMSG)) {
+			// 得到收件箱详情 TODO, ...
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			
+			String userId = req.getParameter("user");
+			String result = apiAdaptor.getUserMsg(userId);
+			System.out.println(result);
+			pw.println(result);
+			
+		}else if(action.equals(AppStarter.CHANGEMSGSTATE)){
+			
+			String msgId = req.getParameter("msgId");
+			apiAdaptor.changeMsgState(msgId);
+			
+		}else if(action.equals(AppStarter.GETHOTPICTURE)){	
+			//TODO 	从cache里取counter做比较返回，需要排序
+			
+		}else {
 
 		}
 	}

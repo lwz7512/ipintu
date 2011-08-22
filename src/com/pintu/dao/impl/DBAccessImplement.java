@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 
 import com.pintu.beans.Comment;
+import com.pintu.beans.Message;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicItem;
 import com.pintu.beans.User;
@@ -436,6 +437,72 @@ public class DBAccessImplement implements DBAccessInterface {
 			pic.setPass(Integer.parseInt(map.get("p_pass").toString()));
 		}
 		return pic;
+	}
+
+	@Override
+	public int insertMessage(final Message msg) {
+		String sql = "INSERT INTO t_message "
+				 + "(m_id,m_sender,m_receiver,m_content,m_writeTime,m_read,m_memo) "
+				 + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+		int[] res = jdbcTemplate.batchUpdate(sql,
+				new BatchPreparedStatementSetter() {
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+						ps.setString(1, msg.getId());
+						ps.setString(2, msg.getSender());
+						ps.setString(3, msg.getReceiver());
+						ps.setString(4, msg.getContent());
+						ps.setString(5, msg.getWriteTime());
+						ps.setInt(6, msg.getRead());
+						ps.setString(7, "");
+					}
+
+					public int getBatchSize() {
+						return 1;
+					}
+
+				});
+				
+			return res.length;
+	}
+
+	@Override
+	public List<Message> getUserMessages(String userId) {
+		List<Message> msgList = new ArrayList<Message>();
+		String sql = "select * from t_message where m_sender = '"+userId+"'"+" or m_receiver = '"+userId+"'";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Message msg = new Message();
+				msg.setId(map.get("m_id").toString());
+				msg.setReceiver(map.get("m_receiver").toString());
+				msg.setSender(map.get("m_sender").toString());
+				msg.setWriteTime(map.get("m_writeTime").toString());
+				msg.setRead(Integer.parseInt(map.get("m_read").toString()));
+				msg.setContent(map.get("m_content").toString());
+				msgList.add(msg);
+			}
+		}
+		return msgList;
+	}
+
+	@Override
+	public int updateMsg(final String msgId) {
+		String sql = "update t_message  set m_read = 1 where m_id =?";
+		int[] res = jdbcTemplate.batchUpdate(sql,
+				new BatchPreparedStatementSetter() {
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+						ps.setString(1, msgId);
+					}
+
+					public int getBatchSize() {
+						return 1;
+					}
+				});
+		return res.length;
 	}
 
 	
