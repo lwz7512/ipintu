@@ -317,6 +317,17 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		if(item.getId() == null){
 			item = dbVisitor.getPictureById(tpId);
 		}
+		//取一个图片详情时，我们认为这张图获得了一个点击量
+		item.setCounter(1);
+		
+		
+		if(PintuServiceInterface.hotPicCacheIds.containsKey(item.getId())){
+			Integer value = PintuServiceInterface.hotPicCacheIds.get(item.getId());
+			PintuServiceInterface.hotPicCacheIds.put(item.getId(), value+item.getCounter());
+		}else{
+			PintuServiceInterface.hotPicCacheIds.put(item.getId(), item.getCounter());
+		}
+		
 		String uerId = item.getOwner();
 		//得到图片的所有者即userId,再到数据库里取出user的详细信息
 		User user = dbVisitor.getUserById(uerId);
@@ -325,7 +336,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		details.setStoriesNum(storyNum);
 		details.setCommentsNum(commentNum);
 		if(user != null){
-			details.setUserName(user.getAccount());
+			details.setAuthor(user.getAccount());
 			details.setScore(user.getScore());
 			details.setLevel(user.getLevel());
 			details.setAvatarImgPath(user.getAvatar());
@@ -423,15 +434,19 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	
 
 	@Override
-	public List<Message> getUserMessages(String user) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Message> getUserMessages(String userId) {
+		List<Message> msgList = dbVisitor.getUserMessages(userId);
+		return msgList;
 	}
 
 	@Override
 	public Boolean sendMessage(Message msg) {
-		// TODO Auto-generated method stub
-		return null;
+		int i = dbVisitor.insertMessage(msg);
+		if(i>0){
+			return true;
+		}else{
+			return false;
+		}
 	}
 
 
@@ -557,6 +572,22 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		}
 	
 		
+	}
+
+	@Override
+	public boolean changeMsgState(String msgId) {
+		int rows = dbVisitor.updateMsg(msgId);
+		if(rows > 0){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	@Override
+	public List<TPicItem> getHotPicture() {
+		// TODO 这里需要用那个存储的id集里取到是热点的图片，并排序返回
+		return null;
 	}
 
 

@@ -10,8 +10,8 @@ public class TPicDetails extends TPicItem {
 
 	private static final long serialVersionUID = -8555839266466344516L;
 	
-	//用户名
-	private String userName;
+	//作者（账号）
+	private String author;
 
 	//用户头像，用户表存文件路径，从磁盘上找图
 	private String avatarImgPath;
@@ -58,13 +58,13 @@ public class TPicDetails extends TPicItem {
 	}
 
 
-	public String getUserName() {
-		return userName;
+	public String getAuthor() {
+		return author;
 	}
 
 
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setAuthor(String author) {
+		this.author = author;
 	}
 
 

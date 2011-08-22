@@ -1,7 +1,9 @@
 package com.pintu.facade;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,6 +17,7 @@ import com.pintu.beans.Note;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicDetails;
+import com.pintu.beans.TPicItem;
 import com.pintu.beans.TastePic;
 import com.pintu.beans.User;
 import com.pintu.beans.Vote;
@@ -22,6 +25,10 @@ import com.pintu.beans.Wealth;
 
 public interface PintuServiceInterface {
 
+	//TODO 用于存放热图的id和点击量的对应关系（每当查看详情后将被查看的图片id放到这里）
+	//在每天零点计算积分等级等时，顺便将这个重置
+	public static Map<String, Integer> hotPicCacheIds = new HashMap<String,Integer>();
+	
 	// 设置图片文件保存路径，由ApiAdaptor赋值
 	public void saveImagePathToProcessor(String filePath);
 
@@ -159,7 +166,13 @@ public interface PintuServiceInterface {
 	public Boolean sendMessage(Message msg);
 
 	// 查看自己的消息
-	public List<Message> getUserMessages(String user);
+	public List<Message> getUserMessages(String userId);
+	
+	//改变消息的状态
+	public boolean changeMsgState(String msgId);
+	
+	//取到今日热图
+	public List<TPicItem> getHotPicture();
 
 	// ANYMORE NECESSARY???
 
@@ -207,6 +220,7 @@ public interface PintuServiceInterface {
 
 	// 发布行业动态
 	public Boolean publishIndustryEvent(Event tpEvent);
+
 
 
 

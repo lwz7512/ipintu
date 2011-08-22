@@ -42,6 +42,20 @@ public class TPicItem implements Serializable {
 	private String rawImgPath;
 	// 是否审核通过，默认都是1，即通过，不通过变为0
 	private int pass;
+	
+	//为今日热点做累加点击数
+	private int counter;
+
+	public int getCounter() {
+		return counter;
+	}
+
+	/**
+	 * 这里给一个点击数，做累加
+	 */
+	public void setCounter(int counter) {
+		this.counter += counter;
+	}
 
 	public TPicItem() {
 

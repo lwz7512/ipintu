@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.pintu.beans.Comment;
 
+import com.pintu.beans.Message;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicItem;
 import com.pintu.beans.User;
@@ -78,5 +79,11 @@ public interface DBAccessInterface {
 	public List<Vote> getVoteByFollowAndType(String storyId, String type);
 
 	public TPicItem getPictureById(String tpId);
+
+	public int insertMessage(Message msg);
+
+	public List<Message> getUserMessages(String userId);
+
+	public int updateMsg(String msgId);
 
 }

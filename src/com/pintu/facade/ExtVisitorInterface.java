@@ -36,6 +36,14 @@ public interface ExtVisitorInterface {
 	
 	public static final String GETUSERDETAIL = "getUserDetail";
 	
+	public static final String SENDMSG = "sendMsg";
+	
+	public static final String GETUSERMSG  = "getUserMsg";
+	
+	public static final String CHANGEMSGSTATE = "changeMsgState";
+	
+	public static final String GETHOTPICTURE = "getHotPicture";
+	
 	//TODO, TO ADD MORE METHOD DEFINITION...
 
 	

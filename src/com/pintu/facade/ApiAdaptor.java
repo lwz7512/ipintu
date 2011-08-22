@@ -15,6 +15,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.fileupload.FileItem;
 
 import com.pintu.beans.Comment;
+import com.pintu.beans.Message;
 import com.pintu.beans.Story;
 import com.pintu.beans.StoryDetails;
 import com.pintu.beans.TPicDetails;
@@ -202,7 +203,7 @@ public class ApiAdaptor {
 		story.setFollow(follow);
 		story.setOwner(owner);
 		story.setPublishTime(PintuUtils.getFormatNowTime());
-		story.setContent(content);
+		story.setContent(UTF8Formater.changeToWord(content));
 		story.setClassical(0);
 		this.addStoryToPicture(story);
 	}
@@ -212,7 +213,7 @@ public class ApiAdaptor {
 	 * 为一个品图添加故事
 	 * @param story
 	 */
-	public void addStoryToPicture(Story story){
+	private void addStoryToPicture(Story story){
 		 pintuService.addStoryToPintu(story);
 	}
 	
@@ -223,7 +224,7 @@ public class ApiAdaptor {
 		cmt.setFollow(follow);
 		cmt.setOwner(owner);
 		cmt.setPublishTime(PintuUtils.getFormatNowTime());
-		cmt.setContent(content);
+		cmt.setContent(UTF8Formater.changeToWord(content));
 		this.addCommentToPicture(cmt);
 	}
 	
@@ -232,7 +233,7 @@ public class ApiAdaptor {
 	 * @param cmt
 	 * @return
 	 */
-	public void addCommentToPicture(Comment cmt){
+	private void addCommentToPicture(Comment cmt){
 		 pintuService.addCommentToPintu(cmt);
 	}
 
@@ -250,7 +251,7 @@ public class ApiAdaptor {
 	 * 为品图故事投票
 	 * @param vote
 	 */
-	public void addVoteToStory(Vote vote) {
+	private void addVoteToStory(Vote vote) {
 		pintuService.addVoteToStory(vote);
 	}
 	
@@ -264,4 +265,39 @@ public class ApiAdaptor {
 		return JSONObject.fromObject(user).toString();
 	}
 
+	/**
+	 * 发消息
+	 * @param sender
+	 * @param receiver
+	 * @param content
+	 */
+	public boolean sendMessage(String sender,String receiver,String content){
+		Message msg =  new Message();
+		msg.setId(PintuUtils.generateUID());
+		msg.setSender(sender);
+		msg.setReceiver(receiver);
+		msg.setContent(UTF8Formater.changeToWord(content));
+		msg.setWriteTime(PintuUtils.getFormatNowTime());
+		msg.setRead(0);
+		return pintuService.sendMessage(msg);
+	}
+	
+	/**
+	 * 得到该用户的所有消息信息
+	 * @param userId
+	 * @return
+	 */
+	public String getUserMsg(String userId){
+		List<Message> msgList = pintuService.getUserMessages(userId);
+		return JSONArray.fromCollection(msgList).toString();
+	}
+
+	/**
+	 * 改变消息状态
+	 * @param read
+	 */
+	public boolean changeMsgState(String msgId) {
+		return pintuService.changeMsgState(msgId);
+	}
+	
 } //end of class
