@@ -313,31 +313,33 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		TPicDetails details = new TPicDetails();
 		//根据图片id到缓存中取图片的基本信息
 		TPicItem item = cacheVisitor.getSpecificPic(tpId);
-		if(item != null){
-			String uerId = item.getOwner();
-			//得到图片的所有者即userId,再到数据库里取出user的详细信息
-			User user = dbVisitor.getUserById(uerId);
-			int commentNum = this.getCommentsOfPic(tpId).size();
-			int storyNum = this.getStoriesOfPic(tpId).size();
-			details.setStoriesNum(storyNum);
-			details.setCommentsNum(commentNum);
-			if(user != null){
-				details.setUserName(user.getAccount());
-				details.setScore(user.getScore());
-				details.setLevel(user.getLevel());
-				details.setAvatarImgPath(user.getAvatar());
-				details.setId(item.getId());
-				details.setName(item.getName());
-				details.setOwner(uerId);
-				details.setMobImgId(item.getMobImgId());
-				details.setRawImgId(item.getRawImgId());
-				details.setPublishTime(item.getPublishTime());
-				details.setDescription(item.getDescription());
-				details.setTags(item.getTags());
-				details.setAllowStory(item.getAllowStory());
-			}
-		
+		//若缓存里不存在该图片的信息则转向查数据库
+		if(item.getId() == null){
+			item = dbVisitor.getPictureById(tpId);
 		}
+		String uerId = item.getOwner();
+		//得到图片的所有者即userId,再到数据库里取出user的详细信息
+		User user = dbVisitor.getUserById(uerId);
+		int commentNum = this.getCommentsOfPic(tpId).size();
+		int storyNum = this.getStoriesOfPic(tpId).size();
+		details.setStoriesNum(storyNum);
+		details.setCommentsNum(commentNum);
+		if(user != null){
+			details.setUserName(user.getAccount());
+			details.setScore(user.getScore());
+			details.setLevel(user.getLevel());
+			details.setAvatarImgPath(user.getAvatar());
+			details.setId(item.getId());
+			details.setName(item.getName());
+			details.setOwner(uerId);
+			details.setMobImgId(item.getMobImgId());
+			details.setRawImgId(item.getRawImgId());
+			details.setPublishTime(item.getPublishTime());
+			details.setDescription(item.getDescription());
+			details.setTags(item.getTags());
+			details.setAllowStory(item.getAllowStory());
+		}
+		
 		return details;
 	}
 	
@@ -537,7 +539,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	 */
 	@Override
 	public void getImageByPath(String path, HttpServletResponse res) {
-		File defaultFile = new File( imagePath + File.separator +"avatarImg"+File.separator+"defaultAvatar.jpg");
+		File defaultFile = new File( imagePath + File.separator +"avatarImg"+File.separator+"defaultAvatar.png");
 		String type =  path.substring(path.lastIndexOf(".") + 1);
 		File file = new File(path);
 		if(file.exists()){
@@ -548,8 +550,10 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			}else if(type.toLowerCase().equals("gif")){
 				writeGIFImage(file,res);
 			}else{
-				writeJPGImage(defaultFile,res);
+				writePNGImage(defaultFile,res);
 			}
+		}else{
+			writePNGImage(defaultFile,res);
 		}
 	
 		

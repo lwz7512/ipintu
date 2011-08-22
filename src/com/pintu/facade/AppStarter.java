@@ -142,9 +142,8 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			String follow = req.getParameter("follow");
 			String owner = req.getParameter("owner");
 			String content = req.getParameter("content");
-			String classical = req.getParameter("classical");
 			
-			apiAdaptor.createStory(follow, owner, content, classical);
+			apiAdaptor.createStory(follow, owner, content);
 			
 		} else if (action.equals(AppStarter.ADDCOMMENT)) {
 			//为图片添加评论

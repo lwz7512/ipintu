@@ -77,4 +77,6 @@ public interface DBAccessInterface {
 
 	public List<Vote> getVoteByFollowAndType(String storyId, String type);
 
+	public TPicItem getPictureById(String tpId);
+
 }
