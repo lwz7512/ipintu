@@ -196,14 +196,14 @@ public class ApiAdaptor {
 		return JSONArray.fromCollection(storyDeatilList).toString();
 	}
 	
-	public void createStory(String follow,String owner,String content,String classical){
+	public void createStory(String follow,String owner,String content){
 		Story story = new Story();
 		story.setId(PintuUtils.generateUID());
 		story.setFollow(follow);
 		story.setOwner(owner);
 		story.setPublishTime(PintuUtils.getFormatNowTime());
 		story.setContent(content);
-		story.setClassical(Integer.parseInt(classical));
+		story.setClassical(0);
 		this.addStoryToPicture(story);
 	}
 

@@ -353,7 +353,6 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 	
 	
-	//TODO 这个还需要验证
 	@Override
 	public int updateVote(final Vote vote) {
 		String sql = "update t_vote  set v_amount = v_amount +? where v_type = ? and v_follow = ?";
@@ -412,6 +411,31 @@ public class DBAccessImplement implements DBAccessInterface {
 			}
 		}
 		return voteList;
+	}
+
+	@Override
+	public TPicItem getPictureById(String tpId) {
+		TPicItem pic = new TPicItem();
+		String sql = "select * from t_picture where p_id = '"+tpId+"'";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if(rows!=null && rows.size()>0){
+			Map<String, Object> map = (Map<String, Object>) rows.get(0);
+			pic.setId(map.get("p_id").toString());
+			pic.setName(map.get("p_name").toString());
+			pic.setOwner(map.get("p_owner").toString());
+			pic.setPublishTime(map.get("p_publishTime").toString());
+			pic.setTags(map.get("p_tags").toString());
+			pic.setDescription(map.get("p_description").toString());
+			pic.setAllowStory(Integer.parseInt(map.get("p_allowStory").toString()));
+			pic.setMobImgId(map.get("p_mobImgId").toString());
+			pic.setMobImgSize(map.get("p_mobImgSize").toString());
+			pic.setMobImgPath(map.get("p_mobImgPath").toString());
+			pic.setRawImgId(map.get("p_rawImgId").toString());
+			pic.setRawImgSize(map.get("p_rawImgSize").toString());
+			pic.setRawImgPath(map.get("p_rawImgPath").toString());
+			pic.setPass(Integer.parseInt(map.get("p_pass").toString()));
+		}
+		return pic;
 	}
 
 	
