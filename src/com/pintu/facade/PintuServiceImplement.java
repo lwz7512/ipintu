@@ -313,6 +313,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		TPicDetails details = new TPicDetails();
 		//根据图片id到缓存中取图片的基本信息
 		TPicItem item = cacheVisitor.getSpecificPic(tpId);
+		//若缓存里不存在该图片的信息则转向查数据库
 		if(item.getId() == null){
 			item = dbVisitor.getPictureById(tpId);
 		}
