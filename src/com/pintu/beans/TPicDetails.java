@@ -27,7 +27,17 @@ public class TPicDetails extends TPicItem {
 	//评论数目
 	public int commentsNum;
 
+	//为今日热点做累加点击数
+	private int counter;
+
+	public int getCounter() {
+		return counter;
+	}
+
 	
+	public void setCounter(int counter) {
+		this.counter = counter;
+	}
 	public int getStoriesNum() {
 		return storiesNum;
 	}

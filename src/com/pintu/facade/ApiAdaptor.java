@@ -299,5 +299,23 @@ public class ApiAdaptor {
 	public boolean changeMsgState(String msgId) {
 		return pintuService.changeMsgState(msgId);
 	}
+
+	/**
+	 * 得到热图列表
+	 * @return
+	 */
+	public String getHotPicture() {
+		List<TPicDetails> hotList = pintuService.getHotPicture();
+		return JSONArray.fromCollection(hotList).toString();
+	}
+
+	/**
+	 * 得到经典品图信息
+	 * @return
+	 */
+	public String getClassicalStory() {
+		List<StoryDetails> classicalList = pintuService.getClassicalPintu();
+		return JSONArray.fromCollection(classicalList).toString();
+	}
 	
 } //end of class

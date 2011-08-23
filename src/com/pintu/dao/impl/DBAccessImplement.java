@@ -505,6 +505,27 @@ public class DBAccessImplement implements DBAccessInterface {
 		return res.length;
 	}
 
+	@Override
+	public List<Story> getClassicalPintu() {
+		List<Story> list = new ArrayList<Story>();
+		String sql = "select * from t_story where s_classical = 1 ";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Story story = new Story();
+				story.setId(map.get("s_id").toString());
+				story.setFollow(map.get("s_follow").toString());
+				story.setOwner(map.get("s_owner").toString());
+				story.setContent(map.get("s_content").toString());
+				story.setClassical(Integer.parseInt(map.get("s_classical").toString()));
+				story.setPublishTime(map.get("s_publishTime").toString());
+				list.add(story);
+			}
+		}
+		return list;
+	}
+
 	
 
 

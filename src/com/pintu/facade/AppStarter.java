@@ -220,15 +220,28 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			String result = apiAdaptor.getUserMsg(userId);
 			System.out.println(result);
 			pw.println(result);
-			
+			pw.close();
 		}else if(action.equals(AppStarter.CHANGEMSGSTATE)){
 			
 			String msgId = req.getParameter("msgId");
 			apiAdaptor.changeMsgState(msgId);
 			
 		}else if(action.equals(AppStarter.GETHOTPICTURE)){	
-			//TODO 	从cache里取counter做比较返回，需要排序
-			
+			//取得热图
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String result = apiAdaptor.getHotPicture();
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
+		}else if(action.equals(AppStarter.GETClASSICALPINTU)){	
+			//取得经典品图
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String result = apiAdaptor.getClassicalStory();
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
 		}else {
 
 		}

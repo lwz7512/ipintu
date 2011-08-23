@@ -15,9 +15,9 @@ import com.pintu.beans.Message;
 import com.pintu.beans.News;
 import com.pintu.beans.Note;
 import com.pintu.beans.Story;
+import com.pintu.beans.StoryDetails;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicDetails;
-import com.pintu.beans.TPicItem;
 import com.pintu.beans.TastePic;
 import com.pintu.beans.User;
 import com.pintu.beans.Vote;
@@ -172,7 +172,10 @@ public interface PintuServiceInterface {
 	public boolean changeMsgState(String msgId);
 	
 	//取到今日热图
-	public List<TPicItem> getHotPicture();
+	public List<TPicDetails> getHotPicture();
+	
+	//查看经典品图（包括经典故事及其所属的图片）
+	public List<StoryDetails> getClassicalPintu();
 
 	// ANYMORE NECESSARY???
 
@@ -220,7 +223,6 @@ public interface PintuServiceInterface {
 
 	// 发布行业动态
 	public Boolean publishIndustryEvent(Event tpEvent);
-
 
 
 

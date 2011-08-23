@@ -1,5 +1,9 @@
 package com.pintu.jobs;
-
+/**
+ * 计算用户积分
+ * @author liumingli
+ *
+ */
 public class ScoreLevelTask extends CalculateTask {
 
 	public ScoreLevelTask() {

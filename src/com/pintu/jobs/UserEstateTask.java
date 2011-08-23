@@ -1,5 +1,9 @@
 package com.pintu.jobs;
-
+/**
+ * 计算用户资产
+ * @author liumingli
+ *
+ */
 public class UserEstateTask extends CalculateTask {
 
 	public UserEstateTask() {
