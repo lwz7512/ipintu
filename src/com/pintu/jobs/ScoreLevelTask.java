@@ -1,6 +1,6 @@
 package com.pintu.jobs;
 /**
- * 计算用户积分
+ * 计算用户积分等级
  * @author liumingli
  *
  */
