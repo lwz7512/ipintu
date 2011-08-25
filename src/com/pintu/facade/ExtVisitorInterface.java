@@ -44,6 +44,9 @@ public interface ExtVisitorInterface {
 	
 	public static final String GETHOTPICTURE = "getHotPicture";
 	
+	public static final String GETClASSICALPINTU= "getClassicalPintu";
+
+	
 	//TODO, TO ADD MORE METHOD DEFINITION...
 
 	

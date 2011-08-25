@@ -86,4 +86,6 @@ public interface DBAccessInterface {
 
 	public int updateMsg(String msgId);
 
+	public List<Story> getClassicalPintu();
+
 }

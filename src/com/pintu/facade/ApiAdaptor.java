@@ -175,13 +175,13 @@ public class ApiAdaptor {
 				if(voteList != null && voteList.size()>0){
 					for(int j=0;j<voteList.size();j++){
 						Vote vote = voteList.get(j);
-						if(vote.getType().equals("flower")){
+						if(vote.getType().equals(Vote.FLOWER_TYPE)){
 							storyDetail.setFlower(vote.getAmount());
-						}else if(vote.getType().equals("egg")){
+						}else if(vote.getType().equals(Vote.EGG_TYPE)){
 							storyDetail.setEgg(vote.getAmount());
-						}else if(vote.getType().equals("heart")){
+						}else if(vote.getType().equals(Vote.HEART_TYPE)){
 							storyDetail.setHeart(vote.getAmount());
-						}else if(vote.getType().equals("star")){
+						}else if(vote.getType().equals(Vote.STAR_TYPE)){
 							storyDetail.setStar(vote.getAmount());
 						}
 					}
@@ -298,6 +298,24 @@ public class ApiAdaptor {
 	 */
 	public boolean changeMsgState(String msgId) {
 		return pintuService.changeMsgState(msgId);
+	}
+
+	/**
+	 * 得到热图列表
+	 * @return
+	 */
+	public String getHotPicture() {
+		List<TPicDetails> hotList = pintuService.getHotPicture();
+		return JSONArray.fromCollection(hotList).toString();
+	}
+
+	/**
+	 * 得到经典品图信息
+	 * @return
+	 */
+	public String getClassicalStory() {
+		List<StoryDetails> classicalList = pintuService.getClassicalPintu();
+		return JSONArray.fromCollection(classicalList).toString();
 	}
 	
 } //end of class

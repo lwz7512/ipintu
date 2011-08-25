@@ -9,8 +9,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
@@ -25,6 +27,7 @@ import com.pintu.beans.Message;
 import com.pintu.beans.News;
 import com.pintu.beans.Note;
 import com.pintu.beans.Story;
+import com.pintu.beans.StoryDetails;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TPicItem;
@@ -52,11 +55,10 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	private ImgDataProcessor imgProcessor;
 
 	private String imagePath;
-	
 
 	// 设定输出的类型
 	private static final String GIF = "image/gif;charset=UTF-8";
-	
+
 	private static final String JPG = "image/jpeg;charset=UTF-8";
 
 	private static final String PNG = "image/png;charset=UTF-8";
@@ -116,7 +118,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			cacheVisitor.cachePicture(tpicItem);
 			// 3. 提交imgProcessor生成文件
 			imgProcessor.createImageFile(pic.getRawImageData(), tpicItem);
-		
+
 			// 4. 入库的事情就交由同步工具CacheToDB来处理，这里就结束了！
 
 		} else {
@@ -125,24 +127,21 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 	}
 
-	
 	@Override
 	public void addStoryToPintu(Story story) {
 		cacheVisitor.cacheStory(story);
 	}
 
-
 	@Override
 	public void addCommentToPintu(Comment cmt) {
 		cacheVisitor.cacheComment(cmt);
 	}
-	
 
 	@Override
 	public void addVoteToStory(Vote vote) {
 		cacheVisitor.cacheVote(vote);
 	}
-	
+
 	@Override
 	public List<TPicDesc> getTpicsByUser(String user, String pageNum) {
 		// TODO Auto-generated method stub
@@ -241,20 +240,21 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		List<TPicDesc> thumbnailList = new ArrayList<TPicDesc>();
 		int start = getMinutes(startTime);
 		int end = getMinutes(endTime);
-		
+
 		for (int i = start; i <= end; i++) {
-			List<TPicDesc> cacheList = cacheVisitor.getCachedThumbnail(String.valueOf(i));
-			 thumbnailList.addAll(cacheList);
+			List<TPicDesc> cacheList = cacheVisitor.getCachedThumbnail(String
+					.valueOf(i));
+			thumbnailList.addAll(cacheList);
 		}
 
 		System.out.println("取出缓存对象：" + thumbnailList.size());
 
-		if(thumbnailList != null){
-			for(int j=thumbnailList.size()-1;j>=0;j--){
+		if (thumbnailList != null) {
+			for (int j = thumbnailList.size() - 1; j >= 0; j--) {
 				resultList.add(thumbnailList.get(j));
 			}
 		}
-		
+
 		JSONArray ja = JSONArray.fromCollection(resultList);
 
 		return ja.toString();
@@ -311,62 +311,66 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	@Override
 	public TPicDetails getTPicDetailsById(String tpId) {
 		TPicDetails details = new TPicDetails();
-		//根据图片id到缓存中取图片的基本信息
+		// 根据图片id到缓存中取图片的基本信息
 		TPicItem item = cacheVisitor.getSpecificPic(tpId);
-		//若缓存里不存在该图片的信息则转向查数据库
-		if(item.getId() == null){
+		// 若缓存里不存在该图片的信息则转向查数据库
+		if (item.getId() == null) {
 			item = dbVisitor.getPictureById(tpId);
 		}
-		//取一个图片详情时，我们认为这张图获得了一个点击量
-		item.setCounter(1);
-		
-		
-		if(PintuServiceInterface.hotPicCacheIds.containsKey(item.getId())){
-			Integer value = PintuServiceInterface.hotPicCacheIds.get(item.getId());
-			PintuServiceInterface.hotPicCacheIds.put(item.getId(), value+item.getCounter());
-		}else{
-			PintuServiceInterface.hotPicCacheIds.put(item.getId(), item.getCounter());
-		}
-		
+
+		// 取一个品图的所有者，即用户ID
 		String uerId = item.getOwner();
-		//得到图片的所有者即userId,再到数据库里取出user的详细信息
+		// 得到图片的所有者即userId,再到数据库里取出user的详细信息
 		User user = dbVisitor.getUserById(uerId);
 		int commentNum = this.getCommentsOfPic(tpId).size();
 		int storyNum = this.getStoriesOfPic(tpId).size();
 		details.setStoriesNum(storyNum);
 		details.setCommentsNum(commentNum);
-		if(user != null){
+		if (user != null) {
 			details.setAuthor(user.getAccount());
 			details.setScore(user.getScore());
 			details.setLevel(user.getLevel());
 			details.setAvatarImgPath(user.getAvatar());
-			details.setId(item.getId());
-			details.setName(item.getName());
-			details.setOwner(uerId);
-			details.setMobImgId(item.getMobImgId());
-			details.setRawImgId(item.getRawImgId());
-			details.setPublishTime(item.getPublishTime());
-			details.setDescription(item.getDescription());
-			details.setTags(item.getTags());
-			details.setAllowStory(item.getAllowStory());
 		}
-		
+		details.setId(item.getId());
+		details.setName(item.getName());
+		details.setOwner(uerId);
+		details.setMobImgId(item.getMobImgId());
+		details.setRawImgId(item.getRawImgId());
+		details.setPublishTime(item.getPublishTime());
+		details.setDescription(item.getDescription());
+		details.setTags(item.getTags());
+		details.setAllowStory(item.getAllowStory());
+		// 取一个图片详情时，我们认为这张图获得了一个点击量
+		int counter = 1;
+
+		// 在缓存的热图id里查看是否存在这个id,若存在直接给其点击量累加，否则将新的放到里面
+		if (PintuServiceInterface.hotPicCacheIds.containsKey(item.getId())) {
+			Integer value = PintuServiceInterface.hotPicCacheIds.get(item
+					.getId());
+			PintuServiceInterface.hotPicCacheIds.put(item.getId(), value
+					+ counter);
+		} else {
+			PintuServiceInterface.hotPicCacheIds.put(item.getId(), counter);
+		}
+
+		details.setCounter(PintuServiceInterface.hotPicCacheIds.get(item
+				.getId()));
+
 		return details;
 	}
-	
-	
+
 	@Override
 	public List<Story> getStoriesOfPic(String tpId) {
-		List<Story> storyList = dbVisitor. getStoriesOfPic(tpId);
-//		JSONArray jarray = JSONArray.fromCollection(storyList);
+		List<Story> storyList = dbVisitor.getStoriesOfPic(tpId);
+		// JSONArray jarray = JSONArray.fromCollection(storyList);
 		return storyList;
 	}
-	
 
 	@Override
 	public List<Comment> getCommentsOfPic(String tpId) {
-		List<Comment>  cmtList = dbVisitor.getCommentsOfPic(tpId);
-//		JSONArray jarray = JSONArray.fromCollection(cmtList);
+		List<Comment> cmtList = dbVisitor.getCommentsOfPic(tpId);
+		// JSONArray jarray = JSONArray.fromCollection(cmtList);
 		return cmtList;
 	}
 
@@ -375,8 +379,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		List<Vote> voteList = dbVisitor.getVoteOfStory(storyId);
 		return voteList;
 	}
-	
-	
+
 	@Override
 	public User getUserInfo(String userId) {
 		User user = dbVisitor.getUserById(userId);
@@ -431,8 +434,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		return null;
 	}
 
-	
-
 	@Override
 	public List<Message> getUserMessages(String userId) {
 		List<Message> msgList = dbVisitor.getUserMessages(userId);
@@ -442,13 +443,12 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	@Override
 	public Boolean sendMessage(Message msg) {
 		int i = dbVisitor.insertMessage(msg);
-		if(i>0){
+		if (i > 0) {
 			return true;
-		}else{
+		} else {
 			return false;
 		}
 	}
-
 
 	@Override
 	public void saveImagePathToProcessor(String filePath) {
@@ -462,19 +462,18 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		File jpgFile = new File(imagePath + File.separator + picId + ".jpg");
 		File pngFile = new File(imagePath + File.separator + picId + ".png");
 		File gifFile = new File(imagePath + File.separator + picId + ".gif");
-		
+
 		if (jpgFile.exists()) {
-			writeJPGImage(jpgFile,res);
+			writeJPGImage(jpgFile, res);
 		} else if (pngFile.exists()) {
-			writePNGImage(pngFile,res);
+			writePNGImage(pngFile, res);
 		} else if (gifFile.exists()) {
-			writeGIFImage(gifFile,res);
-		} else{
-			writeJPGImage(file,res);
+			writeGIFImage(gifFile, res);
+		} else {
+			writeJPGImage(file, res);
 		}
 	}
 
-	
 	private void writeJPGImage(File file, HttpServletResponse res) {
 		try {
 			res.setContentType(JPG);
@@ -498,39 +497,38 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void writePNGImage(File file, HttpServletResponse res) {
 		res.setContentType(PNG);
-		getOutInfo(file,  res);
+		getOutInfo(file, res);
 	}
-	
 
 	private void writeGIFImage(File file, HttpServletResponse res) {
 		res.setContentType(GIF);
-		getOutInfo(file,  res);
+		getOutInfo(file, res);
 	}
-	
+
 	private void getOutInfo(File file, HttpServletResponse res) {
 		try {
 			OutputStream out = res.getOutputStream();
 			InputStream imageIn = new FileInputStream(file);
-			BufferedInputStream bis=new BufferedInputStream(imageIn);
-	        //输入缓冲流   
-	        BufferedOutputStream bos=new BufferedOutputStream(out);
-	        //输出缓冲流   
-	        byte data[]=new byte[4096];
-	        //缓冲字节数   
-	        int size=0;    
-	        size=bis.read(data);   
-	        while (size!=-1){      
-	            bos.write(data,0,size);           
-	            size=bis.read(data);   
-	        }   
-	        bis.close();   
-	        bos.flush();
-	        //清空输出缓冲流        
-	        bos.close(); 
-	        out.close();
+			BufferedInputStream bis = new BufferedInputStream(imageIn);
+			// 输入缓冲流
+			BufferedOutputStream bos = new BufferedOutputStream(out);
+			// 输出缓冲流
+			byte data[] = new byte[4096];
+			// 缓冲字节数
+			int size = 0;
+			size = bis.read(data);
+			while (size != -1) {
+				bos.write(data, 0, size);
+				size = bis.read(data);
+			}
+			bis.close();
+			bos.flush();
+			// 清空输出缓冲流
+			bos.close();
+			out.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -554,42 +552,135 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	 */
 	@Override
 	public void getImageByPath(String path, HttpServletResponse res) {
-		File defaultFile = new File( imagePath + File.separator +"avatarImg"+File.separator+"defaultAvatar.png");
-		String type =  path.substring(path.lastIndexOf(".") + 1);
+		File defaultFile = new File(imagePath + File.separator + "avatarImg"
+				+ File.separator + "defaultAvatar.png");
+		String type = path.substring(path.lastIndexOf(".") + 1);
 		File file = new File(path);
-		if(file.exists()){
-			if(type.toLowerCase().equals("jpg")){
-				writeJPGImage(file,res);
-			}else if(type.toLowerCase().equals("png")){
-				writePNGImage(file,res);
-			}else if(type.toLowerCase().equals("gif")){
-				writeGIFImage(file,res);
-			}else{
-				writePNGImage(defaultFile,res);
+		if (file.exists()) {
+			if (type.toLowerCase().equals("jpg")) {
+				writeJPGImage(file, res);
+			} else if (type.toLowerCase().equals("png")) {
+				writePNGImage(file, res);
+			} else if (type.toLowerCase().equals("gif")) {
+				writeGIFImage(file, res);
+			} else {
+				writePNGImage(defaultFile, res);
 			}
-		}else{
-			writePNGImage(defaultFile,res);
+		} else {
+			writePNGImage(defaultFile, res);
 		}
-	
-		
+
 	}
 
 	@Override
 	public boolean changeMsgState(String msgId) {
 		int rows = dbVisitor.updateMsg(msgId);
-		if(rows > 0){
+		if (rows > 0) {
 			return true;
-		}else{
+		} else {
 			return false;
 		}
 	}
 
 	@Override
-	public List<TPicItem> getHotPicture() {
-		// TODO 这里需要用那个存储的id集里取到是热点的图片，并排序返回
-		return null;
+	public List<TPicDetails> getHotPicture() {
+		List<TPicDetails> hotList = new ArrayList<TPicDetails>();
+		Map<String, Integer> map = PintuServiceInterface.hotPicCacheIds;
+		// for(String tpId:map.keySet()){
+		// 遍历被点击过的图片存储map,判断一下，如果点击次数超过十次则认定为热图
+		// if(map.get(tpId) > 10){
+		// TPicDetails tpic = this.getTPicDetailsById(tpId);
+		// hotList.add(tpic);
+		// }
+
+		// 这里假设每天有十个热图
+		int[] counterArray = new int[10];
+		int i = 0;
+		if (i < 10) {
+			for (Integer counter : map.values()) {
+				if (counter > 10) {
+					Array.set(counterArray, i, counter);
+					i++;
+				}
+			}
+		}
+
+		if (counterArray != null && counterArray.length > 1) {
+			sortArray(counterArray);
+		}
+
+		//根据排序后的结果从大到小，取得缓存中的tpId，并查出详情
+		for (int j = 0; j < counterArray.length; j++) {
+			for (String tpId : map.keySet()) {
+				if (map.get(tpId) == counterArray[j]) {
+					TPicDetails tpic = this.getTPicDetailsById(tpId);
+					hotList.add(tpic);
+				}
+			}
+		}
+
+		return hotList;
 	}
 
+	// 给数组排序
+	private void sortArray(int[] array) {
+		int left, right, num;
+		int middle, j;
+
+		for (int i = 1; i < array.length; i++) {
+			// 准备
+			left = 0;
+			right = i - 1;
+			num = array[i];
+
+			// 二分法查找插入位置
+			while (right >= left) {
+				// 指向已排序好的中间位置
+				middle = (left + right) / 2;
+
+				if (num > array[middle]) {
+					// 插入的元素在左区间
+					right = middle - 1;
+				} else {
+					// 插入的元素在右区间
+					left = middle + 1;
+				}
+			}
+
+			//后移排序码小于R[i]的记录
+            for( j = i-1;j >= left;j-- )
+            {
+                array[j+1] = array[j];
+            }
+			// 插入
+			array[left] = num;
+		}
+
+
+	}
+
+	@Override
+	public List<StoryDetails> getClassicalPintu() {
+		List<StoryDetails> classicalList = new ArrayList<StoryDetails>();
+		List<Story> list = dbVisitor.getClassicalPintu();
+		if (list.size() > 0) {
+			for (int i = 0; i < list.size(); i++) {
+				Story story = list.get(i);
+				String userId = story.getOwner();
+				User user = this.getUserInfo(userId);
+				StoryDetails sDetails = new StoryDetails();
+				sDetails.setAuthor(user.getAccount());
+				sDetails.setId(story.getId());
+				sDetails.setOwner(userId);
+				sDetails.setPublishTime(story.getPublishTime());
+				sDetails.setContent(story.getContent());
+				sDetails.setClassical(story.getClassical());
+				sDetails.setFollow(story.getFollow());
+				classicalList.add(sDetails);
+			}
+		}
+		return classicalList;
+	}
 
 	// TODO, 实现其他接口方法
 

@@ -150,7 +150,7 @@ public class PintuUnitTest {
 		Vote v=new Vote();
 		v.setId("1");
 		v.setFollow("2");
-		v.setType("heart");
+		v.setType(Vote.HEART_TYPE);
 		v.setAmount(3);
 		System.out.println("测试插入投票："+dbAccess.insertVote(v));
 	}
