@@ -1,5 +1,7 @@
 package com.pintu.jobs;
-
+/**
+ * 计算积分、等级、经典品图、资产
+ */
 import java.util.TimerTask;
 
 public class CalculateTask extends TimerTask {

@@ -14,10 +14,28 @@ public class TaskTimer {
 	// 一天的毫秒数
 	long daySpan = 24 * 60 * 60 * 1000;
 
-	private CalculateTask task;
+	private CalculateTask calculateTask;
+	
+	private MidnightTask midnightTask;
 
 	public TaskTimer() {
 		
+	}
+
+	public CalculateTask getCalculateTask() {
+		return calculateTask;
+	}
+
+	public void setCalculateTask(CalculateTask calculateTask) {
+		this.calculateTask = calculateTask;
+	}
+
+	public MidnightTask getMidnightTask() {
+		return midnightTask;
+	}
+
+	public void setMidnightTask(MidnightTask midnightTask) {
+		this.midnightTask = midnightTask;
 	}
 
 	public int getMin() {
@@ -29,18 +47,12 @@ public class TaskTimer {
 		this.min = min;
 	}
 
-	public CalculateTask getTask() {
-		return task;
-	}
 
-	public void setTask(CalculateTask task) {
-		this.task = task;
-	}
 
 	public void start() {
 		Date date = new Date();
-		if (task != null) {
-			timer.schedule(task, date, min * 60 * 1000);
+		if (calculateTask != null) {
+			timer.schedule(calculateTask, date, min * 60 * 1000);
 		}
 	}
 
@@ -61,7 +73,6 @@ public class TaskTimer {
 			startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 					.parse(dateFormat.format(new Date()));
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -70,7 +81,7 @@ public class TaskTimer {
 			startTime = new Date(startTime.getTime() + daySpan);
 
 		// 以每24小时执行一次
-		timer.scheduleAtFixedRate(task, startTime, daySpan);
+		timer.scheduleAtFixedRate(midnightTask, startTime, daySpan);
 	}
 
 	public void stop() {

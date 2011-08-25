@@ -56,13 +56,13 @@ public class TaskStarter  {
     	
     	generalTimer = new TaskTimer();
     	generalTimer.setMin(calculateInterval);
-    	//计算前先制定计算任务，可以是算积分和等级
-    	generalTimer.setTask(new ScoreLevelTask());
+    	//计算前先制定计算任务，可以是算积分、等级、经典品图、资产
+    	generalTimer.setCalculateTask(new CalculateTask());
     	generalTimer.start();
     	
-    	//固定任务用来算礼物
+    	//固定任务用清除缓存中的一些数据，比如点击量等(待完善)
     	fixRunTimer = new TaskTimer();
-    	fixRunTimer.setTask(new UserEstateTask());
+    	fixRunTimer.setMidnightTask(new MidnightTask());
     	//每天0点运行
     	fixRunTimer.runAtFixTime("00:00:00");
 

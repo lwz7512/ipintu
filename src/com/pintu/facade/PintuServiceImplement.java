@@ -319,9 +319,9 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		}
 
 		// 取一个品图的所有者，即用户ID
-		String uerId = item.getOwner();
+		String userId = item.getOwner();
 		// 得到图片的所有者即userId,再到数据库里取出user的详细信息
-		User user = dbVisitor.getUserById(uerId);
+		User user = dbVisitor.getUserById(userId);
 		int commentNum = this.getCommentsOfPic(tpId).size();
 		int storyNum = this.getStoriesOfPic(tpId).size();
 		details.setStoriesNum(storyNum);
@@ -334,7 +334,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		}
 		details.setId(item.getId());
 		details.setName(item.getName());
-		details.setOwner(uerId);
+		details.setOwner(userId);
 		details.setMobImgId(item.getMobImgId());
 		details.setRawImgId(item.getRawImgId());
 		details.setPublishTime(item.getPublishTime());
@@ -363,15 +363,29 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	@Override
 	public List<Story> getStoriesOfPic(String tpId) {
 		List<Story> storyList = dbVisitor.getStoriesOfPic(tpId);
-		// JSONArray jarray = JSONArray.fromCollection(storyList);
 		return storyList;
 	}
 
 	@Override
 	public List<Comment> getCommentsOfPic(String tpId) {
+		List<Comment> resList = new ArrayList<Comment>();
 		List<Comment> cmtList = dbVisitor.getCommentsOfPic(tpId);
-		// JSONArray jarray = JSONArray.fromCollection(cmtList);
-		return cmtList;
+		if(cmtList.size()>0){
+			for(int i=0;i<cmtList.size();i++){
+				Comment comt = new Comment();
+				Comment cmt = cmtList.get(i);
+				String userId = cmt.getOwner();
+				User user = dbVisitor.getUserById(userId);
+				comt.setId(cmt.getId());
+				comt.setAuthor(user.getAccount());
+				comt.setFollow(cmt.getFollow());
+				comt.setOwner(cmt.getOwner());
+				comt.setContent(cmt.getContent());
+				comt.setPublishTime(cmt.getPublishTime());
+				resList.add(comt);
+			}
+		}
+		return resList;
 	}
 
 	@Override

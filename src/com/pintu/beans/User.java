@@ -1,11 +1,15 @@
 package com.pintu.beans;
 
 import java.io.Serializable;
+import java.util.HashMap;
+
 
 public class User implements Serializable{
-
 	
 	private static final long serialVersionUID = 2083131853845725364L;
+	
+	public static HashMap<Integer, Integer> levelScoreMap = new HashMap<Integer, Integer>();
+
 	private String id;
 	//用户名
 	private String account;
@@ -131,7 +135,11 @@ public class User implements Serializable{
 	
 		
 	public User() {			
-		
+		//等级与积分的对应关系
+		User.levelScoreMap.put(1, 10);
+		User.levelScoreMap.put(2, 20);
+		User.levelScoreMap.put(3, 50);
+		User.levelScoreMap.put(4, 100);
 	}
 
 }
