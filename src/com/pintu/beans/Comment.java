@@ -14,6 +14,17 @@ public class Comment implements Serializable{
 	private String publishTime;
 	private String content;
 	
+	//作者，其实为ower对应的用户账号
+	private String author;
+	
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+
 	public Comment() {
 		// TODO Auto-generated constructor stub
 	}

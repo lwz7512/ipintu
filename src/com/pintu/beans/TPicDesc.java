@@ -23,7 +23,12 @@ public class TPicDesc implements Serializable{
 	
 
 	//品图状态：新发布、评论多、故事多、热图（两者都多）
-	//这个状态来自于定时计算任务
+	//图的状态，热图，经典等等
+	//0: 默认状态
+	//1: 有故事状态
+	//2: 热图状态
+	//3: 经典状态
+	//TODO FIXME 这个状态来自于定时计算任务(高级应用)
 	private String status;
 	
 	//生成时间，保存毫秒数 (图片文件的最后修改时间)

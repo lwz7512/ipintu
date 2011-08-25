@@ -19,6 +19,7 @@ import com.pintu.beans.Story;
 import com.pintu.beans.TPicItem;
 import com.pintu.beans.User;
 import com.pintu.beans.Vote;
+import com.pintu.beans.Wealth;
 import com.pintu.dao.DBAccessInterface;
 
 public class DBAccessImplement implements DBAccessInterface {
@@ -526,50 +527,149 @@ public class DBAccessImplement implements DBAccessInterface {
 		return list;
 	}
 
+	@Override
+	public int updateStoryClassical(final String storyId) {
+		String sql = "update t_story  set s_classical = 1 where s_id =?";
+		int[] res = jdbcTemplate.batchUpdate(sql,
+				new BatchPreparedStatementSetter() {
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+						ps.setString(1, storyId);
+					}
+
+					public int getBatchSize() {
+						return 1;
+					}
+				});
+		return res.length;
+	}
+
+	@Override
+	public int updateUserScore(final String userId,final int score) {
+		String sql = "update t_user  set u_score = ? where u_id =?";
+		int[] res = jdbcTemplate.batchUpdate(sql,
+				new BatchPreparedStatementSetter() {
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+						ps.setInt(1, score);
+						ps.setString(2, userId);
+					}
+
+					public int getBatchSize() {
+						return 1;
+					}
+				});
+		return res.length;
+	}
+
+	@Override
+	public int updateUserExchageScore(final String userId,final int exchangeScore) {
+		String sql = "update t_user  set u_exchangeScore = ? where u_id =?";
+		int[] res = jdbcTemplate.batchUpdate(sql,
+				new BatchPreparedStatementSetter() {
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+						ps.setInt(1, exchangeScore);
+						ps.setString(2, userId);
+					}
+
+					public int getBatchSize() {
+						return 1;
+					}
+				});
+		return res.length;
+	}
+
+	@Override
+	public int updateUserLevel(final String userId,final int level) {
+		String sql = "update t_user  set u_level = ? where u_id =?";
+		int[] res = jdbcTemplate.batchUpdate(sql,
+				new BatchPreparedStatementSetter() {
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+						ps.setInt(1, level);
+						ps.setString(2, userId);
+					}
+
+					public int getBatchSize() {
+						return 1;
+					}
+				});
+		return res.length;
+	}
+
+	@Override
+	public int insertOnesWealth(final Wealth wealth) {
+		String sql = "INSERT INTO t_wealth (w_id,w_owner,w_type,w_amount,w_memo) values (?,?,?,?,?)";
+		int[] res = jdbcTemplate.batchUpdate(sql,
+				new BatchPreparedStatementSetter() {
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+						ps.setString(1, wealth.getId());
+						ps.setString(2, wealth.getOwner());
+						ps.setString(3, wealth.getType());
+						ps.setInt(4, wealth.getAmount());
+						ps.setString(5, "");
+					}
+					public int getBatchSize() {
+						return 1;
+					}
+				});
+		return res.length;
+	}
+
+	@Override
+	public int updateOnesWealth(final int amount,final String type,final String userId) {
+		String sql = "update t_wealth set w_amount=? where w_type=? and w_owner=? ";
+		int[] res = jdbcTemplate.batchUpdate(sql,
+				new BatchPreparedStatementSetter() {
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+						ps.setInt(1, amount);
+						ps.setString(2, type);
+						ps.setString(3, userId);
+					}
+
+					public int getBatchSize() {
+						return 1;
+					}
+				});
+		return res.length;
+	}
+
 	
 
 
-	// @Override
-	// public String insertOneGift(Gift gift) {
-	// final String gid = UUID.randomUUID().toString().replace("-", "")
-	// .substring(16);
-	// System.out.println("自动生成的UUID：(截取了自动生成的UUID后面16位)" + gid);
-	// String sql = "INSERT INTO t_gift "
-	// + "(g_id,g_name,g_type,g_value,g_imgPath,g_amount,g_memo) "
-	// + "VALUES (?, ?, ?, ?, ?, ?, ?)";
-	//
-	// return gid;
-	// }
-	//
-	// @Override
-	// public String insertOneWealth(Wealth wealth) {
-	// final String wid = UUID.randomUUID().toString().replace("-", "")
-	// .substring(16);
-	// System.out.println("自动生成的UUID：(截取了自动生成的UUID后面16位)" + wid);
-	// String sql = "INSERT INTO t_wealth "
-	// + "(w_id,w_owner,w_type,w_amount,w_memo) ";
-	//
-	// return wid;
-	// }
-	//
-	// @Override
-	// public String updateOneWealth(String id, Wealth wealth) {
-	// String sql = "update t_wealth set type=?, amount=?, where owner=?";
-	// final Wealth wea = wealth;
-	// jdbcTemplate.update(sql, new PreparedStatementSetter() {
-	// public void setValues(PreparedStatement ps) {
-	//
-	// try {
-	// ps.setString(1, wea.getType());
-	// ps.setInt(2, wea.getAmount());
-	// ps.setString(3, wea.getOwner());
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// });
-	// return null;
-	// }
+
+//	 @Override
+//	 public String insertOneWealth(Wealth wealth) {
+//	 final String wid = UUID.randomUUID().toString().replace("-", "")
+//	 .substring(16);
+//	 System.out.println("自动生成的UUID：(截取了自动生成的UUID后面16位)" + wid);
+//	 String sql = "INSERT INTO t_wealth "
+//	 + "(w_id,w_owner,w_type,w_amount,w_memo) ";
+//	
+//	 return wid;
+//	 }
+//	
+//	 @Override
+//	 public String updateOneWealth(String id, Wealth wealth) {
+//	 String sql = "update t_wealth set type=?, amount=?, where owner=?";
+//	 final Wealth wea = wealth;
+//	 jdbcTemplate.update(sql, new PreparedStatementSetter() {
+//	 public void setValues(PreparedStatement ps) {
+//	
+//	 try {
+//	 ps.setString(1, wea.getType());
+//	 ps.setInt(2, wea.getAmount());
+//	 ps.setString(3, wea.getOwner());
+//	 } catch (Exception e) {
+//	 e.printStackTrace();
+//	 }
+//	 }
+//	 });
+//	 return null;
+//	 }
 	//
 	// @Override
 	// public String insertOneEvent(Event event) {
@@ -604,5 +704,15 @@ public class DBAccessImplement implements DBAccessInterface {
 	//
 	// return fid;
 	// }
-
+	// @Override
+	// public String insertOneGift(Gift gift) {
+	// final String gid = UUID.randomUUID().toString().replace("-", "")
+	// .substring(16);
+	// System.out.println("自动生成的UUID：(截取了自动生成的UUID后面16位)" + gid);
+	// String sql = "INSERT INTO t_gift "
+	// + "(g_id,g_name,g_type,g_value,g_imgPath,g_amount,g_memo) "
+	// + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+	//
+	// return gid;
+	// }
 }

@@ -3,12 +3,12 @@ package com.pintu.dao;
 import java.util.List;
 
 import com.pintu.beans.Comment;
-
 import com.pintu.beans.Message;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicItem;
 import com.pintu.beans.User;
 import com.pintu.beans.Vote;
+import com.pintu.beans.Wealth;
 
 
 public interface DBAccessInterface {
@@ -22,15 +22,24 @@ public interface DBAccessInterface {
 	//根据userId取用户信息
 	public User getUserById(String id);
 	
-//	//礼物入库
-//	public String insertOneGift(Gift gift);
-//	
-//	//将计算好的财富值入库
-//	public String insertOneWealth(Wealth wealth);
-//	
-//	//更新财富值
-//	public String updateOneWealth(String id,Wealth wealth);
-//	
+	//更新故事表的classical字段
+	public int updateStoryClassical(String storyId);
+	
+	//更新用户的积分
+	public int updateUserScore(String userId,int score);
+	
+	//更新可用积分
+	public int updateUserExchageScore(String userId,int exchangeScore);
+	
+	//更新用户等级状态
+	public int updateUserLevel(String userId,int level);
+
+	//将计算好的财富值入库
+	public int  insertOnesWealth(Wealth wealth);
+	
+	//更新财富值
+	public int updateOnesWealth( int amount, String type, String userId);
+	
 //	//社区事件入库
 //	public String insertOneEvent(Event event);
 //	
@@ -39,6 +48,10 @@ public interface DBAccessInterface {
 //
 //	//添加收藏图片信息入库
 //	public String insertOneFavorite(Favorite favorite);
+//		
+//	//礼物入库
+//	public String insertOneGift(Gift gift);
+
 	
 	//获取一个时间段内的图片id信息
 	public List<String> getPicIdsByTime(String startTime, String endTime);
