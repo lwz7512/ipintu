@@ -25,14 +25,16 @@ public class CacheAccessImplement implements CacheAccessInterface {
 		toSavedCacheIds.put(STORY_TYPE, new LinkedList<String>());
 		toSavedCacheIds.put(COMMENT_TYPE, new LinkedList<String>());
 		toSavedCacheIds.put(VOTE_TYPE, new LinkedList<String>());
-		//缩略图不入库，所以不用存ID
-//		toSavedCacheIds.put(THUMBNAIL_TYPE, new LinkedList<String>());
 	}
 
 	public void setPintuCache(PintuCache pintuCache) {
 		this.pintuCache = pintuCache;
 	}
 
+	@Override
+	public void clearHotPicCacheIds() {
+		CacheAccessInterface.hotPicCacheIds.clear();
+	}
 
 	@Override
 	public void cacheLoggedInUser() {
@@ -180,6 +182,23 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	public void syncDBVoteToCache(Vote vote) {
 		pintuCache.cacheVote(vote.getId(), vote);
 	}
+
+	@Override
+	public void cacheUser(User user) {
+		pintuCache.cacheUser(user);
+	}
+
+	@Override
+	public void updateCachedUser(String userId, String updateTime) {
+		pintuCache.updateCachedUser(userId, updateTime);
+	}
+
+	@Override
+	public List<User> getLiveUser(String updateTime) {
+		return pintuCache.getLiveUser(updateTime);
+	}
+
+	
 
 
 } // end of class

@@ -1,7 +1,14 @@
 package com.pintu.beans;
 
 public class Wealth {
-
+	//财富分以下四种类型，分别代表海贝，铜贝，银贝和金贝
+	public static String SEA_TYPE="seashell";
+	public static String COPPER_TYPE="coppershell";
+	public static String SILVER_TYPE="silvershell";
+	public static String GOLD_TYPE="goldshell";
+	//再增加一种用来标识不能换算的可用积分
+	public static String REMAIN_SCORE="remainscore";
+	
 	private String id;
 	private String owner;
 	private String type;

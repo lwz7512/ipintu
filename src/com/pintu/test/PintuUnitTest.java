@@ -95,18 +95,6 @@ public class PintuUnitTest {
 	
 
 	@Test
-	public void getThumbnail(){
-		String startTime = "2011-08-01 15:28:12";
-		String endTime =  "2011-08-09 15:28:12";
-		List<String> list = dbAccess.getPicIdsByTime(startTime, endTime);
-		if(list != null){
-			for(int i = 0; i<list.size();i++){
-				System.out.println(list.get(i));
-			}
-		}
-	}
-	
-	@Test
 	public void getDBPicture(){
 		String today = "2011-08-09 00:00:00";
 //		List<TPicItem> list = dbAccess.getPictureForCache(today);
