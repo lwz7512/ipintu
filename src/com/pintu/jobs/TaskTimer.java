@@ -2,6 +2,7 @@ package com.pintu.jobs;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Timer;
 
@@ -48,9 +49,16 @@ public class TaskTimer {
 	}
 
 
-
 	public void start() {
-		Date date = new Date();
+		
+		Calendar c = Calendar.getInstance();
+	    int year=c.get(Calendar.YEAR); 
+	    int month=c.get(Calendar.MONTH); 
+	    int day=c.get(Calendar.DATE); 
+	    int hour=c.get(Calendar.HOUR_OF_DAY);
+		c.set(year, month, day, hour, 0, 0);
+		Date date = c.getTime();
+		
 		if (calculateTask != null) {
 			timer.schedule(calculateTask, date, min * 60 * 1000);
 		}
