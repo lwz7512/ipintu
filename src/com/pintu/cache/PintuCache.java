@@ -2,16 +2,20 @@ package com.pintu.cache;
 
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 
 import org.apache.log4j.Logger;
 
 import com.pintu.beans.TPicDesc;
+import com.pintu.beans.User;
+import com.pintu.utils.PintuUtils;
 
 /**
  * 这里是真正的缓存逻辑，缓存内容有： 上传图片的缩略图、贴图对象、故事、投票、评论
@@ -90,6 +94,73 @@ public class PintuCache {
 		System.out.println(sb.toString());
 	}
 
+	//用户登录到系统时缓存用户信息
+	public void cacheUser(User user){
+		Long updateTime = Long.parseLong(user.getLastUpdateTime());
+		long minlong = updateTime/(60*1000);
+		int min = Math.round(minlong);
+		String key = String.valueOf(min);
+		Element savedMinute = userCache.get(key);
+		if(savedMinute==null){
+			//保存的分钟数，缩略图id,缩略图对象
+			Element elmt = new Element(key,new HashMap<String, User>());
+			@SuppressWarnings("unchecked")
+			HashMap<String, User>  usersUpdateInOneMinute = (HashMap<String, User>) elmt.getObjectValue();
+			usersUpdateInOneMinute.put(user.getId(),user);
+			synchronized(userCache){
+				userCache.put(elmt);
+			}
+		}else{
+			@SuppressWarnings("unchecked")
+			HashMap<String, User>  savedMap = (HashMap<String, User>) savedMinute.getObjectValue();
+			savedMap.put(user.getId(), user);
+			Element ele = new Element(key,savedMap);
+			synchronized(userCache){
+				userCache.put(ele);
+			}
+		}
+	}
+
+
+	//更新登录到系统中缓存的用户的最后操作时间
+	@SuppressWarnings("unchecked")
+	public void updateCachedUser(String userId, String updateTime){
+		Long upTime = Long.parseLong(updateTime);
+		long minlong = upTime/(60*1000);
+		int min = Math.round(minlong);
+		String key = String.valueOf(min);
+		synchronized(userCache){
+			List<String> timeList = userCache.getKeys();
+			for(int i = 0;i<timeList.size();i++){
+				HashMap<String, User> userMap = (HashMap<String, User>) userCache.get(timeList.get(i)).getObjectValue();
+				User user = userMap.get(userId);
+				if(user != null){
+					user.setLastUpdateTime(updateTime);
+					userMap.put(userId, user);
+					Element ele = new Element(key,userMap);
+					userCache.put(ele);
+				}
+			}
+		}
+	}
+	
+	//根据更新时间取出一个时间点的活跃用户信息
+	@SuppressWarnings("unchecked")
+	public List<User> getLiveUser(String updateTime){
+		List<User> userList = new ArrayList<User>();
+		synchronized(userCache){
+			Element savedMinute = userCache.get(updateTime);
+			if(savedMinute!=null){
+				HashMap<String, User>  savedMap = (HashMap<String, User>) savedMinute.getObjectValue();
+				if(savedMap != null){
+						userList.addAll(savedMap.values());
+				}
+			}
+		}
+		return userList;
+	}
+	
+	
 	
 	public void cachePicture(String key, Object value) {
 		Element ele = new Element(key, value);
@@ -190,6 +261,7 @@ public class PintuCache {
 		Element savedMinute = thumbnailCache.get(key);
 
 		if(savedMinute==null){
+			//保存的分钟数，缩略图id,缩略图对象
 			Element elmt = new Element(key,new HashMap<String, TPicDesc>());
 			@SuppressWarnings("unchecked")
 			HashMap<String, TPicDesc>  picsInOneMinute = (HashMap<String, TPicDesc>) elmt.getObjectValue();

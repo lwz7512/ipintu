@@ -1,9 +1,7 @@
 package com.pintu.facade;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -27,7 +25,7 @@ public interface PintuServiceInterface {
 
 	//TODO 用于存放热图的id和点击量的对应关系（每当查看详情后将被查看的图片id放到这里）
 	//在每天零点计算积分等级等时，顺便将这个重置
-	public static Map<String, Integer> hotPicCacheIds = new HashMap<String,Integer>();
+//	public static Map<String, Integer> hotPicCacheIds = new HashMap<String,Integer>();
 	
 	// 设置图片文件保存路径，由ApiAdaptor赋值
 	public void saveImagePathToProcessor(String filePath);

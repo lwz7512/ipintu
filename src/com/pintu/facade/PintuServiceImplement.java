@@ -13,6 +13,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
@@ -53,6 +54,12 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 	// 由Spring注入
 	private ImgDataProcessor imgProcessor;
+	
+	private Properties propertyConfigurer;
+
+	public void setPropertyConfigurer(Properties propertyConfigurer) {
+		this.propertyConfigurer = propertyConfigurer;
+	}
 
 	private String imagePath;
 
@@ -345,16 +352,16 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		int counter = 1;
 
 		// 在缓存的热图id里查看是否存在这个id,若存在直接给其点击量累加，否则将新的放到里面
-		if (PintuServiceInterface.hotPicCacheIds.containsKey(item.getId())) {
-			Integer value = PintuServiceInterface.hotPicCacheIds.get(item
+		if (CacheAccessInterface.hotPicCacheIds.containsKey(item.getId())) {
+			Integer value = CacheAccessInterface.hotPicCacheIds.get(item
 					.getId());
-			PintuServiceInterface.hotPicCacheIds.put(item.getId(), value
+			CacheAccessInterface.hotPicCacheIds.put(item.getId(), value
 					+ counter);
 		} else {
-			PintuServiceInterface.hotPicCacheIds.put(item.getId(), counter);
+			CacheAccessInterface.hotPicCacheIds.put(item.getId(), counter);
 		}
 
-		details.setCounter(PintuServiceInterface.hotPicCacheIds.get(item
+		details.setCounter(CacheAccessInterface.hotPicCacheIds.get(item
 				.getId()));
 
 		return details;
@@ -599,20 +606,14 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	@Override
 	public List<TPicDetails> getHotPicture() {
 		List<TPicDetails> hotList = new ArrayList<TPicDetails>();
-		Map<String, Integer> map = PintuServiceInterface.hotPicCacheIds;
-		// for(String tpId:map.keySet()){
-		// 遍历被点击过的图片存储map,判断一下，如果点击次数超过十次则认定为热图
-		// if(map.get(tpId) > 10){
-		// TPicDetails tpic = this.getTPicDetailsById(tpId);
-		// hotList.add(tpic);
-		// }
+		Map<String, Integer> map = CacheAccessInterface.hotPicCacheIds;
 
-		// 这里假设每天有十个热图
-		int[] counterArray = new int[10];
+		int[] counterArray = new int[map.size()];
 		int i = 0;
 		if (i < 10) {
 			for (Integer counter : map.values()) {
-				if (counter > 10) {
+                //点击量取配置文件中的设置值
+				if (counter > Integer.parseInt(propertyConfigurer.getProperty("hotPintuCounter"))) {
 					Array.set(counterArray, i, counter);
 					i++;
 				}

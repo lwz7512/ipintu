@@ -28,6 +28,13 @@ public interface CacheAccessInterface {
 	public static String VOTE_TYPE = "vote";
 
 	public static String THUMBNAIL_TYPE = "thumbnail";
+	
+	//用于存放热图的id和点击量的对应关系（每当查看详情后将被查看的图片id放到这里）
+	//在每天零点计算积分等级等时，顺便将这个清空
+	public static Map<String, Integer> hotPicCacheIds = new HashMap<String,Integer>();
+	
+	//清空热图MAP
+	public void clearHotPicCacheIds();
 
 	// 缓存登录用户
 	public void cacheLoggedInUser();
@@ -90,4 +97,11 @@ public interface CacheAccessInterface {
 	
 	public void syncDBVoteToCache(Vote vote);
 
+	
+	//缓存登录用户
+	public void cacheUser(User user);
+	//更新用户最后登录时间
+	public void updateCachedUser(String userId, String updateTime);
+	//取系统中的所有活越用户
+	public List<User> getLiveUser(String updateTime);
 }

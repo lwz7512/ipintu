@@ -1,6 +1,7 @@
 package com.pintu.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.pintu.beans.Comment;
 import com.pintu.beans.Message;
@@ -15,6 +16,8 @@ public interface DBAccessInterface {
 
 	//新用户注册，交用户信息入库
 	public String insertOneUser(User user);
+	//更新用户积分包括可用积分
+	public int updateUserScore(List<User> userList);
 	
 	//品图入库
 	public int insertPicture(List<Object> objList);
@@ -23,22 +26,22 @@ public interface DBAccessInterface {
 	public User getUserById(String id);
 	
 	//更新故事表的classical字段
-	public int updateStoryClassical(String storyId);
-	
-	//更新用户的积分
-	public int updateUserScore(String userId,int score);
+	public int updateStoryClassical(List<String> storyIds);
 	
 	//更新可用积分
-	public int updateUserExchageScore(String userId,int exchangeScore);
-	
+	public int updateUserExchageScore(String userId,int remainScore);
+
 	//更新用户等级状态
 	public int updateUserLevel(String userId,int level);
 
 	//将计算好的财富值入库
-	public int  insertOnesWealth(Wealth wealth);
+	public int  insertOnesWealth( List<Wealth> wList);
 	
 	//更新财富值
 	public int updateOnesWealth( int amount, String type, String userId);
+	
+	//删除amount为0的财产对象
+	public int deleteOnesWealth(String type, String userId);
 	
 //	//社区事件入库
 //	public String insertOneEvent(Event event);
@@ -53,8 +56,6 @@ public interface DBAccessInterface {
 //	public String insertOneGift(Gift gift);
 
 	
-	//获取一个时间段内的图片id信息
-	public List<String> getPicIdsByTime(String startTime, String endTime);
 	
 	/**
 	 * 取数据库中的图片数据到缓存
@@ -100,5 +101,15 @@ public interface DBAccessInterface {
 	public int updateMsg(String msgId);
 
 	public List<Story> getClassicalPintu();
+	
+	public Map<String,Integer> getOnesPicCountByTime(String startTime, String endTime);
+	
+	public Map<String,Integer> getOnesStoryCountByTime(String startTime, String endTime);
+	
+	public Map<String, Integer> getUserExchangeInfo(StringBuffer userIds);
+	
+	public List<String> getStoryIdsByTime(String startTime, String endTime);
+	
+	public List<Wealth> getUsersWealthInfo(	String userId);
 
 }

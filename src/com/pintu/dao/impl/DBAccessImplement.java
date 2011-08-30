@@ -3,6 +3,7 @@ package com.pintu.dao.impl;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -70,6 +71,27 @@ public class DBAccessImplement implements DBAccessInterface {
 
 		return uid;
 	}
+	
+	@Override
+	public int updateUserScore(final List<User> userList) {
+		String sql = "update t_user set u_score=u_score+? , u_exchangeScore=u_exchangeScore+? where u_id = ?";
+
+		int[] res = jdbcTemplate.batchUpdate(sql,
+				new BatchPreparedStatementSetter() {
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+						User user = userList.get(i);
+						ps.setInt(1, user.getScore());
+						ps.setInt(2, user.getExchangeScore());
+						ps.setString(3, user.getId());
+					}
+
+					public int getBatchSize() {
+						return userList.size();
+					}
+				});
+		return res.length;
+	}
 
 	@Override
 	public int insertPicture(final List<Object> objList) {
@@ -104,22 +126,6 @@ public class DBAccessImplement implements DBAccessInterface {
 					}
 				});
 		return res.length;
-	}
-
-	@Override
-	public List<String> getPicIdsByTime(String startTime, String endTime) {
-		String sql = "select p_id from t_picture where p_publishTime >='"
-				+ startTime + "' and p_publishTime <='" + endTime + "'";
-		System.out.println(sql);
-		List<String> idList = new ArrayList<String>();
-		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
-		if(rows!=null && rows.size()>0){
-			for (int i = 0; i < rows.size(); i++) {
-				Map<String, Object> map = (Map<String, Object>) rows.get(i);
-				idList.add(map.get("p_id").toString());
-			}
-		}
-		return idList;
 	}
 
 	@Override
@@ -528,48 +534,30 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public int updateStoryClassical(final String storyId) {
+	public int updateStoryClassical(final List<String> storyIds) {
 		String sql = "update t_story  set s_classical = 1 where s_id =?";
 		int[] res = jdbcTemplate.batchUpdate(sql,
 				new BatchPreparedStatementSetter() {
 					public void setValues(PreparedStatement ps, int i)
 							throws SQLException {
-						ps.setString(1, storyId);
+						ps.setString(1, storyIds.get(i));
 					}
 
 					public int getBatchSize() {
-						return 1;
+						return storyIds.size();
 					}
 				});
 		return res.length;
 	}
 
 	@Override
-	public int updateUserScore(final String userId,final int score) {
-		String sql = "update t_user  set u_score = ? where u_id =?";
-		int[] res = jdbcTemplate.batchUpdate(sql,
-				new BatchPreparedStatementSetter() {
-					public void setValues(PreparedStatement ps, int i)
-							throws SQLException {
-						ps.setInt(1, score);
-						ps.setString(2, userId);
-					}
-
-					public int getBatchSize() {
-						return 1;
-					}
-				});
-		return res.length;
-	}
-
-	@Override
-	public int updateUserExchageScore(final String userId,final int exchangeScore) {
+	public int updateUserExchageScore(final String userId,final int remainScore) {
 		String sql = "update t_user  set u_exchangeScore = ? where u_id =?";
 		int[] res = jdbcTemplate.batchUpdate(sql,
 				new BatchPreparedStatementSetter() {
 					public void setValues(PreparedStatement ps, int i)
 							throws SQLException {
-						ps.setInt(1, exchangeScore);
+						ps.setInt(1, remainScore);
 						ps.setString(2, userId);
 					}
 
@@ -599,12 +587,13 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public int insertOnesWealth(final Wealth wealth) {
+	public int insertOnesWealth(final List<Wealth> wList) {
 		String sql = "INSERT INTO t_wealth (w_id,w_owner,w_type,w_amount,w_memo) values (?,?,?,?,?)";
 		int[] res = jdbcTemplate.batchUpdate(sql,
 				new BatchPreparedStatementSetter() {
 					public void setValues(PreparedStatement ps, int i)
 							throws SQLException {
+						Wealth wealth=wList.get(i);
 						ps.setString(1, wealth.getId());
 						ps.setString(2, wealth.getOwner());
 						ps.setString(3, wealth.getType());
@@ -636,6 +625,92 @@ public class DBAccessImplement implements DBAccessInterface {
 				});
 		return res.length;
 	}
+
+	@Override
+	public int deleteOnesWealth(String type, String userId) {
+		String sql = "delete from t_wealth where w_type="+type+" and w_owner="+userId; 
+		return jdbcTemplate.update(sql);
+	}
+	
+	@Override
+	public Map<String,Integer> getOnesPicCountByTime(String startTime, String endTime) {
+		String sql = "select p_owner,count(p_id) from t_picture where p_publishTime >='"
+				+ startTime + "' and p_publishTime <='" + endTime + "' group by p_owner";
+		Map<String,Integer> resMap = new HashMap<String,Integer>();
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if(rows!=null && rows.size()>0){
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				resMap.put(map.get("p_owner").toString(),Integer.parseInt(map.get("count(p_id)").toString()));
+			}
+		}
+		return resMap;
+	}
+
+	@Override
+	public Map<String,Integer> getOnesStoryCountByTime(String startTime, String endTime) {
+		String sql = "select s_owner,count(s_id) from t_story where s_publishTime >='"
+				+ startTime + "' and s_publishTime <='" + endTime + "' group by s_owner";
+		Map<String,Integer> resMap = new HashMap<String,Integer>();
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if(rows!=null && rows.size()>0){
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				resMap.put(map.get("s_owner").toString(),Integer.parseInt(map.get("count(s_id)").toString()));
+			}
+		}
+		return resMap;
+	}
+
+	@Override
+	public Map<String, Integer> getUserExchangeInfo(StringBuffer userIds) {
+		String sql = "select u_id,u_exchangeScore from t_user where u_id in ("+userIds+")";
+		Map<String,Integer> resMap = new HashMap<String,Integer>();
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if(rows!=null && rows.size()>0){
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				resMap.put(map.get("u_id").toString(),Integer.parseInt(map.get("u_score").toString()));
+			}
+		}
+		return resMap;
+	}
+
+	@Override
+	public List<String> getStoryIdsByTime(String startTime, String endTime) {
+		String sql = "select s_id from t_story where s_publishTime >='"
+				+ startTime + "' and s_publishTime <='" + endTime + "' group by s_owner";
+		List<String> resList = new ArrayList<String>();
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if(rows!=null && rows.size()>0){
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				resList.add(map.get("s_id").toString());
+			}
+		}
+		return resList;
+	}
+
+	@Override
+	public List<Wealth> getUsersWealthInfo(String userId) {
+		String sql = "select * from t_wealth where w_owner = "+userId;
+		List<Wealth> wealthList = new ArrayList<Wealth>();
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if(rows!=null && rows.size()>0){
+			for (int i = 0; i < rows.size(); i++) {
+				Wealth wealth = new Wealth();
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				wealth.setId(map.get("w_id").toString());
+				wealth.setOwner(map.get("w_owner").toString());
+				wealth.setType(map.get("w_type").toString());
+				wealth.setAmount(Integer.parseInt(map.get("w_amount").toString()));
+				wealthList.add(wealth);
+			}
+		}
+		return wealthList;
+	}
+
+	
 
 	
 

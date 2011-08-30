@@ -26,7 +26,20 @@ public class User implements Serializable{
 	//可兑换积分
 	private int exchangeScore;
 	
+	//最后动作时间（即最后更新时间）存毫秒数
+	private String lastUpdateTime;
 	
+	
+	public String getLastUpdateTime() {
+		return lastUpdateTime;
+	}
+
+
+	public void setLastUpdateTime(String lastUpdateTime) {
+		this.lastUpdateTime = lastUpdateTime;
+	}
+
+
 	public String getId() {
 		return id;
 	}
@@ -135,7 +148,7 @@ public class User implements Serializable{
 	
 		
 	public User() {			
-		//等级与积分的对应关系
+		//等级与积分的对应关系。。。
 		User.levelScoreMap.put(1, 10);
 		User.levelScoreMap.put(2, 20);
 		User.levelScoreMap.put(3, 50);

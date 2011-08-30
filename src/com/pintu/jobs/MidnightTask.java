@@ -4,12 +4,32 @@ package com.pintu.jobs;
  */
 import java.util.TimerTask;
 
+import com.pintu.dao.CacheAccessInterface;
+import com.pintu.dao.DBAccessInterface;
+
 public class MidnightTask extends TimerTask{
+
+	private DBAccessInterface dbAccess;
+	private CacheAccessInterface cacheAccess;
+	
+
+
+	public MidnightTask(DBAccessInterface dbVisitor,
+			CacheAccessInterface cacheVisitor) {
+		this.dbAccess=dbVisitor;
+		this.cacheAccess = cacheVisitor;
+	}
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
-		
+		clearCounter();
 	}
+	
+	private void clearCounter(){
+		System.out.println(">>> midnight task executed...");
+		//将一天内查看过详情的图片点击量清零
+		this.cacheAccess.clearHotPicCacheIds();
+	}
+	
 
 }

@@ -1,5 +1,6 @@
 package com.pintu.utils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
@@ -26,4 +27,17 @@ public class PintuUtils {
 		return sdf.format(date);
 	}
 
+	public static String formatLong(Long time){
+		return sdf.format(time);
+	}
+	//转化格式化后的时间字符串成时间格式
+	public static Date parseToDate(String time){
+		Date date = new Date();
+		try {
+			 date = sdf.parse(time);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return date;
+	}
 }
