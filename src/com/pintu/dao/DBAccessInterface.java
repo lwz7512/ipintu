@@ -38,7 +38,7 @@ public interface DBAccessInterface {
 	public int  insertOnesWealth( List<Wealth> wList);
 	
 	//更新财富值
-	public int updateOnesWealth( int amount, String type, String userId);
+	public int updateOnesWealth( List<Wealth> wList);
 	
 	//删除amount为0的财产对象
 	public int deleteOnesWealth(String type, String userId);

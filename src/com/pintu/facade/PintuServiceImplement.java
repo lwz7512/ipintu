@@ -687,6 +687,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				sDetails.setAuthor(user.getAccount());
 				sDetails.setId(story.getId());
 				sDetails.setOwner(userId);
+				sDetails.setAvatarImgPath(user.getAvatar());
 				sDetails.setPublishTime(story.getPublishTime());
 				sDetails.setContent(story.getContent());
 				sDetails.setClassical(story.getClassical());

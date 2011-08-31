@@ -6,6 +6,9 @@ public class StoryDetails extends Story{
 
 	private String author;
 	
+	//用户头像，用户表存文件路径，从磁盘上找图
+	private String avatarImgPath;
+	
 	private int flower;
 	
 	private int heart;
@@ -52,6 +55,14 @@ public class StoryDetails extends Story{
 
 	public void setStar(int star) {
 		this.star = star;
+	}
+
+	public String getAvatarImgPath() {
+		return avatarImgPath;
+	}
+
+	public void setAvatarImgPath(String avatarImgPath) {
+		this.avatarImgPath = avatarImgPath;
 	}
 
 	
