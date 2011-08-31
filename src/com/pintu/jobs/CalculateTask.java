@@ -25,19 +25,17 @@ public class CalculateTask extends TimerTask {
 	private CacheAccessInterface cacheAccess;
 
 	private Properties propertyConfigurer;
+	
 	// 这里存毫秒数
-	private Long start;
-	private Long end;
+	private Long start= System.currentTimeMillis()-60*60*1000;
+	private Long end=System.currentTimeMillis();
 
 	private Logger log = Logger.getLogger(CalculateTask.class);
 
 	public CalculateTask(DBAccessInterface dbVisitor,
-			CacheAccessInterface cacheVisitor, Long startTime, Long endTime,
-			Properties propertyConfigurer) {
+			CacheAccessInterface cacheVisitor,Properties propertyConfigurer) {
 		this.dbAccess = dbVisitor;
 		this.cacheAccess = cacheVisitor;
-		this.start = startTime;
-		this.end = endTime;
 		this.propertyConfigurer = propertyConfigurer;
 	}
 

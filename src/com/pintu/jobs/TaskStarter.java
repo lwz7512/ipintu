@@ -63,10 +63,9 @@ public class TaskStarter  {
     	
     	generalTimer = new TaskTimer();
     	generalTimer.setMin(calculateInterval);
-    	Long startTime = System.currentTimeMillis();
-    	Long endTime = startTime + calculateInterval*60*1000;
+    	
     	//计算前先制定计算任务，可以是算积分、等级、经典品图、资产
-    	generalTimer.setCalculateTask(new CalculateTask(dbVisitor,cacheVisitor,startTime,endTime,propertyConfigurer));
+    	generalTimer.setCalculateTask(new CalculateTask(dbVisitor,cacheVisitor,propertyConfigurer));
     	generalTimer.start();
     	
     	//固定任务用清除缓存中的一些数据，比如点击量等(待完善)
