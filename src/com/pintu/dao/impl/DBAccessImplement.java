@@ -601,26 +601,27 @@ public class DBAccessImplement implements DBAccessInterface {
 						ps.setString(5, "");
 					}
 					public int getBatchSize() {
-						return 1;
+						return wList.size();
 					}
 				});
 		return res.length;
 	}
 
 	@Override
-	public int updateOnesWealth(final int amount,final String type,final String userId) {
+	public int updateOnesWealth(final List<Wealth> wList) {
 		String sql = "update t_wealth set w_amount=? where w_type=? and w_owner=? ";
 		int[] res = jdbcTemplate.batchUpdate(sql,
 				new BatchPreparedStatementSetter() {
 					public void setValues(PreparedStatement ps, int i)
 							throws SQLException {
-						ps.setInt(1, amount);
-						ps.setString(2, type);
-						ps.setString(3, userId);
+						Wealth w = wList.get(i);
+						ps.setInt(1, w.getAmount());
+						ps.setString(2, w.getType());
+						ps.setString(3, w.getOwner());
 					}
 
 					public int getBatchSize() {
-						return 1;
+						return wList.size();
 					}
 				});
 		return res.length;

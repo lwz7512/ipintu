@@ -5,9 +5,11 @@ package com.pintu.jobs;
  */
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
@@ -25,15 +27,15 @@ public class CalculateTask extends TimerTask {
 	private CacheAccessInterface cacheAccess;
 
 	private Properties propertyConfigurer;
-	
+
 	// 这里存毫秒数
-	private Long start= System.currentTimeMillis()-60*60*1000;
-	private Long end=System.currentTimeMillis();
+	private Long start = System.currentTimeMillis() - 60 * 60 * 1000;
+	private Long end = System.currentTimeMillis();
 
 	private Logger log = Logger.getLogger(CalculateTask.class);
 
 	public CalculateTask(DBAccessInterface dbVisitor,
-			CacheAccessInterface cacheVisitor,Properties propertyConfigurer) {
+			CacheAccessInterface cacheVisitor, Properties propertyConfigurer) {
 		this.dbAccess = dbVisitor;
 		this.cacheAccess = cacheVisitor;
 		this.propertyConfigurer = propertyConfigurer;
@@ -164,7 +166,7 @@ public class CalculateTask extends TimerTask {
 					if (vote.getType().equals(Vote.STAR_TYPE)
 							&& vote.getAmount() > Integer
 									.parseInt(propertyConfigurer
-											.getProperty("classicaVoteNum"))) {
+											.getProperty("classicalVoteNum"))) {
 						needUpdateStoryIds.add(vote.getFollow());
 					}
 				}
@@ -193,70 +195,182 @@ public class CalculateTask extends TimerTask {
 				userIds.append("'");
 			}
 		}
-			// 1、 获取活动用户的可用积分信息
-			Map<String, Integer> idScoreMap = this.dbAccess
-					.getUserExchangeInfo(userIds);
+		// 1、 获取活动用户的可用积分信息
+		Map<String, Integer> idScoreMap = this.dbAccess
+				.getUserExchangeInfo(userIds);
 
-			// 2、为用户计算财产，以可用积分换贝壳，
-			// 3、从wealth表中取出要计算的用户的财产信息
-			// 为该用户将相同类型的贝类累加，得到一个结果集用来重新更新wealth，
-			// 比较判断，数据库wealth表里有的类型记录更新，不存在的新类型则直接插入
-			// 若数据库表里有的类型记录与新的同类记录合并后升到上一级此类型个数变0，则删除
-			if (idScoreMap.size() > 0) {
-				for (String userId : idScoreMap.keySet()) {
-					Integer exchangeScore = idScoreMap.get(userId);
-					// 换算
-					Map<String, Integer> typeAmountMap = conversion(exchangeScore);
-					//取出数据库wealth表中的相应用户的记录
-					List<Wealth> oldWealthList = this.dbAccess.getUsersWealthInfo(userId);
-					if (oldWealthList.size() > 0) {
-						// 有财富，需要合并升集，累加后判断更新相应记录也有删除某些数量为0的记录
-						//合并、更新、删除财富;更新剩余可用积分
-						
-					} else {
-						// 数据库wealth表里有的类型记录更新，不存在的新类型则直接插入
-						insertWealthAndUpdateExScore(typeAmountMap, userId);
+		// 2、为用户计算财产，以可用积分换贝壳，
+		// 3、从wealth表中取出要计算的用户的财产信息
+		// 为该用户将相同类型的贝类累加，得到一个结果集用来重新更新wealth，
+		// 比较判断，数据库wealth表里有的类型记录更新，不存在的新类型则直接插入
+		// 若数据库表里有的类型记录与新的同类记录合并后升到上一级此类型个数变0，则删除
+		if (idScoreMap.size() > 0) {
+			for (String userId : idScoreMap.keySet()) {
+				Integer exchangeScore = idScoreMap.get(userId);
+				// 换算
+				Map<String, Integer> typeAmountMap = conversion(exchangeScore);
+
+				// 换算结束后先更新用户的剩余可用积分字段，下面再做wealth表的操作
+				if (typeAmountMap.containsKey(Wealth.REMAIN_SCORE)) {
+					int row = this.dbAccess.updateUserExchageScore(userId,
+							typeAmountMap.get(Wealth.REMAIN_SCORE));
+					if (row == 1) {
+						typeAmountMap.remove(Wealth.REMAIN_SCORE);
+						log.info("更新用户可用积分字段成功！");
 					}
 				}
-			}
 
-	}
+				// 取出数据库wealth表中的相应用户的记录
+				List<Wealth> oldWealthList = this.dbAccess
+						.getUsersWealthInfo(userId);
+				if (oldWealthList.size() > 0) {
+					// 有财富，需要合并升集，累加后判断更新相应记录也有删除某些数量为0的记录
+					// 合并、更新、删除财富
+					unionAndUpdateWealth(typeAmountMap, oldWealthList, userId);
 
-	private void insertWealthAndUpdateExScore(
-			Map<String, Integer> typeAmountMap, String userId) {
-		List<Wealth> wealthList = new ArrayList<Wealth>();
-		for (String type : typeAmountMap.keySet()) {
-			if (type == Wealth.REMAIN_SCORE) {
-				int row = this.dbAccess.updateUserExchageScore(userId,
-						typeAmountMap.get(type));
-				if (row == 1) {
-					log.info("更新用户可用积分字段成功！");
-				}
-			} else {
-				// 判断若财富种类不为零则为该用户插入
-				if (typeAmountMap.get(type) != 0) {
-					Wealth w = new Wealth();
-					w.setId(PintuUtils.generateUID());
-					w.setOwner(userId);
-					w.setType(type);
-					w.setAmount(typeAmountMap.get(type));
-					wealthList.add(w);
-				}
-				int row = this.dbAccess.insertOnesWealth(wealthList);
-				if (row == wealthList.size()) {
-					log.info("插入用户的财产信息成功！");
+				} else {
+					// 数据库wealth表里有的类型记录更新，不存在的新类型则直接插入
+					insertWealth(typeAmountMap, userId);
 				}
 			}
 		}
 	}
 
+	private void unionAndUpdateWealth(Map<String, Integer> typeAmountMap,
+			List<Wealth> oldWealthList, String userId){
+
+		//存储数据库中已存在的财富类型，用来匹配哪些是要更新的，其他是来插入的
+		Set<String> dbTypeSet = new HashSet<String>();
+		//将数据库中已存在的类型与新计算产生的类型取并集
+		Map<String, Integer> unionMap = new HashMap<String, Integer>();
+		
+		Map<String,Integer> updateMap = new HashMap<String,Integer>();
+		Map<String, Integer> insertMap = new HashMap<String, Integer>();
+
+		for (int i = 0; i < oldWealthList.size(); i++) {
+			Wealth wealth = oldWealthList.get(i);
+			String type = wealth.getType();
+			dbTypeSet.add(type);
+			if (typeAmountMap.containsKey(type)) {
+				Integer newCount = typeAmountMap.get(type) + wealth.getAmount();
+				unionMap.remove(type);
+				unionMap.put(type, newCount);
+			}else{
+				unionMap.put(type, typeAmountMap.get(type));
+			}
+		}
+		
+		// 这里需要判断一下unionMap,升级
+		//需要注意这里，合并unionMap应与数据库里的部分重新做一下比较，若有赋值updateMap，否则add到insertMap
+		Map<String,Integer>resultMap = reCalAndUpgrade(unionMap);
+		
+		for(String type:resultMap.keySet()){
+			if(dbTypeSet.contains(type)){
+				updateMap.put(type, resultMap.get(type));
+			}else{
+				insertMap.put(type, resultMap.get(type));
+			}
+		}
+		
+		updateWealth(updateMap,userId);
+		insertWealth(insertMap,userId);
+
+
+
+	}
+
+	//计算并升级(这里因传入的参数为确定的四个级别，要按等级从低到高计算)
+	private Map<String, Integer> reCalAndUpgrade(Map<String, Integer> map) {
+		Map<String,Integer> result = new HashMap<String, Integer>();
+		Map<String,Integer> upGrade = new HashMap<String, Integer>();
+		
+		String[] gradeArray = new String[map.size()];
+		gradeArray[0] = Wealth.ONE_YUAN;
+		gradeArray[1] = Wealth.TEN_YUAN;
+		gradeArray[2] = Wealth.FIFTY_YUAN;
+		gradeArray[3] = Wealth.HUNDRED_YUAN;
+		
+		for(String str:gradeArray){
+			Integer index = map.get(str);
+			Integer upGradeCount = new Integer(0);
+			Integer localGradeCount = new Integer(0);
+			if(Wealth.ONE_YUAN.equals(str)){
+				upGradeCount = index/10;
+				localGradeCount = index%10;
+				upGrade.put(Wealth.TEN_YUAN, upGradeCount);
+				result.put(Wealth.ONE_YUAN, localGradeCount);
+			}else if(Wealth.TEN_YUAN.equals(str)){
+				Integer upGradeCount4me = upGrade.get(Wealth.TEN_YUAN);
+				index += upGradeCount4me;
+				upGradeCount = index/5;
+				localGradeCount = index%5;
+				upGrade.put(Wealth.FIFTY_YUAN, upGradeCount);
+				result.put(Wealth.TEN_YUAN, localGradeCount);
+			}else if(Wealth.FIFTY_YUAN.equals(str)){
+				Integer upGradeCount4me = upGrade.get(Wealth.FIFTY_YUAN);
+				index += upGradeCount4me;
+				upGradeCount = index/2;
+				localGradeCount = index%2;
+				upGrade.put(Wealth.HUNDRED_YUAN, upGradeCount);
+				result.put(Wealth.FIFTY_YUAN, localGradeCount);
+			}else if(Wealth.HUNDRED_YUAN.equals(str)){
+				Integer upGradeCount4me = upGrade.get(Wealth.HUNDRED_YUAN);
+				index += upGradeCount4me;
+				result.put(Wealth.HUNDRED_YUAN, index);
+			}
+		}
+		
+		return result;
+	}
+
+	private void updateWealth(Map<String, Integer> map, String userId) {
+		List<Wealth> updateList = new ArrayList<Wealth>();
+		for(String type:map.keySet()){
+			if(map.get(type)!=0){
+				Wealth w=new Wealth();
+				w.setOwner(userId);
+				w.setType(type);
+				w.setAmount(map.get(type));
+				updateList.add(w);
+			}else{
+				//若某一类型的财富值变成0，则删除该条记录
+				this.dbAccess.deleteOnesWealth(type, userId);
+			}
+		}
+		int row = this.dbAccess.updateOnesWealth(updateList);
+		if (row == updateList.size()) {
+			log.info("更新用户的财产信息成功！");
+		}
+	}
+
+	private void insertWealth(Map<String, Integer> typeAmountMap, String userId) {
+		List<Wealth> wealthList = new ArrayList<Wealth>();
+		for (String type : typeAmountMap.keySet()) {
+			// 判断若财富种类不为零则为该用户插入
+			if (typeAmountMap.get(type) != 0) {
+				Wealth w = new Wealth();
+				w.setId(PintuUtils.generateUID());
+				w.setOwner(userId);
+				w.setType(type);
+				w.setAmount(typeAmountMap.get(type));
+				wealthList.add(w);
+			}
+		}
+		int row = this.dbAccess.insertOnesWealth(wealthList);
+		if (row == wealthList.size()) {
+			log.info("插入用户的财产信息成功！");
+		}
+		
+	}
+
+	//将积分转化为财富的类型与数量map
 	private Map<String, Integer> conversion(Integer exchangeScore) {
 		// 这里包含四个是类型数量，第五个为剩余积分（先初始化，再在递归计算的过程中为其分别赋值）
 		Map<String, Integer> typeAmount = new HashMap<String, Integer>();
-		typeAmount.put(Wealth.SEA_TYPE, 0);
-		typeAmount.put(Wealth.COPPER_TYPE, 0);
-		typeAmount.put(Wealth.SILVER_TYPE, 0);
-		typeAmount.put(Wealth.GOLD_TYPE, 0);
+		typeAmount.put(Wealth.ONE_YUAN, 0);
+		typeAmount.put(Wealth.TEN_YUAN, 0);
+		typeAmount.put(Wealth.FIFTY_YUAN, 0);
+		typeAmount.put(Wealth.HUNDRED_YUAN, 0);
 		typeAmount.put(Wealth.REMAIN_SCORE, 0);
 
 		// 这里考虑用一个递归来写
