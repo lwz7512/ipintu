@@ -25,12 +25,7 @@ public class CalculateTask extends TimerTask {
 
 	private DBAccessInterface dbAccess;
 	private CacheAccessInterface cacheAccess;
-
 	private Properties propertyConfigurer;
-
-	// 这里存毫秒数
-	private Long start = System.currentTimeMillis() - 60 * 60 * 1000;
-	private Long end = System.currentTimeMillis();
 
 	private Logger log = Logger.getLogger(CalculateTask.class);
 
@@ -47,33 +42,83 @@ public class CalculateTask extends TimerTask {
 	}
 
 	private void calculate() {
+		
 		System.out.println(">>> calculate task executed...");
+		// 这里存毫秒数
+		Long start = System.currentTimeMillis() - 60 * 60 * 1000;
+	    Long end = System.currentTimeMillis();
 
+		// 取一小时内被操作的故事，并观察投票数，若start类的值超过一个限值，则将故事表中经典字段
+		findAndSetClassical(start, end);
+		
 		// 取得活跃用户或缺省用户的信息
-		ArrayList<User> userList = getLiveOrDefaultUser();
+		ArrayList<User> userList = getLiveOrDefaultUser(start,end);
 
 		// 计算活跃用用户的积分并更新数据库
 		List<User> updateScoreUserList = new ArrayList<User>();
 		if(userList.size() >0){
-			updateScoreUserList = this.calAndUpdateScore(userList, this.start,
-				this.end);
+			updateScoreUserList = this.calAndUpdateScore(userList, start, end);
 		}
-
-		// 取一小时内被操作的故事，并观察投票数，若start类的值超过一个限值，则将故事表中经典字段
-		findAndSetClassical(start, end);
 
 		// 财产直接根据可用积分计算结果查找并更新数据库的wealth表
 		if(updateScoreUserList.size() >0){
 			calAndUpdateWealth(updateScoreUserList);
 		}
 	}
+	
+	private void findAndSetClassical(Long start, Long end) {
+		// 将毫秒数转换成数据库所存储的字符串格式"yyyy-MM-dd HH:mm:ss"
+		String startTime = PintuUtils.formatLong(start);
+		String endTime = PintuUtils.formatLong(end);
+		// 取到一段时间间隔内有所有故事的id集
+		List<String> storyIdList = this.dbAccess.getStoryIdsByTime(startTime,
+				endTime);
+		// 将storyIdList转化成后面的形式--('','','')
+		if (storyIdList.size() > 0) {
+			StringBuffer storyIds = new StringBuffer();
+			for (int i = 0; i < storyIdList.size(); i++) {
+				String storyId = storyIdList.get(i);
+				if (storyIds.length() > 0) {
+					storyIds.append(",");
+				}
+				storyIds.append("'");
+				storyIds.append(storyId);
+				storyIds.append("'");
+			}
+			// 根据故事id取得投票信息
+			List<Vote> voteList = this.dbAccess.getVoteForCache(storyIds
+					.toString());
+			// 存储需要更新classical字段的故事id
+			List<String> needUpdateStoryIds = new ArrayList<String>();
+			if (voteList.size() > 0) {
+				for (int i = 0; i < voteList.size(); i++) {
+					Vote vote = voteList.get(i);
+					// 查看并判断经典投票的数量
+					if (vote.getType().equals(Vote.STAR_TYPE)
+							&& vote.getAmount() > Integer
+									.parseInt(propertyConfigurer
+											.getProperty("classicalVoteNum"))) {
+						needUpdateStoryIds.add(vote.getFollow());
+					}
+				}
+			}
+			// 更新数据库中的经典字段
+			int res = this.dbAccess.updateStoryClassical(needUpdateStoryIds);
+			if (res == needUpdateStoryIds.size()) {
+				log.info("更新故事经典字段成功！");
+			} else {
+				log.info("更新故事经典字段有误！");
+			}
+		}
 
-	private ArrayList<User> getLiveOrDefaultUser() {
+	}
+
+	private ArrayList<User> getLiveOrDefaultUser(Long start, Long end) {
 		// 需要进行计算的活跃用户
 		ArrayList<User> userList = new ArrayList<User>();
 		List<User> liveList = new ArrayList<User>();
 		
-		for (Long i = this.start / (60 * 1000); i <= this.end / (60 * 1000); i++) {
+		for (Long i = start / (60 * 1000); i <= end / (60 * 1000); i++) {
 			liveList = this.cacheAccess.getLiveUser(String.valueOf(i));
 			if (liveList.size() > 0) {
 				for (int j = 0; j < liveList.size(); j++) {
@@ -156,52 +201,6 @@ public class CalculateTask extends TimerTask {
 		return resultList;
 	}
 
-	private void findAndSetClassical(Long start, Long end) {
-		// 将毫秒数转换成数据库所存储的字符串格式"yyyy-MM-dd HH:mm:ss"
-		String startTime = PintuUtils.formatLong(start);
-		String endTime = PintuUtils.formatLong(end);
-		// 取到一段时间间隔内有所有故事的id集
-		List<String> storyIdList = this.dbAccess.getStoryIdsByTime(startTime,
-				endTime);
-		// 将storyIdList转化成后面的形式--('','','')
-		if (storyIdList.size() > 0) {
-			StringBuffer storyIds = new StringBuffer();
-			for (int i = 0; i < storyIdList.size(); i++) {
-				String storyId = storyIdList.get(i);
-				if (storyIds.length() > 0) {
-					storyIds.append(",");
-				}
-				storyIds.append("'");
-				storyIds.append(storyId);
-				storyIds.append("'");
-			}
-			// 根据故事id取得投票信息
-			List<Vote> voteList = this.dbAccess.getVoteForCache(storyIds
-					.toString());
-			// 存储需要更新classical字段的故事id
-			List<String> needUpdateStoryIds = new ArrayList<String>();
-			if (voteList.size() > 0) {
-				for (int i = 0; i < voteList.size(); i++) {
-					Vote vote = voteList.get(i);
-					// 查看并判断经典投票的数量
-					if (vote.getType().equals(Vote.STAR_TYPE)
-							&& vote.getAmount() > Integer
-									.parseInt(propertyConfigurer
-											.getProperty("classicalVoteNum"))) {
-						needUpdateStoryIds.add(vote.getFollow());
-					}
-				}
-			}
-			// 更新数据库中的经典字段
-			int res = this.dbAccess.updateStoryClassical(needUpdateStoryIds);
-			if (res == needUpdateStoryIds.size()) {
-				log.info("更新故事经典字段成功！");
-			} else {
-				log.info("更新故事经典字段有误！");
-			}
-		}
-
-	}
 
 	private void calAndUpdateWealth(List<User> list) {
 		StringBuffer userIds = new StringBuffer();
