@@ -48,11 +48,33 @@ public class CalculateTask extends TimerTask {
 
 	private void calculate() {
 		System.out.println(">>> calculate task executed...");
+
+		// 取得活跃用户或缺省用户的信息
+		ArrayList<User> userList = getLiveOrDefaultUser();
+
+		// 计算活跃用用户的积分并更新数据库
+		List<User> updateScoreUserList = new ArrayList<User>();
+		if(userList.size() >0){
+			updateScoreUserList = this.calAndUpdateScore(userList, this.start,
+				this.end);
+		}
+
+		// 取一小时内被操作的故事，并观察投票数，若start类的值超过一个限值，则将故事表中经典字段
+		findAndSetClassical(start, end);
+
+		// 财产直接根据可用积分计算结果查找并更新数据库的wealth表
+		if(updateScoreUserList.size() >0){
+			calAndUpdateWealth(updateScoreUserList);
+		}
+	}
+
+	private ArrayList<User> getLiveOrDefaultUser() {
 		// 需要进行计算的活跃用户
 		ArrayList<User> userList = new ArrayList<User>();
+		List<User> liveList = new ArrayList<User>();
+		
 		for (Long i = this.start / (60 * 1000); i <= this.end / (60 * 1000); i++) {
-			List<User> liveList = this.cacheAccess.getLiveUser(String
-					.valueOf(i));
+			liveList = this.cacheAccess.getLiveUser(String.valueOf(i));
 			if (liveList.size() > 0) {
 				for (int j = 0; j < liveList.size(); j++) {
 					User user = liveList.get(j);
@@ -60,27 +82,15 @@ public class CalculateTask extends TimerTask {
 				}
 			}
 		}
-
-		// 已计算积分的用户列表
-		List<User> resultList = this.calAndUpdateScore(userList, this.start,
-				this.end);
-
-		// 已计算后的用户列表来更新完数据库
-		if (resultList.size() > 0) {
-			int m = this.dbAccess.updateUserScore(resultList);
-			if (m == resultList.size()) {
-				log.info("更新数据库用户积分成功");
-			} else {
-				log.info("更新数据库用户积分失败");
-			}
+		
+		//FIXME 这里后期加入登录可缓存用户了后即可删除
+		if (liveList.size() == 0) {
+			// 缺省用户,这里的id是我本身数据库里存在的一个用户id(必须保证存在)
+			User user = this.dbAccess.getUserById("a053beae20125b5b");
+			userList.add(user);
 		}
-
-		// 取一小时内被操作的故事，并观察投票数，若start类的值超过一个限值，则将故事表中经典字段
-		findAndSetClassical(start, end);
-
-		// 财产直接根据可用积分计算查找并更新数据库的wealth表
-		calAndUpdateWealth(resultList);
-
+		
+		return userList;
 	}
 
 	// 计算积分
@@ -132,6 +142,17 @@ public class CalculateTask extends TimerTask {
 				}
 			}
 		}
+
+		// 已计算后的用户列表来更新完数据库
+		if (resultList.size() > 0) {
+			int m = this.dbAccess.updateUserScore(resultList);
+			if (m == resultList.size()) {
+				log.info("更新数据库用户积分成功");
+			} else {
+				log.info("更新数据库用户积分失败");
+			}
+		}
+
 		return resultList;
 	}
 
@@ -182,11 +203,11 @@ public class CalculateTask extends TimerTask {
 
 	}
 
-	private void calAndUpdateWealth(List<User> storyIdList) {
+	private void calAndUpdateWealth(List<User> list) {
 		StringBuffer userIds = new StringBuffer();
-		if (storyIdList.size() > 0) {
-			for (int i = 0; i < storyIdList.size(); i++) {
-				User user = storyIdList.get(i);
+		if (list.size() > 0) {
+			for (int i = 0; i < list.size(); i++) {
+				User user = list.get(i);
 				if (userIds.length() > 0) {
 					userIds.append(",");
 				}
@@ -197,7 +218,7 @@ public class CalculateTask extends TimerTask {
 		}
 		// 1、 获取活动用户的可用积分信息
 		Map<String, Integer> idScoreMap = this.dbAccess
-				.getUserExchangeInfo(userIds);
+				.getUserExchangeInfo(userIds.toString());
 
 		// 2、为用户计算财产，以可用积分换贝壳，
 		// 3、从wealth表中取出要计算的用户的财产信息
@@ -237,14 +258,14 @@ public class CalculateTask extends TimerTask {
 	}
 
 	private void unionAndUpdateWealth(Map<String, Integer> typeAmountMap,
-			List<Wealth> oldWealthList, String userId){
+			List<Wealth> oldWealthList, String userId) {
 
-		//存储数据库中已存在的财富类型，用来匹配哪些是要更新的，其他是来插入的
+		// 存储数据库中已存在的财富类型，用来匹配哪些是要更新的，其他是来插入的
 		Set<String> dbTypeSet = new HashSet<String>();
-		//将数据库中已存在的类型与新计算产生的类型取并集
+		// 将数据库中已存在的类型与新计算产生的类型取并集
 		Map<String, Integer> unionMap = new HashMap<String, Integer>();
-		
-		Map<String,Integer> updateMap = new HashMap<String,Integer>();
+
+		Map<String, Integer> updateMap = new HashMap<String, Integer>();
 		Map<String, Integer> insertMap = new HashMap<String, Integer>();
 
 		for (int i = 0; i < oldWealthList.size(); i++) {
@@ -255,85 +276,83 @@ public class CalculateTask extends TimerTask {
 				Integer newCount = typeAmountMap.get(type) + wealth.getAmount();
 				unionMap.remove(type);
 				unionMap.put(type, newCount);
-			}else{
+			} else {
 				unionMap.put(type, typeAmountMap.get(type));
 			}
 		}
-		
+
 		// 这里需要判断一下unionMap,升级
-		//需要注意这里，合并unionMap应与数据库里的部分重新做一下比较，若有赋值updateMap，否则add到insertMap
-		Map<String,Integer>resultMap = reCalAndUpgrade(unionMap);
-		
-		for(String type:resultMap.keySet()){
-			if(dbTypeSet.contains(type)){
+		Map<String, Integer> resultMap = reCalAndUpgrade(unionMap);
+
+		// 需要注意这里，合并unionMap应与数据库里的部分重新做一下比较，若有赋值updateMap，否则add到insertMap
+		for (String type : resultMap.keySet()) {
+			if (dbTypeSet.contains(type)) {
 				updateMap.put(type, resultMap.get(type));
-			}else{
+			} else {
 				insertMap.put(type, resultMap.get(type));
 			}
 		}
-		
-		updateWealth(updateMap,userId);
-		insertWealth(insertMap,userId);
 
-
+		updateWealth(updateMap, userId);
+		insertWealth(insertMap, userId);
 
 	}
 
-	//计算并升级(这里因传入的参数为确定的四个级别，要按等级从低到高计算)
+	// 计算并升级(这里因传入的参数为确定的四个级别，要按等级从低到高计算)
 	private Map<String, Integer> reCalAndUpgrade(Map<String, Integer> map) {
-		Map<String,Integer> result = new HashMap<String, Integer>();
-		Map<String,Integer> upGrade = new HashMap<String, Integer>();
-		
+		Map<String, Integer> result = new HashMap<String, Integer>();
+		Map<String, Integer> upGrade = new HashMap<String, Integer>();
+
 		String[] gradeArray = new String[map.size()];
 		gradeArray[0] = Wealth.ONE_YUAN;
 		gradeArray[1] = Wealth.TEN_YUAN;
 		gradeArray[2] = Wealth.FIFTY_YUAN;
 		gradeArray[3] = Wealth.HUNDRED_YUAN;
-		
-		for(String str:gradeArray){
+
+		for (String str : gradeArray) {
 			Integer index = map.get(str);
 			Integer upGradeCount = new Integer(0);
 			Integer localGradeCount = new Integer(0);
-			if(Wealth.ONE_YUAN.equals(str)){
-				upGradeCount = index/10;
-				localGradeCount = index%10;
+			if (Wealth.ONE_YUAN.equals(str)) {
+				upGradeCount = index / 10;
+				localGradeCount = index % 10;
 				upGrade.put(Wealth.TEN_YUAN, upGradeCount);
 				result.put(Wealth.ONE_YUAN, localGradeCount);
-			}else if(Wealth.TEN_YUAN.equals(str)){
+			} else if (Wealth.TEN_YUAN.equals(str)) {
 				Integer upGradeCount4me = upGrade.get(Wealth.TEN_YUAN);
 				index += upGradeCount4me;
-				upGradeCount = index/5;
-				localGradeCount = index%5;
+				upGradeCount = index / 5;
+				localGradeCount = index % 5;
 				upGrade.put(Wealth.FIFTY_YUAN, upGradeCount);
 				result.put(Wealth.TEN_YUAN, localGradeCount);
-			}else if(Wealth.FIFTY_YUAN.equals(str)){
+			} else if (Wealth.FIFTY_YUAN.equals(str)) {
 				Integer upGradeCount4me = upGrade.get(Wealth.FIFTY_YUAN);
 				index += upGradeCount4me;
-				upGradeCount = index/2;
-				localGradeCount = index%2;
+				upGradeCount = index / 2;
+				localGradeCount = index % 2;
 				upGrade.put(Wealth.HUNDRED_YUAN, upGradeCount);
 				result.put(Wealth.FIFTY_YUAN, localGradeCount);
-			}else if(Wealth.HUNDRED_YUAN.equals(str)){
+			} else if (Wealth.HUNDRED_YUAN.equals(str)) {
 				Integer upGradeCount4me = upGrade.get(Wealth.HUNDRED_YUAN);
 				index += upGradeCount4me;
 				result.put(Wealth.HUNDRED_YUAN, index);
 			}
 		}
-		
+
 		return result;
 	}
 
 	private void updateWealth(Map<String, Integer> map, String userId) {
 		List<Wealth> updateList = new ArrayList<Wealth>();
-		for(String type:map.keySet()){
-			if(map.get(type)!=0){
-				Wealth w=new Wealth();
+		for (String type : map.keySet()) {
+			if (map.get(type) != 0) {
+				Wealth w = new Wealth();
 				w.setOwner(userId);
 				w.setType(type);
 				w.setAmount(map.get(type));
 				updateList.add(w);
-			}else{
-				//若某一类型的财富值变成0，则删除该条记录
+			} else {
+				// 若某一类型的财富值变成0，则删除该条记录
 				this.dbAccess.deleteOnesWealth(type, userId);
 			}
 		}
@@ -360,10 +379,10 @@ public class CalculateTask extends TimerTask {
 		if (row == wealthList.size()) {
 			log.info("插入用户的财产信息成功！");
 		}
-		
+
 	}
 
-	//将积分转化为财富的类型与数量map
+	// 将积分转化为财富的类型与数量map
 	private Map<String, Integer> conversion(Integer exchangeScore) {
 		// 这里包含四个是类型数量，第五个为剩余积分（先初始化，再在递归计算的过程中为其分别赋值）
 		Map<String, Integer> typeAmount = new HashMap<String, Integer>();
@@ -375,7 +394,7 @@ public class CalculateTask extends TimerTask {
 
 		// 这里考虑用一个递归来写
 
-		return null;
+		return typeAmount;
 	}
 
 }

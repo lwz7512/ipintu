@@ -38,6 +38,7 @@
 	<bean id="taskStarter" class="com.pintu.jobs.TaskStarter">
 		<property name="dbVisitor" ref="dbAcess" />
 		<property name="cacheVisitor" ref="cacheAccess" />
+		<property name="propertyConfigurer" ref="propertyConfigurer" />
 	</bean>
 	<bean id="pintuService" class="com.pintu.facade.PintuServiceImplement">
 		<property name="dbVisitor" ref="dbAcess" />
