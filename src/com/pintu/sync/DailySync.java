@@ -32,8 +32,11 @@ public class DailySync implements Runnable{
 		
 		private Logger log = Logger.getLogger(DailySync.class);
 		
+		// 同步开关
+		private Boolean dailyFlag = true;
+		
 		public void run() {
-			
+			if(dailyFlag){
 				Calendar c = Calendar.getInstance();
 			    int   year=c.get(Calendar.YEAR); 
 			    int   month=c.get(Calendar.MONTH); 
@@ -60,6 +63,7 @@ public class DailySync implements Runnable{
 				if(storyIds.length()>0){
 					syncVoteTask(storyIds);
 				}
+			}
 		}
 
 		/**
@@ -165,6 +169,14 @@ public class DailySync implements Runnable{
 
 		public void setPintuService(PintuServiceInterface pintuService) {
 			this.pintuService = pintuService;
+		}
+
+		public Boolean getDailyFlag() {
+			return dailyFlag;
+		}
+
+		public void setDailyFlag(Boolean dailyFlag) {
+			this.dailyFlag = dailyFlag;
 		}
 
 }

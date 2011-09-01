@@ -18,6 +18,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 import com.pintu.jobs.TaskStarter;
@@ -311,6 +312,13 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 				dailySync.start();
 			}
 
+		}
+		
+		//处理关闭时发布的事件，停止所有的任务
+		 if(event instanceof ContextClosedEvent){
+			 taskStarter.stopTask();
+			 synchProcess.stop();
+			 dailySync.stop();
 		}
 		
 	} //end of onApplicationEvent

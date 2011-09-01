@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public class PintuUtils {
 
-	static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private static final  SimpleDateFormat simpledDateFormat= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	//TODO, some static functions here;
 	
@@ -19,22 +19,22 @@ public class PintuUtils {
 	
 	
 	public static String getFormatNowTime(){
-		String now = sdf.format(new Date().getTime());
+		String now = simpledDateFormat.format(new Date().getTime());
 		return now;
 	}
 	
 	public static String formatDate(Date date){
-		return sdf.format(date);
+		return simpledDateFormat.format(date);
 	}
 
 	public static String formatLong(Long time){
-		return sdf.format(time);
+		return simpledDateFormat.format(time);
 	}
 	//转化格式化后的时间字符串成时间格式
 	public static Date parseToDate(String time){
 		Date date = new Date();
 		try {
-			 date = sdf.parse(time);
+			 date = simpledDateFormat.parse(time);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}

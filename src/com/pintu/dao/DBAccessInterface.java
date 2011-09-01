@@ -111,5 +111,7 @@ public interface DBAccessInterface {
 	public List<String> getStoryIdsByTime(String startTime, String endTime);
 	
 	public List<Wealth> getUsersWealthInfo(	String userId);
+	
+	public boolean isClassicalStory(String storyId);
 
 }

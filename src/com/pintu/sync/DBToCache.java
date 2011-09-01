@@ -15,6 +15,10 @@ public class DBToCache {
 			threader.start();
 		}
 	}
+	
+	public void stop(){
+		if(threader==null) worker.setDailyFlag(false);
+	}
 
 	public DailySync getExecutor() {
 		return worker;

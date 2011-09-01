@@ -98,16 +98,23 @@ public class CalculateTask extends TimerTask {
 							&& vote.getAmount() > Integer
 									.parseInt(propertyConfigurer
 											.getProperty("classicalVoteNum"))) {
-						needUpdateStoryIds.add(vote.getFollow());
+						
+						//在这里需要判断一下，若数据库里故事已为经典就不放到更新里去
+						String storyId =vote.getFollow();
+						if(!this.dbAccess.isClassicalStory(storyId)){
+							needUpdateStoryIds.add(storyId);
+						}
 					}
 				}
 			}
-			// 更新数据库中的经典字段
-			int res = this.dbAccess.updateStoryClassical(needUpdateStoryIds);
-			if (res == needUpdateStoryIds.size()) {
-				log.info("更新故事经典字段成功！");
-			} else {
-				log.info("更新故事经典字段有误！");
+			if(needUpdateStoryIds.size() > 0){
+				// 更新数据库中的经典字段
+				int res = this.dbAccess.updateStoryClassical(needUpdateStoryIds);
+				if (res == needUpdateStoryIds.size()) {
+					log.info("更新故事经典字段成功！");
+				} else {
+					log.info("更新故事经典字段有误！");
+				}
 			}
 		}
 
@@ -192,9 +199,9 @@ public class CalculateTask extends TimerTask {
 		if (resultList.size() > 0) {
 			int m = this.dbAccess.updateUserScore(resultList);
 			if (m == resultList.size()) {
-				log.info("更新数据库用户积分成功");
+				log.info("更新数据库用户积分成功！");
 			} else {
-				log.info("更新数据库用户积分失败");
+				log.info("更新数据库用户积分失败！");
 			}
 		}
 
@@ -355,9 +362,12 @@ public class CalculateTask extends TimerTask {
 				this.dbAccess.deleteOnesWealth(type, userId);
 			}
 		}
-		int row = this.dbAccess.updateOnesWealth(updateList);
-		if (row == updateList.size()) {
-			log.info("更新用户的财产信息成功！");
+		
+		if(updateList.size() > 0){
+			int row = this.dbAccess.updateOnesWealth(updateList);
+			if (row == updateList.size()) {
+				log.info("更新用户的财产信息成功！");
+			}
 		}
 	}
 
@@ -374,15 +384,18 @@ public class CalculateTask extends TimerTask {
 				wealthList.add(w);
 			}
 		}
-		int row = this.dbAccess.insertOnesWealth(wealthList);
-		if (row == wealthList.size()) {
-			log.info("插入用户的财产信息成功！");
+		
+		if(wealthList.size() > 0){
+			int row = this.dbAccess.insertOnesWealth(wealthList);
+			if (row == wealthList.size()) {
+				log.info("插入用户的财产信息成功！");
+			}
 		}
 
 	}
 
 	// 将积分转化为财富的类型与数量map
-	private Map<String, Integer> conversion(Integer exchangeScore) {
+	private Map<String, Integer> conversion(int exchangeScore) {
 		// 这里包含四个是类型数量，第五个为剩余积分（先初始化，再在递归计算的过程中为其分别赋值）
 		Map<String, Integer> typeAmount = new HashMap<String, Integer>();
 		typeAmount.put(Wealth.ONE_YUAN, 0);
@@ -391,9 +404,45 @@ public class CalculateTask extends TimerTask {
 		typeAmount.put(Wealth.HUNDRED_YUAN, 0);
 		typeAmount.put(Wealth.REMAIN_SCORE, 0);
 
-		// 这里考虑用一个递归来写
+		// 这里用一个递归来实现
+		 calculateScore(exchangeScore,typeAmount);
 
 		return typeAmount;
+	}
+	
+	private void calculateScore(int score,Map<String,Integer> map ){
+		//600
+		int gold = Integer.parseInt(propertyConfigurer.getProperty("goldShell"));
+		//300
+		int silver = Integer.parseInt(propertyConfigurer.getProperty("silverShell"));
+		//60
+		int copper = Integer.parseInt(propertyConfigurer.getProperty("copperShell"));
+		//6
+		int sea = Integer.parseInt(propertyConfigurer.getProperty("seaShell"));
+		
+		if(score >= gold){
+			int value = map.get(Wealth.HUNDRED_YUAN);
+			map.put(Wealth.HUNDRED_YUAN, value+1);
+			score -= gold;
+			calculateScore(score,map);
+		}else if(score >= silver){
+			int value = map.get(Wealth.FIFTY_YUAN);
+			map.put(Wealth.FIFTY_YUAN, value+1);
+			score -= silver;
+			calculateScore(score,map);
+		}else if(score >= copper){
+			int value = map.get(Wealth.TEN_YUAN);
+			map.put(Wealth.TEN_YUAN, value+1);
+			score -= copper;
+			calculateScore(score,map);
+		}else if(score >= sea){
+			int value = map.get(Wealth.ONE_YUAN);
+			map.put(Wealth.ONE_YUAN, value+1);
+			score -= sea;
+			calculateScore(score,map);
+		}else {
+			map.put(Wealth.REMAIN_SCORE, score);	
+		}
 	}
 
 }

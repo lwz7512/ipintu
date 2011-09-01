@@ -36,12 +36,12 @@ public class TaskStarter  {
     }
 
 	
-	//TODO, Spring injection
+	// Spring injection
 	public void setDbVisitor(DBAccessInterface dbVisitor) {
 		this.dbVisitor = dbVisitor;
 	}
 	
-	//TODO, Spring injection
+	// Spring injection
 	public void setCacheVisitor(CacheAccessInterface cacheVisitor) {
 		this.cacheVisitor = cacheVisitor;
 	}
@@ -53,8 +53,6 @@ public class TaskStarter  {
 	public CacheAccessInterface getCacheVisitor() {
 		return cacheVisitor;
 	}
-
-    
 	
     public void runAutoTasks() {
     	

@@ -711,6 +711,21 @@ public class DBAccessImplement implements DBAccessInterface {
 		return wealthList;
 	}
 
+	@Override
+	public boolean isClassicalStory(String storyId) {
+		String sql = "select s_classical from t_story where s_id ='"+storyId+"'";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		boolean flag = true;
+		if(rows!=null && rows.size()>0){
+				Map<String, Object> map = (Map<String, Object>) rows.get(0);
+				int classical =Integer.parseInt(map.get("s_classical").toString());
+				if(classical == 0){
+					flag = false;
+			}
+		}
+		return flag;
+	}
+
 	
 
 	
