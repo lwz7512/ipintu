@@ -664,14 +664,14 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public Map<String, Integer> getUserExchangeInfo(StringBuffer userIds) {
+	public Map<String, Integer> getUserExchangeInfo(String userIds) {
 		String sql = "select u_id,u_exchangeScore from t_user where u_id in ("+userIds+")";
 		Map<String,Integer> resMap = new HashMap<String,Integer>();
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if(rows!=null && rows.size()>0){
 			for (int i = 0; i < rows.size(); i++) {
 				Map<String, Object> map = (Map<String, Object>) rows.get(i);
-				resMap.put(map.get("u_id").toString(),Integer.parseInt(map.get("u_score").toString()));
+				resMap.put(map.get("u_id").toString(),Integer.parseInt(map.get("u_exchangeScore").toString()));
 			}
 		}
 		return resMap;
@@ -694,7 +694,7 @@ public class DBAccessImplement implements DBAccessInterface {
 
 	@Override
 	public List<Wealth> getUsersWealthInfo(String userId) {
-		String sql = "select * from t_wealth where w_owner = "+userId;
+		String sql = "select * from t_wealth where w_owner = '"+userId+"'";
 		List<Wealth> wealthList = new ArrayList<Wealth>();
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if(rows!=null && rows.size()>0){

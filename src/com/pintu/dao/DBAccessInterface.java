@@ -106,7 +106,7 @@ public interface DBAccessInterface {
 	
 	public Map<String,Integer> getOnesStoryCountByTime(String startTime, String endTime);
 	
-	public Map<String, Integer> getUserExchangeInfo(StringBuffer userIds);
+	public Map<String, Integer> getUserExchangeInfo(String userIds);
 	
 	public List<String> getStoryIdsByTime(String startTime, String endTime);
 	

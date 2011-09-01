@@ -607,16 +607,19 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	public List<TPicDetails> getHotPicture() {
 		List<TPicDetails> hotList = new ArrayList<TPicDetails>();
 		Map<String, Integer> map = CacheAccessInterface.hotPicCacheIds;
-
+		
+		if (map.size() == 0){ 
+			return hotList ;
+		}
+		
 		int[] counterArray = new int[map.size()];
-		int i = 0;
-		if (i < 10) {
-			for (Integer counter : map.values()) {
-                //点击量取配置文件中的设置值
-				if (counter > Integer.parseInt(propertyConfigurer.getProperty("hotPintuCounter"))) {
-					Array.set(counterArray, i, counter);
-					i++;
-				}
+		int i = 0;		
+		
+		for (Integer counter : map.values()) {
+            //点击量取配置文件中的设置值
+			if (counter > Integer.parseInt(propertyConfigurer.getProperty("hotPintuCounter"))) {
+				Array.set(counterArray, i, counter);
+				i++;
 			}
 		}
 
@@ -626,6 +629,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 		//根据排序后的结果从大到小，取得缓存中的tpId，并查出详情
 		for (int j = 0; j < counterArray.length; j++) {
+			if(counterArray[j]==0) break;
 			for (String tpId : map.keySet()) {
 				if (map.get(tpId) == counterArray[j]) {
 					TPicDetails tpic = this.getTPicDetailsById(tpId);
