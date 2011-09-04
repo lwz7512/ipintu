@@ -3,7 +3,6 @@
  */
 package com.pintu.facade;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -153,48 +152,8 @@ public class ApiAdaptor {
 	 * @param tpID
 	 * @return
 	 */
-	public String getStoriesOfPic(String tpID){
-		List<StoryDetails> storyDeatilList = new ArrayList<StoryDetails>();
-		List<Story> storyList = pintuService.getStoriesOfPic(tpID);
-		if(storyList != null && storyList.size() > 0){
-			for(int i=0;i<storyList.size();i++){
-				StoryDetails storyDetail = new StoryDetails();
-				String storyId = storyList.get(i).getId();
-				String userId = storyList.get(i).getOwner();
-				storyDetail.setId(storyId);
-				storyDetail.setFollow( storyList.get(i).getFollow());
-				storyDetail.setOwner(userId);
-				storyDetail.setPublishTime(storyList.get(i).getPublishTime());
-				storyDetail.setContent(storyList.get(i).getContent());
-				storyDetail.setClassical(storyList.get(i).getClassical());
-				User user = pintuService.getUserInfo(userId);
-				if(user != null){
-					storyDetail.setAuthor(user.getAccount());
-				}
-				List<Vote> voteList = pintuService.getVotesOfStory(storyId);
-				if(voteList != null && voteList.size()>0){
-					for(int j=0;j<voteList.size();j++){
-						Vote vote = voteList.get(j);
-						if(vote.getType().equals(Vote.FLOWER_TYPE)){
-							storyDetail.setFlower(vote.getAmount());
-						}else if(vote.getType().equals(Vote.EGG_TYPE)){
-							storyDetail.setEgg(vote.getAmount());
-						}else if(vote.getType().equals(Vote.HEART_TYPE)){
-							storyDetail.setHeart(vote.getAmount());
-						}else if(vote.getType().equals(Vote.STAR_TYPE)){
-							storyDetail.setStar(vote.getAmount());
-						}
-					}
-				}else{
-					storyDetail.setFlower(0);
-					storyDetail.setEgg(0);
-					storyDetail.setHeart(0);
-					storyDetail.setStar(0);
-				}
-				storyDeatilList.add(storyDetail);
-			}
-		}
-		return JSONArray.fromCollection(storyDeatilList).toString();
+	public String getStoryDetailsOfPic(String tpId){
+		return JSONArray.fromCollection(pintuService.getStroyDetailsOfPic(tpId)).toString();
 	}
 	
 	public void createStory(String follow,String owner,String content){

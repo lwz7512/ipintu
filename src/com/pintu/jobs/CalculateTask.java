@@ -15,7 +15,6 @@ import java.util.TimerTask;
 import org.apache.log4j.Logger;
 
 import com.pintu.beans.User;
-import com.pintu.beans.Vote;
 import com.pintu.beans.Wealth;
 import com.pintu.dao.CacheAccessInterface;
 import com.pintu.dao.DBAccessInterface;
@@ -48,11 +47,8 @@ public class CalculateTask extends TimerTask {
 		Long start = System.currentTimeMillis() - 60 * 60 * 1000;
 	    Long end = System.currentTimeMillis();
 
-		// 取一小时内被操作的故事，并观察投票数，若start类的值超过一个限值，则将故事表中经典字段
-		findAndSetClassical(start, end);
-		
 		// 取得活跃用户或缺省用户的信息
-		ArrayList<User> userList = getLiveOrDefaultUser(start,end);
+		List<User> userList = getLiveOrDefaultUser(start,end);
 
 		// 计算活跃用用户的积分并更新数据库
 		List<User> updateScoreUserList = new ArrayList<User>();
@@ -66,71 +62,19 @@ public class CalculateTask extends TimerTask {
 		}
 	}
 	
-	private void findAndSetClassical(Long start, Long end) {
-		// 将毫秒数转换成数据库所存储的字符串格式"yyyy-MM-dd HH:mm:ss"
-		String startTime = PintuUtils.formatLong(start);
-		String endTime = PintuUtils.formatLong(end);
-		// 取到一段时间间隔内有所有故事的id集
-		List<String> storyIdList = this.dbAccess.getStoryIdsByTime(startTime,
-				endTime);
-		// 将storyIdList转化成后面的形式--('','','')
-		if (storyIdList.size() > 0) {
-			StringBuffer storyIds = new StringBuffer();
-			for (int i = 0; i < storyIdList.size(); i++) {
-				String storyId = storyIdList.get(i);
-				if (storyIds.length() > 0) {
-					storyIds.append(",");
-				}
-				storyIds.append("'");
-				storyIds.append(storyId);
-				storyIds.append("'");
-			}
-			// 根据故事id取得投票信息
-			List<Vote> voteList = this.dbAccess.getVoteForCache(storyIds
-					.toString());
-			// 存储需要更新classical字段的故事id
-			List<String> needUpdateStoryIds = new ArrayList<String>();
-			if (voteList.size() > 0) {
-				for (int i = 0; i < voteList.size(); i++) {
-					Vote vote = voteList.get(i);
-					// 查看并判断经典投票的数量
-					if (vote.getType().equals(Vote.STAR_TYPE)
-							&& vote.getAmount() > Integer
-									.parseInt(propertyConfigurer
-											.getProperty("classicalVoteNum"))) {
-						
-						//在这里需要判断一下，若数据库里故事已为经典就不放到更新里去
-						String storyId =vote.getFollow();
-						if(!this.dbAccess.isClassicalStory(storyId)){
-							needUpdateStoryIds.add(storyId);
-						}
-					}
-				}
-			}
-			if(needUpdateStoryIds.size() > 0){
-				// 更新数据库中的经典字段
-				int res = this.dbAccess.updateStoryClassical(needUpdateStoryIds);
-				if (res == needUpdateStoryIds.size()) {
-					log.info("更新故事经典字段成功！");
-				} else {
-					log.info("更新故事经典字段有误！");
-				}
-			}
-		}
+	
 
-	}
-
-	private ArrayList<User> getLiveOrDefaultUser(Long start, Long end) {
+	private List<User> getLiveOrDefaultUser(Long start, Long end) {
 		// 需要进行计算的活跃用户
-		ArrayList<User> userList = new ArrayList<User>();
+		Set<User> userSet = new HashSet<User>();
 		List<User> liveList = new ArrayList<User>();
 		
 		for (Long i = start / (60 * 1000); i <= end / (60 * 1000); i++) {
-			liveList = this.cacheAccess.getLiveUser(String.valueOf(i));
+			liveList = this.cacheAccess.getLiveUserByMinute(String.valueOf(i));
 			if (liveList.size() > 0) {
 				for (int j = 0; j < liveList.size(); j++) {
 					User user = liveList.get(j);
-					userList.add(user);
+					userSet.add(user);
 				}
 			}
 		}
@@ -139,9 +83,11 @@ public class CalculateTask extends TimerTask {
 		if (liveList.size() == 0) {
 			// 缺省用户,这里的id是我本身数据库里存在的一个用户id(必须保证存在)
 			User user = this.dbAccess.getUserById("a053beae20125b5b");
-			userList.add(user);
+			userSet.add(user);
 		}
 		
+		List<User> userList = new ArrayList<User>();
+		userList.addAll(userSet);
 		return userList;
 	}
 
@@ -274,16 +220,15 @@ public class CalculateTask extends TimerTask {
 		Map<String, Integer> updateMap = new HashMap<String, Integer>();
 		Map<String, Integer> insertMap = new HashMap<String, Integer>();
 
+		unionMap.putAll(typeAmountMap);
+		//将库里的wealth与typeAmoutMap合并算新值更新unionMap
 		for (int i = 0; i < oldWealthList.size(); i++) {
 			Wealth wealth = oldWealthList.get(i);
 			String type = wealth.getType();
 			dbTypeSet.add(type);
 			if (typeAmountMap.containsKey(type)) {
 				Integer newCount = typeAmountMap.get(type) + wealth.getAmount();
-				unionMap.remove(type);
 				unionMap.put(type, newCount);
-			} else {
-				unionMap.put(type, typeAmountMap.get(type));
 			}
 		}
 
@@ -359,7 +304,10 @@ public class CalculateTask extends TimerTask {
 				updateList.add(w);
 			} else {
 				// 若某一类型的财富值变成0，则删除该条记录
-				this.dbAccess.deleteOnesWealth(type, userId);
+				int n = this.dbAccess.deleteOnesWealth(type, userId);
+				if(n ==1){
+					log.info("删除用户:"+userId+"的已为零的"+type+"类型财产成功！");
+				}
 			}
 		}
 		

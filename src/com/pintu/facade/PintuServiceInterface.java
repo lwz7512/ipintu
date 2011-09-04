@@ -108,9 +108,8 @@ public interface PintuServiceInterface {
 	// 对其他用户贴图进行评价
 	public void addCommentToPintu(Comment cmt);
 	
-
 	// 查看一个品图的故事
-	public List<Story> getStoriesOfPic(String tpId);
+	public List<StoryDetails> getStroyDetailsOfPic(String tpId);
 
 	// 查看一个品图的评论
 	public List<Comment> getCommentsOfPic(String tpId);

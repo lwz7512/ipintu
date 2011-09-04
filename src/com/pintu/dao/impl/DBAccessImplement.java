@@ -677,20 +677,7 @@ public class DBAccessImplement implements DBAccessInterface {
 		return resMap;
 	}
 
-	@Override
-	public List<String> getStoryIdsByTime(String startTime, String endTime) {
-		String sql = "select s_id from t_story where s_publishTime >='"
-				+ startTime + "' and s_publishTime <='" + endTime + "' group by s_owner";
-		List<String> resList = new ArrayList<String>();
-		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
-		if(rows!=null && rows.size()>0){
-			for (int i = 0; i < rows.size(); i++) {
-				Map<String, Object> map = (Map<String, Object>) rows.get(i);
-				resList.add(map.get("s_id").toString());
-			}
-		}
-		return resList;
-	}
+
 
 	@Override
 	public List<Wealth> getUsersWealthInfo(String userId) {
@@ -712,23 +699,44 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public boolean isClassicalStory(String storyId) {
-		String sql = "select s_classical from t_story where s_id ='"+storyId+"'";
+	public List<Vote> getAllVote() {
+		List<Vote> resList = new ArrayList<Vote>();
+		String sql = "select * from t_vote";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
-		boolean flag = true;
-		if(rows!=null && rows.size()>0){
-				Map<String, Object> map = (Map<String, Object>) rows.get(0);
-				int classical =Integer.parseInt(map.get("s_classical").toString());
-				if(classical == 0){
-					flag = false;
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Vote vote = new Vote();
+				vote.setId(map.get("v_id").toString());
+				vote.setFollow(map.get("v_follow").toString());
+				vote.setType(map.get("v_type").toString());
+				vote.setAmount(Integer.parseInt(map.get("v_amount").toString()));
+				resList.add(vote);
 			}
 		}
-		return flag;
+		return resList;
 	}
 
-	
-
-	
+	@Override
+	public List<Story> getClassicalPintuByIds(String ids) {
+		String sql = "select * from t_story where s_id in (" + ids + ")";
+		List<Story> storyList = new ArrayList<Story>();
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Story story = new Story();
+				story.setId(map.get("s_id").toString());
+				story.setFollow(map.get("s_follow").toString());
+				story.setOwner(map.get("s_owner").toString());
+				story.setPublishTime(map.get("s_publishTime").toString());
+				story.setContent(map.get("s_content").toString());
+				story.setClassical(Integer.parseInt(map.get("s_classical").toString()));
+				storyList.add(story);
+			}
+		}
+		return storyList;
+	}
 
 
 

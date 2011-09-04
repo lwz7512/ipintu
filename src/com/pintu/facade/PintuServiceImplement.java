@@ -38,6 +38,7 @@ import com.pintu.beans.Vote;
 import com.pintu.beans.Wealth;
 import com.pintu.dao.CacheAccessInterface;
 import com.pintu.dao.DBAccessInterface;
+import com.pintu.jobs.MidnightTask;
 import com.pintu.tools.ImgDataProcessor;
 import com.pintu.utils.PintuUtils;
 import com.sun.image.codec.jpeg.ImageFormatException;
@@ -328,9 +329,9 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		// 取一个品图的所有者，即用户ID
 		String userId = item.getOwner();
 		// 得到图片的所有者即userId,再到数据库里取出user的详细信息
-		User user = dbVisitor.getUserById(userId);
-		int commentNum = this.getCommentsOfPic(tpId).size();
-		int storyNum = this.getStoriesOfPic(tpId).size();
+		User user = this.getUserInfo(userId);
+		int commentNum = dbVisitor.getCommentsOfPic(tpId).size();
+		int storyNum = dbVisitor.getStoriesOfPic(tpId).size();
 		details.setStoriesNum(storyNum);
 		details.setCommentsNum(commentNum);
 		if (user != null) {
@@ -367,10 +368,50 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		return details;
 	}
 
+	
 	@Override
-	public List<Story> getStoriesOfPic(String tpId) {
+	public List<StoryDetails> getStroyDetailsOfPic(String tpId) {
+		List<StoryDetails> storyDeatilList = new ArrayList<StoryDetails>();
 		List<Story> storyList = dbVisitor.getStoriesOfPic(tpId);
-		return storyList;
+		if(storyList != null && storyList.size() > 0){
+			for(int i=0;i<storyList.size();i++){
+				StoryDetails storyDetail = new StoryDetails();
+				String storyId = storyList.get(i).getId();
+				String userId = storyList.get(i).getOwner();
+				storyDetail.setId(storyId);
+				storyDetail.setFollow( storyList.get(i).getFollow());
+				storyDetail.setOwner(userId);
+				storyDetail.setPublishTime(storyList.get(i).getPublishTime());
+				storyDetail.setContent(storyList.get(i).getContent());
+				storyDetail.setClassical(storyList.get(i).getClassical());
+				User user = this.getUserInfo(userId);
+				if(user != null){
+					storyDetail.setAuthor(user.getAccount());
+				}
+				List<Vote> voteList = this.getVotesOfStory(storyId);
+				if(voteList != null && voteList.size()>0){
+					for(int j=0;j<voteList.size();j++){
+						Vote vote = voteList.get(j);
+						if(vote.getType().equals(Vote.FLOWER_TYPE)){
+							storyDetail.setFlower(vote.getAmount());
+						}else if(vote.getType().equals(Vote.EGG_TYPE)){
+							storyDetail.setEgg(vote.getAmount());
+						}else if(vote.getType().equals(Vote.HEART_TYPE)){
+							storyDetail.setHeart(vote.getAmount());
+						}else if(vote.getType().equals(Vote.STAR_TYPE)){
+							storyDetail.setStar(vote.getAmount());
+						}
+					}
+				}else{
+					storyDetail.setFlower(0);
+					storyDetail.setEgg(0);
+					storyDetail.setHeart(0);
+					storyDetail.setStar(0);
+				}
+				storyDeatilList.add(storyDetail);
+			}
+		}
+		return storyDeatilList;
 	}
 
 	@Override
@@ -382,7 +423,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				Comment comt = new Comment();
 				Comment cmt = cmtList.get(i);
 				String userId = cmt.getOwner();
-				User user = dbVisitor.getUserById(userId);
+				User user = this.getUserInfo(userId);
 				comt.setId(cmt.getId());
 				comt.setAuthor(user.getAccount());
 				comt.setFollow(cmt.getFollow());
@@ -681,7 +722,9 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	@Override
 	public List<StoryDetails> getClassicalPintu() {
 		List<StoryDetails> classicalList = new ArrayList<StoryDetails>();
-		List<Story> list = dbVisitor.getClassicalPintu();
+//		List<Story> list = dbVisitor.getClassicalPintu();
+		//取得前一天更新的经典story
+		List<Story> list = dbVisitor.getClassicalPintuByIds(MidnightTask.newClassicalStoryIds.toString());
 		if (list.size() > 0) {
 			for (int i = 0; i < list.size(); i++) {
 				Story story = list.get(i);
@@ -701,6 +744,8 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		}
 		return classicalList;
 	}
+
+
 
 	// TODO, 实现其他接口方法
 

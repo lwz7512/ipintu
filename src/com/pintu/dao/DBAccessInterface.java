@@ -102,16 +102,17 @@ public interface DBAccessInterface {
 
 	public List<Story> getClassicalPintu();
 	
+	public List<Story> getClassicalPintuByIds(String ids);
+	
 	public Map<String,Integer> getOnesPicCountByTime(String startTime, String endTime);
 	
 	public Map<String,Integer> getOnesStoryCountByTime(String startTime, String endTime);
 	
 	public Map<String, Integer> getUserExchangeInfo(String userIds);
 	
-	public List<String> getStoryIdsByTime(String startTime, String endTime);
 	
 	public List<Wealth> getUsersWealthInfo(	String userId);
 	
-	public boolean isClassicalStory(String storyId);
 
+	public List<Vote> getAllVote();
 }

@@ -17,7 +17,10 @@ public interface CacheAccessInterface {
 	// 存放要同步入库的对象ID，该对象在缓冲中已存放；
 	// 同步入库后要从该列表中清除；
 	// type,(id,id...);
-	public static Map<String, LinkedList<String>> toSavedCacheIds = new HashMap<String, LinkedList<String>>();
+	
+	//FIXME TODO 要改这个toSavedCacheIds
+//	public static Map<String, LinkedList<String>> toSavedCacheIds = new HashMap<String, LinkedList<String>>();
+	public static Map<String,Map<String,LinkedList<String>>>  toSavedCacheIds = new HashMap<String,Map<String,LinkedList<String>>>();
 
 	public static String PICTURE_TYPE = "picture";
 
@@ -103,5 +106,5 @@ public interface CacheAccessInterface {
 	//更新用户最后登录时间
 	public void updateCachedUser(String userId, String updateTime);
 	//取系统中的所有活越用户
-	public List<User> getLiveUser(String updateTime);
+	public List<User> getLiveUserByMinute(String minute);
 }

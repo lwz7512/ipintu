@@ -159,7 +159,7 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String tpId = req.getParameter("tpId");
-			String result = apiAdaptor.getStoriesOfPic(tpId);
+			String result = apiAdaptor.getStoryDetailsOfPic(tpId);
 			System.out.println(result);
 			pw.write(result);
 			pw.close();
