@@ -45,6 +45,21 @@ public interface ExtVisitorInterface {
 	public static final String GETHOTPICTURE = "getHotPicture";
 	
 	public static final String GETClASSICALPINTU= "getClassicalPintu";
+	
+	
+	public static final String GETUSERESTATE = "getUserEstate";
+	
+	
+	public static final String MARKTHEPIC = "markThePic";
+	
+	public static final String GETFAVORITEPICS = "getFavoriteTpics";
+	
+	public static final String GETTPICSBYUSER = "getTpicsByUser";
+	
+	public static final String GETSTORIESBYUSER  = "getStoriesByUser";
+	
+	
+
 
 	
 	//TODO, TO ADD MORE METHOD DEFINITION...

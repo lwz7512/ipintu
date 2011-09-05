@@ -20,6 +20,7 @@ import com.pintu.beans.StoryDetails;
 import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TastePic;
 import com.pintu.beans.User;
+import com.pintu.beans.UserDetail;
 import com.pintu.beans.Vote;
 import com.pintu.utils.PintuUtils;
 import com.pintu.utils.UTF8Formater;
@@ -275,6 +276,11 @@ public class ApiAdaptor {
 	public String getClassicalStory() {
 		List<StoryDetails> classicalList = pintuService.getClassicalPintu();
 		return JSONArray.fromCollection(classicalList).toString();
+	}
+
+	public String getUserEstate(String userId) {
+		UserDetail userDetail = pintuService.getUserEstate(userId);
+		return JSONArray.fromObject(userDetail).toString();
 	}
 	
 } //end of class

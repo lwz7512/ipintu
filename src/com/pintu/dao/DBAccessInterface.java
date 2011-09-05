@@ -43,6 +43,9 @@ public interface DBAccessInterface {
 	//删除amount为0的财产对象
 	public int deleteOnesWealth(String type, String userId);
 	
+	//得到某一用户财产信息
+	public List<Wealth> getOnesWealth(String userId);
+	
 //	//社区事件入库
 //	public String insertOneEvent(Event event);
 //	
@@ -63,11 +66,11 @@ public interface DBAccessInterface {
 	 * @return
 	 */
 
-	public List<TPicItem> getPictureForCache(String today);
+	public List<TPicItem> getPictureForCache(String startTime,String endTime);
 	
-	public List<Story> getStoryForCache(String today);
+	public List<Story> getStoryForCache(String picIds);
 	
-	public List<Comment> getCommentForCache(String today);
+	public List<Comment> getCommentForCache(String picIds);
 
 	/**
 	 * 根据故事的id来取评论到缓存
@@ -115,4 +118,5 @@ public interface DBAccessInterface {
 	
 
 	public List<Vote> getAllVote();
+
 }

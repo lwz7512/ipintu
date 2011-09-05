@@ -41,51 +41,47 @@ public class CalculateTask extends TimerTask {
 	}
 
 	private void calculate() {
-		
+
 		System.out.println(">>> calculate task executed...");
 		// 这里存毫秒数
 		Long start = System.currentTimeMillis() - 60 * 60 * 1000;
-	    Long end = System.currentTimeMillis();
+		Long end = System.currentTimeMillis();
 
 		// 取得活跃用户或缺省用户的信息
-		List<User> userList = getLiveOrDefaultUser(start,end);
+		List<User> userList = getLiveOrDefaultUser(start, end);
 
 		// 计算活跃用用户的积分并更新数据库
 		List<User> updateScoreUserList = new ArrayList<User>();
-		if(userList.size() >0){
+		if (userList.size() > 0) {
 			updateScoreUserList = this.calAndUpdateScore(userList, start, end);
 		}
 
 		// 财产直接根据可用积分计算结果查找并更新数据库的wealth表
-		if(updateScoreUserList.size() >0){
+		if (updateScoreUserList.size() > 0) {
 			calAndUpdateWealth(updateScoreUserList);
 		}
 	}
-	
-	
 
 	private List<User> getLiveOrDefaultUser(Long start, Long end) {
 		// 需要进行计算的活跃用户
 		Set<User> userSet = new HashSet<User>();
 		List<User> liveList = new ArrayList<User>();
-		
-		for (Long i = start / (60 * 1000); i <= end / (60 * 1000); i++) {
-			liveList = this.cacheAccess.getLiveUserByMinute(String.valueOf(i));
-			if (liveList.size() > 0) {
-				for (int j = 0; j < liveList.size(); j++) {
-					User user = liveList.get(j);
-					userSet.add(user);
-				}
+
+		liveList = this.cacheAccess.getActiveUser(start, end);
+		if (liveList.size() > 0) {
+			for (int j = 0; j < liveList.size(); j++) {
+				User user = liveList.get(j);
+				userSet.add(user);
 			}
 		}
-		
-		//FIXME 这里后期加入登录可缓存用户了后即可删除
+
+		// FIXME 这里后期加入登录可缓存用户了后即可删除
 		if (liveList.size() == 0) {
 			// 缺省用户,这里的id是我本身数据库里存在的一个用户id(必须保证存在)
 			User user = this.dbAccess.getUserById("a053beae20125b5b");
 			userSet.add(user);
 		}
-		
+
 		List<User> userList = new ArrayList<User>();
 		userList.addAll(userSet);
 		return userList;
@@ -154,7 +150,6 @@ public class CalculateTask extends TimerTask {
 		return resultList;
 	}
 
-
 	private void calAndUpdateWealth(List<User> list) {
 		StringBuffer userIds = new StringBuffer();
 		if (list.size() > 0) {
@@ -221,7 +216,7 @@ public class CalculateTask extends TimerTask {
 		Map<String, Integer> insertMap = new HashMap<String, Integer>();
 
 		unionMap.putAll(typeAmountMap);
-		//将库里的wealth与typeAmoutMap合并算新值更新unionMap
+		// 将库里的wealth与typeAmoutMap合并算新值更新unionMap
 		for (int i = 0; i < oldWealthList.size(); i++) {
 			Wealth wealth = oldWealthList.get(i);
 			String type = wealth.getType();
@@ -305,13 +300,13 @@ public class CalculateTask extends TimerTask {
 			} else {
 				// 若某一类型的财富值变成0，则删除该条记录
 				int n = this.dbAccess.deleteOnesWealth(type, userId);
-				if(n ==1){
-					log.info("删除用户:"+userId+"的已为零的"+type+"类型财产成功！");
+				if (n == 1) {
+					log.info("删除用户:" + userId + "的已为零的" + type + "类型财产成功！");
 				}
 			}
 		}
-		
-		if(updateList.size() > 0){
+
+		if (updateList.size() > 0) {
 			int row = this.dbAccess.updateOnesWealth(updateList);
 			if (row == updateList.size()) {
 				log.info("更新用户的财产信息成功！");
@@ -332,8 +327,8 @@ public class CalculateTask extends TimerTask {
 				wealthList.add(w);
 			}
 		}
-		
-		if(wealthList.size() > 0){
+
+		if (wealthList.size() > 0) {
 			int row = this.dbAccess.insertOnesWealth(wealthList);
 			if (row == wealthList.size()) {
 				log.info("插入用户的财产信息成功！");
@@ -353,43 +348,46 @@ public class CalculateTask extends TimerTask {
 		typeAmount.put(Wealth.REMAIN_SCORE, 0);
 
 		// 这里用一个递归来实现
-		 calculateScore(exchangeScore,typeAmount);
+		calculateScore(exchangeScore, typeAmount);
 
 		return typeAmount;
 	}
-	
-	private void calculateScore(int score,Map<String,Integer> map ){
-		//600
-		int gold = Integer.parseInt(propertyConfigurer.getProperty("goldShell"));
-		//300
-		int silver = Integer.parseInt(propertyConfigurer.getProperty("silverShell"));
-		//60
-		int copper = Integer.parseInt(propertyConfigurer.getProperty("copperShell"));
-		//6
+
+	private void calculateScore(int score, Map<String, Integer> map) {
+		// 600
+		int gold = Integer
+				.parseInt(propertyConfigurer.getProperty("goldShell"));
+		// 300
+		int silver = Integer.parseInt(propertyConfigurer
+				.getProperty("silverShell"));
+		// 60
+		int copper = Integer.parseInt(propertyConfigurer
+				.getProperty("copperShell"));
+		// 6
 		int sea = Integer.parseInt(propertyConfigurer.getProperty("seaShell"));
-		
-		if(score >= gold){
+
+		if (score >= gold) {
 			int value = map.get(Wealth.HUNDRED_YUAN);
-			map.put(Wealth.HUNDRED_YUAN, value+1);
+			map.put(Wealth.HUNDRED_YUAN, value + 1);
 			score -= gold;
-			calculateScore(score,map);
-		}else if(score >= silver){
+			calculateScore(score, map);
+		} else if (score >= silver) {
 			int value = map.get(Wealth.FIFTY_YUAN);
-			map.put(Wealth.FIFTY_YUAN, value+1);
+			map.put(Wealth.FIFTY_YUAN, value + 1);
 			score -= silver;
-			calculateScore(score,map);
-		}else if(score >= copper){
+			calculateScore(score, map);
+		} else if (score >= copper) {
 			int value = map.get(Wealth.TEN_YUAN);
-			map.put(Wealth.TEN_YUAN, value+1);
+			map.put(Wealth.TEN_YUAN, value + 1);
 			score -= copper;
-			calculateScore(score,map);
-		}else if(score >= sea){
+			calculateScore(score, map);
+		} else if (score >= sea) {
 			int value = map.get(Wealth.ONE_YUAN);
-			map.put(Wealth.ONE_YUAN, value+1);
+			map.put(Wealth.ONE_YUAN, value + 1);
 			score -= sea;
-			calculateScore(score,map);
-		}else {
-			map.put(Wealth.REMAIN_SCORE, score);	
+			calculateScore(score, map);
+		} else {
+			map.put(Wealth.REMAIN_SCORE, score);
 		}
 	}
 

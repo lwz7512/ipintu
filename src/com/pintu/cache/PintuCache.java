@@ -9,8 +9,12 @@ import java.util.Map;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+import net.sf.ehcache.search.Attribute;
+import net.sf.ehcache.search.Query;
+import net.sf.ehcache.search.Result;
+import net.sf.ehcache.search.Results;
 
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 
 import com.pintu.beans.Comment;
 import com.pintu.beans.Story;
@@ -41,16 +45,15 @@ public class PintuCache {
 
 	private Cache thumbnailCache;
 
-	private Logger log = Logger.getLogger(PintuCache.class);
+//	private Logger log = Logger.getLogger(PintuCache.class);
 
 	public PintuCache() {
 
 		// 配置文件里配置各种缓存实例参数
 		manager = CacheManager.getInstance();
-		// 用户使用默认缓存
-		manager.addCache("userCache");
-		userCache = manager.getCache("userCache");
-
+		// // 用户使用默认缓存
+		// manager.addCache("userCache");
+		userCache = manager.getCache("usercache");
 		pictureCache = manager.getCache("picturecache");
 		commentCache = manager.getCache("commentcache");
 		storyCache = manager.getCache("storycache");
@@ -104,97 +107,66 @@ public class PintuCache {
 		System.out.println(sb.toString());
 	}
 
-	// 用户登录到系统时缓存用户信息
-	public void cacheUser(User user) {
-		Long updateTime = Long.parseLong(user.getLastUpdateTime());
-		long minlong = updateTime / (60 * 1000);
-		int min = Math.round(minlong);
-		String key = String.valueOf(min);
-		Element savedMinute = userCache.get(key);
-		if (savedMinute == null) {
-			// 保存的分钟数，缩略图id,缩略图对象
-			Element elmt = new Element(key, new HashMap<String, User>());
-			@SuppressWarnings("unchecked")
-			HashMap<String, User> usersUpdateInOneMinute = (HashMap<String, User>) elmt
-					.getObjectValue();
-			usersUpdateInOneMinute.put(user.getId(), user);
-			synchronized (userCache) {
-				userCache.put(elmt);
-			}
-		} else {
-			@SuppressWarnings("unchecked")
-			HashMap<String, User> savedMap = (HashMap<String, User>) savedMinute
-					.getObjectValue();
-			savedMap.put(user.getId(), user);
-			Element ele = new Element(key, savedMap);
-			synchronized (userCache) {
-				userCache.put(ele);
-			}
-		}
-	}
-
-	// 更新登录到系统中缓存的用户的最后操作时间 updateTime为分钟数
-	@SuppressWarnings("unchecked")
-	public void updateCachedUser(String userId, String updateTime) {
-		// Long upTime = Long.parseLong(updateTime);
-		// long minlong = upTime/(60*1000);
-		// int min = Math.round(minlong);
-		String key = String.valueOf(updateTime);
+	// 缓存用户信息
+	public void cacheUser(String userId, User user) {
+		Element elmt = new Element(userId, user);
 		synchronized (userCache) {
-			List<String> timeList = userCache.getKeys();
-			for (int i = 0; i < timeList.size(); i++) {
-				HashMap<String, User> userMap = (HashMap<String, User>) userCache
-						.get(timeList.get(i)).getObjectValue();
-				User user = userMap.get(userId);
-				if (user != null) {
-					user.setLastUpdateTime(updateTime);
-					userMap.put(userId, user);
-					Element ele = new Element(key, userMap);
-					userCache.put(ele);
-				}
+			userCache.put(elmt);
+		}
+	}
+
+	// 更新缓存中用户的最后更新时间
+	public void updateCachedUser(String userId, Long updateTime) {
+		synchronized (userCache) {
+			Element ele = userCache.get(userId);
+			if(ele != null){
+				User user = (User) ele.getObjectValue();
+				user.setLastUpdateTime(updateTime);
 			}
 		}
 	}
 
-	// 根据更新时间取出一个时间点的活跃用户信息
-	@SuppressWarnings("unchecked")
-	public List<User> getLiveUserByMinute(String minute) {
+	// 得到活跃用户
+	public List<User> getActiveUser(Long startTime, Long endTime) {
 		List<User> userList = new ArrayList<User>();
 		synchronized (userCache) {
-			Element savedMinute = userCache.get(minute);
-			if (savedMinute != null) {
-				HashMap<String, User> savedMap = (HashMap<String, User>) savedMinute
-						.getObjectValue();
-				if (savedMap != null) {
-					userList.addAll(savedMap.values());
+			if(userCache.getKeysNoDuplicateCheck().size() > 0){
+				Attribute<Long> lastUpdateTime = userCache
+						.getSearchAttribute("lastUpdateTime");
+				Query query = userCache.createQuery()
+						.addCriteria(lastUpdateTime.between(startTime, endTime))
+						.includeValues().end();
+				Results results = query.execute();
+				List<Result> resultList = results.all();
+				if(resultList != null && resultList.size() > 0){
+					for (int i = 0; i < resultList.size(); i++) {
+						User user = (User) resultList.get(i).getValue();
+						userList.add(user);
+					}
 				}
+				results.discard();
 			}
 		}
 		return userList;
 	}
-
-
-	public void cachePicture(String userId, String picId, TPicItem pic) {
-		Element savedUser = pictureCache.get(userId);
-		if (savedUser == null) {
-			// 图片所有者，图id,图对象
-			Element elmt = new Element(userId, new HashMap<String, TPicItem>());
-			@SuppressWarnings("unchecked")
-			HashMap<String, TPicItem> picsForOneUser = (HashMap<String, TPicItem>) elmt
-					.getObjectValue();
-			picsForOneUser.put(picId, pic);
-			synchronized (pictureCache) {
-				pictureCache.put(elmt);
+	
+	public List<Object> getCachedUser(List<String> userIds) {
+		List<Object> list = new ArrayList<Object>();
+		synchronized (userCache) {
+			for (int i = 0; i < userIds.size(); i++) {
+				Element user = userCache.get(userIds.get(i));
+				if (user != null) {
+					list.add(user.getObjectValue());
+				}
 			}
-		} else {
-			@SuppressWarnings("unchecked")
-			HashMap<String, TPicItem> savedMap = (HashMap<String, TPicItem>) savedUser
-					.getObjectValue();
-			savedMap.put(picId, pic);
-			Element ele = new Element(userId, savedMap);
-			synchronized (pictureCache) {
-				pictureCache.put(ele);
-			}
+		}
+		return list;
+	}
+
+	public void cachePicture(String picId, TPicItem pic) {
+		Element ele = new Element(picId, pic);
+		synchronized (pictureCache) {
+			pictureCache.put(ele);
 		}
 	}
 
@@ -270,7 +242,6 @@ public class PintuCache {
 		}
 	}
 
-
 	/**
 	 * 缓存缩略图 thumbnailCache <分钟数，<thumbnailId,TpicDesc>>
 	 * 
@@ -329,18 +300,19 @@ public class PintuCache {
 		return list;
 	}
 
-	public List<Object> getCachedPictureByUid(List<String> ids) {
+	/**
+	 * 根据对象id取得图片缓存
+	 * 
+	 * @param picIds
+	 * @return
+	 */
+	public List<Object> getCachedPicture(List<String> picIds) {
 		List<Object> list = new ArrayList<Object>();
 		synchronized (pictureCache) {
-			for (String userId : ids) {
-				Element savedUser = pictureCache.get(userId);
-				if (savedUser != null) {
-					@SuppressWarnings("unchecked")
-					HashMap<String, TPicItem> picMap = (HashMap<String, TPicItem>) savedUser
-							.getObjectValue();
-					if (picMap != null) {
-						list.addAll(picMap.values());
-					}
+			for (int i = 0; i < picIds.size(); i++) {
+				Element picture = pictureCache.get(picIds.get(i));
+				if (picture != null) {
+					list.add(picture.getObjectValue());
 				}
 			}
 		}
@@ -398,31 +370,6 @@ public class PintuCache {
 				}
 			}
 		}
-		return list;
-	}
-
-	public List<Object> getCachedPicture(Map<String, LinkedList<String>> map) {
-		List<Object> list = new ArrayList<Object>();
-		synchronized (pictureCache) {
-			for (String userId : map.keySet()) {
-				Element savedUser = pictureCache.get(userId);
-				if (savedUser != null) {
-					@SuppressWarnings("unchecked")
-					HashMap<String, TPicItem> picMap = (HashMap<String, TPicItem>) savedUser
-							.getObjectValue();
-					for (LinkedList<String> picIdList : map.values()) {
-						if (picIdList != null) {
-							for (int i = 0; i < picIdList.size(); i++) {
-								if (picMap != null) {
-									list.add(picMap.get(picIdList.get(i)));
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
 		return list;
 	}
 

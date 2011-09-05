@@ -129,10 +129,10 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public List<TPicItem> getPictureForCache(String today) {
+	public List<TPicItem> getPictureForCache(String startTime,String endTime) {
 		List<TPicItem> resList = new ArrayList<TPicItem>();
-		String sql = "select * from t_picture where p_publishTime >='" + today
-				+ "'";
+		String sql = "select * from t_picture where p_publishTime >='" + startTime
+				+ "' and p_publishTime <='"+endTime+"'";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -159,10 +159,10 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public List<Story> getStoryForCache(String today) {
+	public List<Story> getStoryForCache(String picIds) {
 		List<Story> resList = new ArrayList<Story>();
-		
-		String sql = "select * from t_story where s_publishTime >='" + today + "'";
+//		String sql = "select * from t_story where s_publishTime >='" + today + "'";
+		String sql = "select * from t_story where s_follow in (" + picIds + ")";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -182,10 +182,10 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public List<Comment> getCommentForCache(String today) {
+	public List<Comment> getCommentForCache(String picIds) {
 		List<Comment> resList = new ArrayList<Comment>();
-		
-		String sql = "select * from t_comment where c_publishTime >='" + today + "'";
+//		String sql = "select * from t_comment where c_publishTime >='" + today + "'";
+		String sql = "select * from t_comment where c_follow in (" + picIds + ")";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -738,38 +738,27 @@ public class DBAccessImplement implements DBAccessInterface {
 		return storyList;
 	}
 
+	@Override
+	public List<Wealth> getOnesWealth(String userId) {
+		List<Wealth> resList = new ArrayList<Wealth>();
+		String sql = "select * from t_wealth where  w_owner = '"+userId+"'";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Wealth wealth = new Wealth();
+				wealth.setId(map.get("w_id").toString());
+				wealth.setOwner(map.get("w_owner").toString());
+				wealth.setType(map.get("w_type").toString());
+				wealth.setAmount(Integer.parseInt(map.get("w_amount").toString()));
+				resList.add(wealth);
+			}
+		}
+		return resList;
+	}
 
 
-//	 @Override
-//	 public String insertOneWealth(Wealth wealth) {
-//	 final String wid = UUID.randomUUID().toString().replace("-", "")
-//	 .substring(16);
-//	 System.out.println("自动生成的UUID：(截取了自动生成的UUID后面16位)" + wid);
-//	 String sql = "INSERT INTO t_wealth "
-//	 + "(w_id,w_owner,w_type,w_amount,w_memo) ";
-//	
-//	 return wid;
-//	 }
-//	
-//	 @Override
-//	 public String updateOneWealth(String id, Wealth wealth) {
-//	 String sql = "update t_wealth set type=?, amount=?, where owner=?";
-//	 final Wealth wea = wealth;
-//	 jdbcTemplate.update(sql, new PreparedStatementSetter() {
-//	 public void setValues(PreparedStatement ps) {
-//	
-//	 try {
-//	 ps.setString(1, wea.getType());
-//	 ps.setInt(2, wea.getAmount());
-//	 ps.setString(3, wea.getOwner());
-//	 } catch (Exception e) {
-//	 e.printStackTrace();
-//	 }
-//	 }
-//	 });
-//	 return null;
-//	 }
-	//
+
 	// @Override
 	// public String insertOneEvent(Event event) {
 	// final String eid = UUID.randomUUID().toString().replace("-", "")

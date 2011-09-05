@@ -82,7 +82,7 @@ public class SyncExecute implements Runnable {
 		List<Object> unSavedObjList = cacheVisitor
 				.getUnSavedObj(CacheAccessInterface.PICTURE_TYPE);
 
-		Map<String, LinkedList<String>> cachedMap = CacheAccessInterface.toSavedCacheIds
+		List<String> cachedObjIds = CacheAccessInterface.toSavedUserPicIds
 				.get(CacheAccessInterface.PICTURE_TYPE);
 
 		// 分离出可入库的正确图片对象
@@ -91,12 +91,14 @@ public class SyncExecute implements Runnable {
 		if (rightObjList != null && rightObjList.size() > 0) {
 			int m = dbVisitor.insertPicture(rightObjList);
 			if (m == rightObjList.size()) {
+				List<String> needRemoveIds = new ArrayList<String>();
 				// 成功入库后，全部删除已入库的对象id
 				for (int j = 0; j < rightObjList.size(); j++) {
 					TPicItem tpic = (TPicItem) rightObjList.get(j);
-					cachedMap.get(tpic.getOwner()).remove(tpic.getId());
-					log.info("即将删除已入库图片为：" + tpic.getId());
+					needRemoveIds.add(tpic.getId());
+					log.info("即将删除已入库图片为："+tpic.getId());
 				}
+				cachedObjIds.removeAll(needRemoveIds);
 			} else {
 				log.warn("图片入库数目与实际不符");
 			}
@@ -141,11 +143,7 @@ public class SyncExecute implements Runnable {
 			int m = dbVisitor.insertComment(rightObjList);
 			if (m == rightObjList.size()) {
 				// 成功入库后，全部删除已入库的对象id
-				for (int j = 0; j < rightObjList.size(); j++) {
-					Comment cmt = (Comment) rightObjList.get(j);
-					cachedMap.get(cmt.getFollow()).remove(cmt.getId());
-					log.info("即将删除已入库评论为：" + cmt.getId());
-				}
+				cachedMap.clear();
 			} else {
 				log.warn("评论入库失败");
 			}
@@ -185,11 +183,7 @@ public class SyncExecute implements Runnable {
 			int m = dbVisitor.insertStory(rightObjList);
 			if (m == rightObjList.size()) {
 				// 成功入库后，全部删除已入库的对象id
-				for (int j = 0; j < rightObjList.size(); j++) {
-					Story story = (Story) rightObjList.get(j);
-					cachedMap.get(story.getFollow()).remove(story.getId());
-					log.info("即将删除已入库故事为：" + story.getId());
-				}
+				cachedMap.clear();
 			} else {
 				log.warn("故事入库失败");
 			}

@@ -197,7 +197,7 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			
-			String sender = req.getParameter("user");
+			String sender = req.getParameter("userId");
 			String receiver = req.getParameter("receiver");
 			String content = req.getParameter("content");
 			
@@ -217,7 +217,7 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			
-			String userId = req.getParameter("user");
+			String userId = req.getParameter("userId");
 			String result = apiAdaptor.getUserMsg(userId);
 			System.out.println(result);
 			pw.println(result);
@@ -240,6 +240,15 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getClassicalStory();
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
+		}else if(action.equals(AppStarter.GETUSERESTATE)){	
+			//取得经典品图
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String userId = req.getParameter("userId");
+			String result = apiAdaptor.getUserEstate(userId);
 			System.out.println(result);
 			pw.println(result);
 			pw.close();

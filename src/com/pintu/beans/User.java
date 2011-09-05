@@ -27,15 +27,15 @@ public class User implements Serializable{
 	private int exchangeScore;
 	
 	//最后动作时间（即最后更新时间）存毫秒数
-	private String lastUpdateTime;
+	private Long lastUpdateTime;
 	
 	
-	public String getLastUpdateTime() {
+	public Long getLastUpdateTime() {
 		return lastUpdateTime;
 	}
 
 
-	public void setLastUpdateTime(String lastUpdateTime) {
+	public void setLastUpdateTime(Long lastUpdateTime) {
 		this.lastUpdateTime = lastUpdateTime;
 	}
 

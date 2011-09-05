@@ -18,15 +18,12 @@ import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TastePic;
 import com.pintu.beans.User;
+import com.pintu.beans.UserDetail;
 import com.pintu.beans.Vote;
 import com.pintu.beans.Wealth;
 
 public interface PintuServiceInterface {
 
-	//TODO 用于存放热图的id和点击量的对应关系（每当查看详情后将被查看的图片id放到这里）
-	//在每天零点计算积分等级等时，顺便将这个重置
-//	public static Map<String, Integer> hotPicCacheIds = new HashMap<String,Integer>();
-	
 	// 设置图片文件保存路径，由ApiAdaptor赋值
 	public void saveImagePathToProcessor(String filePath);
 
@@ -87,7 +84,7 @@ public interface PintuServiceInterface {
 	 * @param res
 	 */
 	public void getImageFile(String picId, HttpServletResponse res);
-	
+
 	public void getImageByPath(String path, HttpServletResponse res);
 
 	/**
@@ -98,7 +95,6 @@ public interface PintuServiceInterface {
 	 */
 	public File getThumbnail(String thumbnailName);
 
-	// TODO FIXME 今天任务
 	// 浏览一个品图详情
 	public TPicDetails getTPicDetailsById(String tpId);
 
@@ -107,72 +103,65 @@ public interface PintuServiceInterface {
 
 	// 对其他用户贴图进行评价
 	public void addCommentToPintu(Comment cmt);
-	
+
 	// 查看一个品图的故事
 	public List<StoryDetails> getStroyDetailsOfPic(String tpId);
 
 	// 查看一个品图的评论
 	public List<Comment> getCommentsOfPic(String tpId);
-	
-	//为故事投票
+
+	// 为故事投票
 	public void addVoteToStory(Vote vote);
-	
-	//返回一个故事的所有各类的投票
+
+	// 返回一个故事的所有各类的投票
 	public List<Vote> getVotesOfStory(String storyId);
 
-	// 查看自己的贴图列表
-	public List<TPicDesc> getTpicsByUser(String user, String pageNum);
-	
-	// 查看自己的收藏图片(要用到分页)
-	public List<TPicDesc> getFavoriteTpics(String user, String pageNum);
-	
-	
 	// 查看用户息
 	public User getUserInfo(String userId);
 
 	// 查看今日热图（点击量、故事数、评论数）
 	// 系统定时统计出来并保持，然后返回三类图排名10以内的30张图；
-	public List<TPicDesc> getHotTpics();
+	// public List<TPicDesc> getHotTpics();
+
+	// 取到今日热图
+	public List<TPicDetails> getHotPicture();
+
+	// 查看经典品图（包括经典故事及其所属的图片）
+	public List<StoryDetails> getClassicalPintu();
+
+	// 查看自己的贴图列表
+	public List<TPicDesc> getTpicsByUser(String user, String pageNum);
+
+	// 查看自己的收藏图片(要用到分页)
+	public List<TPicDesc> getFavoriteTpics(String user, String pageNum);
 
 	// 查看今日填词邀请
 	// 这个功能界面上没有设计，暂时先不实现；
 	public List<TPicDesc> getInviteTpicsToday();
 
-	// 查看经典图文故事
-	public List<TPicDesc> getClassicTpics();
-
 	// 查看用户基本信息（微博账号）
 	public User getUsrBasInfo(String user);
 
 	// 查看用户等级和拥有贝壳数
-	public Wealth getUsrEstate(String user);
+	public UserDetail getUserEstate(String userId);
+
+	// 查看自己的贝壳种类和数量
+	public List<Wealth> getWealthDetails(String userId);
 
 	// 展示今日的可兑换礼物信息
 	public List<Gift> getGiftsToday();
 
-	// 为社区中的品评投票（包括经典标识）
-	public Boolean addPollToTpic(Vote vote);
-
 	// 查看今日社区事件
 	public List<Event> getCommunityEvents();
-
-	// 查看自己的贝壳种类和数量
-	public List<Wealth> getShellDetails(String user);
 
 	// 发送一个消息
 	public Boolean sendMessage(Message msg);
 
 	// 查看自己的消息
 	public List<Message> getUserMessages(String userId);
-	
-	//改变消息的状态
+
+	// 改变消息的状态
 	public boolean changeMsgState(String msgId);
-	
-	//取到今日热图
-	public List<TPicDetails> getHotPicture();
-	
-	//查看经典品图（包括经典故事及其所属的图片）
-	public List<StoryDetails> getClassicalPintu();
 
 	// ANYMORE NECESSARY???
 
@@ -220,8 +209,6 @@ public interface PintuServiceInterface {
 
 	// 发布行业动态
 	public Boolean publishIndustryEvent(Event tpEvent);
-
-
 
 	// TO BE CONTINUED...
 

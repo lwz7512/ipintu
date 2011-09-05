@@ -19,9 +19,11 @@ public interface CacheAccessInterface {
 	// type,(id,id...);
 	
 	//FIXME TODO 要改这个toSavedCacheIds
-//	public static Map<String, LinkedList<String>> toSavedCacheIds = new HashMap<String, LinkedList<String>>();
+	public static Map<String, LinkedList<String>> toSavedUserPicIds = new HashMap<String, LinkedList<String>>();
 	public static Map<String,Map<String,LinkedList<String>>>  toSavedCacheIds = new HashMap<String,Map<String,LinkedList<String>>>();
-
+	
+	public static String USER_TYPE = "user";
+	
 	public static String PICTURE_TYPE = "picture";
 
 	public static String STORY_TYPE = "story";
@@ -30,7 +32,6 @@ public interface CacheAccessInterface {
 
 	public static String VOTE_TYPE = "vote";
 
-	public static String THUMBNAIL_TYPE = "thumbnail";
 	
 	//用于存放热图的id和点击量的对应关系（每当查看详情后将被查看的图片id放到这里）
 	//在每天零点计算积分等级等时，顺便将这个清空
@@ -38,53 +39,44 @@ public interface CacheAccessInterface {
 	
 	//清空热图MAP
 	public void clearHotPicCacheIds();
-
-	// 缓存登录用户
-	public void cacheLoggedInUser();
-
-	// 读取活动用户
-	public List<User> getActiveUser();
-
-	// 获取特定用户
-	public User getSpecificUser(String userAccount);
+	
+	// 查看缓存中的对象数目
+	public void traceCache();
 
 	// 缓存图片信息
-	//顺便把id存到toSavedCacheIds,picture中
+	//顺便把id存到toSavedUserPicIds,picture中
 	public void cachePicture(TPicItem pic);
+
+	// 缓存故事
+	//顺便把id存到toSavedCacheIds
+	public void cacheStory(Story story);
+	
+	// 缓存评论
+	//顺便把id存到toSavedCacheIds
+	public void cacheComment(Comment comment);
+	
+	// 缓存投票
+	// 顺便把id存到toSavedCacheIds
+	public void cacheVote(Vote vote);
+	
+	// 获取特定用户
+	public User getSpecificUser(String userId);
 
 	// 读取图片信息
 	public TPicItem getSpecificPic(String pid);
 
-	// 缓存故事
-	// 存ID到缓存方便同步
-	public void cacheStory(Story story);
-
 	// 读取故事
-	public Story getSpecificStory(String sid);
-
-	// 缓存评论
-	//存ID到缓存方便同步
-	public void cacheComment(Comment comment);
+//	public Story getSpecificStory(String sid);
 
 	// 读取评论
-	public Comment getSpecificComment(String cid);
-
-	// 缓存投票
-	//  存ID到缓存方便同步
-	public void cacheVote(Vote vote);
+//	public Comment getSpecificComment(String cid);
 
 	// 读取投票
-	public Vote getSpecificVote(String vid);
+//	public Vote getSpecificVote(String vid);
 
 	// 读取未入库的所有某type的对象
 	public List<Object> getUnSavedObj(String type);
 
-	// FIXME (这个好像没用了) 删掉已入库的所有对象ID: LinkedList中的所有ID
-	public Boolean deleteSavedObjIDs(String type);
-	
-
-	// 查看缓存中的对象数目
-	public void traceCache();
 
 	// 缓存缩略图
 	public void cacheThumbnail(TPicDesc tpicDesc);
@@ -99,12 +91,14 @@ public interface CacheAccessInterface {
 	public void syncDBStoryToCache(Story story);
 	
 	public void syncDBVoteToCache(Vote vote);
-
 	
-	//缓存登录用户
+	//登录，注册的用户都缓存~若有动作，但缓存没有，也要从库里查出放入缓存里
 	public void cacheUser(User user);
-	//更新用户最后登录时间
-	public void updateCachedUser(String userId, String updateTime);
-	//取系统中的所有活越用户
-	public List<User> getLiveUserByMinute(String minute);
+	
+	//更新用户最后操作时间
+	public void updateCachedUser(String userId, Long updateTime);
+	
+	// 读取活动用户
+	public List<User> getActiveUser(Long startTime,Long endTime);
+	
 }

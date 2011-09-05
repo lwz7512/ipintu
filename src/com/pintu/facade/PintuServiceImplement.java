@@ -34,6 +34,7 @@ import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TPicItem;
 import com.pintu.beans.TastePic;
 import com.pintu.beans.User;
+import com.pintu.beans.UserDetail;
 import com.pintu.beans.Vote;
 import com.pintu.beans.Wealth;
 import com.pintu.dao.CacheAccessInterface;
@@ -176,12 +177,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public Boolean addPollToTpic(Vote vote) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Boolean applyForUser(String realname, String email, String intro) {
 		// TODO Auto-generated method stub
 		return null;
@@ -202,12 +197,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	@Override
 	public Boolean exchangeGifts(String user, String giftIds) {
 		// 2.0 功能暂时不实现
-		return null;
-	}
-
-	@Override
-	public List<TPicDesc> getClassicTpics() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -281,12 +270,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public List<TPicDesc> getHotTpics() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public List<News> getIndustryNews() {
 		// 2.0功能暂不实现
 		return null;
@@ -311,9 +294,8 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public List<Wealth> getShellDetails(String user) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Wealth> getWealthDetails(String userId) {
+		return dbVisitor.getOnesWealth(userId);
 	}
 
 	@Override
@@ -455,9 +437,36 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public Wealth getUsrEstate(String user) {
-		// TODO Auto-generated method stub
-		return null;
+	public UserDetail getUserEstate(String userId) {
+		UserDetail uDetail = new UserDetail();
+		User user = cacheVisitor.getSpecificUser(userId);
+		if(user.getId() == null){
+			user = dbVisitor.getUserById(userId);
+		}
+		uDetail.setId(userId);
+		uDetail.setAccount(user.getAccount());
+		uDetail.setAvatar(user.getAvatar());
+		uDetail.setLevel(user.getLevel());
+		uDetail.setScore(user.getScore());
+		uDetail.setExchangeScore(user.getExchangeScore());
+	
+		List<Wealth> wealthList = this.getWealthDetails(userId);
+		if(wealthList.size() > 0){
+			for(int i=0;i<wealthList.size();i++){
+				Wealth wealth = wealthList.get(i);
+				if(wealth.getType().equals(Wealth.ONE_YUAN)){
+					uDetail.setSeaShell(wealth.getAmount());
+				}else if(wealth.getType().equals(Wealth.TEN_YUAN)){
+					uDetail.setCopperShell(wealth.getAmount());
+				}else if(wealth.getType().equals(Wealth.FIFTY_YUAN)){
+					uDetail.setSilverShell(wealth.getAmount());
+				}else if(wealth.getType().equals(Wealth.HUNDRED_YUAN)){
+					uDetail.setGoldShell(wealth.getAmount());
+				}
+			}
+		}
+		
+		return uDetail;
 	}
 
 	@Override
