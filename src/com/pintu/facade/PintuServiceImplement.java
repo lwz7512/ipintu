@@ -64,6 +64,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		this.propertyConfigurer = propertyConfigurer;
 	}
 
+	
 	private String imagePath;
 
 	// 设定输出的类型
@@ -799,6 +800,82 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		} else {
 			return false;
 		}
+	}
+
+	@Override
+	public List<TPicItem> getFavoriteTpics(String userId, int pageNum) {
+		List<String> favorIdList = dbVisitor.getOnesFavorite(userId);
+		StringBuffer picIds = new StringBuffer();
+		if(favorIdList.size() > 0){
+			
+			for(String picId:favorIdList){
+				if(picIds.length()>0){
+					picIds.append(",");
+				}
+				picIds.append("'");
+				picIds.append(picId);
+				picIds.append("'");
+			}
+		}
+		int pageSize = Integer.parseInt(propertyConfigurer.getProperty("pageSize"));
+		List<TPicItem> picList = dbVisitor.getPicturesByIds(picIds.toString(),pageNum,pageSize);
+		// TODO 分页啊
+		
+		return picList;
+	}
+
+	@Override
+	public List<StoryDetails> getStroiesByUser(String userId, int pageNum) {
+		List<StoryDetails> resList = new ArrayList<StoryDetails>();
+		int pageSize = Integer.parseInt(propertyConfigurer.getProperty("pageSize"));
+		List<Story> sList = dbVisitor.getStoriesByUser(userId,pageNum,pageSize);
+		for(int i=0;i<sList.size();i++){
+				StoryDetails details = new StoryDetails();
+				String storyId = sList.get(i).getId();
+				details.setId(storyId);
+				details.setFollow( sList.get(i).getFollow());
+				details.setOwner(userId);
+				details.setPublishTime(sList.get(i).getPublishTime());
+				details.setContent(sList.get(i).getContent());
+				details.setClassical(sList.get(i).getClassical());
+				User user = this.getUserInfo(userId);
+				if(user != null){
+					details.setAuthor(user.getAccount());
+				}
+				List<Vote> voteList = this.getVotesOfStory(storyId);
+				if(voteList != null && voteList.size()>0){
+					for(int j=0;j<voteList.size();j++){
+						Vote vote = voteList.get(j);
+						if(vote.getType().equals(Vote.FLOWER_TYPE)){
+							details.setFlower(vote.getAmount());
+						}else if(vote.getType().equals(Vote.EGG_TYPE)){
+							details.setEgg(vote.getAmount());
+						}else if(vote.getType().equals(Vote.HEART_TYPE)){
+							details.setHeart(vote.getAmount());
+						}else if(vote.getType().equals(Vote.STAR_TYPE)){
+							details.setStar(vote.getAmount());
+						}
+					}
+				}else{
+					details.setFlower(0);
+					details.setEgg(0);
+					details.setHeart(0);
+					details.setStar(0);
+				}
+				resList.add(details);
+		}
+		
+		//TODO 分页返回
+		return resList;
+				
+	}
+
+	@Override
+	public List<TPicItem> getTpicsByUser(String userId, int pageNum) {
+		int pageSize = Integer.parseInt(propertyConfigurer.getProperty("pageSize"));
+		List<TPicItem> list = dbVisitor.getTpicsByUser(userId,pageNum,pageSize);
+		//TODO 分页返回
+		return list;
 	}
 
 

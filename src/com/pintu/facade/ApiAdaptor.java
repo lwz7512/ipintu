@@ -19,6 +19,7 @@ import com.pintu.beans.Message;
 import com.pintu.beans.Story;
 import com.pintu.beans.StoryDetails;
 import com.pintu.beans.TPicDetails;
+import com.pintu.beans.TPicItem;
 import com.pintu.beans.TastePic;
 import com.pintu.beans.User;
 import com.pintu.beans.UserDetail;
@@ -101,7 +102,7 @@ public class ApiAdaptor {
 	 */
 	public String getGalleryByTime(String startTime,String endTime){
 		long queryTimeSpan = Long.valueOf(endTime)-Long.valueOf(startTime);
-		System.out.println(">>> query time span: "+queryTimeSpan/60*1000+" minutes;");
+		System.out.println(">>> query time span: "+queryTimeSpan/(60*1000)+" minutes;");
 		
 		long oneDayMiliSeconds = 24*60*60*1000;
 		if(queryTimeSpan>oneDayMiliSeconds){
@@ -319,18 +320,18 @@ public class ApiAdaptor {
 
 	
 	public String getFavorTpics(String userId, int pageNum) {
-		// TODO Auto-generated method stub
-		return null;
+		List<TPicItem> favorList = pintuService.getFavoriteTpics(userId,pageNum);
+		return JSONArray.fromCollection(favorList).toString();
 	}
 	
 	public String getTpicsByUser(String userId, int pageNum) {
-		// TODO Auto-generated method stub
-		return null;
+		List<TPicItem> userPicList = pintuService.getTpicsByUser(userId,pageNum);
+		return JSONArray.fromCollection(userPicList).toString();
 	}
 
 	public String getStoryiesByUser(String userId, int pageNum) {
-		// TODO Auto-generated method stub
-		return null;
+		List<StoryDetails> userStoryList = pintuService.getStroiesByUser(userId,pageNum);
+		return JSONArray.fromCollection(userStoryList).toString();
 	}
 
 	

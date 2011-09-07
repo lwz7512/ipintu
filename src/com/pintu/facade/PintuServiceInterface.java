@@ -17,6 +17,7 @@ import com.pintu.beans.Story;
 import com.pintu.beans.StoryDetails;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicDetails;
+import com.pintu.beans.TPicItem;
 import com.pintu.beans.TastePic;
 import com.pintu.beans.User;
 import com.pintu.beans.UserDetail;
@@ -219,6 +220,12 @@ public interface PintuServiceInterface {
 
 	//删除收藏的某一图片
 	public boolean deleteOnesFavorite(String picId);
+
+	public List<TPicItem> getFavoriteTpics(String userId, int pageNum);
+
+	public List<StoryDetails> getStroiesByUser(String userId, int pageNum);
+
+	public List<TPicItem> getTpicsByUser(String userId, int pageNum);
 
 	
 	

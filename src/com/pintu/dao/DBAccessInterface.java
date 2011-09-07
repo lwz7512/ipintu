@@ -125,5 +125,15 @@ public interface DBAccessInterface {
 	public int deleteFavorite(String picId);
 	
 	public int getOneFavorite(String userId, String picId);
+	
+	//得到一个人收藏的所有图片id
+	public List<String> getOnesFavorite(String userId);
+	
+	//根据图片id获得图片信息
+	public List<TPicItem> getPicturesByIds(String ids, int pageNum, int pageSize);
+	
+	public List<Story> getStoriesByUser(String userId, int pageNum, int pageSize);
+	
+	public List<TPicItem> getTpicsByUser(String userId, int pageNum, int pageSize);
 
 }

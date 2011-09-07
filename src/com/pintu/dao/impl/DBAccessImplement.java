@@ -799,6 +799,102 @@ public class DBAccessImplement implements DBAccessInterface {
 		return rows;
 	}
 
+	@Override
+	public List<String> getOnesFavorite(String userId) {
+		List<String> idList = new ArrayList<String>();
+		String sql = "select f_picture from t_favorite where f_owner ='"+userId+"' order by p_collectTime desc"; 
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				idList.add(map.get("f_picture").toString());
+			}
+		}
+		return idList;
+	}
+
+	@Override
+	public List<TPicItem> getPicturesByIds(String ids, int pageNum, int pageSize) {
+		List<TPicItem> resList = new ArrayList<TPicItem>();
+		int startLine = (pageNum -1)*2;
+		String sql = "select * from t_picture where p_id in ("+ids+") limit "+startLine+","+pageSize;
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				TPicItem tpicItem = new TPicItem();
+				tpicItem.setId(map.get("p_id").toString());
+				tpicItem.setName(map.get("p_name").toString());
+				tpicItem.setOwner(map.get("p_owner").toString());
+				tpicItem.setPublishTime(map.get("p_publishTime").toString());
+				tpicItem.setDescription(map.get("p_description").toString());
+				tpicItem.setTags(map.get("p_tags").toString());
+				tpicItem.setAllowStory(Integer.parseInt(map.get("p_allowStory")
+						.toString()));
+				tpicItem.setMobImgId(map.get("p_mobImgId").toString());
+				tpicItem.setMobImgSize(map.get("p_mobImgSize").toString());
+				tpicItem.setMobImgPath(map.get("p_mobImgPath").toString());
+				tpicItem.setRawImgId(map.get("p_rawImgId").toString());
+				tpicItem.setRawImgSize(map.get("p_rawImgSize").toString());
+				tpicItem.setRawImgPath(map.get("p_rawImgPath").toString());
+				resList.add(tpicItem);
+			}
+		}
+		return resList;
+	}
+
+	@Override
+	public List<Story> getStoriesByUser(String userId, int pageNum,int pageSize) {
+		int startLine = (pageNum -1)*2;
+		String sql = "select * from t_story  where s_owner ='"+userId+"' order by s_publishTime desc limit "+startLine+","+pageSize;
+		List<Story> storyList = new ArrayList<Story>();
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Story story = new Story();
+				story.setId(map.get("s_id").toString());
+				story.setFollow(map.get("s_follow").toString());
+				story.setOwner(map.get("s_owner").toString());
+				story.setPublishTime(map.get("s_publishTime").toString());
+				story.setContent(map.get("s_content").toString());
+				story.setClassical(Integer.parseInt(map.get("s_classical").toString()));
+				storyList.add(story);
+			}
+		}
+		return storyList;
+	}
+
+	@Override
+	public List<TPicItem> getTpicsByUser(String userId, int pageNum,int pageSize) {
+		int startLine = (pageNum -1)*2;
+		List<TPicItem> resList = new ArrayList<TPicItem>();
+		String sql = "select * from t_picture where p_owner = '"+userId+"' order by p_publishTime desc limit "+startLine+","+pageSize;
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				TPicItem tpicItem = new TPicItem();
+				tpicItem.setId(map.get("p_id").toString());
+				tpicItem.setName(map.get("p_name").toString());
+				tpicItem.setOwner(map.get("p_owner").toString());
+				tpicItem.setPublishTime(map.get("p_publishTime").toString());
+				tpicItem.setDescription(map.get("p_description").toString());
+				tpicItem.setTags(map.get("p_tags").toString());
+				tpicItem.setAllowStory(Integer.parseInt(map.get("p_allowStory")
+						.toString()));
+				tpicItem.setMobImgId(map.get("p_mobImgId").toString());
+				tpicItem.setMobImgSize(map.get("p_mobImgSize").toString());
+				tpicItem.setMobImgPath(map.get("p_mobImgPath").toString());
+				tpicItem.setRawImgId(map.get("p_rawImgId").toString());
+				tpicItem.setRawImgSize(map.get("p_rawImgSize").toString());
+				tpicItem.setRawImgPath(map.get("p_rawImgPath").toString());
+				resList.add(tpicItem);
+			}
+		}
+		return resList;
+	}
+
 
 
 	// @Override
