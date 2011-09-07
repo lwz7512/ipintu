@@ -816,7 +816,7 @@ public class DBAccessImplement implements DBAccessInterface {
 	@Override
 	public List<TPicItem> getPicturesByIds(String ids, int pageNum, int pageSize) {
 		List<TPicItem> resList = new ArrayList<TPicItem>();
-		int startLine = (pageNum -1)*2;
+		int startLine = (pageNum -1)*pageSize;
 		String sql = "select * from t_picture where p_id in ("+ids+") limit "+startLine+","+pageSize;
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
@@ -845,7 +845,7 @@ public class DBAccessImplement implements DBAccessInterface {
 
 	@Override
 	public List<Story> getStoriesByUser(String userId, int pageNum,int pageSize) {
-		int startLine = (pageNum -1)*2;
+		int startLine = (pageNum -1)*pageSize;
 		String sql = "select * from t_story  where s_owner ='"+userId+"' order by s_publishTime desc limit "+startLine+","+pageSize;
 		List<Story> storyList = new ArrayList<Story>();
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
@@ -867,7 +867,7 @@ public class DBAccessImplement implements DBAccessInterface {
 
 	@Override
 	public List<TPicItem> getTpicsByUser(String userId, int pageNum,int pageSize) {
-		int startLine = (pageNum -1)*2;
+		int startLine = (pageNum -1)*pageSize;
 		List<TPicItem> resList = new ArrayList<TPicItem>();
 		String sql = "select * from t_picture where p_owner = '"+userId+"' order by p_publishTime desc limit "+startLine+","+pageSize;
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
