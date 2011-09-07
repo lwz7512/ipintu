@@ -52,13 +52,14 @@ public interface ExtVisitorInterface {
 	
 	public static final String MARKTHEPIC = "markThePic";
 	
+	public static final String DELETEONEFAVOR = "deleteOneFavor";
+	
 	public static final String GETFAVORITEPICS = "getFavoriteTpics";
 	
 	public static final String GETTPICSBYUSER = "getTpicsByUser";
 	
 	public static final String GETSTORIESBYUSER  = "getStoriesByUser";
-	
-	
+
 
 
 	

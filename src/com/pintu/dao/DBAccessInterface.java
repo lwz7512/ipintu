@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.pintu.beans.Comment;
+import com.pintu.beans.Favorite;
 import com.pintu.beans.Message;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicItem;
@@ -118,5 +119,11 @@ public interface DBAccessInterface {
 	
 
 	public List<Vote> getAllVote();
+	
+	public int insertFavorite(Favorite fav);
+	
+	public int deleteFavorite(String picId);
+	
+	public int getOneFavorite(String userId, String picId);
 
 }

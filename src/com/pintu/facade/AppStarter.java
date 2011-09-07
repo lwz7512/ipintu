@@ -32,7 +32,8 @@ import com.pintu.sync.DBToCache;
  * 
  */
 @SuppressWarnings("rawtypes")
-public class AppStarter extends HttpServlet implements  ApplicationListener,ExtVisitorInterface  {
+public class AppStarter extends HttpServlet implements ApplicationListener,
+		ExtVisitorInterface {
 
 	private Logger log = Logger.getLogger(AppStarter.class);
 
@@ -45,20 +46,17 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 	private TaskStarter taskStarter;
 	// 同步任务，由Spring注入
 	private CacheToDB synchProcess;
-	//同步任务，由Spring注入
+	// 同步任务，由Spring注入
 	private DBToCache dailySync;
 
 	// 最大文件上传尺寸设置
 	private int fileMaxSize = 4 * 1024 * 1024;
 	// 上传组件
 	private ServletFileUpload upload;
-	
-	
 
 	public AppStarter() {
-		//do nothing...
+		// do nothing...
 	}
-
 
 	public void setApiAdaptor(ApiAdaptor apiAdaptor) {
 		this.apiAdaptor = apiAdaptor;
@@ -76,11 +74,10 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 		this.dailySync = dailySync;
 	}
 
-
 	@Override
 	public void service(HttpServletRequest req, HttpServletResponse res)
 			throws ServletException, IOException {
-		
+
 		System.out.println(">>> appstater 开始解析表单");
 
 		// 这里将客户端参数解析出来传给apiAdaptor
@@ -90,11 +87,11 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 
 		boolean isMultipart = ServletFileUpload.isMultipartContent(req);
 		System.out.println("isMultipart value is:" + isMultipart);
-		
-		if(action==null && isMultipart==false){
+
+		if (action == null && isMultipart == false) {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
-			pw.write("请求无效！");	
+			pw.write("请求无效！");
 			pw.close();
 			return;
 		}
@@ -118,44 +115,44 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			pw.close();
 
 		} else if (action.equals(AppStarter.GETIMAGEFILE)) {
-			//要所图片id得到相应图片
+			// 要所图片id得到相应图片
 			String tpId = req.getParameter("tpId");
 			apiAdaptor.getImageFile(tpId, res);
 
-		}else if (action.equals(AppStarter.GETPICDETAIL)) {
-			//取得一副图片的详情
+		} else if (action.equals(AppStarter.GETPICDETAIL)) {
+			// 取得一副图片的详情
 			res.setContentType("text/plain;charset=UTF-8");
 			String tpId = req.getParameter("tpId");
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getTPicDetailsById(tpId);
 			System.out.println(result);
-			pw.write(result);	
+			pw.write(result);
 			pw.close();
 
-		}else if(action.equals(AppStarter.GETIMAGEBYPATH)) {
-			//根据路径得img(主要用于得到头像图)
+		} else if (action.equals(AppStarter.GETIMAGEBYPATH)) {
+			// 根据路径得img(主要用于得到头像图)
 			String path = req.getParameter("path");
 			apiAdaptor.getImageByPath(path, res);
-			
-		}else if (action.equals(AppStarter.ADDSTORY)) {
-			//为图片添加故事
+
+		} else if (action.equals(AppStarter.ADDSTORY)) {
+			// 为图片添加故事
 			res.setContentType("text/plain;charset=UTF-8");
 			String follow = req.getParameter("follow");
 			String owner = req.getParameter("owner");
 			String content = req.getParameter("content");
-			
-			apiAdaptor.createStory(follow, owner, content);
-			
+
+			apiAdaptor.addStoryToPicture(follow, owner, content);
+
 		} else if (action.equals(AppStarter.ADDCOMMENT)) {
-			//为图片添加评论
+			// 为图片添加评论
 			String follow = req.getParameter("follow");
 			String owner = req.getParameter("owner");
 			String content = req.getParameter("content");
-			
-			apiAdaptor.createComment(follow,owner,content);
 
-		}else if (action.equals(AppStarter.GETSTORIESOFPIC)) {
-			//得到某副图片的所有故事
+			apiAdaptor.addCommentToPicture(follow, owner, content);
+
+		} else if (action.equals(AppStarter.GETSTORIESOFPIC)) {
+			// 得到某副图片的所有故事
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String tpId = req.getParameter("tpId");
@@ -163,9 +160,9 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			System.out.println(result);
 			pw.write(result);
 			pw.close();
-			
+
 		} else if (action.equals(AppStarter.GETCOMMENTSOFPIC)) {
-			//得到某副图片的所有评论
+			// 得到某副图片的所有评论
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String tpId = req.getParameter("tpId");
@@ -173,17 +170,17 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			System.out.println(result);
 			pw.write(result);
 			pw.close();
-			
+
 		} else if (action.equals(AppStarter.ADDVOTE)) {
-			//为故事添加投票
+			// 为故事添加投票
 			String follow = req.getParameter("follow");
 			String type = req.getParameter("type");
-			String amount =req.getParameter("amount");
-			
-			apiAdaptor.createVote(follow, type, amount);
-			
-		}else if (action.equals(AppStarter.GETUSERDETAIL)) {
-			//根据用户id得到该用户详情
+			String amount = req.getParameter("amount");
+
+			apiAdaptor.addVoteToStory(follow, type, amount);
+
+		} else if (action.equals(AppStarter.GETUSERDETAIL)) {
+			// 根据用户id得到该用户详情
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String userId = req.getParameter("userId");
@@ -191,60 +188,58 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			System.out.println(result);
 			pw.write(result);
 			pw.close();
-			
-		}else if (action.equals(AppStarter.SENDMSG)) {
+
+		} else if (action.equals(AppStarter.SENDMSG)) {
 			// 发消息 TODO, ...
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
-			
+
 			String sender = req.getParameter("userId");
 			String receiver = req.getParameter("receiver");
 			String content = req.getParameter("content");
-			
+
 			boolean flag = apiAdaptor.sendMessage(sender, receiver, content);
 			System.out.println(flag);
-			
-			
-			if(flag){
+
+			if (flag) {
 				pw.println("发送消息成功！");
-			}else{
+			} else {
 				pw.println("发送消息失败！");
 			}
-			
-			
+
 		} else if (action.equals(AppStarter.GETUSERMSG)) {
 			// 得到收件箱详情 TODO, ...
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
-			
+
 			String userId = req.getParameter("userId");
 			String result = apiAdaptor.getUserMsg(userId);
 			System.out.println(result);
 			pw.println(result);
 			pw.close();
-		}else if(action.equals(AppStarter.CHANGEMSGSTATE)){
-			
+		} else if (action.equals(AppStarter.CHANGEMSGSTATE)) {
+
 			String msgId = req.getParameter("msgId");
 			apiAdaptor.changeMsgState(msgId);
-			
-		}else if(action.equals(AppStarter.GETHOTPICTURE)){	
-			//取得热图
+
+		} else if (action.equals(AppStarter.GETHOTPICTURE)) {
+			// 取得热图
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getHotPicture();
 			System.out.println(result);
 			pw.println(result);
 			pw.close();
-		}else if(action.equals(AppStarter.GETClASSICALPINTU)){	
-			//取得经典品图
+		} else if (action.equals(AppStarter.GETClASSICALPINTU)) {
+			// 取得经典品图
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getClassicalStory();
 			System.out.println(result);
 			pw.println(result);
 			pw.close();
-		}else if(action.equals(AppStarter.GETUSERESTATE)){	
-			//取得经典品图
+		} else if (action.equals(AppStarter.GETUSERESTATE)) {
+			// 取得用户基本信息和资产详情
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String userId = req.getParameter("userId");
@@ -252,7 +247,62 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 			System.out.println(result);
 			pw.println(result);
 			pw.close();
-		}else {
+		} else if (action.equals(AppStarter.MARKTHEPIC)) {
+			//收藏图片
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String userId = req.getParameter("userId");
+			String picId = req.getParameter("picId");
+			boolean flag = apiAdaptor.markFavoritePic(userId,picId);
+			if (flag) {
+				pw.println("收藏图片成功！");
+			} else {
+				pw.println("收藏图片失败！");
+			}
+			
+		} else if (action.equals(AppStarter.DELETEONEFAVOR)) {
+			//删除收藏的图片
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String fId = req.getParameter("fId");
+			boolean flag = apiAdaptor.deleteOneFavorite(fId);
+			if (flag) {
+				pw.println("删除收藏成功！");
+			} else {
+				pw.println("删除收藏失败！");
+			}
+			
+		} else if (action.equals(AppStarter.GETFAVORITEPICS)) {
+			//获取收藏列表
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String userId = req.getParameter("userId");
+			int pageNum = Integer.parseInt(req.getParameter("pageNum"));
+			String result = apiAdaptor.getFavorTpics(userId,pageNum);
+			System.out.println(result);
+			pw.println(result);
+			
+		} else if (action.equals(AppStarter.GETTPICSBYUSER)) {
+			//获取指定用户图片列表
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String userId = req.getParameter("userId");
+			int pageNum = Integer.parseInt(req.getParameter("pageNum"));
+			String result = apiAdaptor.getTpicsByUser(userId,pageNum);
+			System.out.println(result);
+			pw.println(result);
+			
+		} else if (action.equals(AppStarter.GETSTORIESBYUSER)) {
+			//获取指定用户故事列表
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String userId = req.getParameter("userId");
+			int pageNum = Integer.parseInt(req.getParameter("pageNum"));
+			String result = apiAdaptor.getStoryiesByUser(userId,pageNum);
+			System.out.println(result);
+			pw.println(result);
+			
+		} else {
 
 		}
 	}
@@ -279,59 +329,58 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 
 	}
 
-
 	@Override
 	public void onApplicationEvent(ApplicationEvent event) {
-		
-		//ApplicationContext 已经准备好，Spring配置初始化完成，可以启动任务了
-		if(event instanceof ContextRefreshedEvent){
-			
+
+		// ApplicationContext 已经准备好，Spring配置初始化完成，可以启动任务了
+		if (event instanceof ContextRefreshedEvent) {
+
 			System.out.println(">>>>>>>> Server 启动完成， 开始启动自动任务 <<<<<<<");
-			
-			//上传文件保存路径
+
+			// 上传文件保存路径
 			String filePath = System.getProperty("filePath");
 			// 初始化文件上传组件参数
 			String tempPath = System.getProperty("tempPath");
-			if(tempPath!=null){
+			if (tempPath != null) {
 				System.out.println(">>>>> init file upload component...");
-				initUploadComponent(tempPath);				
-			}else{
+				initUploadComponent(tempPath);
+			} else {
 				log.warn(">>>>> !!! 文件上传路径tempPath环境变量为空，不能初始化上传组件!");
 			}
-			
-			if(apiAdaptor!=null){
+
+			if (apiAdaptor != null) {
 				System.out.println(">>> apiAdaptor is ready to use...");
 				// 将磁盘文件保存路径传进来
-				if(filePath!=null){
-					apiAdaptor.setImagePath(filePath);					
-				}else{
+				if (filePath != null) {
+					apiAdaptor.setImagePath(filePath);
+				} else {
 					log.warn(">>>>> !!! 文件上传路径filePath环境变量为空，不能初始化上传路径!");
 				}
 			}
-			if(taskStarter!=null){
+			if (taskStarter != null) {
 				System.out.println(">>> taskStarter is ready to start...");
 				taskStarter.runAutoTasks();
 			}
-			if(synchProcess!=null){
+			if (synchProcess != null) {
 				System.out.println(">>> synchProcess is ready to start...");
 				synchProcess.start();
 			}
-			if(dailySync!=null){
+			if (dailySync != null) {
 				System.out.println(">>> dailySync is ready to start...");
 				dailySync.start();
 			}
 
 		}
-		
-		//处理关闭时发布的事件，停止所有的任务
-		 if(event instanceof ContextClosedEvent){
-			 taskStarter.stopTask();
-			 synchProcess.stop();
-			 dailySync.stop();
+
+		// 处理关闭时发布的事件，停止所有的任务
+		if (event instanceof ContextClosedEvent) {
+			taskStarter.stopTask();
+			synchProcess.stop();
+			dailySync.stop();
 		}
-		
-	} //end of onApplicationEvent
-	
+
+	} // end of onApplicationEvent
+
 	private void initUploadComponent(String tempPath) {
 		DiskFileItemFactory diskFactory = new DiskFileItemFactory();
 		// threshold 极限、临界值，即内存缓存 空间大小
@@ -344,6 +393,5 @@ public class AppStarter extends HttpServlet implements  ApplicationListener,ExtV
 		upload.setSizeMax(fileMaxSize);
 
 	}
-	
 
 }

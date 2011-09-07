@@ -100,5 +100,11 @@ public interface CacheAccessInterface {
 	
 	// 读取活动用户
 	public List<User> getActiveUser(Long startTime,Long endTime);
+
+	public List<Comment> getCommentsOfPic(String tpId);
+
+	public List<Story> getStoriesOfPic(String tpId);
+
+	public User getUserById(String userId);
 	
 }

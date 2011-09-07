@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.pintu.beans.Comment;
 import com.pintu.beans.Event;
+import com.pintu.beans.Favorite;
 import com.pintu.beans.GTStatics;
 import com.pintu.beans.Gift;
 import com.pintu.beans.Message;
@@ -209,7 +210,18 @@ public interface PintuServiceInterface {
 
 	// 发布行业动态
 	public Boolean publishIndustryEvent(Event tpEvent);
+	
+	//在标记为收藏时来检查是否已收藏 
+	public boolean getOneFavorite(String userId, String picId);
+	
+	//标记收藏
+	public boolean markFavoritePic(Favorite fav);
 
+	//删除收藏的某一图片
+	public boolean deleteOnesFavorite(String picId);
+
+	
+	
 	// TO BE CONTINUED...
 
 }

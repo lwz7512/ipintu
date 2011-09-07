@@ -22,6 +22,7 @@ import net.sf.json.JSONArray;
 
 import com.pintu.beans.Comment;
 import com.pintu.beans.Event;
+import com.pintu.beans.Favorite;
 import com.pintu.beans.GTStatics;
 import com.pintu.beans.Gift;
 import com.pintu.beans.Message;
@@ -312,8 +313,14 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		String userId = item.getOwner();
 		// 得到图片的所有者即userId,再到数据库里取出user的详细信息
 		User user = this.getUserInfo(userId);
-		int commentNum = dbVisitor.getCommentsOfPic(tpId).size();
-		int storyNum = dbVisitor.getStoriesOfPic(tpId).size();
+		int commentNum = cacheVisitor.getCommentsOfPic(tpId).size();
+		if(commentNum == 0){
+			commentNum = dbVisitor.getCommentsOfPic(tpId).size();
+		}
+		int storyNum = cacheVisitor.getStoriesOfPic(tpId).size();
+		if(storyNum == 0){
+			storyNum = dbVisitor.getStoriesOfPic(tpId).size();
+		}
 		details.setStoriesNum(storyNum);
 		details.setCommentsNum(commentNum);
 		if (user != null) {
@@ -354,7 +361,10 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	@Override
 	public List<StoryDetails> getStroyDetailsOfPic(String tpId) {
 		List<StoryDetails> storyDeatilList = new ArrayList<StoryDetails>();
-		List<Story> storyList = dbVisitor.getStoriesOfPic(tpId);
+		List<Story> storyList = cacheVisitor.getStoriesOfPic(tpId);
+		if(storyList.size() == 0){
+			storyList = dbVisitor.getStoriesOfPic(tpId);
+		}
 		if(storyList != null && storyList.size() > 0){
 			for(int i=0;i<storyList.size();i++){
 				StoryDetails storyDetail = new StoryDetails();
@@ -399,7 +409,10 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	@Override
 	public List<Comment> getCommentsOfPic(String tpId) {
 		List<Comment> resList = new ArrayList<Comment>();
-		List<Comment> cmtList = dbVisitor.getCommentsOfPic(tpId);
+		List<Comment> cmtList = cacheVisitor.getCommentsOfPic(tpId);
+		if(cmtList.size() == 0){
+			cmtList = dbVisitor.getCommentsOfPic(tpId);
+		}
 		if(cmtList.size()>0){
 			for(int i=0;i<cmtList.size();i++){
 				Comment comt = new Comment();
@@ -426,7 +439,10 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 	@Override
 	public User getUserInfo(String userId) {
-		User user = dbVisitor.getUserById(userId);
+		User user = cacheVisitor.getUserById(userId);
+		if(user.getId() == null){
+			user = dbVisitor.getUserById(userId);;
+		}
 		return user;
 	}
 
@@ -520,6 +536,17 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			return false;
 		}
 	}
+	
+	@Override
+	public boolean changeMsgState(String msgId) {
+		int rows = dbVisitor.updateMsg(msgId);
+		if (rows > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 
 	@Override
 	public void saveImagePathToProcessor(String filePath) {
@@ -644,16 +671,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public boolean changeMsgState(String msgId) {
-		int rows = dbVisitor.updateMsg(msgId);
-		if (rows > 0) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	@Override
 	public List<TPicDetails> getHotPicture() {
 		List<TPicDetails> hotList = new ArrayList<TPicDetails>();
 		Map<String, Integer> map = CacheAccessInterface.hotPicCacheIds;
@@ -753,6 +770,37 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		}
 		return classicalList;
 	}
+	
+	@Override
+	public boolean getOneFavorite(String userId, String picId) {
+		int i = dbVisitor.getOneFavorite(userId,picId);
+		if (i > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean markFavoritePic(Favorite fav) {
+		int i = dbVisitor.insertFavorite(fav);
+		if (i > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	@Override
+	public boolean deleteOnesFavorite(String picId){
+		int i =dbVisitor.deleteFavorite(picId);
+		if (i > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 
 
 

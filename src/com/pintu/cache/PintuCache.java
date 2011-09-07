@@ -45,7 +45,7 @@ public class PintuCache {
 
 	private Cache thumbnailCache;
 
-//	private Logger log = Logger.getLogger(PintuCache.class);
+	// private Logger log = Logger.getLogger(PintuCache.class);
 
 	public PintuCache() {
 
@@ -119,7 +119,7 @@ public class PintuCache {
 	public void updateCachedUser(String userId, Long updateTime) {
 		synchronized (userCache) {
 			Element ele = userCache.get(userId);
-			if(ele != null){
+			if (ele != null) {
 				User user = (User) ele.getObjectValue();
 				user.setLastUpdateTime(updateTime);
 			}
@@ -130,15 +130,16 @@ public class PintuCache {
 	public List<User> getActiveUser(Long startTime, Long endTime) {
 		List<User> userList = new ArrayList<User>();
 		synchronized (userCache) {
-			if(userCache.getKeysNoDuplicateCheck().size() > 0){
+			if (userCache.getKeysNoDuplicateCheck().size() > 0) {
 				Attribute<Long> lastUpdateTime = userCache
 						.getSearchAttribute("lastUpdateTime");
-				Query query = userCache.createQuery()
+				Query query = userCache
+						.createQuery()
 						.addCriteria(lastUpdateTime.between(startTime, endTime))
 						.includeValues().end();
 				Results results = query.execute();
 				List<Result> resultList = results.all();
-				if(resultList != null && resultList.size() > 0){
+				if (resultList != null && resultList.size() > 0) {
 					for (int i = 0; i < resultList.size(); i++) {
 						User user = (User) resultList.get(i).getValue();
 						userList.add(user);
@@ -149,18 +150,16 @@ public class PintuCache {
 		}
 		return userList;
 	}
-	
-	public List<Object> getCachedUser(List<String> userIds) {
-		List<Object> list = new ArrayList<Object>();
+
+	public User getCachedUser(String userId) {
+		User user = new User();
 		synchronized (userCache) {
-			for (int i = 0; i < userIds.size(); i++) {
-				Element user = userCache.get(userIds.get(i));
-				if (user != null) {
-					list.add(user.getObjectValue());
-				}
+			Element ele = userCache.get(userId);
+			if (ele != null) {
+				user = (User) ele.getObjectValue();
 			}
 		}
-		return list;
+		return user;
 	}
 
 	public void cachePicture(String picId, TPicItem pic) {
@@ -319,8 +318,8 @@ public class PintuCache {
 		return list;
 	}
 
-	public List<Object> getCachedCommentByPid(List<String> ids) {
-		List<Object> list = new ArrayList<Object>();
+	public List<Comment> getCachedCommentByPid(List<String> ids) {
+		List<Comment> list = new ArrayList<Comment>();
 		synchronized (commentCache) {
 			for (String picId : ids) {
 				Element savedPic = commentCache.get(picId);
@@ -337,8 +336,8 @@ public class PintuCache {
 		return list;
 	}
 
-	public List<Object> getCachedStoryByPid(List<String> ids) {
-		List<Object> list = new ArrayList<Object>();
+	public List<Story> getCachedStoryByPid(List<String> ids) {
+		List<Story> list = new ArrayList<Story>();
 		synchronized (storyCache) {
 			for (String picId : ids) {
 				Element savedPic = storyCache.get(picId);
@@ -355,8 +354,8 @@ public class PintuCache {
 		return list;
 	}
 
-	public List<Object> getCachedVoteBySid(List<String> ids) {
-		List<Object> list = new ArrayList<Object>();
+	public List<Vote> getCachedVoteBySid(List<String> ids) {
+		List<Vote> list = new ArrayList<Vote>();
 		synchronized (voteCache) {
 			for (String storyId : ids) {
 				Element savedStory = voteCache.get(storyId);

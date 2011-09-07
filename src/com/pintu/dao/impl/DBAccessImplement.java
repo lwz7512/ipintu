@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 
 import com.pintu.beans.Comment;
+import com.pintu.beans.Favorite;
 import com.pintu.beans.Message;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicItem;
@@ -477,7 +478,7 @@ public class DBAccessImplement implements DBAccessInterface {
 	@Override
 	public List<Message> getUserMessages(String userId) {
 		List<Message> msgList = new ArrayList<Message>();
-		String sql = "select * from t_message where m_sender = '"+userId+"'"+" or m_receiver = '"+userId+"'";
+		String sql = "select * from t_message where m_sender = '"+userId+"'"+" or m_receiver = '"+userId+"' and m_read=0";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -630,7 +631,8 @@ public class DBAccessImplement implements DBAccessInterface {
 	@Override
 	public int deleteOnesWealth(String type, String userId) {
 		String sql = "delete from t_wealth where w_type="+type+" and w_owner="+userId; 
-		return jdbcTemplate.update(sql);
+		int rows = jdbcTemplate.update(sql);
+		return rows;
 	}
 	
 	@Override
@@ -755,6 +757,46 @@ public class DBAccessImplement implements DBAccessInterface {
 			}
 		}
 		return resList;
+	}
+
+	@Override
+	public int insertFavorite(final Favorite fav) {
+		String sql = "INSERT INTO t_favorite "
+				 + "(f_id,f_owner,f_picture,f_collectTime,f_memo) "
+				 + "VALUES (?, ?, ?, ?, ?)";
+
+		int[] res = jdbcTemplate.batchUpdate(sql,
+				new BatchPreparedStatementSetter() {
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+						ps.setString(1, fav.getId());
+						ps.setString(2, fav.getOwner());
+						ps.setString(3, fav.getPicture());
+						ps.setString(4, fav.getCollectTime());
+						ps.setString(5, "");
+					}
+
+					@Override
+					public int getBatchSize() {
+						return 1;
+					}
+
+				});
+		return res.length;
+	}
+
+	@Override
+	public int deleteFavorite(String fId) {
+		String sql = "delete from t_favorite where f_id ='"+fId+"'"; 
+		int rows = jdbcTemplate.update(sql);
+		return rows;
+	}
+
+	@Override
+	public int getOneFavorite(String userId, String picId) {
+		String sql = "select count(*) from t_favorite where f_owner = '"+userId+"' and f_picture = '"+picId+"'";
+		int rows = jdbcTemplate.queryForInt(sql);
+		return rows;
 	}
 
 

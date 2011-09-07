@@ -14,6 +14,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.fileupload.FileItem;
 
 import com.pintu.beans.Comment;
+import com.pintu.beans.Favorite;
 import com.pintu.beans.Message;
 import com.pintu.beans.Story;
 import com.pintu.beans.StoryDetails;
@@ -38,7 +39,7 @@ public class ApiAdaptor {
 	private PintuServiceInterface pintuService;
 	
 	public ApiAdaptor() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public PintuServiceInterface getPintuService() {
@@ -157,7 +158,7 @@ public class ApiAdaptor {
 		return JSONArray.fromCollection(pintuService.getStroyDetailsOfPic(tpId)).toString();
 	}
 	
-	public void createStory(String follow,String owner,String content){
+	private Story createStory(String follow,String owner,String content){
 		Story story = new Story();
 		story.setId(PintuUtils.generateUID());
 		story.setFollow(follow);
@@ -165,7 +166,7 @@ public class ApiAdaptor {
 		story.setPublishTime(PintuUtils.getFormatNowTime());
 		story.setContent(UTF8Formater.changeToWord(content));
 		story.setClassical(0);
-		this.addStoryToPicture(story);
+		return story;
 	}
 
 
@@ -173,19 +174,20 @@ public class ApiAdaptor {
 	 * 为一个品图添加故事
 	 * @param story
 	 */
-	private void addStoryToPicture(Story story){
+	public void addStoryToPicture(String follow,String owner,String content){
+		Story story = this.createStory(follow, owner, content);
 		 pintuService.addStoryToPintu(story);
 	}
 	
 	
-	public void createComment(String follow,String owner,String content ){
+	private Comment createComment(String follow,String owner,String content ){
 		Comment cmt = new Comment();
 		cmt.setId(PintuUtils.generateUID());
 		cmt.setFollow(follow);
 		cmt.setOwner(owner);
 		cmt.setPublishTime(PintuUtils.getFormatNowTime());
 		cmt.setContent(UTF8Formater.changeToWord(content));
-		this.addCommentToPicture(cmt);
+		return cmt;
 	}
 	
 	/**
@@ -193,25 +195,27 @@ public class ApiAdaptor {
 	 * @param cmt
 	 * @return
 	 */
-	private void addCommentToPicture(Comment cmt){
+	public void addCommentToPicture(String follow,String owner,String content){
+		Comment cmt = this.createComment(follow, owner, content);
 		 pintuService.addCommentToPintu(cmt);
 	}
 
 	
-	public void createVote(String follow,String type,String amount){
+	private Vote createVote(String follow,String type,String amount){
 		Vote vote = new Vote();
 		vote.setId(PintuUtils.generateUID());
 		vote.setFollow(follow);
 		vote.setType(type);
 		vote.setAmount(Integer.parseInt(amount));
-		this.addVoteToStory(vote);
+		return vote;
 	}
 	
 	/**
 	 * 为品图故事投票
 	 * @param vote
 	 */
-	private void addVoteToStory(Vote vote) {
+	public void addVoteToStory(String follow,String type,String amount) {
+		Vote vote = this.createVote(follow, type, amount);
 		pintuService.addVoteToStory(vote);
 	}
 	
@@ -224,6 +228,18 @@ public class ApiAdaptor {
 		User user = pintuService.getUserInfo(userId);
 		return JSONObject.fromObject(user).toString();
 	}
+	
+	private Message createMessage(String sender,String receiver,String content){
+		Message msg =  new Message();
+		msg.setId(PintuUtils.generateUID());
+		msg.setSender(sender);
+		msg.setReceiver(receiver);
+		msg.setContent(UTF8Formater.changeToWord(content));
+		msg.setWriteTime(PintuUtils.getFormatNowTime());
+		msg.setRead(0);
+		return msg;
+	}
+	
 
 	/**
 	 * 发消息
@@ -232,13 +248,7 @@ public class ApiAdaptor {
 	 * @param content
 	 */
 	public boolean sendMessage(String sender,String receiver,String content){
-		Message msg =  new Message();
-		msg.setId(PintuUtils.generateUID());
-		msg.setSender(sender);
-		msg.setReceiver(receiver);
-		msg.setContent(UTF8Formater.changeToWord(content));
-		msg.setWriteTime(PintuUtils.getFormatNowTime());
-		msg.setRead(0);
+		Message msg = this.createMessage(sender, receiver, content);
 		return pintuService.sendMessage(msg);
 	}
 	
@@ -282,5 +292,46 @@ public class ApiAdaptor {
 		UserDetail userDetail = pintuService.getUserEstate(userId);
 		return JSONArray.fromObject(userDetail).toString();
 	}
+
+	
+	private Favorite createFavorite(String userId, String picId) {
+		Favorite fav = new Favorite();
+		fav.setId(PintuUtils.generateUID());
+		fav.setCollectTime(PintuUtils.getFormatNowTime());
+		fav.setOwner(userId);
+		fav.setPicture(picId);
+		return fav;
+	}
+	
+	public boolean markFavoritePic(String userId, String picId) {
+		boolean flag = pintuService.getOneFavorite(userId,picId);
+		if(flag){//图片已收藏，禁止重复收藏
+			return false;
+		}else{
+			Favorite fav = this.createFavorite(userId,picId);
+			return pintuService.markFavoritePic(fav);
+		}
+	}
+
+	public boolean deleteOneFavorite(String fId){
+		return pintuService.deleteOnesFavorite(fId);
+	}
+
+	
+	public String getFavorTpics(String userId, int pageNum) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public String getTpicsByUser(String userId, int pageNum) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getStoryiesByUser(String userId, int pageNum) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 } //end of class

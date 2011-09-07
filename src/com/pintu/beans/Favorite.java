@@ -1,13 +1,11 @@
 package com.pintu.beans;
 
-import java.util.Date;
-
 public class Favorite {
 
 	private String id;
 	private String owner;
 	private String picture;
-	private Date collectTime;
+	private String collectTime;
 	
 	public Favorite() {
 		// TODO Auto-generated constructor stub
@@ -37,12 +35,13 @@ public class Favorite {
 		this.picture = picture;
 	}
 
-	public Date getCollectTime() {
+	public String getCollectTime() {
 		return collectTime;
 	}
 
-	public void setCollectTime(Date collectTime) {
+	public void setCollectTime(String collectTime) {
 		this.collectTime = collectTime;
 	}
+
 
 }
