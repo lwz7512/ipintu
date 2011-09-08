@@ -773,8 +773,8 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 	
 	@Override
-	public boolean getOneFavorite(String userId, String picId) {
-		int i = dbVisitor.getOneFavorite(userId,picId);
+	public boolean checkExistFavorite(String userId, String picId) {
+		int i = dbVisitor.checkExistFavorite(userId,picId);
 		if (i > 0) {
 			return true;
 		} else {
@@ -804,24 +804,18 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 	@Override
 	public List<TPicItem> getFavoriteTpics(String userId, int pageNum) {
-		List<String> favorIdList = dbVisitor.getOnesFavorite(userId);
-		StringBuffer picIds = new StringBuffer();
-		if(favorIdList.size() > 0){
-			
-			for(String picId:favorIdList){
-				if(picIds.length()>0){
-					picIds.append(",");
-				}
-				picIds.append("'");
-				picIds.append(picId);
-				picIds.append("'");
-			}
-		}
+		// TODO 分页
 		int pageSize = Integer.parseInt(propertyConfigurer.getProperty("pageSize"));
-		List<TPicItem> picList = dbVisitor.getPicturesByIds(picIds.toString(),pageNum,pageSize);
-		// TODO 分页啊
-		
+		List<TPicItem> picList = dbVisitor.getFavoriteTpics(userId,pageNum,pageSize);
 		return picList;
+	}
+	
+	@Override
+	public List<TPicItem> getTpicsByUser(String userId, int pageNum) {
+		int pageSize = Integer.parseInt(propertyConfigurer.getProperty("pageSize"));
+		List<TPicItem> list = dbVisitor.getTpicsByUser(userId,pageNum,pageSize);
+		//TODO 分页返回
+		return list;
 	}
 
 	@Override
@@ -869,16 +863,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		return resList;
 				
 	}
-
-	@Override
-	public List<TPicItem> getTpicsByUser(String userId, int pageNum) {
-		int pageSize = Integer.parseInt(propertyConfigurer.getProperty("pageSize"));
-		List<TPicItem> list = dbVisitor.getTpicsByUser(userId,pageNum,pageSize);
-		//TODO 分页返回
-		return list;
-	}
-
-
 
 
 	// TODO, 实现其他接口方法

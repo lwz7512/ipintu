@@ -213,7 +213,7 @@ public interface PintuServiceInterface {
 	public Boolean publishIndustryEvent(Event tpEvent);
 	
 	//在标记为收藏时来检查是否已收藏 
-	public boolean getOneFavorite(String userId, String picId);
+	public boolean checkExistFavorite(String userId, String picId);
 	
 	//标记收藏
 	public boolean markFavoritePic(Favorite fav);

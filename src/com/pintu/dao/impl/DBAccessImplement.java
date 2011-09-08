@@ -793,31 +793,63 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public int getOneFavorite(String userId, String picId) {
+	public int checkExistFavorite(String userId, String picId) {
 		String sql = "select count(*) from t_favorite where f_owner = '"+userId+"' and f_picture = '"+picId+"'";
 		int rows = jdbcTemplate.queryForInt(sql);
 		return rows;
 	}
 
+//	@Override
+//	public List<String> getOnesFavorite(String userId) {
+//		List<String> idList = new ArrayList<String>();
+//		String sql = "select f_picture from t_favorite where f_owner ='"+userId+"' order by f_collectTime desc"; 
+//		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+//		if (rows != null && rows.size() > 0) {
+//			for (int i = 0; i < rows.size(); i++) {
+//				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+//				idList.add(map.get("f_picture").toString());
+//			}
+//		}
+//		return idList;
+//	}
+//
+//	@Override
+//	public List<TPicItem> getPicturesByIds(String ids, int pageNum, int pageSize) {
+//		List<TPicItem> resList = new ArrayList<TPicItem>();
+//		int startLine = (pageNum -1)*pageSize;
+//		String sql = "select * from t_picture where p_id in ("+ids+") limit "+startLine+","+pageSize;
+//		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+//		if (rows != null && rows.size() > 0) {
+//			for (int i = 0; i < rows.size(); i++) {
+//				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+//				TPicItem tpicItem = new TPicItem();
+//				tpicItem.setId(map.get("p_id").toString());
+//				tpicItem.setName(map.get("p_name").toString());
+//				tpicItem.setOwner(map.get("p_owner").toString());
+//				tpicItem.setPublishTime(map.get("p_publishTime").toString());
+//				tpicItem.setDescription(map.get("p_description").toString());
+//				tpicItem.setTags(map.get("p_tags").toString());
+//				tpicItem.setAllowStory(Integer.parseInt(map.get("p_allowStory")
+//						.toString()));
+//				tpicItem.setMobImgId(map.get("p_mobImgId").toString());
+//				tpicItem.setMobImgSize(map.get("p_mobImgSize").toString());
+//				tpicItem.setMobImgPath(map.get("p_mobImgPath").toString());
+//				tpicItem.setRawImgId(map.get("p_rawImgId").toString());
+//				tpicItem.setRawImgSize(map.get("p_rawImgSize").toString());
+//				tpicItem.setRawImgPath(map.get("p_rawImgPath").toString());
+//				resList.add(tpicItem);
+//			}
+//		}
+//		return resList;
+//	}
+	
 	@Override
-	public List<String> getOnesFavorite(String userId) {
-		List<String> idList = new ArrayList<String>();
-		String sql = "select f_picture from t_favorite where f_owner ='"+userId+"' order by f_collectTime desc"; 
-		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
-		if (rows != null && rows.size() > 0) {
-			for (int i = 0; i < rows.size(); i++) {
-				Map<String, Object> map = (Map<String, Object>) rows.get(i);
-				idList.add(map.get("f_picture").toString());
-			}
-		}
-		return idList;
-	}
-
-	@Override
-	public List<TPicItem> getPicturesByIds(String ids, int pageNum, int pageSize) {
+	public List<TPicItem> getFavoriteTpics(String userId, int pageNum, int pageSize) {
 		List<TPicItem> resList = new ArrayList<TPicItem>();
 		int startLine = (pageNum -1)*pageSize;
-		String sql = "select * from t_picture where p_id in ("+ids+") limit "+startLine+","+pageSize;
+		String sql = "select p.p_id,p.p_name,p.p_owner,p.p_publishTime,p.p_description,p.p_tags,p.p_allowStory," +
+				"p.p_mobImgId,p.p_mobImgSize,p.p_mobImgPath,p.p_rawImgId,p.p_rawImgSize,p.p_rawImgPath" +
+				" from t_picture p, t_favorite f where p.p_id = f.f_picture and f.f_owner = '"+userId+"' limit "+startLine+","+pageSize;
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {

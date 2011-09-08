@@ -137,7 +137,10 @@ public class ApiAdaptor {
 	 */
 	public String getTPicDetailsById(String tpId){
 		TPicDetails tpicDetails = pintuService.getTPicDetailsById(tpId);
-		return JSONObject.fromBean(tpicDetails).toString() ;
+		JSONObject json =JSONObject.fromBean(tpicDetails);
+		json.remove("mobImgPath");
+		json.remove("rawImgPath");
+		return json.toString() ;
 	}
 	
 	/**
@@ -272,15 +275,6 @@ public class ApiAdaptor {
 	}
 
 	/**
-	 * 得到热图列表
-	 * @return
-	 */
-	public String getHotPicture() {
-		List<TPicDetails> hotList = pintuService.getHotPicture();
-		return JSONArray.fromCollection(hotList).toString();
-	}
-
-	/**
 	 * 得到经典品图信息
 	 * @return
 	 */
@@ -305,7 +299,7 @@ public class ApiAdaptor {
 	}
 	
 	public boolean markFavoritePic(String userId, String picId) {
-		boolean flag = pintuService.getOneFavorite(userId,picId);
+		boolean flag = pintuService.checkExistFavorite(userId,picId);
 		if(flag){//图片已收藏，禁止重复收藏
 			return false;
 		}else{
@@ -318,15 +312,36 @@ public class ApiAdaptor {
 		return pintuService.deleteOnesFavorite(fId);
 	}
 
+	private void removeJsonKey(JSONArray jsonArray){
+		for(int i = 0;i<jsonArray.length();i++){
+			jsonArray.getJSONObject(i).remove("mobImgPath");
+			jsonArray.getJSONObject(i).remove("rawImgPath");
+		}
+	}
+	
+	/**
+	 * 得到热图列表
+	 * @return
+	 */
+	public String getHotPicture() {
+		List<TPicDetails> hotList = pintuService.getHotPicture();
+		JSONArray jsonArray = JSONArray.fromCollection(hotList);
+		removeJsonKey(jsonArray);
+		return jsonArray.toString();
+	}
 	
 	public String getFavorTpics(String userId, int pageNum) {
 		List<TPicItem> favorList = pintuService.getFavoriteTpics(userId,pageNum);
-		return JSONArray.fromCollection(favorList).toString();
+		JSONArray jsonArray = JSONArray.fromCollection(favorList);
+		removeJsonKey(jsonArray);
+		return jsonArray.toString();
 	}
 	
 	public String getTpicsByUser(String userId, int pageNum) {
 		List<TPicItem> userPicList = pintuService.getTpicsByUser(userId,pageNum);
-		return JSONArray.fromCollection(userPicList).toString();
+		JSONArray jsonArray = JSONArray.fromCollection(userPicList);
+		removeJsonKey(jsonArray);
+		return jsonArray.toString();
 	}
 
 	public String getStoryiesByUser(String userId, int pageNum) {
