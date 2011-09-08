@@ -18,16 +18,9 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONArray;
-
 import com.pintu.beans.Comment;
-import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
-import com.pintu.beans.GTStatics;
-import com.pintu.beans.Gift;
 import com.pintu.beans.Message;
-import com.pintu.beans.News;
-import com.pintu.beans.Note;
 import com.pintu.beans.Story;
 import com.pintu.beans.StoryDetails;
 import com.pintu.beans.TPicDesc;
@@ -98,6 +91,13 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	public CacheAccessInterface getCacheVisitor() {
 		return cacheVisitor;
 	}
+	
+	@Override
+	public List<TPicDesc> getInviteTpicsToday() {
+		// 这个功能暂时不在1.0中实现，界面中没有设计
+		return null;
+	}
+
 
 	@Override
 	public void createTastePic(TastePic pic, String user) {
@@ -153,66 +153,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		cacheVisitor.cacheVote(vote);
 	}
 
-	@Override
-	public List<TPicDesc> getTpicsByUser(String user, String pageNum) {
-		// TODO Auto-generated method stub
-		return null;
 
-	}
-
-	@Override
-	public Boolean loginByWeibo(String user, String pswd) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean loginSys(String user, String pswd) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean registerUser(String user, String pswd, String inviteCode) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean applyForUser(String realname, String email, String intro) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean deleteStoryOfPic(String storyId, String tpicID) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean deleteTasetPic(String tpID) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean exchangeGifts(String user, String giftIds) {
-		// 2.0 功能暂时不实现
-		return null;
-	}
-
-	@Override
-	public List<Event> getCommunityEvents() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public GTStatics getCommunityGTs() {
-		// 2.0 功能暂时不实现
-		return null;
-	}
 
 	@Override
 	public List<TPicDesc> getCommunityTpics() {
@@ -234,7 +175,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public String getTpicsByTime(String startTime, String endTime) {
+	public List<TPicDesc> getTpicsByTime(String startTime, String endTime) {
 		List<TPicDesc> resultList = new ArrayList<TPicDesc>();
 		List<TPicDesc> thumbnailList = new ArrayList<TPicDesc>();
 		int start = getMinutes(startTime);
@@ -254,45 +195,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			}
 		}
 
-		JSONArray ja = JSONArray.fromCollection(resultList);
-
-		return ja.toString();
-	}
-
-	@Override
-	public List<TPicDesc> getFavoriteTpics(String user, String pageNum) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Gift> getGiftsToday() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<News> getIndustryNews() {
-		// 2.0功能暂不实现
-		return null;
-	}
-
-	@Override
-	public List<TPicDesc> getInviteTpicsToday() {
-		// 这个功能暂时不在1.0中实现，界面中没有设计
-		return null;
-	}
-
-	@Override
-	public List<TPicDesc> getLatestTpics(String timeLength) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Note> getMarketNotes() {
-		// 2.0功能暂不实现
-		return null;
+		return resultList;
 	}
 
 	@Override
@@ -447,11 +350,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		return user;
 	}
 
-	@Override
-	public User getUsrBasInfo(String user) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public UserDetail getUserEstate(String userId) {
@@ -484,42 +382,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		}
 		
 		return uDetail;
-	}
-
-	@Override
-	public Boolean giveGifts(String user, String giftIds) {
-		// 2.0功能暂不实现
-		return null;
-	}
-
-	@Override
-	public Boolean pasteNote(String user, String content) {
-		// 2.0功能暂不实现
-		return null;
-	}
-
-	@Override
-	public Boolean publishAvailableGift(Gift gift) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean publishIndustryEvent(Event tpEvent) {
-		// 2.0功能暂不实现
-		return null;
-	}
-
-	@Override
-	public Boolean publishTpEvent(Event tpEvent) {
-		// 2.0功能暂不实现
-		return null;
-	}
-
-	@Override
-	public List<TPicDesc> searchTpicByTags(String tags) {
-		// 2.0功能暂不实现
-		return null;
 	}
 
 	@Override
@@ -804,7 +666,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 	@Override
 	public List<TPicItem> getFavoriteTpics(String userId, int pageNum) {
-		// TODO 分页
 		int pageSize = Integer.parseInt(propertyConfigurer.getProperty("pageSize"));
 		List<TPicItem> picList = dbVisitor.getFavoriteTpics(userId,pageNum,pageSize);
 		return picList;
@@ -814,7 +675,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	public List<TPicItem> getTpicsByUser(String userId, int pageNum) {
 		int pageSize = Integer.parseInt(propertyConfigurer.getProperty("pageSize"));
 		List<TPicItem> list = dbVisitor.getTpicsByUser(userId,pageNum,pageSize);
-		//TODO 分页返回
 		return list;
 	}
 
@@ -859,9 +719,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				resList.add(details);
 		}
 		
-		//TODO 分页返回
 		return resList;
-				
 	}
 
 

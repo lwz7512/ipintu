@@ -40,7 +40,7 @@ public interface PintuServiceInterface {
 	 *            自我介绍加入理由
 	 * @return
 	 */
-	public Boolean applyForUser(String realname, String email, String intro);
+//	public Boolean applyForUser(String realname, String email, String intro);
 
 	/**
 	 * 该方法在web注册页面中调用
@@ -53,16 +53,21 @@ public interface PintuServiceInterface {
 	 *            邀请码
 	 * @return
 	 */
-	// 用户注册
-	public Boolean registerUser(String user, String pswd, String inviteCode);
-
-	// 使用品图账号登录系统
-	public Boolean loginSys(String user, String pswd);
-
-	// 使用微博账号登录系统
-	public Boolean loginByWeibo(String user, String pswd);
+//	// 用户注册
+//	public Boolean registerUser(String user, String pswd, String inviteCode);
+//
+//	// 使用品图账号登录系统
+//	public Boolean loginSys(String user, String pswd);
+//
+//	// 使用微博账号登录系统
+//	public Boolean loginByWeibo(String user, String pswd);
+//
+//	// 查看用户基本信息（微博账号）
+//	public User getUsrBasInfo(String user);
 
 	// -------------------------------下面是已做的
+	// 查看用户息
+	public User getUserInfo(String userId);
 
 	// 发送一个贴图到系统中
 	public void createTastePic(TastePic pic, String user);
@@ -77,7 +82,7 @@ public interface PintuServiceInterface {
 	 * @param endTime
 	 * @return
 	 */
-	public String getTpicsByTime(String startTime, String endTime);
+	public List<TPicDesc> getTpicsByTime(String startTime, String endTime);
 
 	/**
 	 * 根据图片id返回图片流到OutputStream中
@@ -118,9 +123,6 @@ public interface PintuServiceInterface {
 	// 返回一个故事的所有各类的投票
 	public List<Vote> getVotesOfStory(String storyId);
 
-	// 查看用户息
-	public User getUserInfo(String userId);
-
 	// 查看今日热图（点击量、故事数、评论数）
 	// 系统定时统计出来并保持，然后返回三类图排名10以内的30张图；
 	// public List<TPicDesc> getHotTpics();
@@ -131,30 +133,15 @@ public interface PintuServiceInterface {
 	// 查看经典品图（包括经典故事及其所属的图片）
 	public List<StoryDetails> getClassicalPintu();
 
-	// 查看自己的贴图列表
-	public List<TPicDesc> getTpicsByUser(String user, String pageNum);
-
-	// 查看自己的收藏图片(要用到分页)
-	public List<TPicDesc> getFavoriteTpics(String user, String pageNum);
-
 	// 查看今日填词邀请
 	// 这个功能界面上没有设计，暂时先不实现；
 	public List<TPicDesc> getInviteTpicsToday();
-
-	// 查看用户基本信息（微博账号）
-	public User getUsrBasInfo(String user);
 
 	// 查看用户等级和拥有贝壳数
 	public UserDetail getUserEstate(String userId);
 
 	// 查看自己的贝壳种类和数量
 	public List<Wealth> getWealthDetails(String userId);
-
-	// 展示今日的可兑换礼物信息
-	public List<Gift> getGiftsToday();
-
-	// 查看今日社区事件
-	public List<Event> getCommunityEvents();
 
 	// 发送一个消息
 	public Boolean sendMessage(Message msg);
@@ -165,70 +152,78 @@ public interface PintuServiceInterface {
 	// 改变消息的状态
 	public boolean changeMsgState(String msgId);
 
+	// 在标记为收藏时来检查是否已收藏
+	public boolean checkExistFavorite(String userId, String picId);
+
+	// 标记收藏
+	public boolean markFavoritePic(Favorite fav);
+
+	// 删除收藏的某一图片
+	public boolean deleteOnesFavorite(String picId);
+
+	// 查看自己的收藏图片(要用到分页)
+	public List<TPicItem> getFavoriteTpics(String userId, int pageNum);
+
+	// 查看自己的故事列表
+	public List<StoryDetails> getStroiesByUser(String userId, int pageNum);
+
+	// 查看自己的贴图列表
+	public List<TPicItem> getTpicsByUser(String userId, int pageNum);
+
 	// ANYMORE NECESSARY???
 
 	// ************************ 以下为客户端2.0版本功能 *********************************
 
 	// 浏览社区达人(达人，Get Talent)
-	public GTStatics getCommunityGTs();
-
-	// 在夜市兑换礼物
-	public Boolean exchangeGifts(String user, String giftIds);
-
-	// 赠送邻居礼物
-	public Boolean giveGifts(String user, String giftIds);
-
-	// 在夜市贴条子
-	public Boolean pasteNote(String user, String content);
-
-	// 看夜市条子
-	public List<Note> getMarketNotes();
-
-	// 按图片关键字搜索
-	public List<TPicDesc> searchTpicByTags(String tags);
-
-	// 查看行业动态
-	public List<News> getIndustryNews();
-
-	// ******************** 后台管理用方法 **************************************
-
-	// 查看最近一段时间的贴图（自动刷新）
-	public List<TPicDesc> getLatestTpics(String timeLength);
-
-	// 删除垃圾贴图
-	public Boolean deleteTasetPic(String tpID);
-
-	// 删除灌水故事
-	public Boolean deleteStoryOfPic(String storyId, String tpicID);
-
-	// 发布可选礼物信息
-	public Boolean publishAvailableGift(Gift gift);
-
-	// ********************* 后台管理2.0功能 *************************************
-
-	// 发布社区事件
-	public Boolean publishTpEvent(Event tpEvent);
-
-	// 发布行业动态
-	public Boolean publishIndustryEvent(Event tpEvent);
-	
-	//在标记为收藏时来检查是否已收藏 
-	public boolean checkExistFavorite(String userId, String picId);
-	
-	//标记收藏
-	public boolean markFavoritePic(Favorite fav);
-
-	//删除收藏的某一图片
-	public boolean deleteOnesFavorite(String picId);
-
-	public List<TPicItem> getFavoriteTpics(String userId, int pageNum);
-
-	public List<StoryDetails> getStroiesByUser(String userId, int pageNum);
-
-	public List<TPicItem> getTpicsByUser(String userId, int pageNum);
-
-	
-	
-	// TO BE CONTINUED...
+//	public GTStatics getCommunityGTs();
+//
+//	// 在夜市兑换礼物
+//	public Boolean exchangeGifts(String user, String giftIds);
+//
+//	// 赠送邻居礼物
+//	public Boolean giveGifts(String user, String giftIds);
+//
+//	// 在夜市贴条子
+//	public Boolean pasteNote(String user, String content);
+//
+//	// 看夜市条子
+//	public List<Note> getMarketNotes();
+//
+//	// 按图片关键字搜索
+//	public List<TPicDesc> searchTpicByTags(String tags);
+//
+//	// 查看行业动态
+//	public List<News> getIndustryNews();
+//
+//	// ******************** 后台管理用方法 **************************************
+//
+//	// 查看最近一段时间的贴图（自动刷新）
+//	public List<TPicDesc> getLatestTpics(String timeLength);
+//
+//	// 删除垃圾贴图
+//	public Boolean deleteTasetPic(String tpID);
+//
+//	// 删除灌水故事
+//	public Boolean deleteStoryOfPic(String storyId, String tpicID);
+//
+//	// 发布可选礼物信息
+//	public Boolean publishAvailableGift(Gift gift);
+//
+//	// ********************* 后台管理2.0功能 *************************************
+//
+//	// 发布社区事件
+//	public Boolean publishTpEvent(Event tpEvent);
+//
+//	// 发布行业动态
+//	public Boolean publishIndustryEvent(Event tpEvent);
+//
+//	// TO BE CONTINUED...
+//	
+//
+//	// 展示今日的可兑换礼物信息
+//	public List<Gift> getGiftsToday();
+//
+//	// 查看今日社区事件
+//	public List<Event> getCommunityEvents();
 
 }

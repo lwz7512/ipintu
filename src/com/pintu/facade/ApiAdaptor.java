@@ -18,6 +18,7 @@ import com.pintu.beans.Favorite;
 import com.pintu.beans.Message;
 import com.pintu.beans.Story;
 import com.pintu.beans.StoryDetails;
+import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TPicItem;
 import com.pintu.beans.TastePic;
@@ -109,7 +110,10 @@ public class ApiAdaptor {
 			//如果跨越了1天，就只给返回一天的数据
 			startTime = String.valueOf(Long.valueOf(endTime)-oneDayMiliSeconds);
 		}
-		return pintuService.getTpicsByTime(startTime, endTime);
+		
+		List<TPicDesc> list= pintuService.getTpicsByTime(startTime, endTime);
+		
+		return JSONArray.fromCollection(list).toString();
 	}
 	
 	/**
