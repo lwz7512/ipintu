@@ -58,9 +58,25 @@ public class CalculateTask extends TimerTask {
 			updateScoreUserList = this.calAndUpdateScore(userList, start, end);
 		}
 
-		// 财产直接根据可用积分计算结果查找并更新数据库的wealth表
+		StringBuffer userIds = new StringBuffer();
 		if (updateScoreUserList.size() > 0) {
-			calAndUpdateWealth(updateScoreUserList);
+			if (updateScoreUserList.size() > 0) {
+				for (int i = 0; i < updateScoreUserList.size(); i++) {
+					User user = updateScoreUserList.get(i);
+					if (userIds.length() > 0) {
+						userIds.append(",");
+					}
+					userIds.append("'");
+					userIds.append(user.getId());
+					userIds.append("'");
+				}
+			}
+		}
+		// 财产直接根据可用积分计算结果查找并更新数据库的wealth表
+		// 根据用户的积分更新来处理用户的等级
+		if(userIds.length() > 0){
+			upgradeUserLevel(userIds.toString());
+			calAndUpdateWealth(userIds.toString());
 		}
 	}
 
@@ -148,26 +164,54 @@ public class CalculateTask extends TimerTask {
 				log.info("更新数据库用户积分失败！");
 			}
 		}
-
 		return resultList;
 	}
+	
 
-	private void calAndUpdateWealth(List<User> list) {
-		StringBuffer userIds = new StringBuffer();
-		if (list.size() > 0) {
-			for (int i = 0; i < list.size(); i++) {
-				User user = list.get(i);
-				if (userIds.length() > 0) {
-					userIds.append(",");
-				}
-				userIds.append("'");
-				userIds.append(user.getId());
-				userIds.append("'");
+	//更新用户等级
+	private void upgradeUserLevel(String userIds) {
+		
+		Map<String, Integer> idScoreMap = this.dbAccess
+				.getUserScoreInfo(userIds.toString());
+		
+		List <Map<String,Integer>> idLevelList = new ArrayList<Map<String,Integer>>();
+		
+		if (idScoreMap.size() > 0) {
+			for (String userId : idScoreMap.keySet()) {
+				Integer score = idScoreMap.get(userId);
+				Map<String,Integer> idLevelMap = new HashMap<String,Integer>();
+				Integer level =  conversionToLevel(score);
+				idLevelMap.put(userId,level);
+				idLevelList.add(idLevelMap);
 			}
 		}
+		
+		int rows = this.dbAccess.updateUserLevel(idLevelList);
+		if(rows == idLevelList.size()){
+			log.info("更新用户等级成功!");
+		}else{
+			log.info("更新用户等级有误！");
+		}
+	}
+	
+	//FIXME TODO 这里需要完善，积分与等级的对应关系还没有定
+	private int conversionToLevel(Integer score){
+		int level = 0;
+		switch(score / 100){
+		case 1:
+			level = 1;
+			break;
+		default:
+			level = 0;
+		}
+		return level;
+	}
+	
+	private void calAndUpdateWealth(String userIds) {
+		
 		// 1、 获取活动用户的可用积分信息
 		Map<String, Integer> idScoreMap = this.dbAccess
-				.getUserExchangeInfo(userIds.toString());
+				.getUserExchangeInfo(userIds);
 
 		// 2、为用户计算财产，以可用积分换贝壳，
 		// 3、从wealth表中取出要计算的用户的财产信息
@@ -178,7 +222,7 @@ public class CalculateTask extends TimerTask {
 			for (String userId : idScoreMap.keySet()) {
 				Integer exchangeScore = idScoreMap.get(userId);
 				// 换算
-				Map<String, Integer> typeAmountMap = conversion(exchangeScore);
+				Map<String, Integer> typeAmountMap = conversionToWealth(exchangeScore);
 
 				// 换算结束后先更新用户的剩余可用积分字段，下面再做wealth表的操作
 				if (typeAmountMap.containsKey(Wealth.REMAIN_SCORE)) {
@@ -340,7 +384,7 @@ public class CalculateTask extends TimerTask {
 	}
 
 	// 将积分转化为财富的类型与数量map
-	private Map<String, Integer> conversion(int exchangeScore) {
+	private Map<String, Integer> conversionToWealth(int exchangeScore) {
 		// 这里包含四个是类型数量，第五个为剩余积分（先初始化，再在递归计算的过程中为其分别赋值）
 		Map<String, Integer> typeAmount = new HashMap<String, Integer>();
 		typeAmount.put(Wealth.ONE_YUAN, 0);

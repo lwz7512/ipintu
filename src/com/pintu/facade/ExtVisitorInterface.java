@@ -61,7 +61,14 @@ public interface ExtVisitorInterface {
 	public static final String GETSTORIESBYUSER  = "getStoriesByUser";
 
 
-
+	public static final String GETGIFTS ="getExchangeableGifts";
+	
+	public static final String GETEVENTS = "getCommunityEvents";
+	
+	public static final String ADDGIFT = "publishGift";
+	
+	public static final String ADDEVENT = "publishEvent";
+	
 	
 	//TODO, TO ADD MORE METHOD DEFINITION...
 

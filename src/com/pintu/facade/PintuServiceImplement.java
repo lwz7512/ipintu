@@ -19,7 +19,9 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pintu.beans.Comment;
+import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
+import com.pintu.beans.Gift;
 import com.pintu.beans.Message;
 import com.pintu.beans.Story;
 import com.pintu.beans.StoryDetails;
@@ -50,14 +52,13 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 	// 由Spring注入
 	private ImgDataProcessor imgProcessor;
-	
+
 	private Properties propertyConfigurer;
 
 	public void setPropertyConfigurer(Properties propertyConfigurer) {
 		this.propertyConfigurer = propertyConfigurer;
 	}
 
-	
 	private String imagePath;
 
 	// 设定输出的类型
@@ -91,13 +92,12 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	public CacheAccessInterface getCacheVisitor() {
 		return cacheVisitor;
 	}
-	
+
 	@Override
 	public List<TPicDesc> getInviteTpicsToday() {
 		// 这个功能暂时不在1.0中实现，界面中没有设计
 		return null;
 	}
-
 
 	@Override
 	public void createTastePic(TastePic pic, String user) {
@@ -152,8 +152,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	public void addVoteToStory(Vote vote) {
 		cacheVisitor.cacheVote(vote);
 	}
-
-
 
 	@Override
 	public List<TPicDesc> getCommunityTpics() {
@@ -218,11 +216,11 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		// 得到图片的所有者即userId,再到数据库里取出user的详细信息
 		User user = this.getUserInfo(userId);
 		int commentNum = cacheVisitor.getCommentsOfPic(tpId).size();
-		if(commentNum == 0){
+		if (commentNum == 0) {
 			commentNum = dbVisitor.getCommentsOfPic(tpId).size();
 		}
 		int storyNum = cacheVisitor.getStoriesOfPic(tpId).size();
-		if(storyNum == 0){
+		if (storyNum == 0) {
 			storyNum = dbVisitor.getStoriesOfPic(tpId).size();
 		}
 		details.setStoriesNum(storyNum);
@@ -255,50 +253,48 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			CacheAccessInterface.hotPicCacheIds.put(item.getId(), counter);
 		}
 
-		details.setCounter(CacheAccessInterface.hotPicCacheIds.get(item
-				.getId()));
+		details.setCounter(CacheAccessInterface.hotPicCacheIds.get(item.getId()));
 
 		return details;
 	}
 
-	
 	@Override
 	public List<StoryDetails> getStroyDetailsOfPic(String tpId) {
 		List<StoryDetails> storyDeatilList = new ArrayList<StoryDetails>();
 		List<Story> storyList = cacheVisitor.getStoriesOfPic(tpId);
-		if(storyList.size() == 0){
+		if (storyList.size() == 0) {
 			storyList = dbVisitor.getStoriesOfPic(tpId);
 		}
-		if(storyList != null && storyList.size() > 0){
-			for(int i=0;i<storyList.size();i++){
+		if (storyList != null && storyList.size() > 0) {
+			for (int i = 0; i < storyList.size(); i++) {
 				StoryDetails storyDetail = new StoryDetails();
 				String storyId = storyList.get(i).getId();
 				String userId = storyList.get(i).getOwner();
 				storyDetail.setId(storyId);
-				storyDetail.setFollow( storyList.get(i).getFollow());
+				storyDetail.setFollow(storyList.get(i).getFollow());
 				storyDetail.setOwner(userId);
 				storyDetail.setPublishTime(storyList.get(i).getPublishTime());
 				storyDetail.setContent(storyList.get(i).getContent());
 				storyDetail.setClassical(storyList.get(i).getClassical());
 				User user = this.getUserInfo(userId);
-				if(user != null){
+				if (user != null) {
 					storyDetail.setAuthor(user.getAccount());
 				}
 				List<Vote> voteList = this.getVotesOfStory(storyId);
-				if(voteList != null && voteList.size()>0){
-					for(int j=0;j<voteList.size();j++){
+				if (voteList != null && voteList.size() > 0) {
+					for (int j = 0; j < voteList.size(); j++) {
 						Vote vote = voteList.get(j);
-						if(vote.getType().equals(Vote.FLOWER_TYPE)){
+						if (vote.getType().equals(Vote.FLOWER_TYPE)) {
 							storyDetail.setFlower(vote.getAmount());
-						}else if(vote.getType().equals(Vote.EGG_TYPE)){
+						} else if (vote.getType().equals(Vote.EGG_TYPE)) {
 							storyDetail.setEgg(vote.getAmount());
-						}else if(vote.getType().equals(Vote.HEART_TYPE)){
+						} else if (vote.getType().equals(Vote.HEART_TYPE)) {
 							storyDetail.setHeart(vote.getAmount());
-						}else if(vote.getType().equals(Vote.STAR_TYPE)){
+						} else if (vote.getType().equals(Vote.STAR_TYPE)) {
 							storyDetail.setStar(vote.getAmount());
 						}
 					}
-				}else{
+				} else {
 					storyDetail.setFlower(0);
 					storyDetail.setEgg(0);
 					storyDetail.setHeart(0);
@@ -314,11 +310,11 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	public List<Comment> getCommentsOfPic(String tpId) {
 		List<Comment> resList = new ArrayList<Comment>();
 		List<Comment> cmtList = cacheVisitor.getCommentsOfPic(tpId);
-		if(cmtList.size() == 0){
+		if (cmtList.size() == 0) {
 			cmtList = dbVisitor.getCommentsOfPic(tpId);
 		}
-		if(cmtList.size()>0){
-			for(int i=0;i<cmtList.size();i++){
+		if (cmtList.size() > 0) {
+			for (int i = 0; i < cmtList.size(); i++) {
 				Comment comt = new Comment();
 				Comment cmt = cmtList.get(i);
 				String userId = cmt.getOwner();
@@ -344,18 +340,20 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	@Override
 	public User getUserInfo(String userId) {
 		User user = cacheVisitor.getUserById(userId);
-		if(user.getId() == null){
-			user = dbVisitor.getUserById(userId);;
+		if (user.getId() == null) {
+			user = dbVisitor.getUserById(userId);
 		}
+		// FIXME 添加发图数和发故事统计
+		user.setStoryNum(dbVisitor.getStoryCountByUser(userId));
+		user.setTpicNum(dbVisitor.getTPicCountByUser(userId));
 		return user;
 	}
-
 
 	@Override
 	public UserDetail getUserEstate(String userId) {
 		UserDetail uDetail = new UserDetail();
 		User user = cacheVisitor.getSpecificUser(userId);
-		if(user.getId() == null){
+		if (user.getId() == null) {
 			user = dbVisitor.getUserById(userId);
 		}
 		uDetail.setId(userId);
@@ -364,23 +362,26 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		uDetail.setLevel(user.getLevel());
 		uDetail.setScore(user.getScore());
 		uDetail.setExchangeScore(user.getExchangeScore());
-	
+		// FIXME 这里给用户资产添加发图数和发故事统计
+		uDetail.setStoryNum(dbVisitor.getStoryCountByUser(userId));
+		uDetail.setTpicNum(dbVisitor.getTPicCountByUser(userId));
+
 		List<Wealth> wealthList = this.getWealthDetails(userId);
-		if(wealthList.size() > 0){
-			for(int i=0;i<wealthList.size();i++){
+		if (wealthList.size() > 0) {
+			for (int i = 0; i < wealthList.size(); i++) {
 				Wealth wealth = wealthList.get(i);
-				if(wealth.getType().equals(Wealth.ONE_YUAN)){
+				if (wealth.getType().equals(Wealth.ONE_YUAN)) {
 					uDetail.setSeaShell(wealth.getAmount());
-				}else if(wealth.getType().equals(Wealth.TEN_YUAN)){
+				} else if (wealth.getType().equals(Wealth.TEN_YUAN)) {
 					uDetail.setCopperShell(wealth.getAmount());
-				}else if(wealth.getType().equals(Wealth.FIFTY_YUAN)){
+				} else if (wealth.getType().equals(Wealth.FIFTY_YUAN)) {
 					uDetail.setSilverShell(wealth.getAmount());
-				}else if(wealth.getType().equals(Wealth.HUNDRED_YUAN)){
+				} else if (wealth.getType().equals(Wealth.HUNDRED_YUAN)) {
 					uDetail.setGoldShell(wealth.getAmount());
 				}
 			}
 		}
-		
+
 		return uDetail;
 	}
 
@@ -399,7 +400,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			return false;
 		}
 	}
-	
+
 	@Override
 	public boolean changeMsgState(String msgId) {
 		int rows = dbVisitor.updateMsg(msgId);
@@ -409,7 +410,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			return false;
 		}
 	}
-
 
 	@Override
 	public void saveImagePathToProcessor(String filePath) {
@@ -537,17 +537,18 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	public List<TPicDetails> getHotPicture() {
 		List<TPicDetails> hotList = new ArrayList<TPicDetails>();
 		Map<String, Integer> map = CacheAccessInterface.hotPicCacheIds;
-		
-		if (map.size() == 0){ 
-			return hotList ;
+
+		if (map.size() == 0) {
+			return hotList;
 		}
-		
+
 		int[] counterArray = new int[map.size()];
-		int i = 0;		
-		
+		int i = 0;
+
 		for (Integer counter : map.values()) {
-            //点击量取配置文件中的设置值
-			if (counter > Integer.parseInt(propertyConfigurer.getProperty("hotPintuCounter"))) {
+			// 点击量取配置文件中的设置值
+			if (counter > Integer.parseInt(propertyConfigurer
+					.getProperty("hotPintuCounter"))) {
 				Array.set(counterArray, i, counter);
 				i++;
 			}
@@ -557,9 +558,10 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			sortArray(counterArray);
 		}
 
-		//根据排序后的结果从大到小，取得缓存中的tpId，并查出详情
+		// 根据排序后的结果从大到小，取得缓存中的tpId，并查出详情
 		for (int j = 0; j < counterArray.length; j++) {
-			if(counterArray[j]==0) break;
+			if (counterArray[j] == 0)
+				break;
 			for (String tpId : map.keySet()) {
 				if (map.get(tpId) == counterArray[j]) {
 					TPicDetails tpic = this.getTPicDetailsById(tpId);
@@ -596,24 +598,24 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				}
 			}
 
-			//后移排序码小于R[i]的记录
-            for( j = i-1;j >= left;j-- )
-            {
-                array[j+1] = array[j];
-            }
+			// 后移排序码小于R[i]的记录
+			for (j = i - 1; j >= left; j--) {
+				array[j + 1] = array[j];
+			}
 			// 插入
 			array[left] = num;
 		}
-
 
 	}
 
 	@Override
 	public List<StoryDetails> getClassicalPintu() {
 		List<StoryDetails> classicalList = new ArrayList<StoryDetails>();
-//		List<Story> list = dbVisitor.getClassicalPintu();
-		//取得前一天更新的经典story
-		List<Story> list = dbVisitor.getClassicalPintuByIds(MidnightTask.newClassicalStoryIds.toString());
+		// List<Story> list = dbVisitor.getClassicalPintu();
+		// 取得前一天更新的经典story
+		List<Story> list = dbVisitor
+				.getClassicalPintuByIds(MidnightTask.newClassicalStoryIds
+						.toString());
 		if (list.size() > 0) {
 			for (int i = 0; i < list.size(); i++) {
 				Story story = list.get(i);
@@ -633,10 +635,10 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		}
 		return classicalList;
 	}
-	
+
 	@Override
 	public boolean checkExistFavorite(String userId, String picId) {
-		int i = dbVisitor.checkExistFavorite(userId,picId);
+		int i = dbVisitor.checkExistFavorite(userId, picId);
 		if (i > 0) {
 			return true;
 		} else {
@@ -653,10 +655,10 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			return false;
 		}
 	}
-	
+
 	@Override
-	public boolean deleteOnesFavorite(String picId){
-		int i =dbVisitor.deleteFavorite(picId);
+	public boolean deleteOnesFavorite(String picId) {
+		int i = dbVisitor.deleteFavorite(picId);
 		if (i > 0) {
 			return true;
 		} else {
@@ -666,62 +668,100 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 	@Override
 	public List<TPicItem> getFavoriteTpics(String userId, int pageNum) {
-		int pageSize = Integer.parseInt(propertyConfigurer.getProperty("pageSize"));
-		List<TPicItem> picList = dbVisitor.getFavoriteTpics(userId,pageNum,pageSize);
+		int pageSize = Integer.parseInt(propertyConfigurer
+				.getProperty("pageSize"));
+		List<TPicItem> picList = dbVisitor.getFavoriteTpics(userId, pageNum,
+				pageSize);
 		return picList;
 	}
-	
+
 	@Override
 	public List<TPicItem> getTpicsByUser(String userId, int pageNum) {
-		int pageSize = Integer.parseInt(propertyConfigurer.getProperty("pageSize"));
-		List<TPicItem> list = dbVisitor.getTpicsByUser(userId,pageNum,pageSize);
+		int pageSize = Integer.parseInt(propertyConfigurer
+				.getProperty("pageSize"));
+		List<TPicItem> list = dbVisitor.getTpicsByUser(userId, pageNum,
+				pageSize);
 		return list;
 	}
 
 	@Override
 	public List<StoryDetails> getStroiesByUser(String userId, int pageNum) {
 		List<StoryDetails> resList = new ArrayList<StoryDetails>();
-		int pageSize = Integer.parseInt(propertyConfigurer.getProperty("pageSize"));
-		List<Story> sList = dbVisitor.getStoriesByUser(userId,pageNum,pageSize);
-		for(int i=0;i<sList.size();i++){
-				StoryDetails details = new StoryDetails();
-				String storyId = sList.get(i).getId();
-				details.setId(storyId);
-				details.setFollow( sList.get(i).getFollow());
-				details.setOwner(userId);
-				details.setPublishTime(sList.get(i).getPublishTime());
-				details.setContent(sList.get(i).getContent());
-				details.setClassical(sList.get(i).getClassical());
-				User user = this.getUserInfo(userId);
-				if(user != null){
-					details.setAuthor(user.getAccount());
-				}
-				List<Vote> voteList = this.getVotesOfStory(storyId);
-				if(voteList != null && voteList.size()>0){
-					for(int j=0;j<voteList.size();j++){
-						Vote vote = voteList.get(j);
-						if(vote.getType().equals(Vote.FLOWER_TYPE)){
-							details.setFlower(vote.getAmount());
-						}else if(vote.getType().equals(Vote.EGG_TYPE)){
-							details.setEgg(vote.getAmount());
-						}else if(vote.getType().equals(Vote.HEART_TYPE)){
-							details.setHeart(vote.getAmount());
-						}else if(vote.getType().equals(Vote.STAR_TYPE)){
-							details.setStar(vote.getAmount());
-						}
+		int pageSize = Integer.parseInt(propertyConfigurer
+				.getProperty("pageSize"));
+		List<Story> sList = dbVisitor.getStoriesByUser(userId, pageNum,
+				pageSize);
+		for (int i = 0; i < sList.size(); i++) {
+			StoryDetails details = new StoryDetails();
+			String storyId = sList.get(i).getId();
+			details.setId(storyId);
+			details.setFollow(sList.get(i).getFollow());
+			details.setOwner(userId);
+			details.setPublishTime(sList.get(i).getPublishTime());
+			details.setContent(sList.get(i).getContent());
+			details.setClassical(sList.get(i).getClassical());
+			User user = this.getUserInfo(userId);
+			if (user != null) {
+				details.setAuthor(user.getAccount());
+			}
+			List<Vote> voteList = this.getVotesOfStory(storyId);
+			if (voteList != null && voteList.size() > 0) {
+				for (int j = 0; j < voteList.size(); j++) {
+					Vote vote = voteList.get(j);
+					if (vote.getType().equals(Vote.FLOWER_TYPE)) {
+						details.setFlower(vote.getAmount());
+					} else if (vote.getType().equals(Vote.EGG_TYPE)) {
+						details.setEgg(vote.getAmount());
+					} else if (vote.getType().equals(Vote.HEART_TYPE)) {
+						details.setHeart(vote.getAmount());
+					} else if (vote.getType().equals(Vote.STAR_TYPE)) {
+						details.setStar(vote.getAmount());
 					}
-				}else{
-					details.setFlower(0);
-					details.setEgg(0);
-					details.setHeart(0);
-					details.setStar(0);
 				}
-				resList.add(details);
+			} else {
+				details.setFlower(0);
+				details.setEgg(0);
+				details.setHeart(0);
+				details.setStar(0);
+			}
+			resList.add(details);
 		}
-		
+
 		return resList;
 	}
 
+	@Override
+	public List<Gift> getExchangeableGifts() {
+		List<Gift> result = dbVisitor.getExchangeableGifts();
+		return result;
+	}
+
+	@Override
+	public List<Event> getCommunityEvents() {
+		String today = PintuUtils.getToday();
+		List<Event> result = dbVisitor.getCommunityEvents(today);
+		return result;
+	}
+
+	@Override
+	public Boolean publishExchangeableGift(Gift gift) {
+		int i = dbVisitor.insertGift(gift);
+		if (i > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public Boolean publishCommunityEvent(Event event) {
+		int i = dbVisitor.insertEvent(event);
+		if (i > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	// TODO, 实现其他接口方法
 

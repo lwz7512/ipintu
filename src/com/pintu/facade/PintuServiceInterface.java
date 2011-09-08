@@ -6,7 +6,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pintu.beans.Comment;
+import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
+import com.pintu.beans.Gift;
 import com.pintu.beans.Message;
 import com.pintu.beans.Story;
 import com.pintu.beans.StoryDetails;
@@ -164,6 +166,18 @@ public interface PintuServiceInterface {
 
 	// 查看自己的贴图列表
 	public List<TPicItem> getTpicsByUser(String userId, int pageNum);
+	
+	// 展示今日的可兑换礼物信息
+	public List<Gift> getExchangeableGifts();
+
+	// 查看今日社区事件
+	public List<Event> getCommunityEvents();
+	
+	// 发布可选礼物信息
+	public Boolean publishExchangeableGift(Gift gift);
+	
+	// 发布社区事件
+	public Boolean publishCommunityEvent(Event event);
 
 	// ANYMORE NECESSARY???
 
@@ -186,6 +200,9 @@ public interface PintuServiceInterface {
 //
 //	// 按图片关键字搜索
 //	public List<TPicDesc> searchTpicByTags(String tags);
+//	
+//	// 发布行业动态
+//	public Boolean publishIndustryEvent(Event tpEvent);
 //
 //	// 查看行业动态
 //	public List<News> getIndustryNews();
@@ -200,25 +217,9 @@ public interface PintuServiceInterface {
 //
 //	// 删除灌水故事
 //	public Boolean deleteStoryOfPic(String storyId, String tpicID);
-//
-//	// 发布可选礼物信息
-//	public Boolean publishAvailableGift(Gift gift);
-//
-//	// ********************* 后台管理2.0功能 *************************************
-//
-//	// 发布社区事件
-//	public Boolean publishTpEvent(Event tpEvent);
-//
-//	// 发布行业动态
-//	public Boolean publishIndustryEvent(Event tpEvent);
-//
-//	// TO BE CONTINUED...
-//	
-//
-//	// 展示今日的可兑换礼物信息
-//	public List<Gift> getGiftsToday();
-//
-//	// 查看今日社区事件
-//	public List<Event> getCommunityEvents();
+
+
+	// TO BE CONTINUED...
+
 
 }

@@ -4,7 +4,7 @@ package com.pintu.beans;
 public class UserDetail extends User{
 
 	private static final long serialVersionUID = 7140021440044372397L;
-
+	
 	//用户资产Map 
 	private int seaShell;
 	
@@ -45,5 +45,6 @@ public class UserDetail extends User{
 	public void setGoldShell(int goldShell) {
 		this.goldShell = goldShell;
 	}
+
 	
 }

@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.pintu.beans.Comment;
+import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
+import com.pintu.beans.Gift;
 import com.pintu.beans.Message;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicItem;
@@ -34,6 +36,8 @@ public interface DBAccessInterface {
 
 	//更新用户等级状态
 	public int updateUserLevel(String userId,int level);
+	
+	public int updateUserLevel(List<Map<String, Integer>> idLevelList);
 
 	//将计算好的财富值入库
 	public int  insertOnesWealth( List<Wealth> wList);
@@ -114,6 +118,7 @@ public interface DBAccessInterface {
 	
 	public Map<String, Integer> getUserExchangeInfo(String userIds);
 	
+	public Map<String, Integer> getUserScoreInfo(String userIds);
 	
 	public List<Wealth> getUsersWealthInfo(	String userId);
 	
@@ -132,5 +137,17 @@ public interface DBAccessInterface {
 	public List<TPicItem> getTpicsByUser(String userId, int pageNum, int pageSize);
 	
 	public List<TPicItem> getFavoriteTpics(String userId, int pageNum, int pageSize);
+	
+	public List<Gift> getExchangeableGifts();
+	
+	public List<Event> getCommunityEvents(String today);
+	
+	public int insertGift(Gift gift);
+	
+	public int insertEvent(Event event);
+	
+	public int getTPicCountByUser(String userId);
+	
+	public int getStoryCountByUser(String userId);
 
 }

@@ -29,7 +29,26 @@ public class User implements Serializable{
 	//最后动作时间（即最后更新时间）存毫秒数
 	private Long lastUpdateTime;
 	
+
+	private int storyNum;
+	private int tpicNum;
 	
+	public int getStoryNum() {
+		return storyNum;
+	}
+
+	public void setStoryNum(int storyNum) {
+		this.storyNum = storyNum;
+	}
+
+	public int getTpicNum() {
+		return tpicNum;
+	}
+
+	public void setTpicNum(int tpicNum) {
+		this.tpicNum = tpicNum;
+	}
+
 	public Long getLastUpdateTime() {
 		return lastUpdateTime;
 	}

@@ -50,7 +50,7 @@ public class DailySync implements Runnable{
 						.getProperty("syncInterval"));
 				String startTime= PintuUtils.formatLong(before);
 				
-				//同步当日零点开始数据库图片到缓存
+				//同步现在到syncInterval（7）天前的数据库图片到缓存
 				Map<String,String> picIdNameMap=syncPictureTask(startTime,endTime);
 				
 				List<String> picNameList = new ArrayList<String>();

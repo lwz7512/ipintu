@@ -14,7 +14,9 @@ import net.sf.json.JSONObject;
 import org.apache.commons.fileupload.FileItem;
 
 import com.pintu.beans.Comment;
+import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
+import com.pintu.beans.Gift;
 import com.pintu.beans.Message;
 import com.pintu.beans.Story;
 import com.pintu.beans.StoryDetails;
@@ -110,7 +112,6 @@ public class ApiAdaptor {
 			//如果跨越了1天，就只给返回一天的数据
 			startTime = String.valueOf(Long.valueOf(endTime)-oneDayMiliSeconds);
 		}
-		
 		List<TPicDesc> list= pintuService.getTpicsByTime(startTime, endTime);
 		
 		return JSONArray.fromCollection(list).toString();
@@ -351,6 +352,31 @@ public class ApiAdaptor {
 	public String getStoryiesByUser(String userId, int pageNum) {
 		List<StoryDetails> userStoryList = pintuService.getStroiesByUser(userId,pageNum);
 		return JSONArray.fromCollection(userStoryList).toString();
+	}
+
+	public String getExchangeableGifts() {
+		List<Gift> list = pintuService.getExchangeableGifts();
+		return JSONArray.fromCollection(list).toString();
+	}
+
+	public String getCommunityEvents() {
+		List<Event> list =pintuService.getCommunityEvents();
+		return JSONArray.fromCollection(list).toString();
+	}
+
+	public boolean publishCommunityEvent(String title, String detail,
+			String time) {
+		Event eve = new Event();
+		eve.setId(PintuUtils.generateUID());
+		eve.setTitle(title);
+		eve.setDetail(detail);
+		eve.setEventTime(time);
+		return  pintuService.publishCommunityEvent(eve);
+	}
+
+	public boolean publishExchangeableGift() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	

@@ -1,6 +1,5 @@
 package com.pintu.beans;
 
-import java.util.Date;
 
 /**
  * 社区事件，或者行业事件类
@@ -12,8 +11,18 @@ public class Event {
 	private String id;
 	private String title;
 	private String detail;
-	private Date eventTime;
+	private String eventTime;
 	
+	public String getEventTime() {
+		return eventTime;
+	}
+
+
+	public void setEventTime(String eventTime) {
+		this.eventTime = eventTime;
+	}
+
+
 	public String getId() {
 		return id;
 	}
@@ -44,14 +53,6 @@ public class Event {
 	}
 
 
-	public Date getEventTime() {
-		return eventTime;
-	}
-
-
-	public void setEventTime(Date eventTime) {
-		this.eventTime = eventTime;
-	}
 
 
 	public Event() {

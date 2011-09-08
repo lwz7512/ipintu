@@ -15,7 +15,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 
 import com.pintu.beans.Comment;
+import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
+import com.pintu.beans.Gift;
 import com.pintu.beans.Message;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicItem;
@@ -588,6 +590,28 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
+	public int updateUserLevel(final List<Map<String, Integer>> idLevelList) {
+		String sql = "update t_user  set u_level = ? where u_id =?";
+		int[] res = jdbcTemplate.batchUpdate(sql,
+				new BatchPreparedStatementSetter() {
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+						
+						Map<String,Integer> map = idLevelList.get(i);
+						for(String userId:map.keySet()){
+						ps.setInt(1, map.get(userId));
+						ps.setString(2, userId);
+						}
+					}
+
+					public int getBatchSize() {
+						return idLevelList.size();
+					}
+				});
+		return res.length;
+	}
+	
+	@Override
 	public int insertOnesWealth(final List<Wealth> wList) {
 		String sql = "INSERT INTO t_wealth (w_id,w_owner,w_type,w_amount,w_memo) values (?,?,?,?,?)";
 		int[] res = jdbcTemplate.batchUpdate(sql,
@@ -679,7 +703,19 @@ public class DBAccessImplement implements DBAccessInterface {
 		return resMap;
 	}
 
-
+	@Override
+	public Map<String, Integer> getUserScoreInfo(String userIds) {
+		String sql = "select u_id,u_score from t_user where u_id in ("+userIds+")";
+		Map<String,Integer> resMap = new HashMap<String,Integer>();
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if(rows!=null && rows.size()>0){
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				resMap.put(map.get("u_id").toString(),Integer.parseInt(map.get("u_exchangeScore").toString()));
+			}
+		}
+		return resMap;
+	}
 
 	@Override
 	public List<Wealth> getUsersWealthInfo(String userId) {
@@ -794,9 +830,9 @@ public class DBAccessImplement implements DBAccessInterface {
 
 	@Override
 	public int checkExistFavorite(String userId, String picId) {
-		String sql = "select count(*) from t_favorite where f_owner = '"+userId+"' and f_picture = '"+picId+"'";
-		int rows = jdbcTemplate.queryForInt(sql);
-		return rows;
+		String sql = "select count(f_id) from t_favorite where f_owner = '"+userId+"' and f_picture = '"+picId+"'";
+		int counts = jdbcTemplate.queryForInt(sql);
+		return counts;
 	}
 
 	@Override
@@ -883,50 +919,112 @@ public class DBAccessImplement implements DBAccessInterface {
 		return resList;
 	}
 
+	@Override
+	public List<Gift> getExchangeableGifts() {
+		List<Gift> resList = new ArrayList<Gift>();
+		String sql = "select * from t_gift where  g_amount > 0";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Gift gift = new Gift();
+				gift.setId(map.get("g_id").toString());
+				gift.setName(map.get("g_name").toString());
+				gift.setType(map.get("g_type").toString());
+				gift.setValue(Integer.parseInt(map.get("g_value").toString()));
+				gift.setAmount(Integer.parseInt(map.get("g_amount").toString()));
+				gift.setImgPath(map.get("g_imgPath").toString());
+				resList.add(gift);
+			}
+		}
+		return resList;
+	}
+
+	@Override
+	public List<Event> getCommunityEvents(String today) {
+		List<Event> resList = new ArrayList<Event>();
+		String sql = "select * from t_event where  e_eventTime >='"+today+"'";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Event eve = new Event();
+				eve.setId(map.get("e_id").toString());
+				eve.setDetail(map.get("e_detail").toString());
+				eve.setTitle(map.get("e_title").toString());
+				eve.setEventTime(map.get("e_eventTime").toString());
+				resList.add(eve);
+			}
+		}
+		return resList;
+	}
+
+	@Override
+	public int insertGift(final Gift gift) {
+		String sql = "INSERT INTO t_gift "
+				 + "(g_id,g_name,g_type,g_value,g_imgPath,g_amount,g_memo) "
+				 + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+		int[] res = jdbcTemplate.batchUpdate(sql,
+				new BatchPreparedStatementSetter() {
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+						ps.setString(1, gift.getId());
+						ps.setString(2, gift.getName());
+						ps.setString(3, gift.getType());
+						ps.setInt(4, gift.getValue());
+						ps.setString(5, gift.getImgPath());
+						ps.setInt(5, gift.getAmount());
+						ps.setString(6, "");
+					}
+
+					@Override
+					public int getBatchSize() {
+						return 1;
+					}
+
+				});
+		return res.length;
+	}
+
+	@Override
+	public int insertEvent(final Event event) {
+		String sql = "INSERT INTO t_event "
+				 + "(e_id,e_title,e_detail,e_eventTime,e_memo) "
+				 + "VALUES (?, ?, ?, ?, ?)";
+		int[] res = jdbcTemplate.batchUpdate(sql,
+				new BatchPreparedStatementSetter() {
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+						ps.setString(1, event.getId());
+						ps.setString(2, event.getTitle());
+						ps.setString(3, event.getDetail());
+						ps.setString(4, event.getEventTime());
+						ps.setString(5, "");
+					}
+
+					@Override
+					public int getBatchSize() {
+						return 1;
+					}
+
+				});
+		return res.length;
+	}
+
+	@Override
+	public int getTPicCountByUser(String userId) {
+		String sql = "select count(p_id) from t_picture where p_owner = '"+userId+"'";
+		int counts = jdbcTemplate.queryForInt(sql);
+		return counts;
+	}
+
+	@Override
+	public int getStoryCountByUser(String userId) {
+		String sql = "select count(s_id) from t_story where s_owner = '"+userId+"'";
+		int counts = jdbcTemplate.queryForInt(sql);
+		return counts;
+	}
 
 
-	// @Override
-	// public String insertOneEvent(Event event) {
-	// final String eid = UUID.randomUUID().toString().replace("-", "")
-	// .substring(16);
-	// System.out.println("自动生成的UUID：(截取了自动生成的UUID后面16位)" + eid);
-	// String sql = "INSERT INTO t_comment "
-	// + "(e_id,e_title,e_detail,e_eventTime,e_memo) "
-	// + "VALUES (?, ?, ?, ?, ?)";
-	// return eid;
-	// }
-	//
-	// @Override
-	// public String insertOneMessage(Message message) {
-	// final String mid = UUID.randomUUID().toString().replace("-", "")
-	// .substring(16);
-	// System.out.println("自动生成的UUID：(截取了自动生成的UUID后面16位)" + mid);
-	// String sql = "INSERT INTO t_message "
-	// + "(m_id,m_sender,m_receiver,m_content,m_wir,m_memo) ";
-	//
-	// return mid;
-	// }
-	//
-	// @Override
-	// public String insertOneFavorite(Favorite favorite) {
-	// final String fid = UUID.randomUUID().toString().replace("-", "")
-	// .substring(16);
-	// System.out.println("自动生成的UUID：(截取了自动生成的UUID后面16位)" + fid);
-	// String sql = "INSERT INTO t_favorite "
-	// + "(f_id,f_owner,f_picture,f_collectTime,f_memo) "
-	// + "VALUES (?, ?, ?, ?, ?)";
-	//
-	// return fid;
-	// }
-	// @Override
-	// public String insertOneGift(Gift gift) {
-	// final String gid = UUID.randomUUID().toString().replace("-", "")
-	// .substring(16);
-	// System.out.println("自动生成的UUID：(截取了自动生成的UUID后面16位)" + gid);
-	// String sql = "INSERT INTO t_gift "
-	// + "(g_id,g_name,g_type,g_value,g_imgPath,g_amount,g_memo) "
-	// + "VALUES (?, ?, ?, ?, ?, ?, ?)";
-	//
-	// return gid;
-	// }
 }

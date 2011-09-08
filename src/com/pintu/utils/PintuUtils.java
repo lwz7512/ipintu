@@ -2,6 +2,7 @@ package com.pintu.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
@@ -39,5 +40,18 @@ public class PintuUtils {
 			e.printStackTrace();
 		}
 		return date;
+	}
+
+	//当日零点
+	public static String getToday() {
+		Calendar c = Calendar.getInstance();
+	    int   year=c.get(Calendar.YEAR); 
+	    int   month=c.get(Calendar.MONTH); 
+	    int   day=c.get(Calendar.DATE); 
+		c.set(year, month, day, 0, 0, 0);
+		Date date = c.getTime();
+		//得到当天零点即 "2011-08-12 00:00:00"
+		String today = PintuUtils.formatDate(date);
+		return today;
 	}
 }

@@ -301,6 +301,41 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			String result = apiAdaptor.getStoryiesByUser(userId,pageNum);
 			System.out.println(result);
 			pw.println(result);
+		
+		} else if (action.equals(AppStarter.GETGIFTS)) {
+			//获取可换礼物
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String result = apiAdaptor.getExchangeableGifts();
+			System.out.println(result);
+			pw.println(result);
+			
+		} else if (action.equals(AppStarter.GETEVENTS)) {
+			//获取今日社区
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String result = apiAdaptor.getCommunityEvents();
+			System.out.println(result);
+			pw.println(result);
+			
+		} else if (action.equals(AppStarter.ADDEVENT)) {
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String title = req.getParameter("title");
+			String detail = req.getParameter("detail");
+			String time = req.getParameter("time");
+			boolean flag = apiAdaptor.publishCommunityEvent(title,detail,time);
+			if (flag) {
+				pw.println("发布社区事件成功！");
+			} else {
+				pw.println("发布社区事件失败！");
+			}
+			
+		} else if (action.equals(AppStarter.ADDGIFT)) {
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			//TODO 这里发布礼物时候要有图片上传
+			apiAdaptor.publishExchangeableGift();
 			
 		} else {
 
