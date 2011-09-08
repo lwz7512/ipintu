@@ -802,7 +802,7 @@ public class DBAccessImplement implements DBAccessInterface {
 	@Override
 	public List<String> getOnesFavorite(String userId) {
 		List<String> idList = new ArrayList<String>();
-		String sql = "select f_picture from t_favorite where f_owner ='"+userId+"' order by p_collectTime desc"; 
+		String sql = "select f_picture from t_favorite where f_owner ='"+userId+"' order by f_collectTime desc"; 
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
