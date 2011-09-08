@@ -6,13 +6,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pintu.beans.Comment;
-import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
-import com.pintu.beans.GTStatics;
-import com.pintu.beans.Gift;
 import com.pintu.beans.Message;
-import com.pintu.beans.News;
-import com.pintu.beans.Note;
 import com.pintu.beans.Story;
 import com.pintu.beans.StoryDetails;
 import com.pintu.beans.TPicDesc;
