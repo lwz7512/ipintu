@@ -290,7 +290,7 @@ public class ApiAdaptor {
 
 	public String getUserEstate(String userId) {
 		UserDetail userDetail = pintuService.getUserEstate(userId);
-		return JSONArray.fromObject(userDetail).toString();
+		return JSONObject.fromBean(userDetail).toString();
 	}
 
 	
