@@ -18,7 +18,7 @@ import com.pintu.beans.Wealth;
 public interface DBAccessInterface {
 
 	//新用户注册，交用户信息入库
-	public String insertOneUser(User user);
+	public int insertOneUser(User user);
 	//更新用户积分包括可用积分
 	public int updateUserScore(List<User> userList);
 	

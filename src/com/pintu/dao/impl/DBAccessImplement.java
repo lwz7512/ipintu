@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.sql.DataSource;
 
@@ -42,28 +41,24 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public String insertOneUser(User user) {
-		final String uid = UUID.randomUUID().toString().replace("-", "")
-				.substring(16);
-		System.out.println("自动生成的UUID：(截取了自动生成的UUID后面16位)" + uid);
+	public int insertOneUser(final User user) {
 		String sql = "INSERT INTO t_user "
-				+ "(u_id, u_account, u_pwd, u_avatar, u_role, u_level, u_score, u_exchangeScore,u_memo) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)";
+				+ "(u_id, u_account, u_pwd, u_avatar, u_role, u_level, u_score, u_exchangeScore,u_registerTime,u_memo) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ? ,? ,?)";
 
-		final User usr = user;
-
-		jdbcTemplate.update(sql, new PreparedStatementSetter() {
+		int res =jdbcTemplate.update(sql, new PreparedStatementSetter() {
 			public void setValues(PreparedStatement ps) {
 				try {
-					ps.setString(1, uid);
-					ps.setString(2, usr.getAccount());
-					ps.setString(3, usr.getPwd());
-					ps.setString(4, usr.getAvatar());
-					ps.setString(5, usr.getRole());
-					ps.setInt(6, usr.getLevel());
-					ps.setInt(7, usr.getScore());
-					ps.setInt(8, usr.getExchangeScore());
-					ps.setString(9, "");
+					ps.setString(1, user.getId());
+					ps.setString(2, user.getAccount());
+					ps.setString(3, user.getPwd());
+					ps.setString(4, user.getAvatar());
+					ps.setString(5, user.getRole());
+					ps.setInt(6, user.getLevel());
+					ps.setInt(7, user.getScore());
+					ps.setInt(8, user.getExchangeScore());
+					ps.setString(9, user.getRegisterTime());
+					ps.setString(10, "");
 
 				} catch (SQLException e) {
 					e.printStackTrace();
@@ -72,7 +67,7 @@ public class DBAccessImplement implements DBAccessInterface {
 			}
 		});
 
-		return uid;
+		return res;
 	}
 	
 	@Override
@@ -343,24 +338,23 @@ public class DBAccessImplement implements DBAccessInterface {
 				 + "(v_id,v_follow,v_type,v_amount,v_memo) "
 				 + "VALUES (?, ?, ?, ?, ?)";
 
-		int[] res = jdbcTemplate.batchUpdate(sql,
-				new BatchPreparedStatementSetter() {
-					public void setValues(PreparedStatement ps, int i)
-							throws SQLException {
-						ps.setString(1, vote.getId());
-						ps.setString(2, vote.getFollow());
-						ps.setString(3, vote.getType());
-						ps.setInt(4, vote.getAmount());
-						ps.setString(5, "");
-					}
+		int res =jdbcTemplate.update(sql, new PreparedStatementSetter() {
+			public void setValues(PreparedStatement ps) {
+				try {
+					ps.setString(1, vote.getId());
+					ps.setString(2, vote.getFollow());
+					ps.setString(3, vote.getType());
+					ps.setInt(4, vote.getAmount());
+					ps.setString(5, "");
 
-					@Override
-					public int getBatchSize() {
-						return 1;
-					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 
-				});
-		return res.length;
+			}
+		});
+
+		return res;
 	}
 	
 	
@@ -455,26 +449,25 @@ public class DBAccessImplement implements DBAccessInterface {
 				 + "(m_id,m_sender,m_receiver,m_content,m_writeTime,m_read,m_memo) "
 				 + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-		int[] res = jdbcTemplate.batchUpdate(sql,
-				new BatchPreparedStatementSetter() {
-					public void setValues(PreparedStatement ps, int i)
-							throws SQLException {
-						ps.setString(1, msg.getId());
-						ps.setString(2, msg.getSender());
-						ps.setString(3, msg.getReceiver());
-						ps.setString(4, msg.getContent());
-						ps.setString(5, msg.getWriteTime());
-						ps.setInt(6, msg.getRead());
-						ps.setString(7, "");
-					}
+		int res =jdbcTemplate.update(sql, new PreparedStatementSetter() {
+			public void setValues(PreparedStatement ps) {
+				try {
+					ps.setString(1, msg.getId());
+					ps.setString(2, msg.getSender());
+					ps.setString(3, msg.getReceiver());
+					ps.setString(4, msg.getContent());
+					ps.setString(5, msg.getWriteTime());
+					ps.setInt(6, msg.getRead());
+					ps.setString(7, "");
 
-					public int getBatchSize() {
-						return 1;
-					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 
-				});
-				
-			return res.length;
+			}
+		});
+		return res;
+
 	}
 
 	@Override
@@ -801,24 +794,23 @@ public class DBAccessImplement implements DBAccessInterface {
 				 + "(f_id,f_owner,f_picture,f_collectTime,f_memo) "
 				 + "VALUES (?, ?, ?, ?, ?)";
 
-		int[] res = jdbcTemplate.batchUpdate(sql,
-				new BatchPreparedStatementSetter() {
-					public void setValues(PreparedStatement ps, int i)
-							throws SQLException {
-						ps.setString(1, fav.getId());
-						ps.setString(2, fav.getOwner());
-						ps.setString(3, fav.getPicture());
-						ps.setString(4, fav.getCollectTime());
-						ps.setString(5, "");
-					}
+		int res =jdbcTemplate.update(sql, new PreparedStatementSetter() {
+			public void setValues(PreparedStatement ps) {
+				try {
+					ps.setString(1, fav.getId());
+					ps.setString(2, fav.getOwner());
+					ps.setString(3, fav.getPicture());
+					ps.setString(4, fav.getCollectTime());
+					ps.setString(5, "");
 
-					@Override
-					public int getBatchSize() {
-						return 1;
-					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 
-				});
-		return res.length;
+			}
+		});
+
+		return res;
 	}
 
 	@Override
@@ -965,26 +957,25 @@ public class DBAccessImplement implements DBAccessInterface {
 				 + "(g_id,g_name,g_type,g_value,g_imgPath,g_amount,g_memo) "
 				 + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-		int[] res = jdbcTemplate.batchUpdate(sql,
-				new BatchPreparedStatementSetter() {
-					public void setValues(PreparedStatement ps, int i)
-							throws SQLException {
-						ps.setString(1, gift.getId());
-						ps.setString(2, gift.getName());
-						ps.setString(3, gift.getType());
-						ps.setInt(4, gift.getValue());
-						ps.setString(5, gift.getImgPath());
-						ps.setInt(5, gift.getAmount());
-						ps.setString(6, "");
-					}
+		int res =jdbcTemplate.update(sql, new PreparedStatementSetter() {
+			public void setValues(PreparedStatement ps) {
+				try {
+					ps.setString(1, gift.getId());
+					ps.setString(2, gift.getName());
+					ps.setString(3, gift.getType());
+					ps.setInt(4, gift.getValue());
+					ps.setString(5, gift.getImgPath());
+					ps.setInt(5, gift.getAmount());
+					ps.setString(6, "");
 
-					@Override
-					public int getBatchSize() {
-						return 1;
-					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 
-				});
-		return res.length;
+			}
+		});
+
+		return res;
 	}
 
 	@Override
@@ -992,24 +983,23 @@ public class DBAccessImplement implements DBAccessInterface {
 		String sql = "INSERT INTO t_event "
 				 + "(e_id,e_title,e_detail,e_eventTime,e_memo) "
 				 + "VALUES (?, ?, ?, ?, ?)";
-		int[] res = jdbcTemplate.batchUpdate(sql,
-				new BatchPreparedStatementSetter() {
-					public void setValues(PreparedStatement ps, int i)
-							throws SQLException {
-						ps.setString(1, event.getId());
-						ps.setString(2, event.getTitle());
-						ps.setString(3, event.getDetail());
-						ps.setString(4, event.getEventTime());
-						ps.setString(5, "");
-					}
+		int res =jdbcTemplate.update(sql, new PreparedStatementSetter() {
+			public void setValues(PreparedStatement ps) {
+				try {
+					ps.setString(1, event.getId());
+					ps.setString(2, event.getTitle());
+					ps.setString(3, event.getDetail());
+					ps.setString(4, event.getEventTime());
+					ps.setString(5, "");
 
-					@Override
-					public int getBatchSize() {
-						return 1;
-					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 
-				});
-		return res.length;
+			}
+		});
+
+		return res;
 	}
 
 	@Override

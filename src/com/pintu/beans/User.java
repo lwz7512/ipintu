@@ -25,6 +25,8 @@ public class User implements Serializable{
 	private int score;
 	//可兑换积分
 	private int exchangeScore;
+	//注册时间
+	private String registerTime;
 	
 	//最后动作时间（即最后更新时间）存毫秒数
 	private Long lastUpdateTime;
@@ -156,6 +158,15 @@ public class User implements Serializable{
 
 	public void setPassed(String passed) {
 		this.passed = passed;
+	}
+
+
+	public String getRegisterTime() {
+		return registerTime;
+	}
+
+	public void setRegisterTime(String registerTime) {
+		this.registerTime = registerTime;
 	}
 
 

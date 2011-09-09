@@ -130,7 +130,7 @@ public class CalculateTask extends TimerTask {
 					user.setScore(picMap.get(userId)
 							* Integer.parseInt(propertyConfigurer
 									.getProperty("uploadPictureScore"))
-							+ picMap.get(userId)
+							+ storyMap.get(userId)
 							* Integer.parseInt(propertyConfigurer
 									.getProperty("tellStoryScore")));
 
@@ -146,7 +146,7 @@ public class CalculateTask extends TimerTask {
 					resultList.add(user);
 					// 只有写故事操作
 				} else if (storyMap.containsKey(userId)) {
-					user.setScore(picMap.get(userId)
+					user.setScore(storyMap.get(userId)
 							* Integer.parseInt(propertyConfigurer
 									.getProperty("tellStoryScore")));
 					user.setExchangeScore(user.getScore());
@@ -194,17 +194,62 @@ public class CalculateTask extends TimerTask {
 		}
 	}
 	
-	//FIXME TODO 这里需要完善，积分与等级的对应关系还没有定
+	//FIXME 这里需要完善，积分与等级的对应关系暂定
 	private int conversionToLevel(Integer score){
-		int level = 0;
-		switch(score / 100){
-		case 1:
+		int level = 0;    
+		int score1 = Integer.parseInt(propertyConfigurer
+				.getProperty("Lv1"));
+		int score2 = Integer.parseInt(propertyConfigurer
+				.getProperty("Lv2"));
+		int score3 = Integer.parseInt(propertyConfigurer
+				.getProperty("Lv3"));
+		int score4 = Integer.parseInt(propertyConfigurer
+				.getProperty("Lv4"));
+		int score5 = Integer.parseInt(propertyConfigurer
+				.getProperty("Lv5"));
+		int score6 = Integer.parseInt(propertyConfigurer
+				.getProperty("Lv6"));
+		int score7 = Integer.parseInt(propertyConfigurer
+				.getProperty("Lv7"));
+		int score8 = Integer.parseInt(propertyConfigurer
+				.getProperty("Lv8"));
+		int score9 = Integer.parseInt(propertyConfigurer
+				.getProperty("Lv9"));
+		int score10= Integer.parseInt(propertyConfigurer
+				.getProperty("Lv10"));
+		int score11= Integer.parseInt(propertyConfigurer
+				.getProperty("Lv11"));
+		int score12= Integer.parseInt(propertyConfigurer
+				.getProperty("Lv12"));
+		
+		if(score <= score1){
 			level = 1;
-			break;
-		default:
-			level = 0;
+		}else if(score > score1 && score <= score2){
+			level =2;
+		}else if(score > score2 && score <= score3){
+			level =3;
+		}else if(score > score3 && score <= score4){
+			level =4;
+		}else if(score > score4 && score <= score5){
+			level =5;
+		}else if(score > score5 && score <= score6){
+			level =6;
+		}else if(score > score6 && score <= score7){
+			level =7;
+		}else if(score > score7 && score <= score8){
+			level =8;
+		}else if(score > score8 && score <= score9){
+			level =9;
+		}else if(score > score9 && score <= score10){
+			level =10;
+		}else if(score > score10 && score <= score11){
+			level =11;
+		}else if(score > score11 && score <= score12){
+			level =12;
+		}else{
+			level = 12;
 		}
-		return level;
+		return level;	
 	}
 	
 	private void calAndUpdateWealth(String userIds) {

@@ -424,9 +424,9 @@ public class PintuCache {
 
 	public List<Object> getCachedVote(Map<String, LinkedList<String>> map) {
 		List<Object> list = new ArrayList<Object>();
-		synchronized (pictureCache) {
+		synchronized (voteCache) {
 			for (String storyId : map.keySet()) {
-				Element savedStory = pictureCache.get(storyId);
+				Element savedStory = voteCache.get(storyId);
 				if (savedStory != null) {
 					@SuppressWarnings("unchecked")
 					HashMap<String, TPicItem> voteMap = (HashMap<String, TPicItem>) savedStory

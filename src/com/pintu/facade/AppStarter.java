@@ -176,8 +176,9 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			String follow = req.getParameter("follow");
 			String type = req.getParameter("type");
 			String amount = req.getParameter("amount");
-
-			apiAdaptor.addVoteToStory(follow, type, amount);
+			String voter = req.getParameter("owner");
+			String receiver = req.getParameter("receiver");
+			apiAdaptor.addVoteToStory(follow, type, amount,voter,receiver);
 
 		} else if (action.equals(AppStarter.GETUSERDETAIL)) {
 			// 根据用户id得到该用户详情

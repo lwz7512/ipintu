@@ -8,11 +8,13 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.pintu.beans.Comment;
+import com.pintu.beans.Message;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicItem;
 import com.pintu.beans.Vote;
 import com.pintu.dao.CacheAccessInterface;
 import com.pintu.dao.DBAccessInterface;
+import com.pintu.utils.PintuUtils;
 
 public class SyncExecute implements Runnable {
 
@@ -236,11 +238,14 @@ public class SyncExecute implements Runnable {
 			}
 
 			if (rows == rightObjList.size()) {
+				//FIXME 在投票入库成功时根据投票者的投票发一条消息给所投品图的故事作者
+				addVoteMsg(rightObjList);
 				// 成功入库后，全部删除已入库的对象id
 				for (int j = 0; j < rightObjList.size(); j++) {
 					Vote vote = (Vote) rightObjList.get(j);
 					cachedMap.get(vote.getFollow()).remove(vote.getId());
 					log.info("即将删除已入库投票为：" + vote.getId());
+					
 				}
 			} else {
 				log.warn("投票入库失败");
@@ -250,6 +255,29 @@ public class SyncExecute implements Runnable {
 			// log.info("当前没有需要入库的的投票！");
 		}
 
+	}
+	
+	//投票附加消息
+	private void addVoteMsg(List<Object> rightObjList){
+		if(rightObjList.size() > 0){
+			for(int i=0;i<rightObjList.size();i++){
+				Vote vote = (Vote) rightObjList.get(i);
+				Message msg = new Message();
+				msg.setId(PintuUtils.generateUID());
+				msg.setSender(vote.getVoter());
+				msg.setReceiver(vote.getReceiver());
+				msg.setContent("I like your stroy and support you!");
+				msg.setWriteTime(PintuUtils.getFormatNowTime());
+				msg.setRead(0);
+				
+				int res = dbVisitor.insertMessage(msg);
+				if(res == 1){
+					log.info("投票附加消息入库成功");
+				}else{
+					log.info("投票附加消息入库失败");
+				}
+			}
+		}
 	}
 
 	private List<Object> getVaildVote(List<Object> objList) {

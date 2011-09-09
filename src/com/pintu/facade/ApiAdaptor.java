@@ -210,21 +210,25 @@ public class ApiAdaptor {
 	}
 
 	
-	private Vote createVote(String follow,String type,String amount){
+	private Vote createVote(String follow,String type,String amount,String voter, String receiver){
 		Vote vote = new Vote();
 		vote.setId(PintuUtils.generateUID());
 		vote.setFollow(follow);
 		vote.setType(type);
 		vote.setAmount(Integer.parseInt(amount));
+		vote.setVoter(voter);
+		vote.setReceiver(receiver);
 		return vote;
 	}
 	
 	/**
 	 * 为品图故事投票
+	 * @param voter 
+	 * @param receiver 
 	 * @param vote
 	 */
-	public void addVoteToStory(String follow,String type,String amount) {
-		Vote vote = this.createVote(follow, type, amount);
+	public void addVoteToStory(String follow,String type,String amount, String voter, String receiver) {
+		Vote vote = this.createVote(follow, type, amount,voter,receiver);
 		pintuService.addVoteToStory(vote);
 	}
 	

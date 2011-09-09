@@ -87,13 +87,13 @@ public class CacheAccessImplement implements CacheAccessInterface {
 			String storyId = vote.getFollow();
 			String voteId = vote.getId();
 			pintuCache.cacheVote(vote.getFollow(),vote.getId(), vote);
-			LinkedList<String> voteIdList = toSavedCacheIds.get(STORY_TYPE).get(storyId);
+			LinkedList<String> voteIdList = toSavedCacheIds.get(VOTE_TYPE).get(storyId);
 			if(voteIdList == null){
 				LinkedList<String> idList = new LinkedList<String>();
 				idList.add(voteId);
-				toSavedCacheIds.get(STORY_TYPE).put(storyId, idList);
+				toSavedCacheIds.get(VOTE_TYPE).put(storyId, idList);
 			}else{
-				toSavedCacheIds.get(STORY_TYPE).get(storyId).add(voteId);
+				toSavedCacheIds.get(VOTE_TYPE).get(storyId).add(voteId);
 			}
 	}
 
