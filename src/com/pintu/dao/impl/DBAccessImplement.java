@@ -704,7 +704,7 @@ public class DBAccessImplement implements DBAccessInterface {
 		if(rows!=null && rows.size()>0){
 			for (int i = 0; i < rows.size(); i++) {
 				Map<String, Object> map = (Map<String, Object>) rows.get(i);
-				resMap.put(map.get("u_id").toString(),Integer.parseInt(map.get("u_exchangeScore").toString()));
+				resMap.put(map.get("u_id").toString(),Integer.parseInt(map.get("u_score").toString()));
 			}
 		}
 		return resMap;
