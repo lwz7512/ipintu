@@ -391,5 +391,10 @@ public class ApiAdaptor {
 		return JSONArray.fromCollection(list).toString();
 	}
 
+	public String getExistUser(String account, String pwd) {
+		String userId = pintuService.getExistUser(account,pwd);
+		return userId;
+	}
+
 	
 } //end of class

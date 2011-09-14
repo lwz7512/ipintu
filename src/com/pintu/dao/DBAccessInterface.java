@@ -149,5 +149,7 @@ public interface DBAccessInterface {
 	public int getTPicCountByUser(String userId);
 	
 	public int getStoryCountByUser(String userId);
+	
+	public String getExistUser(String account, String md5Pwd);
 
 }

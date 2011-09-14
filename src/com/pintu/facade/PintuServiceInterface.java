@@ -182,6 +182,9 @@ public interface PintuServiceInterface {
 	// 获取最近一段时间的贴图
 	public List<TPicDesc> getLatestPic();
 
+	//验证登录的用户是否存在
+	public String getExistUser(String account, String pwd);
+
 	// ANYMORE NECESSARY???
 
 	// ************************ 以下为客户端2.0版本功能 *********************************

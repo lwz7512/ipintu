@@ -38,6 +38,7 @@ import com.pintu.dao.CacheAccessInterface;
 import com.pintu.dao.DBAccessInterface;
 import com.pintu.jobs.MidnightTask;
 import com.pintu.tools.ImgDataProcessor;
+import com.pintu.utils.Encrypt;
 import com.pintu.utils.PintuUtils;
 import com.sun.image.codec.jpeg.ImageFormatException;
 import com.sun.image.codec.jpeg.JPEGCodec;
@@ -803,6 +804,13 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		}
 
 		return resultList;
+	}
+
+	@Override
+	public String getExistUser(String account, String pwd) {
+		String md5Pwd = Encrypt.encrypt(pwd);
+		String userId = dbVisitor.getExistUser(account, md5Pwd);
+		return userId;
 	}
 
 	// TODO, 实现其他接口方法

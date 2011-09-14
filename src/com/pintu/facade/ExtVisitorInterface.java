@@ -9,6 +9,8 @@ package com.pintu.facade;
  *
  */
 public interface ExtVisitorInterface {
+	
+	public static final String LOGON ="logon";
 
 	public static final String UPLOADPICTURE = "upload";
 	

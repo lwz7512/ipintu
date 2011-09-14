@@ -1020,5 +1020,19 @@ public class DBAccessImplement implements DBAccessInterface {
 		return counts;
 	}
 
+	@Override
+	public String getExistUser(String account, String pwd) {
+		String sql = "select u_id from t_user where u_account = '"+account+"' and u_pwd = '"+pwd+"'"; 
+		String id = null;
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+			    id = map.get("u_id").toString();
+			}
+		}
+		return id;
+	}
+
 
 }

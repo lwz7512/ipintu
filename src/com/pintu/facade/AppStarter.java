@@ -103,6 +103,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			// 授理上传图片的请求
 			processMultiPart(req, pw);
 			pw.close();
+			
 		} else if (action.equals(AppStarter.GETGALLERYBYTIME)) {
 			// 处理取长廊缩略图信息的请求
 			res.setContentType("text/plain;charset=UTF-8");
@@ -345,6 +346,15 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			System.out.println(result);
 			pw.println(result);
 			
+		} else if (action.equals(AppStarter.LOGON)) {	
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String account = req.getParameter("account");
+			String pwd = req.getParameter("password");
+			//登录成功后，返回一个用户的id，否则返回null
+			String result = apiAdaptor.getExistUser(account,pwd);
+			System.out.println(result);
+			pw.println(result);
 		} else {
 
 		}
