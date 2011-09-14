@@ -492,17 +492,17 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public int updateMsg(final String msgId) {
+	public int updateMsg(final List<String> msgIdList) {
 		String sql = "update t_message  set m_read = 1 where m_id =?";
 		int[] res = jdbcTemplate.batchUpdate(sql,
 				new BatchPreparedStatementSetter() {
 					public void setValues(PreparedStatement ps, int i)
 							throws SQLException {
-						ps.setString(1, msgId);
+						ps.setString(1, msgIdList.get(i));
 					}
 
 					public int getBatchSize() {
-						return 1;
+						return msgIdList.size();
 					}
 				});
 		return res.length;
@@ -690,7 +690,9 @@ public class DBAccessImplement implements DBAccessInterface {
 		if(rows!=null && rows.size()>0){
 			for (int i = 0; i < rows.size(); i++) {
 				Map<String, Object> map = (Map<String, Object>) rows.get(i);
-				resMap.put(map.get("u_id").toString(),Integer.parseInt(map.get("u_exchangeScore").toString()));
+				String id = map.get("u_id").toString();
+				int exchangeScore = Integer.parseInt(map.get("u_exchangeScore").toString());
+				resMap.put(id,exchangeScore);
 			}
 		}
 		return resMap;
@@ -704,7 +706,9 @@ public class DBAccessImplement implements DBAccessInterface {
 		if(rows!=null && rows.size()>0){
 			for (int i = 0; i < rows.size(); i++) {
 				Map<String, Object> map = (Map<String, Object>) rows.get(i);
-				resMap.put(map.get("u_id").toString(),Integer.parseInt(map.get("u_score").toString()));
+				String id = map.get("u_id").toString();
+				int score = Integer.parseInt(map.get("u_score").toString());
+				resMap.put(id,score);
 			}
 		}
 		return resMap;

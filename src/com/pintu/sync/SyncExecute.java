@@ -266,7 +266,12 @@ public class SyncExecute implements Runnable {
 				msg.setId(PintuUtils.generateUID());
 				msg.setSender(vote.getVoter());
 				msg.setReceiver(vote.getReceiver());
-				msg.setContent("I like your stroy and support you!");
+				String type = vote.getType();
+				if(type.equals(Vote.EGG_TYPE)){
+					msg.setContent("so bad story.");
+				}else{
+					msg.setContent("I like your story and I am on your side.");
+				}
 				msg.setWriteTime(PintuUtils.getFormatNowTime());
 				msg.setRead(0);
 				

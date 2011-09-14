@@ -3,6 +3,7 @@
  */
 package com.pintu.facade;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -70,14 +71,11 @@ public class ApiAdaptor {
 				if(item.getFieldName().equals("user")){
 					pic.setUser(item.getString());
 				}
-				//FIXME 这里注意，应用手机时需要用到 UTF8Formater
 				if(item.getFieldName().equals("description")){
-//					pic.setDescription(item.getString());
 				    pic.setDescription(UTF8Formater.changeToWord(item.getString()));
 					System.out.println("description:"+pic.getDescription());
 				}
 				if(item.getFieldName().equals("tags")){
-//					pic.setTags(item.getString());
 					pic.setTags(UTF8Formater.changeToWord(item.getString()));
 					System.out.println("tags:"+pic.getTags());
 				}
@@ -279,8 +277,13 @@ public class ApiAdaptor {
 	 * 改变消息状态
 	 * @param read
 	 */
-	public boolean changeMsgState(String msgId) {
-		return pintuService.changeMsgState(msgId);
+	public boolean changeMsgState(String msgIds) {
+		List<String> msgIdList = new ArrayList<String>();
+		String[] idArray = msgIds.split(",");
+		for(int i = 0;i < idArray.length;i++){
+			msgIdList.add(idArray[i]);
+		}
+		return pintuService.changeMsgState(msgIdList);
 	}
 
 	/**
@@ -381,6 +384,11 @@ public class ApiAdaptor {
 	public boolean publishExchangeableGift() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public String getLatestPic() {
+		List<TPicDesc> list= pintuService.getLatestPic();
+		return JSONArray.fromCollection(list).toString();
 	}
 
 	

@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -165,7 +166,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	 * @param longTime
 	 * @return
 	 */
-	public int getMinutes(String longTime) {
+	private int getMinutes(String longTime) {
 		Long lTime = Long.parseLong(longTime);
 		long minlong = lTime / (60 * 1000);
 		int min = Math.round(minlong);
@@ -387,8 +388,27 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 	@Override
 	public List<Message> getUserMessages(String userId) {
+		List<Message> resList = new ArrayList<Message>();
 		List<Message> msgList = dbVisitor.getUserMessages(userId);
-		return msgList;
+		for(int i = 0;i<msgList.size();i ++){
+			Message msg = msgList.get(i);
+			//为消息的接收者添加名字和肖像
+			String receiverId = msg.getReceiver();
+			User receiveUser = this.getUserInfo(receiverId);
+			String receiverName = receiveUser.getAccount();
+			String receiverAvatar = receiveUser.getAvatar();
+			msg.setReceiverName(receiverName);
+			msg.setReceiverAvatar(receiverAvatar);
+			//为消息发送者添加名字和肖像
+			String senderId = msg.getSender();
+			User sendUser = this.getUserInfo(senderId);
+			String senderName = sendUser.getAccount();
+			String senderAvatar = sendUser.getAvatar();
+			msg.setSenderName(senderName);
+			msg.setSenderAvatar(senderAvatar);
+			resList.add(msg);
+		}
+		return resList;
 	}
 
 	@Override
@@ -402,8 +422,8 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public boolean changeMsgState(String msgId) {
-		int rows = dbVisitor.updateMsg(msgId);
+	public boolean changeMsgState(List<String> msgIdList) {
+		int rows = dbVisitor.updateMsg(msgIdList);
 		if (rows > 0) {
 			return true;
 		} else {
@@ -761,6 +781,28 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		} else {
 			return false;
 		}
+	}
+
+	@Override
+	public List<TPicDesc> getLatestPic() {
+		List<TPicDesc> resultList = new ArrayList<TPicDesc>();
+		List<TPicDesc> thumbnailList = new ArrayList<TPicDesc>();
+		//获取最近一小时内发的品图
+		int nowMinute = getMinutes(String.valueOf(new Date().getTime()));
+		int hourBefore = nowMinute - Integer.parseInt(propertyConfigurer.getProperty("latestTimeSpan"));
+		for (int i = nowMinute; i > hourBefore ; i--) {
+			List<TPicDesc> cacheList = cacheVisitor.getCachedThumbnail(String
+					.valueOf(i));
+			thumbnailList.addAll(cacheList);
+		}
+
+		if (thumbnailList != null) {
+			for (int j = thumbnailList.size() - 1; j >= 0; j--) {
+				resultList.add(thumbnailList.get(j));
+			}
+		}
+
+		return resultList;
 	}
 
 	// TODO, 实现其他接口方法

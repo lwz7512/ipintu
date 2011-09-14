@@ -106,7 +106,7 @@ public interface DBAccessInterface {
 
 	public List<Message> getUserMessages(String userId);
 
-	public int updateMsg(String msgId);
+	public int updateMsg(List<String> msgIds);
 
 	public List<Story> getClassicalPintu();
 	

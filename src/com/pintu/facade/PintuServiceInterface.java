@@ -147,7 +147,7 @@ public interface PintuServiceInterface {
 	public List<Message> getUserMessages(String userId);
 
 	// 改变消息的状态
-	public boolean changeMsgState(String msgId);
+	public boolean changeMsgState(List<String> msgIdList);
 
 	// 在标记为收藏时来检查是否已收藏
 	public boolean checkExistFavorite(String userId, String picId);
@@ -178,6 +178,9 @@ public interface PintuServiceInterface {
 	
 	// 发布社区事件
 	public Boolean publishCommunityEvent(Event event);
+
+	// 获取最近一段时间的贴图
+	public List<TPicDesc> getLatestPic();
 
 	// ANYMORE NECESSARY???
 

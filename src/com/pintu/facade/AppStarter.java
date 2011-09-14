@@ -334,9 +334,16 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			
 		} else if (action.equals(AppStarter.ADDGIFT)) {
 			res.setContentType("text/plain;charset=UTF-8");
-			PrintWriter pw = res.getWriter();
+//			PrintWriter pw = res.getWriter();
 			//TODO 这里发布礼物时候要有图片上传
 			apiAdaptor.publishExchangeableGift();
+			
+		} else if (action.equals(AppStarter.GETLATESTPIC)) {	
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String result = apiAdaptor.getLatestPic();
+			System.out.println(result);
+			pw.println(result);
 			
 		} else {
 
