@@ -221,7 +221,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			pw.close();
 		} else if (action.equals(AppStarter.CHANGEMSGSTATE)) {
 
-			String msgId = req.getParameter("msgId");
+			String msgId = req.getParameter("msgIds");
 			apiAdaptor.changeMsgState(msgId);
 
 		} else if (action.equals(AppStarter.GETHOTPICTURE)) {
