@@ -221,8 +221,8 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			pw.close();
 		} else if (action.equals(AppStarter.CHANGEMSGSTATE)) {
 
-			String msgId = req.getParameter("msgIds");
-			apiAdaptor.changeMsgState(msgId);
+			String msgIds = req.getParameter("msgIds");
+			apiAdaptor.changeMsgState(msgIds);
 
 		} else if (action.equals(AppStarter.GETHOTPICTURE)) {
 			// 取得热图
