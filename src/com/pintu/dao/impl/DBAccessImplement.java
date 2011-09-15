@@ -473,7 +473,7 @@ public class DBAccessImplement implements DBAccessInterface {
 	@Override
 	public List<Message> getUserMessages(String userId) {
 		List<Message> msgList = new ArrayList<Message>();
-		String sql = "select * from t_message where m_sender = '"+userId+"'"+" or m_receiver = '"+userId+"' and m_read=0";
+		String sql = "select * from t_message where (m_sender = '"+userId+"'"+" or m_receiver = '"+userId+"') and m_read=0";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
