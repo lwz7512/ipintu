@@ -31,10 +31,6 @@ public class UTF8Formater {
 	 * 在服务端将获取的Unicode字符串解码成中文字
 	 */
 	public static String changeToWord(String str) {
-		//判断不是Uincode就直接返回字符串，可以解决乱码以及空的问题
-		if(!str.startsWith("\\u")){
-			return str;
-		}
 		String retData = null;
 		String tempStr = new String(str);
 		String[] chStr = new String[str.length() / 4];
