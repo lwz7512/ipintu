@@ -809,10 +809,20 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	@Override
 	public String getExistUser(String account, String pwd) {
 		String md5Pwd = Encrypt.encrypt(pwd);
-		String userId = dbVisitor.getExistUser(account, md5Pwd);
-		return userId;
+		Map<String,String> userPwdMap = dbVisitor.getExistUser(account);
+		if(userPwdMap != null && userPwdMap.size() > 0){
+			if(userPwdMap.containsValue(md5Pwd)){
+				for(String id:userPwdMap.keySet()){
+					if(userPwdMap.get(id).equals(md5Pwd)){
+						return id;
+					}
+				}
+			}else{
+				return "PASSWORDERROR";	
+			}
+		}
+		return "USERNOTEXIST";
 	}
-
 	// TODO, 实现其他接口方法
 
 }

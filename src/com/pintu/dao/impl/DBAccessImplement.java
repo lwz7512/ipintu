@@ -1021,17 +1021,19 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public String getExistUser(String account, String pwd) {
-		String sql = "select u_id from t_user where u_account = '"+account+"' and u_pwd = '"+pwd+"'"; 
-		String id = null;
+	public Map<String,String> getExistUser(String account) {
+		String sql = "select u_id,u_pwd from t_user where u_account = '"+account+"'"; 
+		Map<String,String> idPwdMap = new HashMap<String,String>();
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
 				Map<String, Object> map = (Map<String, Object>) rows.get(i);
-			    id = map.get("u_id").toString();
+				String id = map.get("u_id").toString();
+			    String passwd = map.get("u_pwd").toString();
+			    idPwdMap.put(id, passwd);
 			}
 		}
-		return id;
+		return idPwdMap;
 	}
 
 

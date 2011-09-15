@@ -150,6 +150,6 @@ public interface DBAccessInterface {
 	
 	public int getStoryCountByUser(String userId);
 	
-	public String getExistUser(String account, String md5Pwd);
+	public Map<String,String> getExistUser(String account);
 
 }

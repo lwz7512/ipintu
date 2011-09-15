@@ -392,8 +392,8 @@ public class ApiAdaptor {
 	}
 
 	public String getExistUser(String account, String pwd) {
-		String userId = pintuService.getExistUser(account,pwd);
-		return userId;
+		String result = pintuService.getExistUser(account,pwd);
+		return result;
 	}
 
 	
