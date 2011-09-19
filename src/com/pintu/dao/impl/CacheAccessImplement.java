@@ -216,6 +216,12 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	public void updateCachedUser(String userId, Long updateTime) {
 		pintuCache.updateCachedUser(userId, updateTime);
 	}
+	
+	@Override
+	public void updateCachedUser(User user) {
+		pintuCache.updateCachedUser(user);
+		
+	}
 
 	@Override
 	public List<Comment> getCommentsOfPic(String tpId) {
@@ -235,6 +241,8 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	public User getUserById(String userId) {
 		return pintuCache.getCachedUser(userId);
 	}
+
+	
 
 
 } // end of class

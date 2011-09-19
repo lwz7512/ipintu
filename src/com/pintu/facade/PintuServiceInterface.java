@@ -185,6 +185,17 @@ public interface PintuServiceInterface {
 	//验证登录的用户是否存在
 	public String getExistUser(String account, String pwd);
 
+	//验证账户名称是否已被占用
+	public String validateAccount(String account);
+
+	//比较邀请码是否正确，正确即注册，否则返回错误信息
+	public String registerUser(String userId, String account, String pwd, String code);
+
+	//这里由管理员授理请求，并发带注册码的链接邮件给申请者邮箱
+	public String sendApply(String account, String reason);
+
+	public String acceptApply(String account, String url);
+
 	// ANYMORE NECESSARY???
 
 	// ************************ 以下为客户端2.0版本功能 *********************************

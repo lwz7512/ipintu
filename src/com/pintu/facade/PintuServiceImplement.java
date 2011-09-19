@@ -39,7 +39,9 @@ import com.pintu.dao.DBAccessInterface;
 import com.pintu.jobs.MidnightTask;
 import com.pintu.tools.ImgDataProcessor;
 import com.pintu.utils.Encrypt;
+import com.pintu.utils.MailSenderInfo;
 import com.pintu.utils.PintuUtils;
+import com.pintu.utils.SimpleMailSender;
 import com.sun.image.codec.jpeg.ImageFormatException;
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGImageDecoder;
@@ -809,20 +811,124 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	@Override
 	public String getExistUser(String account, String pwd) {
 		String md5Pwd = Encrypt.encrypt(pwd);
-		Map<String,String> userPwdMap = dbVisitor.getExistUser(account);
-		if(userPwdMap != null && userPwdMap.size() > 0){
-			if(userPwdMap.containsValue(md5Pwd)){
-				for(String id:userPwdMap.keySet()){
-					if(userPwdMap.get(id).equals(md5Pwd)){
-						return id;
-					}
-				}
+		User user = dbVisitor.getExistUser(account);
+		if(user != null && user.getId() != null){
+			if(user.getPwd().equals(md5Pwd)){
+				//用户登录成功后将用户信息放缓存
+				cacheVisitor.cacheUser(user);
+				return user.getId();
 			}else{
 				return "PASSWORDERROR";	
 			}
-		}
+		}	
 		return "USERNOTEXIST";
 	}
+	
+	@Override
+	public String validateAccount(String account) {
+		User user = dbVisitor.getExistUser(account);
+		if(user != null && user.getId() != null){
+			return "false";
+		}
+		return "true";
+	}
+
+	@Override
+	public String registerUser(String userId,String account, String pwd, String code) {
+    	User u = cacheVisitor.getUserById(userId);
+    	User user = new User();
+    	if(u!=null && u.getId()!=null){
+	    	if(u.getInviteCode().equals(code) && u.getPassed().equalsIgnoreCase("yes")){
+	    		user = createUser(userId,account,pwd);
+	    	}else{
+	    		return "APPLYNOTACCEPT";
+	    	}
+    	}
+    	int i = dbVisitor.insertUser(user);
+    	if(i > 0){
+    		//注册成功更新缓存中的用户
+    		cacheVisitor.updateCachedUser(user);
+    		return "REGISTERSUCCESS";
+    	}
+    	
+		return "REGISTERFAIL";
+	}
+
+	private User createUser(String userId, String account, String pwd) {
+		User user = new User();
+		user.setId(userId);
+		user.setAccount(account);
+		user.setPwd(Encrypt.encrypt(pwd));
+		user.setRegisterTime(PintuUtils.getFormatNowTime());
+		return user;
+	}
+
+	@Override
+	public String sendApply(String account, String reason) {
+		String info = this.contactService(account,reason);
+		return info;
+	}
+	
+	private String contactService(String account,String reason){
+		Message msg = new Message();
+		msg.setId(PintuUtils.generateUID());
+		msg.setContent(reason);
+		msg.setReceiver(propertyConfigurer
+				.getProperty("serviceMM").toString());
+		boolean flag = this.sendMessage(msg);
+		if(flag){
+			return "APPLAYPROCESSING";
+		}
+		return "CONTACTSERVICEFAIL";
+	}
+	
+	
+	/**
+	 * 发邮件
+	 * @param receiverMail
+	 * @param content
+	 */
+	private void sendMail(String receiverMail,String content){
+		MailSenderInfo mailInfo = new MailSenderInfo();
+//		mailInfo.setMailServerPort("25");
+//		mailInfo.setValidate(true);
+		String host = propertyConfigurer.getProperty("mailServiceHost").toString();
+		String username = propertyConfigurer.getProperty("serviceMailUsername").toString();
+		String password = propertyConfigurer.getProperty("serviceMailPassword").toString(); 
+		String address = propertyConfigurer.getProperty("serviceMailAddress").toString(); 
+		mailInfo.setMailServerHost(host);
+		mailInfo.setUserName(username);
+		mailInfo.setPassword(password);// 邮箱密码
+		mailInfo.setFromAddress(address);
+		mailInfo.setToAddress(receiverMail);
+		mailInfo.setSubject("申请注册通过通知");
+		//邮件内容
+		mailInfo.setContent(content);
+		// 发送html格式
+		SimpleMailSender.sendHtmlMail(mailInfo);
+	}
+
+	@Override
+	public String acceptApply(String account,String url) {
+		//发邮件啊发邮件java实现发邮件
+		String inviteCode = Encrypt.encrypt(String.valueOf(System.currentTimeMillis())).substring(0, 6); 
+		String info = "请使用以下要邀请码到注册页面，或者点击链接注册<br/><br/>";
+		String href ="邀请码为："+inviteCode+"<br/>"+
+				"<a href='"+url+"?method=register&inviteCode="+inviteCode+"' target='_blank'>点击这里可直接注册</a>";
+		String content = info+href;
+		sendMail(account,content);
+		
+		//允许注册后将用户基本信息放缓存
+		User user =new User();
+		user.setId(PintuUtils.generateUID());
+		user.setInviteCode(inviteCode);
+		user.setPassed("yes");
+		cacheVisitor.cacheUser(user);
+		
+		return "Email has been sent to please note to check!";
+	}
+	
 	// TODO, 实现其他接口方法
+	
 
 }

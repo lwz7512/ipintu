@@ -11,10 +11,16 @@ package com.pintu.facade;
 public interface ExtVisitorInterface {
 	
 	public static final String LOGON ="logon";
-
-	public static final String UPLOADPICTURE = "upload";
 	
-	public static final String APPLYFORUSER = "applyForUser";
+	public static final String APPLY ="apply";
+	
+	public static final String ACCEPT ="accept";
+	
+	public static final String REGISTER ="register";
+	
+	public static final String VALIDATE = "validate";
+	
+	public static final String UPLOADPICTURE = "upload";
 	
 	public static final String GETGALLERYBYTIME = "getGalleryByTime";
 	

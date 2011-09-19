@@ -125,6 +125,20 @@ public class PintuCache {
 			}
 		}
 	}
+	
+	// 更新缓存中用户的基本信息
+	public void updateCachedUser(User u) {
+			synchronized (userCache) {
+				Element ele = userCache.get(u.getId());
+				if (ele != null) {
+					User user = (User) ele.getObjectValue();
+					user.setAccount(u.getAccount());
+					user.setPwd(u.getPwd());
+					user.setAvatar(u.getAvatar());
+					user.setRegisterTime(u.getRegisterTime());
+				}
+			}
+		}
 
 	// 得到活跃用户
 	public List<User> getActiveUser(Long startTime, Long endTime) {

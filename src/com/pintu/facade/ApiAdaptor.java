@@ -396,5 +396,27 @@ public class ApiAdaptor {
 		return result;
 	}
 
+	public String registerUser(String userId,String account, String pwd, String code) {
+		String prompt = pintuService.registerUser(userId,account,pwd,code);
+		return prompt;
+	}
+	
+	public String validateAccount(String account) {
+		String result = pintuService.validateAccount(account);
+		return result;
+	}
+
+	public String sendApply(String account, String reason) {
+		String prompt = pintuService.sendApply(account,reason);
+		return prompt;
+	}
+
+	public String acceptApply(String account, String url) {
+		String prompt = pintuService.acceptApply(account,url);
+		return prompt;
+	}
+
+
+
 	
 } //end of class

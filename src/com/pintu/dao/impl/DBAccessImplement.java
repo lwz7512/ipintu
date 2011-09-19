@@ -41,7 +41,7 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public int insertOneUser(final User user) {
+	public int insertUser(final User user) {
 		String sql = "INSERT INTO t_user "
 				+ "(u_id, u_account, u_pwd, u_avatar, u_role, u_level, u_score, u_exchangeScore,u_registerTime,u_memo) "
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ? ,? ,?)";
@@ -1021,19 +1021,25 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public Map<String,String> getExistUser(String account) {
-		String sql = "select u_id,u_pwd from t_user where u_account = '"+account+"'"; 
-		Map<String,String> idPwdMap = new HashMap<String,String>();
+	public User getExistUser(String account) {
+		String sql = "select * from t_user where u_account = '"+account+"'"; 
+		User user = new User();
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
 				Map<String, Object> map = (Map<String, Object>) rows.get(i);
-				String id = map.get("u_id").toString();
-			    String passwd = map.get("u_pwd").toString();
-			    idPwdMap.put(id, passwd);
+				user.setId(map.get("u_id").toString());
+				user.setAccount(map.get("u_account").toString());
+			    user.setPwd(map.get("u_pwd").toString());
+			    user.setAvatar(map.get("u_avatar").toString());
+			    user.setRegisterTime(map.get("u_registerTime").toString());
+			    user.setRole(map.get("u_role").toString());
+			    user.setLevel(Integer.parseInt(map.get("u_level").toString()));
+			    user.setScore(Integer.parseInt(map.get("u_score").toString()));
+			    user.setExchangeScore(Integer.parseInt(map.get("u_exchangeScore").toString()));
 			}
 		}
-		return idPwdMap;
+		return user;
 	}
 
 

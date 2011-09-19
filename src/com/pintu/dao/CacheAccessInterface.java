@@ -98,6 +98,9 @@ public interface CacheAccessInterface {
 	//更新用户最后操作时间
 	public void updateCachedUser(String userId, Long updateTime);
 	
+	//更新用户
+	public void updateCachedUser(User user);
+	
 	// 读取活动用户
 	public List<User> getActiveUser(Long startTime,Long endTime);
 

@@ -18,7 +18,7 @@ import com.pintu.beans.Wealth;
 public interface DBAccessInterface {
 
 	//新用户注册，交用户信息入库
-	public int insertOneUser(User user);
+	public int insertUser(User user);
 	//更新用户积分包括可用积分
 	public int updateUserScore(List<User> userList);
 	
@@ -150,6 +150,6 @@ public interface DBAccessInterface {
 	
 	public int getStoryCountByUser(String userId);
 	
-	public Map<String,String> getExistUser(String account);
+	public User getExistUser(String account);
 
 }

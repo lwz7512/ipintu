@@ -34,7 +34,24 @@ public class User implements Serializable{
 
 	private int storyNum;
 	private int tpicNum;
+
+	//申请理由
+	private String applyReason;
 	
+	//是否通过申请
+	private String passed;
+
+	//邀请码
+	private String inviteCode;
+	
+	public String getInviteCode() {
+		return inviteCode;
+	}
+
+	public void setInviteCode(String inviteCode) {
+		this.inviteCode = inviteCode;
+	}
+
 	public int getStoryNum() {
 		return storyNum;
 	}
@@ -168,13 +185,6 @@ public class User implements Serializable{
 	public void setRegisterTime(String registerTime) {
 		this.registerTime = registerTime;
 	}
-
-
-	//申请理由
-	private String applyReason;
-	
-	//是否通过申请
-	private String passed;
 	
 		
 	public User() {			

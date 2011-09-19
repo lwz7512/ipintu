@@ -351,10 +351,54 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			PrintWriter pw = res.getWriter();
 			String account = req.getParameter("account");
 			String pwd = req.getParameter("password");
-			//登录成功后，返回一个用户的id，否则返回null
+			//登录成功后，返回一个用户的id，否则返回错误信息
 			String result = apiAdaptor.getExistUser(account,pwd);
 			System.out.println(result);
 			pw.println(result);
+			
+		} else if (action.equals(AppStarter.APPLY)) {	
+			//申请，发送后由管理员授理
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String account = req.getParameter("account");
+			String reason = req.getParameter("reason");
+			String result = apiAdaptor.sendApply(account,reason);
+			System.out.println(result);
+			pw.write(result);
+			
+		} else if (action.equals(AppStarter.ACCEPT)) {	
+			//管理员处理申请，审核后发带邀请码的链接的为内容的邮件~
+			//"Email has been sent to please note to check!"
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			//申请人，即消息的发送者
+			String account = req.getParameter("sender");
+			String url = req.getRequestURL().toString();
+			String result = apiAdaptor.acceptApply(account,url);
+			System.out.println(result);
+			pw.println(result);
+			
+		} else if (action.equals(AppStarter.REGISTER)) {	
+			//注册，验证用户输入的验证码是否与发给他的一致，比较后完成注册返回相应信息
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String account = req.getParameter("account");
+			String pwd = req.getParameter("password");
+			String code = req.getParameter("inviteCode");
+			String userId = req.getParameter("userId");
+			String result = apiAdaptor.registerUser(userId,account,pwd,code);
+			System.out.println(result);
+			pw.write(result);
+			
+		} else if (action.equals(AppStarter.VALIDATE)) {	
+			//验证注册的账户是否已被用
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String account = req.getParameter("account");
+			String result = apiAdaptor.validateAccount(account);
+			System.out.println(result);
+			pw.println(result);
+			
 		} else {
 
 		}
