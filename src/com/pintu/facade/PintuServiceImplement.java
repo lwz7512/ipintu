@@ -19,6 +19,8 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 import com.pintu.beans.Comment;
 import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
@@ -48,6 +50,8 @@ import com.sun.image.codec.jpeg.JPEGImageDecoder;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 public class PintuServiceImplement implements PintuServiceInterface {
+	
+	private Logger log = Logger.getLogger(PintuServiceImplement.class);
 
 	// 由Spring注入
 	private DBAccessInterface dbVisitor;
@@ -832,28 +836,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		}
 		return "true";
 	}
-
-	@Override
-	public String registerUser(String userId,String account, String pwd, String code) {
-    	User u = cacheVisitor.getUserById(userId);
-    	User user = new User();
-    	if(u!=null && u.getId()!=null){
-	    	if(u.getInviteCode().equals(code) && u.getPassed().equalsIgnoreCase("yes")){
-	    		user = createUser(userId,account,pwd);
-	    	}else{
-	    		return "APPLYNOTACCEPT";
-	    	}
-    	}
-    	int i = dbVisitor.insertUser(user);
-    	if(i > 0){
-    		//注册成功更新缓存中的用户
-    		cacheVisitor.updateCachedUser(user);
-    		return "REGISTERSUCCESS";
-    	}
-    	
-		return "REGISTERFAIL";
-	}
-
+	
 	private User createUser(String userId, String account, String pwd) {
 		User user = new User();
 		user.setId(userId);
@@ -864,31 +847,53 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
+	public String registerUser(String account, String pwd, String code) {
+		String userId = dbVisitor.getExistApplicant(account, code);
+    	if(!"".equals(userId)){
+	    		User user = createUser(userId,account,pwd);
+	    		int i = dbVisitor.insertUser(user);
+	        	if(i == 1){
+	        		//注册成功用户放缓存
+	        		cacheVisitor.cacheUser(user);
+	        		//删除临时
+	        		int j = dbVisitor.deleteTempUser(userId);
+	        		if(j ==1){
+	        			log.info("删除已注册成功的临时用户"+userId);
+	        		}
+	        		return "REGISTERSUCCESS";
+	        	}else{
+	        		return "REGISTERFAIL";
+	        	}
+	    }else{
+	    	return "Pleaas apply!";
+	    }
+	}
+	
+
+	@Override
 	public String sendApply(String account, String reason) {
-		String info = this.contactService(account,reason);
-		return info;
-	}
-	
-	private String contactService(String account,String reason){
-		Message msg = new Message();
-		msg.setId(PintuUtils.generateUID());
-		msg.setContent(reason);
-		msg.setReceiver(propertyConfigurer
-				.getProperty("serviceMM").toString());
-		boolean flag = this.sendMessage(msg);
-		if(flag){
-			return "APPLAYPROCESSING";
+		User tempUser = this.createApplicant(account, reason);
+		int m = dbVisitor.insertApplicant(tempUser);
+		if(m ==1){
+			return "APPLYPROCESSING";
 		}
-		return "CONTACTSERVICEFAIL";
+		return "APPLYFAIL";
 	}
 	
-	
+	private User createApplicant(String account, String reason) {
+		User user = new User();
+		user.setId(PintuUtils.generateUID());
+		user.setAccount(account);
+		user.setApplyReason(reason);
+		return user;
+	}
+
 	/**
 	 * 发邮件
 	 * @param receiverMail
 	 * @param content
 	 */
-	private void sendMail(String receiverMail,String content){
+	private void sendMail(String toAddress,String content){
 		MailSenderInfo mailInfo = new MailSenderInfo();
 //		mailInfo.setMailServerPort("25");
 //		mailInfo.setValidate(true);
@@ -900,7 +905,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		mailInfo.setUserName(username);
 		mailInfo.setPassword(password);// 邮箱密码
 		mailInfo.setFromAddress(address);
-		mailInfo.setToAddress(receiverMail);
+		mailInfo.setToAddress(toAddress);
 		mailInfo.setSubject("申请注册通过通知");
 		//邮件内容
 		mailInfo.setContent(content);
@@ -909,23 +914,33 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public String acceptApply(String account,String url) {
+	public String acceptApply(String id, String account,String url) {
 		//发邮件啊发邮件java实现发邮件
-		String inviteCode = Encrypt.encrypt(String.valueOf(System.currentTimeMillis())).substring(0, 6); 
+		String inviteCode = PintuUtils.generateInviteCode(); 
 		String info = "请使用以下要邀请码到注册页面，或者点击链接注册<br/><br/>";
 		String href ="邀请码为："+inviteCode+"<br/>"+
-				"<a href='"+url+"?method=register&inviteCode="+inviteCode+"' target='_blank'>点击这里可直接注册</a>";
+				"<a href='"+url+"/register.jsp?account="+account+"&inviteCode="+inviteCode+"' target='_blank'>点击这里可直接注册</a>";
 		String content = info+href;
-		sendMail(account,content);
 		
-		//允许注册后将用户基本信息放缓存
-		User user =new User();
-		user.setId(PintuUtils.generateUID());
-		user.setInviteCode(inviteCode);
-		user.setPassed("yes");
-		cacheVisitor.cacheUser(user);
+		int i = dbVisitor.updateApplicant(inviteCode,id);
 		
-		return "Email has been sent to please note to check!";
+		if(i==1){
+			//数据库用户临时表更新成功发邮件
+			sendMail(account,content);
+			return "Email has been sent to please note to check!";
+			
+		}else{
+			log.info("更新临时用户邀请码和通过与否字段成功");
+		}
+		
+		return "Please contact service";
+	
+	}
+
+	@Override
+	public List<User> getApplicant() {
+		List<User> list = dbVisitor.getApplicant();
+		return list;
 	}
 	
 	// TODO, 实现其他接口方法

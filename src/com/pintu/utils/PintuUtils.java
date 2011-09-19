@@ -54,4 +54,8 @@ public class PintuUtils {
 		String today = PintuUtils.formatDate(date);
 		return today;
 	}
+	
+	public static String generateInviteCode(){
+		return Encrypt.encrypt(String.valueOf(System.currentTimeMillis())).substring(0, 6);
+	}
 }

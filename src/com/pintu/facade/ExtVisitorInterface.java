@@ -14,6 +14,8 @@ public interface ExtVisitorInterface {
 	
 	public static final String APPLY ="apply";
 	
+	public static final String GETAPPLICANT = "getApplicant";
+	
 	public static final String ACCEPT ="accept";
 	
 	public static final String REGISTER ="register";

@@ -1043,4 +1043,77 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 
+	@Override
+	public int insertApplicant(final User tempUser) {
+		String sql = "INSERT INTO t_applicant "
+				+ "(a_id, a_account, a_applyReason,a_inviteCode,a_passed,a_memo) "
+				+ "VALUES (?, ?, ?, ?, ?, ?)";
+
+		int res =jdbcTemplate.update(sql, new PreparedStatementSetter() {
+			public void setValues(PreparedStatement ps) {
+				try {
+					ps.setString(1, tempUser.getId());
+					ps.setString(2, tempUser.getAccount());
+					ps.setString(3, tempUser.getApplyReason());
+					ps.setString(4, tempUser.getInviteCode());
+					ps.setInt(5, tempUser.getPassed());
+					ps.setString(6, "");
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+
+			}
+		});
+
+		return res;
+	}
+
+	@Override
+	public List<User> getApplicant() {
+		List<User> resList = new ArrayList<User>();
+		String sql = "select * from t_applicant where  a_passed=0 and isNull(a_inviteCode) ";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				User user = new User();
+				user.setId(map.get("a_id").toString());
+				user.setAccount(map.get("a_account").toString());
+				user.setApplyReason(map.get("a_applyReason").toString());
+				resList.add(user);
+			}
+		}
+		return resList;
+	}
+
+	@Override
+	public int deleteTempUser(String userId) {
+		String sql = "delete from t_applicant where a_id ='"+userId+"'"; 
+		int rows = jdbcTemplate.update(sql);
+		return rows;
+	}
+
+	@Override
+	public int updateApplicant(final String inviteCode,final String id) {
+		String sql = "update t_applicant  set a_inviteCode ='"+inviteCode +"' , a_passed=1 where a_id ='"+id+"'";
+		int rows = jdbcTemplate.update(sql);
+		return rows;
+	}
+	
+	@Override
+	public String getExistApplicant(String account,String inviteCode) {
+		String sql = "select a_id from t_applicant where a_account = '"+account+"' and a_inviteCode ='"+inviteCode+"' and a_passed=1"; 
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		String id="";
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				id =map.get("a_id").toString();
+			}
+		}
+		return id;
+	}
+
+
 }

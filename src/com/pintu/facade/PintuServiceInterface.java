@@ -189,12 +189,14 @@ public interface PintuServiceInterface {
 	public String validateAccount(String account);
 
 	//比较邀请码是否正确，正确即注册，否则返回错误信息
-	public String registerUser(String userId, String account, String pwd, String code);
+	public String registerUser(String account, String pwd, String code);
 
 	//这里由管理员授理请求，并发带注册码的链接邮件给申请者邮箱
 	public String sendApply(String account, String reason);
 
-	public String acceptApply(String account, String url);
+	public String  acceptApply(String id, String account,String url);
+
+	public List<User> getApplicant();
 
 	// ANYMORE NECESSARY???
 

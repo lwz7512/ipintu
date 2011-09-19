@@ -16,9 +16,9 @@ public class User implements Serializable{
 	//密码
 	private String pwd;
 	//肖像
-	private String avatar;
+	private String avatar="default";
 	//角色
-	private String role;
+	private String role="general";
 	//级别
 	private int level;
 	//总积分
@@ -39,7 +39,7 @@ public class User implements Serializable{
 	private String applyReason;
 	
 	//是否通过申请
-	private String passed;
+	private int passed=0;
 
 	//邀请码
 	private String inviteCode;
@@ -81,7 +81,6 @@ public class User implements Serializable{
 	public String getId() {
 		return id;
 	}
-
 
 	public void setId(String id) {
 		this.id = id;
@@ -168,12 +167,12 @@ public class User implements Serializable{
 	}
 
 
-	public String getPassed() {
+	public int getPassed() {
 		return passed;
 	}
 
 
-	public void setPassed(String passed) {
+	public void setPassed(int passed) {
 		this.passed = passed;
 	}
 

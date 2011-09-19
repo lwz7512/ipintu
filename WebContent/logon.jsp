@@ -13,24 +13,12 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 </head>
 
-<script>
-	function checkEmail(){
-			var emailStr=document.all.applyForm.account.value;
-			var emailPat=/^(. )@(. )$/;
-			var matchArray=emailStr.match(emailPat);
-			if (matchArray==null) {
-			return false;
-			}
-			return true;
-	}
-</script>
-
 <body>
 
-	<form action="pintuapi" method="post" name="applyForm">
-		<input type="hidden" name="method" value="apply" /> 
-		注册邮箱：<input type="text" name="account" onblur="checkEmail(); "/><br/>
-		申请理由：<input type="text" name = "reason" />
-		<input type="submit"  value="提交申请">
+	<form action="pintuapi" method="post" name="logonForm">
+		<input type="hidden" name="method" value="logon" /> 
+		账户：<input type="text" name="account" /><br/>
+		密码：<input type="text" name = "password" />
+		<input type="submit"  value="登录">
 	</form>
 </html>

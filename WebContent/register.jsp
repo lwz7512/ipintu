@@ -49,13 +49,27 @@
 </script>
 
 <body>
-
-	<form action="pintuapi" method="post">
+	<%
+		String id = request.getParameter("id");
+		String account = request.getParameter("account");
+		String inviteCode = request.getParameter("inviteCode");
+		if(id==null || id.equals("null")){
+			id="";
+		}
+		if(account==null || account.equals("null")){
+			account="";
+		}
+		if(inviteCode==null || inviteCode.equals("null")){
+			inviteCode="";
+		}
+		%>
+	<form action="pintuapi" method="post" name="registerForm">
 		<input type="hidden" name="method" value="register" /> 
-		账户：<input type="text" name="account" onblur=check(); />
-		密码：<input type="password" name = "password" />
-		邀请码：<input type="text" name = "inviteCode" />
-		<input type="submit" name="submit" value="注册"/>
-		<input type="button" name="apply" value="申请" onclick=""/>
+		<input type="hidden" name="id" value="<%=id%>" /> 
+		账户：<input type="text" name="account"  value ="<%=account %>" onblur=check(); /><br/>
+		密码：<input type="password" name = "password" /><br/>
+		邀请码：<input type="text" name = "inviteCode"   value ="<%=inviteCode %>"/><br/>
+		<input type="submit" name="submit" value="注册"/><br/><br/>
+		<a href="apply.jsp">向客服人员发出申请</a>
 	</form>
 </html>

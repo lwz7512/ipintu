@@ -396,8 +396,8 @@ public class ApiAdaptor {
 		return result;
 	}
 
-	public String registerUser(String userId,String account, String pwd, String code) {
-		String prompt = pintuService.registerUser(userId,account,pwd,code);
+	public String registerUser(String account, String pwd, String code) {
+		String prompt = pintuService.registerUser(account,pwd,code);
 		return prompt;
 	}
 	
@@ -411,9 +411,14 @@ public class ApiAdaptor {
 		return prompt;
 	}
 
-	public String acceptApply(String account, String url) {
-		String prompt = pintuService.acceptApply(account,url);
+	public String acceptApply(String id, String account,String url) {
+		String prompt = pintuService.acceptApply(id,account,url);
 		return prompt;
+	}
+
+	public List<User> getApplicant() {
+		List<User> list = pintuService.getApplicant();
+		return list;
 	}
 
 

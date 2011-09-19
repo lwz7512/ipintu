@@ -151,5 +151,15 @@ public interface DBAccessInterface {
 	public int getStoryCountByUser(String userId);
 	
 	public User getExistUser(String account);
+	
+	public int insertApplicant(User tempUser);
+	
+	public List<User> getApplicant();
+	
+	public int deleteTempUser(String userId);
+	
+	public int updateApplicant(String inviteCode,String id);
+	
+	public String getExistApplicant(String account, String inviteCode);
 
 }
