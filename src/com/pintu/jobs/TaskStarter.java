@@ -36,12 +36,12 @@ public class TaskStarter  {
     }
 
 	
-	//TODO, Spring injection
+	// Spring injection
 	public void setDbVisitor(DBAccessInterface dbVisitor) {
 		this.dbVisitor = dbVisitor;
 	}
 	
-	//TODO, Spring injection
+	// Spring injection
 	public void setCacheVisitor(CacheAccessInterface cacheVisitor) {
 		this.cacheVisitor = cacheVisitor;
 	}
@@ -53,8 +53,6 @@ public class TaskStarter  {
 	public CacheAccessInterface getCacheVisitor() {
 		return cacheVisitor;
 	}
-
-    
 	
     public void runAutoTasks() {
     	
@@ -70,7 +68,7 @@ public class TaskStarter  {
     	
     	//固定任务用清除缓存中的一些数据，比如点击量等(待完善)
     	fixRunTimer = new TaskTimer();
-    	fixRunTimer.setMidnightTask(new MidnightTask(dbVisitor,cacheVisitor));
+    	fixRunTimer.setMidnightTask(new MidnightTask(dbVisitor,cacheVisitor,propertyConfigurer));
     	//每天0点运行
     	fixRunTimer.runAtFixTime("00:00:00");
 

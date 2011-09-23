@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.sql.DataSource;
 
@@ -15,6 +14,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 
 import com.pintu.beans.Comment;
+import com.pintu.beans.Event;
+import com.pintu.beans.Favorite;
+import com.pintu.beans.Gift;
 import com.pintu.beans.Message;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicItem;
@@ -39,28 +41,24 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public String insertOneUser(User user) {
-		final String uid = UUID.randomUUID().toString().replace("-", "")
-				.substring(16);
-		System.out.println("自动生成的UUID：(截取了自动生成的UUID后面16位)" + uid);
+	public int insertUser(final User user) {
 		String sql = "INSERT INTO t_user "
-				+ "(u_id, u_account, u_pwd, u_avatar, u_role, u_level, u_score, u_exchangeScore,u_memo) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)";
+				+ "(u_id, u_account, u_pwd, u_avatar, u_role, u_level, u_score, u_exchangeScore,u_registerTime,u_memo) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ? ,? ,?)";
 
-		final User usr = user;
-
-		jdbcTemplate.update(sql, new PreparedStatementSetter() {
+		int res =jdbcTemplate.update(sql, new PreparedStatementSetter() {
 			public void setValues(PreparedStatement ps) {
 				try {
-					ps.setString(1, uid);
-					ps.setString(2, usr.getAccount());
-					ps.setString(3, usr.getPwd());
-					ps.setString(4, usr.getAvatar());
-					ps.setString(5, usr.getRole());
-					ps.setInt(6, usr.getLevel());
-					ps.setInt(7, usr.getScore());
-					ps.setInt(8, usr.getExchangeScore());
-					ps.setString(9, "");
+					ps.setString(1, user.getId());
+					ps.setString(2, user.getAccount());
+					ps.setString(3, user.getPwd());
+					ps.setString(4, user.getAvatar());
+					ps.setString(5, user.getRole());
+					ps.setInt(6, user.getLevel());
+					ps.setInt(7, user.getScore());
+					ps.setInt(8, user.getExchangeScore());
+					ps.setString(9, user.getRegisterTime());
+					ps.setString(10, "");
 
 				} catch (SQLException e) {
 					e.printStackTrace();
@@ -69,7 +67,7 @@ public class DBAccessImplement implements DBAccessInterface {
 			}
 		});
 
-		return uid;
+		return res;
 	}
 	
 	@Override
@@ -129,10 +127,10 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public List<TPicItem> getPictureForCache(String today) {
+	public List<TPicItem> getPictureForCache(String startTime,String endTime) {
 		List<TPicItem> resList = new ArrayList<TPicItem>();
-		String sql = "select * from t_picture where p_publishTime >='" + today
-				+ "'";
+		String sql = "select * from t_picture where p_publishTime >='" + startTime
+				+ "' and p_publishTime <='"+endTime+"'";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -159,10 +157,10 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public List<Story> getStoryForCache(String today) {
+	public List<Story> getStoryForCache(String picIds) {
 		List<Story> resList = new ArrayList<Story>();
-		
-		String sql = "select * from t_story where s_publishTime >='" + today + "'";
+//		String sql = "select * from t_story where s_publishTime >='" + today + "'";
+		String sql = "select * from t_story where s_follow in (" + picIds + ")";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -182,10 +180,10 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public List<Comment> getCommentForCache(String today) {
+	public List<Comment> getCommentForCache(String picIds) {
 		List<Comment> resList = new ArrayList<Comment>();
-		
-		String sql = "select * from t_comment where c_publishTime >='" + today + "'";
+//		String sql = "select * from t_comment where c_publishTime >='" + today + "'";
+		String sql = "select * from t_comment where c_follow in (" + picIds + ")";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -340,24 +338,23 @@ public class DBAccessImplement implements DBAccessInterface {
 				 + "(v_id,v_follow,v_type,v_amount,v_memo) "
 				 + "VALUES (?, ?, ?, ?, ?)";
 
-		int[] res = jdbcTemplate.batchUpdate(sql,
-				new BatchPreparedStatementSetter() {
-					public void setValues(PreparedStatement ps, int i)
-							throws SQLException {
-						ps.setString(1, vote.getId());
-						ps.setString(2, vote.getFollow());
-						ps.setString(3, vote.getType());
-						ps.setInt(4, vote.getAmount());
-						ps.setString(5, "");
-					}
+		int res =jdbcTemplate.update(sql, new PreparedStatementSetter() {
+			public void setValues(PreparedStatement ps) {
+				try {
+					ps.setString(1, vote.getId());
+					ps.setString(2, vote.getFollow());
+					ps.setString(3, vote.getType());
+					ps.setInt(4, vote.getAmount());
+					ps.setString(5, "");
 
-					@Override
-					public int getBatchSize() {
-						return 1;
-					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 
-				});
-		return res.length;
+			}
+		});
+
+		return res;
 	}
 	
 	
@@ -452,32 +449,31 @@ public class DBAccessImplement implements DBAccessInterface {
 				 + "(m_id,m_sender,m_receiver,m_content,m_writeTime,m_read,m_memo) "
 				 + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-		int[] res = jdbcTemplate.batchUpdate(sql,
-				new BatchPreparedStatementSetter() {
-					public void setValues(PreparedStatement ps, int i)
-							throws SQLException {
-						ps.setString(1, msg.getId());
-						ps.setString(2, msg.getSender());
-						ps.setString(3, msg.getReceiver());
-						ps.setString(4, msg.getContent());
-						ps.setString(5, msg.getWriteTime());
-						ps.setInt(6, msg.getRead());
-						ps.setString(7, "");
-					}
+		int res =jdbcTemplate.update(sql, new PreparedStatementSetter() {
+			public void setValues(PreparedStatement ps) {
+				try {
+					ps.setString(1, msg.getId());
+					ps.setString(2, msg.getSender());
+					ps.setString(3, msg.getReceiver());
+					ps.setString(4, msg.getContent());
+					ps.setString(5, msg.getWriteTime());
+					ps.setInt(6, msg.getRead());
+					ps.setString(7, "");
 
-					public int getBatchSize() {
-						return 1;
-					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 
-				});
-				
-			return res.length;
+			}
+		});
+		return res;
+
 	}
 
 	@Override
 	public List<Message> getUserMessages(String userId) {
 		List<Message> msgList = new ArrayList<Message>();
-		String sql = "select * from t_message where m_sender = '"+userId+"'"+" or m_receiver = '"+userId+"'";
+		String sql = "select * from t_message where (m_sender = '"+userId+"'"+" or m_receiver = '"+userId+"') and m_read=0";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -496,17 +492,17 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public int updateMsg(final String msgId) {
+	public int updateMsg(final List<String> msgIdList) {
 		String sql = "update t_message  set m_read = 1 where m_id =?";
 		int[] res = jdbcTemplate.batchUpdate(sql,
 				new BatchPreparedStatementSetter() {
 					public void setValues(PreparedStatement ps, int i)
 							throws SQLException {
-						ps.setString(1, msgId);
+						ps.setString(1, msgIdList.get(i));
 					}
 
 					public int getBatchSize() {
-						return 1;
+						return msgIdList.size();
 					}
 				});
 		return res.length;
@@ -587,6 +583,28 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
+	public int updateUserLevel(final List<Map<String, Integer>> idLevelList) {
+		String sql = "update t_user  set u_level = ? where u_id =?";
+		int[] res = jdbcTemplate.batchUpdate(sql,
+				new BatchPreparedStatementSetter() {
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+						
+						Map<String,Integer> map = idLevelList.get(i);
+						for(String userId:map.keySet()){
+						ps.setInt(1, map.get(userId));
+						ps.setString(2, userId);
+						}
+					}
+
+					public int getBatchSize() {
+						return idLevelList.size();
+					}
+				});
+		return res.length;
+	}
+	
+	@Override
 	public int insertOnesWealth(final List<Wealth> wList) {
 		String sql = "INSERT INTO t_wealth (w_id,w_owner,w_type,w_amount,w_memo) values (?,?,?,?,?)";
 		int[] res = jdbcTemplate.batchUpdate(sql,
@@ -630,7 +648,8 @@ public class DBAccessImplement implements DBAccessInterface {
 	@Override
 	public int deleteOnesWealth(String type, String userId) {
 		String sql = "delete from t_wealth where w_type="+type+" and w_owner="+userId; 
-		return jdbcTemplate.update(sql);
+		int rows = jdbcTemplate.update(sql);
+		return rows;
 	}
 	
 	@Override
@@ -671,25 +690,28 @@ public class DBAccessImplement implements DBAccessInterface {
 		if(rows!=null && rows.size()>0){
 			for (int i = 0; i < rows.size(); i++) {
 				Map<String, Object> map = (Map<String, Object>) rows.get(i);
-				resMap.put(map.get("u_id").toString(),Integer.parseInt(map.get("u_exchangeScore").toString()));
+				String id = map.get("u_id").toString();
+				int exchangeScore = Integer.parseInt(map.get("u_exchangeScore").toString());
+				resMap.put(id,exchangeScore);
 			}
 		}
 		return resMap;
 	}
 
 	@Override
-	public List<String> getStoryIdsByTime(String startTime, String endTime) {
-		String sql = "select s_id from t_story where s_publishTime >='"
-				+ startTime + "' and s_publishTime <='" + endTime + "' group by s_owner";
-		List<String> resList = new ArrayList<String>();
+	public Map<String, Integer> getUserScoreInfo(String userIds) {
+		String sql = "select u_id,u_score from t_user where u_id in ("+userIds+")";
+		Map<String,Integer> resMap = new HashMap<String,Integer>();
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if(rows!=null && rows.size()>0){
 			for (int i = 0; i < rows.size(); i++) {
 				Map<String, Object> map = (Map<String, Object>) rows.get(i);
-				resList.add(map.get("s_id").toString());
+				String id = map.get("u_id").toString();
+				int score = Integer.parseInt(map.get("u_score").toString());
+				resMap.put(id,score);
 			}
 		}
-		return resList;
+		return resMap;
 	}
 
 	@Override
@@ -711,84 +733,387 @@ public class DBAccessImplement implements DBAccessInterface {
 		return wealthList;
 	}
 
+	@Override
+	public List<Vote> getAllVote() {
+		List<Vote> resList = new ArrayList<Vote>();
+		String sql = "select * from t_vote";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Vote vote = new Vote();
+				vote.setId(map.get("v_id").toString());
+				vote.setFollow(map.get("v_follow").toString());
+				vote.setType(map.get("v_type").toString());
+				vote.setAmount(Integer.parseInt(map.get("v_amount").toString()));
+				resList.add(vote);
+			}
+		}
+		return resList;
+	}
+
+	@Override
+	public List<Story> getClassicalPintuByIds(String ids) {
+		String sql = "select * from t_story where s_id in (" + ids + ")";
+		List<Story> storyList = new ArrayList<Story>();
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Story story = new Story();
+				story.setId(map.get("s_id").toString());
+				story.setFollow(map.get("s_follow").toString());
+				story.setOwner(map.get("s_owner").toString());
+				story.setPublishTime(map.get("s_publishTime").toString());
+				story.setContent(map.get("s_content").toString());
+				story.setClassical(Integer.parseInt(map.get("s_classical").toString()));
+				storyList.add(story);
+			}
+		}
+		return storyList;
+	}
+
+	@Override
+	public List<Wealth> getOnesWealth(String userId) {
+		List<Wealth> resList = new ArrayList<Wealth>();
+		String sql = "select * from t_wealth where  w_owner = '"+userId+"'";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Wealth wealth = new Wealth();
+				wealth.setId(map.get("w_id").toString());
+				wealth.setOwner(map.get("w_owner").toString());
+				wealth.setType(map.get("w_type").toString());
+				wealth.setAmount(Integer.parseInt(map.get("w_amount").toString()));
+				resList.add(wealth);
+			}
+		}
+		return resList;
+	}
+
+	@Override
+	public int insertFavorite(final Favorite fav) {
+		String sql = "INSERT INTO t_favorite "
+				 + "(f_id,f_owner,f_picture,f_collectTime,f_memo) "
+				 + "VALUES (?, ?, ?, ?, ?)";
+
+		int res =jdbcTemplate.update(sql, new PreparedStatementSetter() {
+			public void setValues(PreparedStatement ps) {
+				try {
+					ps.setString(1, fav.getId());
+					ps.setString(2, fav.getOwner());
+					ps.setString(3, fav.getPicture());
+					ps.setString(4, fav.getCollectTime());
+					ps.setString(5, "");
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+
+			}
+		});
+
+		return res;
+	}
+
+	@Override
+	public int deleteFavorite(String fId) {
+		String sql = "delete from t_favorite where f_id ='"+fId+"'"; 
+		int rows = jdbcTemplate.update(sql);
+		return rows;
+	}
+
+	@Override
+	public int checkExistFavorite(String userId, String picId) {
+		String sql = "select count(f_id) from t_favorite where f_owner = '"+userId+"' and f_picture = '"+picId+"'";
+		int counts = jdbcTemplate.queryForInt(sql);
+		return counts;
+	}
+
+	@Override
+	public List<TPicItem> getFavoriteTpics(String userId, int pageNum, int pageSize) {
+		List<TPicItem> resList = new ArrayList<TPicItem>();
+		int startLine = (pageNum -1)*pageSize;
+		String sql = "select p.p_id,p.p_name,p.p_owner,p.p_publishTime,p.p_description,p.p_tags,p.p_allowStory," +
+				"p.p_mobImgId,p.p_mobImgSize,p.p_mobImgPath,p.p_rawImgId,p.p_rawImgSize,p.p_rawImgPath" +
+				" from t_picture p, t_favorite f where p.p_id = f.f_picture and f.f_owner = '"+userId+"' limit "+startLine+","+pageSize;
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				TPicItem tpicItem = new TPicItem();
+				tpicItem.setId(map.get("p_id").toString());
+				tpicItem.setName(map.get("p_name").toString());
+				tpicItem.setOwner(map.get("p_owner").toString());
+				tpicItem.setPublishTime(map.get("p_publishTime").toString());
+				tpicItem.setDescription(map.get("p_description").toString());
+				tpicItem.setTags(map.get("p_tags").toString());
+				tpicItem.setAllowStory(Integer.parseInt(map.get("p_allowStory")
+						.toString()));
+				tpicItem.setMobImgId(map.get("p_mobImgId").toString());
+				tpicItem.setMobImgSize(map.get("p_mobImgSize").toString());
+				tpicItem.setMobImgPath(map.get("p_mobImgPath").toString());
+				tpicItem.setRawImgId(map.get("p_rawImgId").toString());
+				tpicItem.setRawImgSize(map.get("p_rawImgSize").toString());
+				tpicItem.setRawImgPath(map.get("p_rawImgPath").toString());
+				resList.add(tpicItem);
+			}
+		}
+		return resList;
+	}
+
+	@Override
+	public List<Story> getStoriesByUser(String userId, int pageNum,int pageSize) {
+		int startLine = (pageNum -1)*pageSize;
+		String sql = "select * from t_story  where s_owner ='"+userId+"' order by s_publishTime desc limit "+startLine+","+pageSize;
+		List<Story> storyList = new ArrayList<Story>();
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Story story = new Story();
+				story.setId(map.get("s_id").toString());
+				story.setFollow(map.get("s_follow").toString());
+				story.setOwner(map.get("s_owner").toString());
+				story.setPublishTime(map.get("s_publishTime").toString());
+				story.setContent(map.get("s_content").toString());
+				story.setClassical(Integer.parseInt(map.get("s_classical").toString()));
+				storyList.add(story);
+			}
+		}
+		return storyList;
+	}
+
+	@Override
+	public List<TPicItem> getTpicsByUser(String userId, int pageNum,int pageSize) {
+		int startLine = (pageNum -1)*pageSize;
+		List<TPicItem> resList = new ArrayList<TPicItem>();
+		String sql = "select * from t_picture where p_owner = '"+userId+"' order by p_publishTime desc limit "+startLine+","+pageSize;
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				TPicItem tpicItem = new TPicItem();
+				tpicItem.setId(map.get("p_id").toString());
+				tpicItem.setName(map.get("p_name").toString());
+				tpicItem.setOwner(map.get("p_owner").toString());
+				tpicItem.setPublishTime(map.get("p_publishTime").toString());
+				tpicItem.setDescription(map.get("p_description").toString());
+				tpicItem.setTags(map.get("p_tags").toString());
+				tpicItem.setAllowStory(Integer.parseInt(map.get("p_allowStory")
+						.toString()));
+				tpicItem.setMobImgId(map.get("p_mobImgId").toString());
+				tpicItem.setMobImgSize(map.get("p_mobImgSize").toString());
+				tpicItem.setMobImgPath(map.get("p_mobImgPath").toString());
+				tpicItem.setRawImgId(map.get("p_rawImgId").toString());
+				tpicItem.setRawImgSize(map.get("p_rawImgSize").toString());
+				tpicItem.setRawImgPath(map.get("p_rawImgPath").toString());
+				resList.add(tpicItem);
+			}
+		}
+		return resList;
+	}
+
+	@Override
+	public List<Gift> getExchangeableGifts() {
+		List<Gift> resList = new ArrayList<Gift>();
+		String sql = "select * from t_gift where  g_amount > 0";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Gift gift = new Gift();
+				gift.setId(map.get("g_id").toString());
+				gift.setName(map.get("g_name").toString());
+				gift.setType(map.get("g_type").toString());
+				gift.setValue(Integer.parseInt(map.get("g_value").toString()));
+				gift.setAmount(Integer.parseInt(map.get("g_amount").toString()));
+				gift.setImgPath(map.get("g_imgPath").toString());
+				resList.add(gift);
+			}
+		}
+		return resList;
+	}
+
+	@Override
+	public List<Event> getCommunityEvents(String today) {
+		List<Event> resList = new ArrayList<Event>();
+		String sql = "select * from t_event where  e_eventTime >='"+today+"'";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Event eve = new Event();
+				eve.setId(map.get("e_id").toString());
+				eve.setDetail(map.get("e_detail").toString());
+				eve.setTitle(map.get("e_title").toString());
+				eve.setEventTime(map.get("e_eventTime").toString());
+				resList.add(eve);
+			}
+		}
+		return resList;
+	}
+
+	@Override
+	public int insertGift(final Gift gift) {
+		String sql = "INSERT INTO t_gift "
+				 + "(g_id,g_name,g_type,g_value,g_imgPath,g_amount,g_memo) "
+				 + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+		int res =jdbcTemplate.update(sql, new PreparedStatementSetter() {
+			public void setValues(PreparedStatement ps) {
+				try {
+					ps.setString(1, gift.getId());
+					ps.setString(2, gift.getName());
+					ps.setString(3, gift.getType());
+					ps.setInt(4, gift.getValue());
+					ps.setString(5, gift.getImgPath());
+					ps.setInt(5, gift.getAmount());
+					ps.setString(6, "");
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+
+			}
+		});
+
+		return res;
+	}
+
+	@Override
+	public int insertEvent(final Event event) {
+		String sql = "INSERT INTO t_event "
+				 + "(e_id,e_title,e_detail,e_eventTime,e_memo) "
+				 + "VALUES (?, ?, ?, ?, ?)";
+		int res =jdbcTemplate.update(sql, new PreparedStatementSetter() {
+			public void setValues(PreparedStatement ps) {
+				try {
+					ps.setString(1, event.getId());
+					ps.setString(2, event.getTitle());
+					ps.setString(3, event.getDetail());
+					ps.setString(4, event.getEventTime());
+					ps.setString(5, "");
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+
+			}
+		});
+
+		return res;
+	}
+
+	@Override
+	public int getTPicCountByUser(String userId) {
+		String sql = "select count(p_id) from t_picture where p_owner = '"+userId+"'";
+		int counts = jdbcTemplate.queryForInt(sql);
+		return counts;
+	}
+
+	@Override
+	public int getStoryCountByUser(String userId) {
+		String sql = "select count(s_id) from t_story where s_owner = '"+userId+"'";
+		int counts = jdbcTemplate.queryForInt(sql);
+		return counts;
+	}
+
+	@Override
+	public User getExistUser(String account) {
+		String sql = "select * from t_user where u_account = '"+account+"'"; 
+		User user = new User();
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				user.setId(map.get("u_id").toString());
+				user.setAccount(map.get("u_account").toString());
+			    user.setPwd(map.get("u_pwd").toString());
+			    user.setAvatar(map.get("u_avatar").toString());
+			    user.setRegisterTime(map.get("u_registerTime").toString());
+			    user.setRole(map.get("u_role").toString());
+			    user.setLevel(Integer.parseInt(map.get("u_level").toString()));
+			    user.setScore(Integer.parseInt(map.get("u_score").toString()));
+			    user.setExchangeScore(Integer.parseInt(map.get("u_exchangeScore").toString()));
+			}
+		}
+		return user;
+	}
+
+
+	@Override
+	public int insertApplicant(final User tempUser) {
+		String sql = "INSERT INTO t_applicant "
+				+ "(a_id, a_account, a_applyReason,a_inviteCode,a_passed,a_memo) "
+				+ "VALUES (?, ?, ?, ?, ?, ?)";
+
+		int res =jdbcTemplate.update(sql, new PreparedStatementSetter() {
+			public void setValues(PreparedStatement ps) {
+				try {
+					ps.setString(1, tempUser.getId());
+					ps.setString(2, tempUser.getAccount());
+					ps.setString(3, tempUser.getApplyReason());
+					ps.setString(4, tempUser.getInviteCode());
+					ps.setInt(5, tempUser.getPassed());
+					ps.setString(6, "");
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+
+			}
+		});
+
+		return res;
+	}
+
+	@Override
+	public List<User> getApplicant() {
+		List<User> resList = new ArrayList<User>();
+		String sql = "select * from t_applicant where  a_passed=0 and isNull(a_inviteCode) ";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				User user = new User();
+				user.setId(map.get("a_id").toString());
+				user.setAccount(map.get("a_account").toString());
+				user.setApplyReason(map.get("a_applyReason").toString());
+				resList.add(user);
+			}
+		}
+		return resList;
+	}
+
+	@Override
+	public int deleteTempUser(String userId) {
+		String sql = "delete from t_applicant where a_id ='"+userId+"'"; 
+		int rows = jdbcTemplate.update(sql);
+		return rows;
+	}
+
+	@Override
+	public int updateApplicant(final String inviteCode,final String id) {
+		String sql = "update t_applicant  set a_inviteCode ='"+inviteCode +"' , a_passed=1 where a_id ='"+id+"'";
+		int rows = jdbcTemplate.update(sql);
+		return rows;
+	}
 	
+	@Override
+	public String getExistApplicant(String account,String inviteCode) {
+		String sql = "select a_id from t_applicant where a_account = '"+account+"' and a_inviteCode ='"+inviteCode+"' and a_passed=1"; 
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		String id="";
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				id =map.get("a_id").toString();
+			}
+		}
+		return id;
+	}
 
-	
 
-
-
-//	 @Override
-//	 public String insertOneWealth(Wealth wealth) {
-//	 final String wid = UUID.randomUUID().toString().replace("-", "")
-//	 .substring(16);
-//	 System.out.println("自动生成的UUID：(截取了自动生成的UUID后面16位)" + wid);
-//	 String sql = "INSERT INTO t_wealth "
-//	 + "(w_id,w_owner,w_type,w_amount,w_memo) ";
-//	
-//	 return wid;
-//	 }
-//	
-//	 @Override
-//	 public String updateOneWealth(String id, Wealth wealth) {
-//	 String sql = "update t_wealth set type=?, amount=?, where owner=?";
-//	 final Wealth wea = wealth;
-//	 jdbcTemplate.update(sql, new PreparedStatementSetter() {
-//	 public void setValues(PreparedStatement ps) {
-//	
-//	 try {
-//	 ps.setString(1, wea.getType());
-//	 ps.setInt(2, wea.getAmount());
-//	 ps.setString(3, wea.getOwner());
-//	 } catch (Exception e) {
-//	 e.printStackTrace();
-//	 }
-//	 }
-//	 });
-//	 return null;
-//	 }
-	//
-	// @Override
-	// public String insertOneEvent(Event event) {
-	// final String eid = UUID.randomUUID().toString().replace("-", "")
-	// .substring(16);
-	// System.out.println("自动生成的UUID：(截取了自动生成的UUID后面16位)" + eid);
-	// String sql = "INSERT INTO t_comment "
-	// + "(e_id,e_title,e_detail,e_eventTime,e_memo) "
-	// + "VALUES (?, ?, ?, ?, ?)";
-	// return eid;
-	// }
-	//
-	// @Override
-	// public String insertOneMessage(Message message) {
-	// final String mid = UUID.randomUUID().toString().replace("-", "")
-	// .substring(16);
-	// System.out.println("自动生成的UUID：(截取了自动生成的UUID后面16位)" + mid);
-	// String sql = "INSERT INTO t_message "
-	// + "(m_id,m_sender,m_receiver,m_content,m_wir,m_memo) ";
-	//
-	// return mid;
-	// }
-	//
-	// @Override
-	// public String insertOneFavorite(Favorite favorite) {
-	// final String fid = UUID.randomUUID().toString().replace("-", "")
-	// .substring(16);
-	// System.out.println("自动生成的UUID：(截取了自动生成的UUID后面16位)" + fid);
-	// String sql = "INSERT INTO t_favorite "
-	// + "(f_id,f_owner,f_picture,f_collectTime,f_memo) "
-	// + "VALUES (?, ?, ?, ?, ?)";
-	//
-	// return fid;
-	// }
-	// @Override
-	// public String insertOneGift(Gift gift) {
-	// final String gid = UUID.randomUUID().toString().replace("-", "")
-	// .substring(16);
-	// System.out.println("自动生成的UUID：(截取了自动生成的UUID后面16位)" + gid);
-	// String sql = "INSERT INTO t_gift "
-	// + "(g_id,g_name,g_type,g_value,g_imgPath,g_amount,g_memo) "
-	// + "VALUES (?, ?, ?, ?, ?, ?, ?)";
-	//
-	// return gid;
-	// }
 }

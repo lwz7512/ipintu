@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app id="WebApp_ID" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">	
-	<!--<filter>
+	<filter>
 		<filter-name>character</filter-name>
 		<filter-class> com.pintu.utils.CharacterEncodingFilter</filter-class>
 	</filter>
@@ -11,7 +11,7 @@
 	
 	<listener>
 		<listener-class>net.sf.ehcache.constructs.web.ShutdownListener</listener-class>
-	</listener> -->
+	</listener>
 	
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

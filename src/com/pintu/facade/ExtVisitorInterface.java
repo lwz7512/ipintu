@@ -9,12 +9,20 @@ package com.pintu.facade;
  *
  */
 public interface ExtVisitorInterface {
-
+	
+	public static final String LOGON ="logon";
+	
+	public static final String APPLY ="apply";
+	
+	public static final String GETAPPLICANT = "getApplicant";
+	
+	public static final String ACCEPT ="accept";
+	
+	public static final String REGISTER ="register";
+	
+	public static final String VALIDATE = "validate";
+	
 	public static final String UPLOADPICTURE = "upload";
-	
-	public static final String APPLYFORUSER = "applyForUser";
-	
-	public static final String OTHERMETHOD = "otherMethod";
 	
 	public static final String GETGALLERYBYTIME = "getGalleryByTime";
 	
@@ -45,7 +53,33 @@ public interface ExtVisitorInterface {
 	public static final String GETHOTPICTURE = "getHotPicture";
 	
 	public static final String GETClASSICALPINTU= "getClassicalPintu";
+	
+	
+	public static final String GETUSERESTATE = "getUserEstate";
+	
+	
+	public static final String MARKTHEPIC = "markThePic";
+	
+	public static final String DELETEONEFAVOR = "deleteOneFavor";
+	
+	public static final String GETFAVORITEPICS = "getFavoriteTpics";
+	
+	public static final String GETTPICSBYUSER = "getTpicsByUser";
+	
+	public static final String GETSTORIESBYUSER  = "getStoriesByUser";
 
+	public static final String GETGIFTS ="getExchangeableGifts";
+	
+	public static final String GETEVENTS = "getCommunityEvents";
+	
+	
+	//后台管理员角色
+	//发布可选礼物
+	public static final String ADDGIFT = "publishGift";
+	//发布社区事件
+	public static final String ADDEVENT = "publishEvent";
+	//查看最近一段时间的贴图
+	public static final String GETLATESTPIC = "getLatestPic";
 	
 	//TODO, TO ADD MORE METHOD DEFINITION...
 

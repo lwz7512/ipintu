@@ -6,9 +6,11 @@ package com.pintu.sync;
  */
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
@@ -30,36 +32,61 @@ public class DailySync implements Runnable{
 		//由Spring注入
 		private PintuServiceInterface pintuService;
 		
+		private Properties propertyConfigurer;
+		
 		private Logger log = Logger.getLogger(DailySync.class);
+		
+		// 同步开关
+		private Boolean dailyFlag = true;
 		
 		public void run() {
 			
-				Calendar c = Calendar.getInstance();
-			    int   year=c.get(Calendar.YEAR); 
-			    int   month=c.get(Calendar.MONTH); 
-			    int   day=c.get(Calendar.DATE); 
-				c.set(year, month, day, 0, 0, 0);
-				Date date = c.getTime();
-				//得到当天零点即 "2011-08-12 00:00:00"
-				String today = PintuUtils.formatDate(date);
+			if(dailyFlag){
+
+				//当前时间
+				Date date = new Date();
+				String endTime = PintuUtils.formatDate(date);
+				Long before = date.getTime() - 24*60*60*1000* Integer.parseInt(propertyConfigurer
+						.getProperty("syncInterval"));
+				String startTime= PintuUtils.formatLong(before);
 				
-				//同步当日零点开始数据库图片到缓存
-				List<String> picNames=syncPictureTask(today);
+				//同步现在到syncInterval（7）天前的数据库图片到缓存
+				Map<String,String> picIdNameMap=syncPictureTask(startTime,endTime);
 				
-				//同步品图对应的缓存图片
-				syncThumbnailTask(picNames);
+				List<String> picNameList = new ArrayList<String>();
+				StringBuffer picIds = new StringBuffer();
 				
-				//同步当日零点开始数据库评论到缓存
-				syncCommentTask(today);
-				
-				//同步当日零点开始数据库故事到缓存
-				String storyIds = syncStoryTask(today);
-				
-				//同步当日零点开始数据库投票到缓存
-				//若没有同步到故事的缓存，即storyId没有，就不用同步投票了吧
-				if(storyIds.length()>0){
-					syncVoteTask(storyIds);
+				for(String picId:picIdNameMap.keySet()){
+					if(picIds.length()>0){
+						picIds.append(",");
+					}
+					picIds.append("'");
+					picIds.append(picId);
+					picIds.append("'");
+					picNameList.add(picIdNameMap.get(picId));
 				}
+				
+				
+				//同步图片对应的缓存图片
+				if(picNameList.size() == 0){
+					syncThumbnailTask(picNameList);
+				}
+				
+				if(picIds.length() > 0){
+					//同步图片对应的数据库评论到缓存
+					syncCommentTask(picIds.toString());
+					
+					//同步图片对应的数据库故事到缓存
+					String storyIds = syncStoryTask(picIds.toString());
+					
+					//同步故事对应的数据库投票到缓存
+					//若没有同步到故事的缓存，即storyId没有，就不用同步投票了吧
+					if(storyIds.length()>0){
+						syncVoteTask(storyIds);
+					}
+				}
+			}
+			
 		}
 
 		/**
@@ -104,11 +131,12 @@ public class DailySync implements Runnable{
 		}
 
 
-		private String syncStoryTask(String today) {
+		private String syncStoryTask(String picIds) {
 			log.info("同步数据库故事到缓存开始...");
 			// 这里因是要取出story的id给vote用，构造出一个类似('storyId','storyId')的串给sql语句用
 			StringBuffer storyIds= new StringBuffer();
-			List<Story> storyList=dbVisitor.getStoryForCache(today);
+//			List<Story> storyList=dbVisitor.getStoryForCache(today);
+			List<Story> storyList=dbVisitor.getStoryForCache(picIds);
 			if(storyList != null){
 				for(int i=0;i<storyList.size();i++){
 					Story story = storyList.get(i);
@@ -127,9 +155,10 @@ public class DailySync implements Runnable{
 		}
 
 
-		private void syncCommentTask(String today) {
+		private void syncCommentTask(String picIds) {
 			log.info("同步数据库评论到缓存开始...");
-			List<Comment> commList=dbVisitor.getCommentForCache(today);
+//			List<Comment> commList=dbVisitor.getCommentForCache(today);
+			List<Comment> commList = dbVisitor.getCommentForCache(picIds);
 			if(commList != null){
 				for(int i=0;i<commList.size();i++){
 					Comment comm = commList.get(i);
@@ -139,20 +168,19 @@ public class DailySync implements Runnable{
 			log.info("同步评论到缓存结束，commentSize:"+commList.size());
 		}
 
-
-		private List<String> syncPictureTask(String today){
+		private Map<String,String> syncPictureTask(String startTime,String endTime){
 			log.info("同步数据库图片到缓存开始...");
-			List<String> names = new ArrayList<String>();
-			List<TPicItem> picList=dbVisitor.getPictureForCache(today);
+			Map<String,String> resMap = new HashMap<String,String>();
+			List<TPicItem> picList=dbVisitor.getPictureForCache(startTime,endTime);
 			if(picList != null){
 				for(int i=0;i<picList.size();i++){
 					TPicItem pic = picList.get(i);
 					cacheVisitor.syncDBPictureToCache(pic);
-					names.add(pic.getName());
+					resMap.put(pic.getId(), pic.getName());
 				}
 			}
 			log.info("同步图片到缓存结束，pictureSize:"+picList.size());
-			return names;
+			return resMap;
 		}
 		
 		public void setDbVisitor(DBAccessInterface dbVisitor) {
@@ -165,6 +193,18 @@ public class DailySync implements Runnable{
 
 		public void setPintuService(PintuServiceInterface pintuService) {
 			this.pintuService = pintuService;
+		}
+
+		public Boolean getDailyFlag() {
+			return dailyFlag;
+		}
+
+		public void setDailyFlag(Boolean dailyFlag) {
+			this.dailyFlag = dailyFlag;
+		}
+
+		public void setPropertyConfigurer(Properties propertyConfigurer) {
+			this.propertyConfigurer = propertyConfigurer;
 		}
 
 }

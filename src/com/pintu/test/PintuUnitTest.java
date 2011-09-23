@@ -65,7 +65,8 @@ public class PintuUnitTest {
 		u.setLevel(1);
 		u.setScore(0);
 		u.setExchangeScore(0);
-		dbAccess.insertOneUser(u);
+		u.setRegisterTime(PintuUtils.getFormatNowTime());
+		dbAccess.insertUser(u);
 		System.out.println("插入数据库成功！");
 	}
 	

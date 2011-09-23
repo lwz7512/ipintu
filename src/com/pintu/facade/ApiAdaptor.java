@@ -15,12 +15,18 @@ import net.sf.json.JSONObject;
 import org.apache.commons.fileupload.FileItem;
 
 import com.pintu.beans.Comment;
+import com.pintu.beans.Event;
+import com.pintu.beans.Favorite;
+import com.pintu.beans.Gift;
 import com.pintu.beans.Message;
 import com.pintu.beans.Story;
 import com.pintu.beans.StoryDetails;
+import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicDetails;
+import com.pintu.beans.TPicItem;
 import com.pintu.beans.TastePic;
 import com.pintu.beans.User;
+import com.pintu.beans.UserDetail;
 import com.pintu.beans.Vote;
 import com.pintu.utils.PintuUtils;
 import com.pintu.utils.UTF8Formater;
@@ -38,7 +44,7 @@ public class ApiAdaptor {
 	private PintuServiceInterface pintuService;
 	
 	public ApiAdaptor() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public PintuServiceInterface getPintuService() {
@@ -65,14 +71,11 @@ public class ApiAdaptor {
 				if(item.getFieldName().equals("user")){
 					pic.setUser(item.getString());
 				}
-				//FIXME 这里注意，应用手机时需要用到 UTF8Formater
 				if(item.getFieldName().equals("description")){
-//					pic.setDescription(item.getString());
 				    pic.setDescription(UTF8Formater.changeToWord(item.getString()));
 					System.out.println("description:"+pic.getDescription());
 				}
 				if(item.getFieldName().equals("tags")){
-//					pic.setTags(item.getString());
 					pic.setTags(UTF8Formater.changeToWord(item.getString()));
 					System.out.println("tags:"+pic.getTags());
 				}
@@ -100,14 +103,16 @@ public class ApiAdaptor {
 	 */
 	public String getGalleryByTime(String startTime,String endTime){
 		long queryTimeSpan = Long.valueOf(endTime)-Long.valueOf(startTime);
-		System.out.println(">>> query time span: "+queryTimeSpan/60*1000+" minutes;");
+		System.out.println(">>> query time span: "+queryTimeSpan/(60*1000)+" minutes;");
 		
 		long oneDayMiliSeconds = 24*60*60*1000;
 		if(queryTimeSpan>oneDayMiliSeconds){
 			//如果跨越了1天，就只给返回一天的数据
 			startTime = String.valueOf(Long.valueOf(endTime)-oneDayMiliSeconds);
 		}
-		return pintuService.getTpicsByTime(startTime, endTime);
+		List<TPicDesc> list= pintuService.getTpicsByTime(startTime, endTime);
+		
+		return JSONArray.fromCollection(list).toString();
 	}
 	
 	/**
@@ -135,7 +140,10 @@ public class ApiAdaptor {
 	 */
 	public String getTPicDetailsById(String tpId){
 		TPicDetails tpicDetails = pintuService.getTPicDetailsById(tpId);
-		return JSONObject.fromBean(tpicDetails).toString() ;
+		JSONObject json =JSONObject.fromBean(tpicDetails);
+		json.remove("mobImgPath");
+		json.remove("rawImgPath");
+		return json.toString() ;
 	}
 	
 	/**
@@ -153,51 +161,11 @@ public class ApiAdaptor {
 	 * @param tpID
 	 * @return
 	 */
-	public String getStoriesOfPic(String tpID){
-		List<StoryDetails> storyDeatilList = new ArrayList<StoryDetails>();
-		List<Story> storyList = pintuService.getStoriesOfPic(tpID);
-		if(storyList != null && storyList.size() > 0){
-			for(int i=0;i<storyList.size();i++){
-				StoryDetails storyDetail = new StoryDetails();
-				String storyId = storyList.get(i).getId();
-				String userId = storyList.get(i).getOwner();
-				storyDetail.setId(storyId);
-				storyDetail.setFollow( storyList.get(i).getFollow());
-				storyDetail.setOwner(userId);
-				storyDetail.setPublishTime(storyList.get(i).getPublishTime());
-				storyDetail.setContent(storyList.get(i).getContent());
-				storyDetail.setClassical(storyList.get(i).getClassical());
-				User user = pintuService.getUserInfo(userId);
-				if(user != null){
-					storyDetail.setAuthor(user.getAccount());
-				}
-				List<Vote> voteList = pintuService.getVotesOfStory(storyId);
-				if(voteList != null && voteList.size()>0){
-					for(int j=0;j<voteList.size();j++){
-						Vote vote = voteList.get(j);
-						if(vote.getType().equals(Vote.FLOWER_TYPE)){
-							storyDetail.setFlower(vote.getAmount());
-						}else if(vote.getType().equals(Vote.EGG_TYPE)){
-							storyDetail.setEgg(vote.getAmount());
-						}else if(vote.getType().equals(Vote.HEART_TYPE)){
-							storyDetail.setHeart(vote.getAmount());
-						}else if(vote.getType().equals(Vote.STAR_TYPE)){
-							storyDetail.setStar(vote.getAmount());
-						}
-					}
-				}else{
-					storyDetail.setFlower(0);
-					storyDetail.setEgg(0);
-					storyDetail.setHeart(0);
-					storyDetail.setStar(0);
-				}
-				storyDeatilList.add(storyDetail);
-			}
-		}
-		return JSONArray.fromCollection(storyDeatilList).toString();
+	public String getStoryDetailsOfPic(String tpId){
+		return JSONArray.fromCollection(pintuService.getStroyDetailsOfPic(tpId)).toString();
 	}
 	
-	public void createStory(String follow,String owner,String content){
+	private Story createStory(String follow,String owner,String content){
 		Story story = new Story();
 		story.setId(PintuUtils.generateUID());
 		story.setFollow(follow);
@@ -205,7 +173,7 @@ public class ApiAdaptor {
 		story.setPublishTime(PintuUtils.getFormatNowTime());
 		story.setContent(UTF8Formater.changeToWord(content));
 		story.setClassical(0);
-		this.addStoryToPicture(story);
+		return story;
 	}
 
 
@@ -213,19 +181,20 @@ public class ApiAdaptor {
 	 * 为一个品图添加故事
 	 * @param story
 	 */
-	private void addStoryToPicture(Story story){
+	public void addStoryToPicture(String follow,String owner,String content){
+		Story story = this.createStory(follow, owner, content);
 		 pintuService.addStoryToPintu(story);
 	}
 	
 	
-	public void createComment(String follow,String owner,String content ){
+	private Comment createComment(String follow,String owner,String content ){
 		Comment cmt = new Comment();
 		cmt.setId(PintuUtils.generateUID());
 		cmt.setFollow(follow);
 		cmt.setOwner(owner);
 		cmt.setPublishTime(PintuUtils.getFormatNowTime());
 		cmt.setContent(UTF8Formater.changeToWord(content));
-		this.addCommentToPicture(cmt);
+		return cmt;
 	}
 	
 	/**
@@ -233,25 +202,31 @@ public class ApiAdaptor {
 	 * @param cmt
 	 * @return
 	 */
-	private void addCommentToPicture(Comment cmt){
+	public void addCommentToPicture(String follow,String owner,String content){
+		Comment cmt = this.createComment(follow, owner, content);
 		 pintuService.addCommentToPintu(cmt);
 	}
 
 	
-	public void createVote(String follow,String type,String amount){
+	private Vote createVote(String follow,String type,String amount,String voter, String receiver){
 		Vote vote = new Vote();
 		vote.setId(PintuUtils.generateUID());
 		vote.setFollow(follow);
 		vote.setType(type);
 		vote.setAmount(Integer.parseInt(amount));
-		this.addVoteToStory(vote);
+		vote.setVoter(voter);
+		vote.setReceiver(receiver);
+		return vote;
 	}
 	
 	/**
 	 * 为品图故事投票
+	 * @param voter 
+	 * @param receiver 
 	 * @param vote
 	 */
-	private void addVoteToStory(Vote vote) {
+	public void addVoteToStory(String follow,String type,String amount, String voter, String receiver) {
+		Vote vote = this.createVote(follow, type, amount,voter,receiver);
 		pintuService.addVoteToStory(vote);
 	}
 	
@@ -264,6 +239,18 @@ public class ApiAdaptor {
 		User user = pintuService.getUserInfo(userId);
 		return JSONObject.fromObject(user).toString();
 	}
+	
+	private Message createMessage(String sender,String receiver,String content){
+		Message msg =  new Message();
+		msg.setId(PintuUtils.generateUID());
+		msg.setSender(sender);
+		msg.setReceiver(receiver);
+		msg.setContent(UTF8Formater.changeToWord(content));
+		msg.setWriteTime(PintuUtils.getFormatNowTime());
+		msg.setRead(0);
+		return msg;
+	}
+	
 
 	/**
 	 * 发消息
@@ -272,13 +259,7 @@ public class ApiAdaptor {
 	 * @param content
 	 */
 	public boolean sendMessage(String sender,String receiver,String content){
-		Message msg =  new Message();
-		msg.setId(PintuUtils.generateUID());
-		msg.setSender(sender);
-		msg.setReceiver(receiver);
-		msg.setContent(UTF8Formater.changeToWord(content));
-		msg.setWriteTime(PintuUtils.getFormatNowTime());
-		msg.setRead(0);
+		Message msg = this.createMessage(sender, receiver, content);
 		return pintuService.sendMessage(msg);
 	}
 	
@@ -296,17 +277,13 @@ public class ApiAdaptor {
 	 * 改变消息状态
 	 * @param read
 	 */
-	public boolean changeMsgState(String msgId) {
-		return pintuService.changeMsgState(msgId);
-	}
-
-	/**
-	 * 得到热图列表
-	 * @return
-	 */
-	public String getHotPicture() {
-		List<TPicDetails> hotList = pintuService.getHotPicture();
-		return JSONArray.fromCollection(hotList).toString();
+	public boolean changeMsgState(String msgIds) {
+		List<String> msgIdList = new ArrayList<String>();
+		String[] idArray = msgIds.split(",");
+		for(int i = 0;i < idArray.length;i++){
+			msgIdList.add(idArray[i]);
+		}
+		return pintuService.changeMsgState(msgIdList);
 	}
 
 	/**
@@ -317,5 +294,134 @@ public class ApiAdaptor {
 		List<StoryDetails> classicalList = pintuService.getClassicalPintu();
 		return JSONArray.fromCollection(classicalList).toString();
 	}
+
+	public String getUserEstate(String userId) {
+		UserDetail userDetail = pintuService.getUserEstate(userId);
+		return JSONObject.fromBean(userDetail).toString();
+	}
+
+	
+	private Favorite createFavorite(String userId, String picId) {
+		Favorite fav = new Favorite();
+		fav.setId(PintuUtils.generateUID());
+		fav.setCollectTime(PintuUtils.getFormatNowTime());
+		fav.setOwner(userId);
+		fav.setPicture(picId);
+		return fav;
+	}
+	
+	public boolean markFavoritePic(String userId, String picId) {
+		boolean flag = pintuService.checkExistFavorite(userId,picId);
+		if(flag){//图片已收藏，禁止重复收藏
+			return false;
+		}else{
+			Favorite fav = this.createFavorite(userId,picId);
+			return pintuService.markFavoritePic(fav);
+		}
+	}
+
+	public boolean deleteOneFavorite(String fId){
+		return pintuService.deleteOnesFavorite(fId);
+	}
+
+	private void removeJsonKey(JSONArray jsonArray){
+		for(int i = 0;i<jsonArray.length();i++){
+			jsonArray.getJSONObject(i).remove("mobImgPath");
+			jsonArray.getJSONObject(i).remove("rawImgPath");
+		}
+	}
+	
+	/**
+	 * 得到热图列表
+	 * @return
+	 */
+	public String getHotPicture() {
+		List<TPicDetails> hotList = pintuService.getHotPicture();
+		JSONArray jsonArray = JSONArray.fromCollection(hotList);
+		removeJsonKey(jsonArray);
+		return jsonArray.toString();
+	}
+	
+	public String getFavorTpics(String userId, int pageNum) {
+		List<TPicItem> favorList = pintuService.getFavoriteTpics(userId,pageNum);
+		JSONArray jsonArray = JSONArray.fromCollection(favorList);
+		removeJsonKey(jsonArray);
+		return jsonArray.toString();
+	}
+	
+	public String getTpicsByUser(String userId, int pageNum) {
+		List<TPicItem> userPicList = pintuService.getTpicsByUser(userId,pageNum);
+		JSONArray jsonArray = JSONArray.fromCollection(userPicList);
+		removeJsonKey(jsonArray);
+		return jsonArray.toString();
+	}
+
+	public String getStoryiesByUser(String userId, int pageNum) {
+		List<StoryDetails> userStoryList = pintuService.getStroiesByUser(userId,pageNum);
+		return JSONArray.fromCollection(userStoryList).toString();
+	}
+
+	public String getExchangeableGifts() {
+		List<Gift> list = pintuService.getExchangeableGifts();
+		return JSONArray.fromCollection(list).toString();
+	}
+
+	public String getCommunityEvents() {
+		List<Event> list =pintuService.getCommunityEvents();
+		return JSONArray.fromCollection(list).toString();
+	}
+
+	public boolean publishCommunityEvent(String title, String detail,
+			String time) {
+		Event eve = new Event();
+		eve.setId(PintuUtils.generateUID());
+		eve.setTitle(title);
+		eve.setDetail(detail);
+		eve.setEventTime(time);
+		return  pintuService.publishCommunityEvent(eve);
+	}
+
+	public boolean publishExchangeableGift() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public String getLatestPic() {
+		List<TPicDesc> list= pintuService.getLatestPic();
+		return JSONArray.fromCollection(list).toString();
+	}
+
+	public String getExistUser(String account, String pwd) {
+		String result = pintuService.getExistUser(account,pwd);
+		return result;
+	}
+
+	public String registerUser(String account, String pwd, String code) {
+		String prompt = pintuService.registerUser(account,pwd,code);
+		return prompt;
+	}
+	
+	public String validateAccount(String account) {
+		String result = pintuService.validateAccount(account);
+		return result;
+	}
+
+	public String sendApply(String account, String reason) {
+		String prompt = pintuService.sendApply(account,reason);
+		return prompt;
+	}
+
+	public String acceptApply(String id, String account,String url) {
+		String prompt = pintuService.acceptApply(id,account,url);
+		return prompt;
+	}
+
+	public List<User> getApplicant() {
+		List<User> list = pintuService.getApplicant();
+		return list;
+	}
+
+
+
 	
 } //end of class

@@ -20,7 +20,29 @@ public class Vote implements Serializable{
 	//数量
 	private int amount;
 	
-	
+	//投票作者
+	private String voter;
+	//所投故事的作者
+	private String receiver;
+
+	public String getReceiver() {
+		return receiver;
+	}
+
+	public void setReceiver(String receiver) {
+		this.receiver = receiver;
+	}
+
+	public String getVoter() {
+		return voter;
+	}
+
+	public void setVoter(String voter) {
+		this.voter = voter;
+	}
+
+
+
 	public Vote() {
 		// TODO Auto-generated constructor stub
 	}

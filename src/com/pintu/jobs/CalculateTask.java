@@ -15,7 +15,6 @@ import java.util.TimerTask;
 import org.apache.log4j.Logger;
 
 import com.pintu.beans.User;
-import com.pintu.beans.Vote;
 import com.pintu.beans.Wealth;
 import com.pintu.dao.CacheAccessInterface;
 import com.pintu.dao.DBAccessInterface;
@@ -42,99 +41,67 @@ public class CalculateTask extends TimerTask {
 	}
 
 	private void calculate() {
-		
-		System.out.println(">>> calculate task executed...");
+
+
 		// 这里存毫秒数
 		Long start = System.currentTimeMillis() - 60 * 60 * 1000;
-	    Long end = System.currentTimeMillis();
-
-		// 取一小时内被操作的故事，并观察投票数，若start类的值超过一个限值，则将故事表中经典字段
-		findAndSetClassical(start, end);
+		Long end = System.currentTimeMillis();
 		
+		System.out.println(">>> calculate task executed...时间范围："+PintuUtils.formatLong(start)+"--"+PintuUtils.formatLong(end));
+
 		// 取得活跃用户或缺省用户的信息
-		ArrayList<User> userList = getLiveOrDefaultUser(start,end);
+		List<User> userList = getLiveOrDefaultUser(start, end);
 
 		// 计算活跃用用户的积分并更新数据库
 		List<User> updateScoreUserList = new ArrayList<User>();
-		if(userList.size() >0){
+		if (userList.size() > 0) {
 			updateScoreUserList = this.calAndUpdateScore(userList, start, end);
 		}
 
-		// 财产直接根据可用积分计算结果查找并更新数据库的wealth表
-		if(updateScoreUserList.size() >0){
-			calAndUpdateWealth(updateScoreUserList);
-		}
-	}
-	
-	private void findAndSetClassical(Long start, Long end) {
-		// 将毫秒数转换成数据库所存储的字符串格式"yyyy-MM-dd HH:mm:ss"
-		String startTime = PintuUtils.formatLong(start);
-		String endTime = PintuUtils.formatLong(end);
-		// 取到一段时间间隔内有所有故事的id集
-		List<String> storyIdList = this.dbAccess.getStoryIdsByTime(startTime,
-				endTime);
-		// 将storyIdList转化成后面的形式--('','','')
-		if (storyIdList.size() > 0) {
-			StringBuffer storyIds = new StringBuffer();
-			for (int i = 0; i < storyIdList.size(); i++) {
-				String storyId = storyIdList.get(i);
-				if (storyIds.length() > 0) {
-					storyIds.append(",");
-				}
-				storyIds.append("'");
-				storyIds.append(storyId);
-				storyIds.append("'");
-			}
-			// 根据故事id取得投票信息
-			List<Vote> voteList = this.dbAccess.getVoteForCache(storyIds
-					.toString());
-			// 存储需要更新classical字段的故事id
-			List<String> needUpdateStoryIds = new ArrayList<String>();
-			if (voteList.size() > 0) {
-				for (int i = 0; i < voteList.size(); i++) {
-					Vote vote = voteList.get(i);
-					// 查看并判断经典投票的数量
-					if (vote.getType().equals(Vote.STAR_TYPE)
-							&& vote.getAmount() > Integer
-									.parseInt(propertyConfigurer
-											.getProperty("classicalVoteNum"))) {
-						needUpdateStoryIds.add(vote.getFollow());
+		StringBuffer userIds = new StringBuffer();
+		if (updateScoreUserList.size() > 0) {
+			if (updateScoreUserList.size() > 0) {
+				for (int i = 0; i < updateScoreUserList.size(); i++) {
+					User user = updateScoreUserList.get(i);
+					if (userIds.length() > 0) {
+						userIds.append(",");
 					}
+					userIds.append("'");
+					userIds.append(user.getId());
+					userIds.append("'");
 				}
 			}
-			// 更新数据库中的经典字段
-			int res = this.dbAccess.updateStoryClassical(needUpdateStoryIds);
-			if (res == needUpdateStoryIds.size()) {
-				log.info("更新故事经典字段成功！");
-			} else {
-				log.info("更新故事经典字段有误！");
-			}
 		}
-
+		// 财产直接根据可用积分计算结果查找并更新数据库的wealth表
+		// 根据用户的积分更新来处理用户的等级
+		if(userIds.length() > 0){
+			upgradeUserLevel(userIds.toString());
+			calAndUpdateWealth(userIds.toString());
+		}
 	}
 
-	private ArrayList<User> getLiveOrDefaultUser(Long start, Long end) {
+	private List<User> getLiveOrDefaultUser(Long start, Long end) {
 		// 需要进行计算的活跃用户
-		ArrayList<User> userList = new ArrayList<User>();
+		Set<User> userSet = new HashSet<User>();
 		List<User> liveList = new ArrayList<User>();
-		
-		for (Long i = start / (60 * 1000); i <= end / (60 * 1000); i++) {
-			liveList = this.cacheAccess.getLiveUser(String.valueOf(i));
-			if (liveList.size() > 0) {
-				for (int j = 0; j < liveList.size(); j++) {
-					User user = liveList.get(j);
-					userList.add(user);
-				}
+
+		liveList = this.cacheAccess.getActiveUser(start, end);
+		if (liveList.size() > 0) {
+			for (int j = 0; j < liveList.size(); j++) {
+				User user = liveList.get(j);
+				userSet.add(user);
 			}
 		}
-		
-		//FIXME 这里后期加入登录可缓存用户了后即可删除
+
+		// FIXME 这里后期加入登录可缓存用户了后即可删除
 		if (liveList.size() == 0) {
 			// 缺省用户,这里的id是我本身数据库里存在的一个用户id(必须保证存在)
 			User user = this.dbAccess.getUserById("a053beae20125b5b");
-			userList.add(user);
+			userSet.add(user);
 		}
-		
+
+		List<User> userList = new ArrayList<User>();
+		userList.addAll(userSet);
 		return userList;
 	}
 
@@ -163,7 +130,7 @@ public class CalculateTask extends TimerTask {
 					user.setScore(picMap.get(userId)
 							* Integer.parseInt(propertyConfigurer
 									.getProperty("uploadPictureScore"))
-							+ picMap.get(userId)
+							+ storyMap.get(userId)
 							* Integer.parseInt(propertyConfigurer
 									.getProperty("tellStoryScore")));
 
@@ -179,7 +146,7 @@ public class CalculateTask extends TimerTask {
 					resultList.add(user);
 					// 只有写故事操作
 				} else if (storyMap.containsKey(userId)) {
-					user.setScore(picMap.get(userId)
+					user.setScore(storyMap.get(userId)
 							* Integer.parseInt(propertyConfigurer
 									.getProperty("tellStoryScore")));
 					user.setExchangeScore(user.getScore());
@@ -192,32 +159,104 @@ public class CalculateTask extends TimerTask {
 		if (resultList.size() > 0) {
 			int m = this.dbAccess.updateUserScore(resultList);
 			if (m == resultList.size()) {
-				log.info("更新数据库用户积分成功");
+				log.info("更新数据库用户积分成功！");
 			} else {
-				log.info("更新数据库用户积分失败");
+				log.info("更新数据库用户积分失败！");
 			}
 		}
-
 		return resultList;
 	}
+	
 
-
-	private void calAndUpdateWealth(List<User> list) {
-		StringBuffer userIds = new StringBuffer();
-		if (list.size() > 0) {
-			for (int i = 0; i < list.size(); i++) {
-				User user = list.get(i);
-				if (userIds.length() > 0) {
-					userIds.append(",");
-				}
-				userIds.append("'");
-				userIds.append(user.getId());
-				userIds.append("'");
+	//更新用户等级
+	private void upgradeUserLevel(String userIds) {
+		
+		Map<String, Integer> idScoreMap = this.dbAccess
+				.getUserScoreInfo(userIds.toString());
+		
+		List <Map<String,Integer>> idLevelList = new ArrayList<Map<String,Integer>>();
+		
+		if (idScoreMap.size() > 0) {
+			for (String userId : idScoreMap.keySet()) {
+				Integer score = idScoreMap.get(userId);
+				Map<String,Integer> idLevelMap = new HashMap<String,Integer>();
+				Integer level =  conversionToLevel(score);
+				idLevelMap.put(userId,level);
+				idLevelList.add(idLevelMap);
 			}
 		}
+		
+		int rows = this.dbAccess.updateUserLevel(idLevelList);
+		if(rows == idLevelList.size()){
+			log.info("更新用户等级成功!");
+		}else{
+			log.info("更新用户等级有误！");
+		}
+	}
+	
+	//FIXME 这里需要完善，积分与等级的对应关系暂定
+	private int conversionToLevel(Integer score){
+		int level = 0;    
+		int score1 = Integer.parseInt(propertyConfigurer
+				.getProperty("Lv1"));
+		int score2 = Integer.parseInt(propertyConfigurer
+				.getProperty("Lv2"));
+		int score3 = Integer.parseInt(propertyConfigurer
+				.getProperty("Lv3"));
+		int score4 = Integer.parseInt(propertyConfigurer
+				.getProperty("Lv4"));
+		int score5 = Integer.parseInt(propertyConfigurer
+				.getProperty("Lv5"));
+		int score6 = Integer.parseInt(propertyConfigurer
+				.getProperty("Lv6"));
+		int score7 = Integer.parseInt(propertyConfigurer
+				.getProperty("Lv7"));
+		int score8 = Integer.parseInt(propertyConfigurer
+				.getProperty("Lv8"));
+		int score9 = Integer.parseInt(propertyConfigurer
+				.getProperty("Lv9"));
+		int score10= Integer.parseInt(propertyConfigurer
+				.getProperty("Lv10"));
+		int score11= Integer.parseInt(propertyConfigurer
+				.getProperty("Lv11"));
+		int score12= Integer.parseInt(propertyConfigurer
+				.getProperty("Lv12"));
+		
+		if(score <= score1){
+			level = 1;
+		}else if(score > score1 && score <= score2){
+			level =2;
+		}else if(score > score2 && score <= score3){
+			level =3;
+		}else if(score > score3 && score <= score4){
+			level =4;
+		}else if(score > score4 && score <= score5){
+			level =5;
+		}else if(score > score5 && score <= score6){
+			level =6;
+		}else if(score > score6 && score <= score7){
+			level =7;
+		}else if(score > score7 && score <= score8){
+			level =8;
+		}else if(score > score8 && score <= score9){
+			level =9;
+		}else if(score > score9 && score <= score10){
+			level =10;
+		}else if(score > score10 && score <= score11){
+			level =11;
+		}else if(score > score11 && score <= score12){
+			level =12;
+		}else{
+			level = 12;
+		}
+		return level;	
+	}
+	
+	private void calAndUpdateWealth(String userIds) {
+		
 		// 1、 获取活动用户的可用积分信息
 		Map<String, Integer> idScoreMap = this.dbAccess
-				.getUserExchangeInfo(userIds.toString());
+				.getUserExchangeInfo(userIds);
 
 		// 2、为用户计算财产，以可用积分换贝壳，
 		// 3、从wealth表中取出要计算的用户的财产信息
@@ -228,7 +267,7 @@ public class CalculateTask extends TimerTask {
 			for (String userId : idScoreMap.keySet()) {
 				Integer exchangeScore = idScoreMap.get(userId);
 				// 换算
-				Map<String, Integer> typeAmountMap = conversion(exchangeScore);
+				Map<String, Integer> typeAmountMap = conversionToWealth(exchangeScore);
 
 				// 换算结束后先更新用户的剩余可用积分字段，下面再做wealth表的操作
 				if (typeAmountMap.containsKey(Wealth.REMAIN_SCORE)) {
@@ -267,16 +306,15 @@ public class CalculateTask extends TimerTask {
 		Map<String, Integer> updateMap = new HashMap<String, Integer>();
 		Map<String, Integer> insertMap = new HashMap<String, Integer>();
 
+		unionMap.putAll(typeAmountMap);
+		// 将库里的wealth与typeAmoutMap合并算新值更新unionMap
 		for (int i = 0; i < oldWealthList.size(); i++) {
 			Wealth wealth = oldWealthList.get(i);
 			String type = wealth.getType();
 			dbTypeSet.add(type);
 			if (typeAmountMap.containsKey(type)) {
 				Integer newCount = typeAmountMap.get(type) + wealth.getAmount();
-				unionMap.remove(type);
 				unionMap.put(type, newCount);
-			} else {
-				unionMap.put(type, typeAmountMap.get(type));
 			}
 		}
 
@@ -352,12 +390,18 @@ public class CalculateTask extends TimerTask {
 				updateList.add(w);
 			} else {
 				// 若某一类型的财富值变成0，则删除该条记录
-				this.dbAccess.deleteOnesWealth(type, userId);
+				int n = this.dbAccess.deleteOnesWealth(type, userId);
+				if (n == 1) {
+					log.info("删除用户:" + userId + "的已为零的" + type + "类型财产成功！");
+				}
 			}
 		}
-		int row = this.dbAccess.updateOnesWealth(updateList);
-		if (row == updateList.size()) {
-			log.info("更新用户的财产信息成功！");
+
+		if (updateList.size() > 0) {
+			int row = this.dbAccess.updateOnesWealth(updateList);
+			if (row == updateList.size()) {
+				log.info("更新用户的财产信息成功！");
+			}
 		}
 	}
 
@@ -374,15 +418,18 @@ public class CalculateTask extends TimerTask {
 				wealthList.add(w);
 			}
 		}
-		int row = this.dbAccess.insertOnesWealth(wealthList);
-		if (row == wealthList.size()) {
-			log.info("插入用户的财产信息成功！");
+
+		if (wealthList.size() > 0) {
+			int row = this.dbAccess.insertOnesWealth(wealthList);
+			if (row == wealthList.size()) {
+				log.info("插入用户的财产信息成功！");
+			}
 		}
 
 	}
 
 	// 将积分转化为财富的类型与数量map
-	private Map<String, Integer> conversion(Integer exchangeScore) {
+	private Map<String, Integer> conversionToWealth(int exchangeScore) {
 		// 这里包含四个是类型数量，第五个为剩余积分（先初始化，再在递归计算的过程中为其分别赋值）
 		Map<String, Integer> typeAmount = new HashMap<String, Integer>();
 		typeAmount.put(Wealth.ONE_YUAN, 0);
@@ -391,9 +438,48 @@ public class CalculateTask extends TimerTask {
 		typeAmount.put(Wealth.HUNDRED_YUAN, 0);
 		typeAmount.put(Wealth.REMAIN_SCORE, 0);
 
-		// 这里考虑用一个递归来写
+		// 这里用一个递归来实现
+		calculateScore(exchangeScore, typeAmount);
 
 		return typeAmount;
+	}
+
+	private void calculateScore(int score, Map<String, Integer> map) {
+		// 600
+		int gold = Integer
+				.parseInt(propertyConfigurer.getProperty("goldShell"));
+		// 300
+		int silver = Integer.parseInt(propertyConfigurer
+				.getProperty("silverShell"));
+		// 60
+		int copper = Integer.parseInt(propertyConfigurer
+				.getProperty("copperShell"));
+		// 6
+		int sea = Integer.parseInt(propertyConfigurer.getProperty("seaShell"));
+
+		if (score >= gold) {
+			int value = map.get(Wealth.HUNDRED_YUAN);
+			map.put(Wealth.HUNDRED_YUAN, value + 1);
+			score -= gold;
+			calculateScore(score, map);
+		} else if (score >= silver) {
+			int value = map.get(Wealth.FIFTY_YUAN);
+			map.put(Wealth.FIFTY_YUAN, value + 1);
+			score -= silver;
+			calculateScore(score, map);
+		} else if (score >= copper) {
+			int value = map.get(Wealth.TEN_YUAN);
+			map.put(Wealth.TEN_YUAN, value + 1);
+			score -= copper;
+			calculateScore(score, map);
+		} else if (score >= sea) {
+			int value = map.get(Wealth.ONE_YUAN);
+			map.put(Wealth.ONE_YUAN, value + 1);
+			score -= sea;
+			calculateScore(score, map);
+		} else {
+			map.put(Wealth.REMAIN_SCORE, score);
+		}
 	}
 
 }

@@ -1,16 +1,20 @@
 package com.pintu.sync;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
 import com.pintu.beans.Comment;
+import com.pintu.beans.Message;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicItem;
 import com.pintu.beans.Vote;
 import com.pintu.dao.CacheAccessInterface;
 import com.pintu.dao.DBAccessInterface;
+import com.pintu.utils.PintuUtils;
 
 public class SyncExecute implements Runnable {
 
@@ -23,7 +27,6 @@ public class SyncExecute implements Runnable {
 	private Boolean syncFlag = true;
 
 	private Logger log = Logger.getLogger(SyncExecute.class);
-
 
 	public SyncExecute() {
 	}
@@ -82,7 +85,7 @@ public class SyncExecute implements Runnable {
 		List<Object> unSavedObjList = cacheVisitor
 				.getUnSavedObj(CacheAccessInterface.PICTURE_TYPE);
 
-		List<String> cachedObjIds = CacheAccessInterface.toSavedCacheIds
+		List<String> cachedObjIds = CacheAccessInterface.toSavedUserPicIds
 				.get(CacheAccessInterface.PICTURE_TYPE);
 
 		// 分离出可入库的正确图片对象
@@ -117,25 +120,24 @@ public class SyncExecute implements Runnable {
 		List<Object> resList = new ArrayList<Object>();
 		if (objList != null && objList.size() > 0) {
 			for (int i = 0; i < objList.size(); i++) {
-					TPicItem tpic = (TPicItem) objList.get(i);
-					if (tpic.isValid()) {
-						resList.add(tpic);
-						log.info("校验通过准备入库的故事："+tpic.getId());
-					} else {
-						// 有属性字段为空时为不全法的入库对象
-						log.warn("不能入库的图片对象，ID为：" + tpic.getId());
-					}
+				TPicItem tpic = (TPicItem) objList.get(i);
+				if (tpic.isValid()) {
+					resList.add(tpic);
+					log.info("校验通过准备入库的故事：" + tpic.getId());
+				} else {
+					// 有属性字段为空时为不全法的入库对象
+					log.warn("不能入库的图片对象，ID为：" + tpic.getId());
 				}
 			}
+		}
 		return resList;
 	}
-	
 
 	private void syncCommentToDB() {
 		List<Object> unSavedObjList = cacheVisitor
 				.getUnSavedObj(CacheAccessInterface.COMMENT_TYPE);
 
-		List<String> cachedObjIds = CacheAccessInterface.toSavedCacheIds
+		Map<String, LinkedList<String>> cachedMap = CacheAccessInterface.toSavedCacheIds
 				.get(CacheAccessInterface.COMMENT_TYPE);
 
 		List<Object> rightObjList = getVaildComment(unSavedObjList);
@@ -144,13 +146,7 @@ public class SyncExecute implements Runnable {
 			int m = dbVisitor.insertComment(rightObjList);
 			if (m == rightObjList.size()) {
 				// 成功入库后，全部删除已入库的对象id
-				List<String> needRemoveIds = new ArrayList<String>();
-				for (int j = 0; j < rightObjList.size(); j++) {
-					Comment cmt = (Comment) rightObjList.get(j);
-					needRemoveIds.add(cmt.getId());
-					log.info("即将删除已入库评论为："+cmt.getId());
-				}
-				cachedObjIds.removeAll(needRemoveIds);
+				cachedMap.clear();
 			} else {
 				log.warn("评论入库失败");
 			}
@@ -165,11 +161,11 @@ public class SyncExecute implements Runnable {
 		if (objList != null && objList.size() > 0) {
 			for (int i = 0; i < objList.size(); i++) {
 				Comment cmt = (Comment) objList.get(i);
-				if(cmt.isValid()){
+				if (cmt.isValid()) {
 					resList.add(cmt);
-					log.info("校验通过准备入库的评论："+cmt.getId());
+					log.info("校验通过准备入库的评论：" + cmt.getId());
 				} else {
-					// 有属性字段为空时为不全法的入库对象
+					// 有属性字段为空时为不合法的入库对象
 					log.warn("不能入库的评论对象，ID为：" + cmt.getId());
 				}
 			}
@@ -180,7 +176,8 @@ public class SyncExecute implements Runnable {
 	private void syncStoryToDB() {
 		List<Object> unSavedObjList = cacheVisitor
 				.getUnSavedObj(CacheAccessInterface.STORY_TYPE);
-		List<String> cachedObjIds = CacheAccessInterface.toSavedCacheIds
+
+		Map<String, LinkedList<String>> cachedMap = CacheAccessInterface.toSavedCacheIds
 				.get(CacheAccessInterface.STORY_TYPE);
 
 		List<Object> rightObjList = getVaildStory(unSavedObjList);
@@ -189,13 +186,7 @@ public class SyncExecute implements Runnable {
 			int m = dbVisitor.insertStory(rightObjList);
 			if (m == rightObjList.size()) {
 				// 成功入库后，全部删除已入库的对象id
-				List<String> needRemoveIds = new ArrayList<String>();
-				for (int j = 0; j < rightObjList.size(); j++) {
-					Story story = (Story) rightObjList.get(j);
-					needRemoveIds.add(story.getId());
-					log.info("即将删除已入库故事为："+story.getId());
-				}
-				cachedObjIds.removeAll(needRemoveIds);
+				cachedMap.clear();
 			} else {
 				log.warn("故事入库失败");
 			}
@@ -207,13 +198,15 @@ public class SyncExecute implements Runnable {
 
 	private List<Object> getVaildStory(List<Object> objList) {
 		List<Object> resList = new ArrayList<Object>();
-		for(int i = 0;i<objList.size();i++){
-			Story story = (Story) objList.get(i);
-			if(story.isValid()){
-				resList.add(story);
-				log.info("校验通过准备入库的故事："+story.getId());
-			}else{
-				log.warn("不能入库的故事对象，ID为：" + story.getId());
+		if (objList != null && objList.size() > 0) {
+			for (int i = 0; i < objList.size(); i++) {
+				Story story = (Story) objList.get(i);
+				if (story.isValid()) {
+					resList.add(story);
+					log.info("校验通过准备入库的故事：" + story.getId());
+				} else {
+					log.warn("不能入库的故事对象，ID为：" + story.getId());
+				}
 			}
 		}
 		return resList;
@@ -222,7 +215,8 @@ public class SyncExecute implements Runnable {
 	private void syncVoteToDB() {
 		List<Object> unSavedObjList = cacheVisitor
 				.getUnSavedObj(CacheAccessInterface.VOTE_TYPE);
-		List<String> cachedObjIds = CacheAccessInterface.toSavedCacheIds
+
+		Map<String, LinkedList<String>> cachedMap = CacheAccessInterface.toSavedCacheIds
 				.get(CacheAccessInterface.VOTE_TYPE);
 
 		List<Object> rightObjList = getVaildVote(unSavedObjList);
@@ -235,7 +229,7 @@ public class SyncExecute implements Runnable {
 				// 原则上，入库的投票，一个故事最多有是几个种类的有几条投票数据
 				List<Vote> resList = dbVisitor.getVoteByFollowAndType(
 						vote.getFollow(), vote.getType());
-				
+
 				// 存在对于某一故事的这一种类的评论，则更新数据库中此条记录，否则插入新的记录
 				if (resList.size() > 0) {
 					rows += dbVisitor.updateVote(vote);
@@ -243,15 +237,17 @@ public class SyncExecute implements Runnable {
 					rows += dbVisitor.insertVote(vote);
 				}
 			}
-			
+
 			if (rows == rightObjList.size()) {
+				//FIXME 在投票入库成功时根据投票者的投票发一条消息给所投品图的故事作者
+				addVoteMsg(rightObjList);
 				// 成功入库后，全部删除已入库的对象id
-				List<String> needRemoveIds = new ArrayList<String>();
 				for (int j = 0; j < rightObjList.size(); j++) {
-					needRemoveIds.add(((Vote) rightObjList.get(j)).getId());
-					log.info("即将删除已入库投票为："+((Vote) rightObjList.get(j)).getId());
+					Vote vote = (Vote) rightObjList.get(j);
+					cachedMap.get(vote.getFollow()).remove(vote.getId());
+					log.info("即将删除已入库投票为：" + vote.getId());
+					
 				}
-				cachedObjIds.removeAll(needRemoveIds);
 			} else {
 				log.warn("投票入库失败");
 			}
@@ -261,16 +257,46 @@ public class SyncExecute implements Runnable {
 		}
 
 	}
+	
+	//投票附加消息
+	private void addVoteMsg(List<Object> rightObjList){
+		if(rightObjList.size() > 0){
+			for(int i=0;i<rightObjList.size();i++){
+				Vote vote = (Vote) rightObjList.get(i);
+				Message msg = new Message();
+				msg.setId(PintuUtils.generateUID());
+				msg.setSender(vote.getVoter());
+				msg.setReceiver(vote.getReceiver());
+				String type = vote.getType();
+				if(type.equals(Vote.EGG_TYPE)){
+					msg.setContent("so bad story.");
+				}else{
+					msg.setContent("I like your story and I am on your side.");
+				}
+				msg.setWriteTime(PintuUtils.getFormatNowTime());
+				msg.setRead(0);
+				
+				int res = dbVisitor.insertMessage(msg);
+				if(res == 1){
+					log.info("投票附加消息入库成功");
+				}else{
+					log.info("投票附加消息入库失败");
+				}
+			}
+		}
+	}
 
 	private List<Object> getVaildVote(List<Object> objList) {
 		List<Object> resList = new ArrayList<Object>();
-		for(int i = 0;i<objList.size();i++){
-			Vote vote =(Vote) objList.get(i);
-			if(vote.isValid()){
-				resList.add(vote);
-				log.info("校验通过准备入库的投票："+vote.getId());
-			}else{
-				log.warn("不能入库的投票对象，ID为：" + vote.getId());
+		if (objList != null && objList.size() > 0) {
+			for (int i = 0; i < objList.size(); i++) {
+				Vote vote = (Vote) objList.get(i);
+				if (vote.isValid()) {
+					resList.add(vote);
+					log.info("校验通过准备入库的投票：" + vote.getId());
+				} else {
+					log.warn("不能入库的投票对象，ID为：" + vote.getId());
+				}
 			}
 		}
 		return resList;

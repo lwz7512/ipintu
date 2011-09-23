@@ -16,26 +16,64 @@ public class User implements Serializable{
 	//密码
 	private String pwd;
 	//肖像
-	private String avatar;
+	private String avatar="default";
 	//角色
-	private String role;
+	private String role="general";
 	//级别
 	private int level;
 	//总积分
 	private int score;
 	//可兑换积分
 	private int exchangeScore;
+	//注册时间
+	private String registerTime;
 	
 	//最后动作时间（即最后更新时间）存毫秒数
-	private String lastUpdateTime;
+	private Long lastUpdateTime;
 	
+
+	private int storyNum;
+	private int tpicNum;
+
+	//申请理由
+	private String applyReason;
 	
-	public String getLastUpdateTime() {
+	//是否通过申请
+	private int passed=0;
+
+	//邀请码
+	private String inviteCode;
+	
+	public String getInviteCode() {
+		return inviteCode;
+	}
+
+	public void setInviteCode(String inviteCode) {
+		this.inviteCode = inviteCode;
+	}
+
+	public int getStoryNum() {
+		return storyNum;
+	}
+
+	public void setStoryNum(int storyNum) {
+		this.storyNum = storyNum;
+	}
+
+	public int getTpicNum() {
+		return tpicNum;
+	}
+
+	public void setTpicNum(int tpicNum) {
+		this.tpicNum = tpicNum;
+	}
+
+	public Long getLastUpdateTime() {
 		return lastUpdateTime;
 	}
 
 
-	public void setLastUpdateTime(String lastUpdateTime) {
+	public void setLastUpdateTime(Long lastUpdateTime) {
 		this.lastUpdateTime = lastUpdateTime;
 	}
 
@@ -43,7 +81,6 @@ public class User implements Serializable{
 	public String getId() {
 		return id;
 	}
-
 
 	public void setId(String id) {
 		this.id = id;
@@ -130,21 +167,23 @@ public class User implements Serializable{
 	}
 
 
-	public String getPassed() {
+	public int getPassed() {
 		return passed;
 	}
 
 
-	public void setPassed(String passed) {
+	public void setPassed(int passed) {
 		this.passed = passed;
 	}
 
 
-	//申请理由
-	private String applyReason;
-	
-	//是否通过申请
-	private String passed;
+	public String getRegisterTime() {
+		return registerTime;
+	}
+
+	public void setRegisterTime(String registerTime) {
+		this.registerTime = registerTime;
+	}
 	
 		
 	public User() {			

@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -18,15 +19,13 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONArray;
+import org.apache.log4j.Logger;
 
 import com.pintu.beans.Comment;
 import com.pintu.beans.Event;
-import com.pintu.beans.GTStatics;
+import com.pintu.beans.Favorite;
 import com.pintu.beans.Gift;
 import com.pintu.beans.Message;
-import com.pintu.beans.News;
-import com.pintu.beans.Note;
 import com.pintu.beans.Story;
 import com.pintu.beans.StoryDetails;
 import com.pintu.beans.TPicDesc;
@@ -34,18 +33,25 @@ import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TPicItem;
 import com.pintu.beans.TastePic;
 import com.pintu.beans.User;
+import com.pintu.beans.UserDetail;
 import com.pintu.beans.Vote;
 import com.pintu.beans.Wealth;
 import com.pintu.dao.CacheAccessInterface;
 import com.pintu.dao.DBAccessInterface;
+import com.pintu.jobs.MidnightTask;
 import com.pintu.tools.ImgDataProcessor;
+import com.pintu.utils.Encrypt;
+import com.pintu.utils.MailSenderInfo;
 import com.pintu.utils.PintuUtils;
+import com.pintu.utils.SimpleMailSender;
 import com.sun.image.codec.jpeg.ImageFormatException;
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGImageDecoder;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 public class PintuServiceImplement implements PintuServiceInterface {
+	
+	private Logger log = Logger.getLogger(PintuServiceImplement.class);
 
 	// 由Spring注入
 	private DBAccessInterface dbVisitor;
@@ -54,7 +60,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 	// 由Spring注入
 	private ImgDataProcessor imgProcessor;
-	
+
 	private Properties propertyConfigurer;
 
 	public void setPropertyConfigurer(Properties propertyConfigurer) {
@@ -96,6 +102,12 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
+	public List<TPicDesc> getInviteTpicsToday() {
+		// 这个功能暂时不在1.0中实现，界面中没有设计
+		return null;
+	}
+
+	@Override
 	public void createTastePic(TastePic pic, String user) {
 		System.out.println("3 构造对象 pintuservice createTastePic");
 		System.out.println("TastePic:" + pic.getFileType() + "   user:" + user);
@@ -123,6 +135,12 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 			// 2. 放入缓存
 			cacheVisitor.cachePicture(tpicItem);
+			
+			//FIXME 更新用户的最后操作时间
+			Long updateTime = System.currentTimeMillis();
+			cacheVisitor.updateCachedUser(tpicItem.getOwner(), updateTime);
+			
+			
 			// 3. 提交imgProcessor生成文件
 			imgProcessor.createImageFile(pic.getRawImageData(), tpicItem);
 
@@ -137,6 +155,10 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	@Override
 	public void addStoryToPintu(Story story) {
 		cacheVisitor.cacheStory(story);
+		
+		//FIXME 更新用户的最后操作时间
+		Long updateTime = System.currentTimeMillis();
+		cacheVisitor.updateCachedUser(story.getOwner(), updateTime);
 	}
 
 	@Override
@@ -147,79 +169,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	@Override
 	public void addVoteToStory(Vote vote) {
 		cacheVisitor.cacheVote(vote);
-	}
-
-	@Override
-	public List<TPicDesc> getTpicsByUser(String user, String pageNum) {
-		// TODO Auto-generated method stub
-		return null;
-
-	}
-
-	@Override
-	public Boolean loginByWeibo(String user, String pswd) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean loginSys(String user, String pswd) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean registerUser(String user, String pswd, String inviteCode) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean addPollToTpic(Vote vote) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean applyForUser(String realname, String email, String intro) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean deleteStoryOfPic(String storyId, String tpicID) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean deleteTasetPic(String tpID) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean exchangeGifts(String user, String giftIds) {
-		// 2.0 功能暂时不实现
-		return null;
-	}
-
-	@Override
-	public List<TPicDesc> getClassicTpics() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Event> getCommunityEvents() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public GTStatics getCommunityGTs() {
-		// 2.0 功能暂时不实现
-		return null;
 	}
 
 	@Override
@@ -234,7 +183,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	 * @param longTime
 	 * @return
 	 */
-	public int getMinutes(String longTime) {
+	private int getMinutes(String longTime) {
 		Long lTime = Long.parseLong(longTime);
 		long minlong = lTime / (60 * 1000);
 		int min = Math.round(minlong);
@@ -242,7 +191,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public String getTpicsByTime(String startTime, String endTime) {
+	public List<TPicDesc> getTpicsByTime(String startTime, String endTime) {
 		List<TPicDesc> resultList = new ArrayList<TPicDesc>();
 		List<TPicDesc> thumbnailList = new ArrayList<TPicDesc>();
 		int start = getMinutes(startTime);
@@ -262,57 +211,12 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			}
 		}
 
-		JSONArray ja = JSONArray.fromCollection(resultList);
-
-		return ja.toString();
+		return resultList;
 	}
 
 	@Override
-	public List<TPicDesc> getFavoriteTpics(String user, String pageNum) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Gift> getGiftsToday() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<TPicDesc> getHotTpics() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<News> getIndustryNews() {
-		// 2.0功能暂不实现
-		return null;
-	}
-
-	@Override
-	public List<TPicDesc> getInviteTpicsToday() {
-		// 这个功能暂时不在1.0中实现，界面中没有设计
-		return null;
-	}
-
-	@Override
-	public List<TPicDesc> getLatestTpics(String timeLength) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Note> getMarketNotes() {
-		// 2.0功能暂不实现
-		return null;
-	}
-
-	@Override
-	public List<Wealth> getShellDetails(String user) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Wealth> getWealthDetails(String userId) {
+		return dbVisitor.getOnesWealth(userId);
 	}
 
 	@Override
@@ -328,9 +232,15 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		// 取一个品图的所有者，即用户ID
 		String userId = item.getOwner();
 		// 得到图片的所有者即userId,再到数据库里取出user的详细信息
-		User user = dbVisitor.getUserById(userId);
-		int commentNum = this.getCommentsOfPic(tpId).size();
-		int storyNum = this.getStoriesOfPic(tpId).size();
+		User user = this.getUserInfo(userId);
+		int commentNum = cacheVisitor.getCommentsOfPic(tpId).size();
+		if (commentNum == 0) {
+			commentNum = dbVisitor.getCommentsOfPic(tpId).size();
+		}
+		int storyNum = cacheVisitor.getStoriesOfPic(tpId).size();
+		if (storyNum == 0) {
+			storyNum = dbVisitor.getStoriesOfPic(tpId).size();
+		}
 		details.setStoriesNum(storyNum);
 		details.setCommentsNum(commentNum);
 		if (user != null) {
@@ -361,28 +271,72 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			CacheAccessInterface.hotPicCacheIds.put(item.getId(), counter);
 		}
 
-		details.setCounter(CacheAccessInterface.hotPicCacheIds.get(item
-				.getId()));
+		details.setCounter(CacheAccessInterface.hotPicCacheIds.get(item.getId()));
 
 		return details;
 	}
 
 	@Override
-	public List<Story> getStoriesOfPic(String tpId) {
-		List<Story> storyList = dbVisitor.getStoriesOfPic(tpId);
-		return storyList;
+	public List<StoryDetails> getStroyDetailsOfPic(String tpId) {
+		List<StoryDetails> storyDeatilList = new ArrayList<StoryDetails>();
+		List<Story> storyList = cacheVisitor.getStoriesOfPic(tpId);
+		if (storyList.size() == 0) {
+			storyList = dbVisitor.getStoriesOfPic(tpId);
+		}
+		if (storyList != null && storyList.size() > 0) {
+			for (int i = 0; i < storyList.size(); i++) {
+				StoryDetails storyDetail = new StoryDetails();
+				String storyId = storyList.get(i).getId();
+				String userId = storyList.get(i).getOwner();
+				storyDetail.setId(storyId);
+				storyDetail.setFollow(storyList.get(i).getFollow());
+				storyDetail.setOwner(userId);
+				storyDetail.setPublishTime(storyList.get(i).getPublishTime());
+				storyDetail.setContent(storyList.get(i).getContent());
+				storyDetail.setClassical(storyList.get(i).getClassical());
+				User user = this.getUserInfo(userId);
+				if (user != null) {
+					storyDetail.setAuthor(user.getAccount());
+				}
+				List<Vote> voteList = this.getVotesOfStory(storyId);
+				if (voteList != null && voteList.size() > 0) {
+					for (int j = 0; j < voteList.size(); j++) {
+						Vote vote = voteList.get(j);
+						if (vote.getType().equals(Vote.FLOWER_TYPE)) {
+							storyDetail.setFlower(vote.getAmount());
+						} else if (vote.getType().equals(Vote.EGG_TYPE)) {
+							storyDetail.setEgg(vote.getAmount());
+						} else if (vote.getType().equals(Vote.HEART_TYPE)) {
+							storyDetail.setHeart(vote.getAmount());
+						} else if (vote.getType().equals(Vote.STAR_TYPE)) {
+							storyDetail.setStar(vote.getAmount());
+						}
+					}
+				} else {
+					storyDetail.setFlower(0);
+					storyDetail.setEgg(0);
+					storyDetail.setHeart(0);
+					storyDetail.setStar(0);
+				}
+				storyDeatilList.add(storyDetail);
+			}
+		}
+		return storyDeatilList;
 	}
 
 	@Override
 	public List<Comment> getCommentsOfPic(String tpId) {
 		List<Comment> resList = new ArrayList<Comment>();
-		List<Comment> cmtList = dbVisitor.getCommentsOfPic(tpId);
-		if(cmtList.size()>0){
-			for(int i=0;i<cmtList.size();i++){
+		List<Comment> cmtList = cacheVisitor.getCommentsOfPic(tpId);
+		if (cmtList.size() == 0) {
+			cmtList = dbVisitor.getCommentsOfPic(tpId);
+		}
+		if (cmtList.size() > 0) {
+			for (int i = 0; i < cmtList.size(); i++) {
 				Comment comt = new Comment();
 				Comment cmt = cmtList.get(i);
 				String userId = cmt.getOwner();
-				User user = dbVisitor.getUserById(userId);
+				User user = this.getUserInfo(userId);
 				comt.setId(cmt.getId());
 				comt.setAuthor(user.getAccount());
 				comt.setFollow(cmt.getFollow());
@@ -403,68 +357,91 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 	@Override
 	public User getUserInfo(String userId) {
-		User user = dbVisitor.getUserById(userId);
+		User user = cacheVisitor.getUserById(userId);
+		if (user.getId() == null) {
+			user = dbVisitor.getUserById(userId);
+		}
+		// FIXME 添加发图数和发故事统计
+		user.setStoryNum(dbVisitor.getStoryCountByUser(userId));
+		user.setTpicNum(dbVisitor.getTPicCountByUser(userId));
 		return user;
 	}
 
 	@Override
-	public User getUsrBasInfo(String user) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public UserDetail getUserEstate(String userId) {
+		UserDetail uDetail = new UserDetail();
+		User user = cacheVisitor.getSpecificUser(userId);
+		if (user.getId() == null) {
+			user = dbVisitor.getUserById(userId);
+		}
+		uDetail.setId(userId);
+		uDetail.setAccount(user.getAccount());
+		uDetail.setAvatar(user.getAvatar());
+		uDetail.setLevel(user.getLevel());
+		uDetail.setScore(user.getScore());
+		uDetail.setExchangeScore(user.getExchangeScore());
+		// FIXME 这里给用户资产添加发图数和发故事统计
+		uDetail.setStoryNum(dbVisitor.getStoryCountByUser(userId));
+		uDetail.setTpicNum(dbVisitor.getTPicCountByUser(userId));
 
-	@Override
-	public Wealth getUsrEstate(String user) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		List<Wealth> wealthList = this.getWealthDetails(userId);
+		if (wealthList.size() > 0) {
+			for (int i = 0; i < wealthList.size(); i++) {
+				Wealth wealth = wealthList.get(i);
+				if (wealth.getType().equals(Wealth.ONE_YUAN)) {
+					uDetail.setSeaShell(wealth.getAmount());
+				} else if (wealth.getType().equals(Wealth.TEN_YUAN)) {
+					uDetail.setCopperShell(wealth.getAmount());
+				} else if (wealth.getType().equals(Wealth.FIFTY_YUAN)) {
+					uDetail.setSilverShell(wealth.getAmount());
+				} else if (wealth.getType().equals(Wealth.HUNDRED_YUAN)) {
+					uDetail.setGoldShell(wealth.getAmount());
+				}
+			}
+		}
 
-	@Override
-	public Boolean giveGifts(String user, String giftIds) {
-		// 2.0功能暂不实现
-		return null;
-	}
-
-	@Override
-	public Boolean pasteNote(String user, String content) {
-		// 2.0功能暂不实现
-		return null;
-	}
-
-	@Override
-	public Boolean publishAvailableGift(Gift gift) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean publishIndustryEvent(Event tpEvent) {
-		// 2.0功能暂不实现
-		return null;
-	}
-
-	@Override
-	public Boolean publishTpEvent(Event tpEvent) {
-		// 2.0功能暂不实现
-		return null;
-	}
-
-	@Override
-	public List<TPicDesc> searchTpicByTags(String tags) {
-		// 2.0功能暂不实现
-		return null;
+		return uDetail;
 	}
 
 	@Override
 	public List<Message> getUserMessages(String userId) {
+		List<Message> resList = new ArrayList<Message>();
 		List<Message> msgList = dbVisitor.getUserMessages(userId);
-		return msgList;
+		for(int i = 0;i<msgList.size();i ++){
+			Message msg = msgList.get(i);
+			//为消息的接收者添加名字和肖像
+			String receiverId = msg.getReceiver();
+			User receiveUser = this.getUserInfo(receiverId);
+			String receiverName = receiveUser.getAccount();
+			String receiverAvatar = receiveUser.getAvatar();
+			msg.setReceiverName(receiverName);
+			msg.setReceiverAvatar(receiverAvatar);
+			//为消息发送者添加名字和肖像
+			String senderId = msg.getSender();
+			User sendUser = this.getUserInfo(senderId);
+			String senderName = sendUser.getAccount();
+			String senderAvatar = sendUser.getAvatar();
+			msg.setSenderName(senderName);
+			msg.setSenderAvatar(senderAvatar);
+			resList.add(msg);
+		}
+		return resList;
 	}
 
 	@Override
 	public Boolean sendMessage(Message msg) {
 		int i = dbVisitor.insertMessage(msg);
 		if (i > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean changeMsgState(List<String> msgIdList) {
+		int rows = dbVisitor.updateMsg(msgIdList);
+		if (rows > 0) {
 			return true;
 		} else {
 			return false;
@@ -594,30 +571,21 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public boolean changeMsgState(String msgId) {
-		int rows = dbVisitor.updateMsg(msgId);
-		if (rows > 0) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	@Override
 	public List<TPicDetails> getHotPicture() {
 		List<TPicDetails> hotList = new ArrayList<TPicDetails>();
 		Map<String, Integer> map = CacheAccessInterface.hotPicCacheIds;
-		
-		if (map.size() == 0){ 
-			return hotList ;
+
+		if (map.size() == 0) {
+			return hotList;
 		}
-		
+
 		int[] counterArray = new int[map.size()];
-		int i = 0;		
-		
+		int i = 0;
+
 		for (Integer counter : map.values()) {
-            //点击量取配置文件中的设置值
-			if (counter > Integer.parseInt(propertyConfigurer.getProperty("hotPintuCounter"))) {
+			// 点击量取配置文件中的设置值
+			if (counter > Integer.parseInt(propertyConfigurer
+					.getProperty("hotPintuCounter"))) {
 				Array.set(counterArray, i, counter);
 				i++;
 			}
@@ -627,9 +595,10 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			sortArray(counterArray);
 		}
 
-		//根据排序后的结果从大到小，取得缓存中的tpId，并查出详情
+		// 根据排序后的结果从大到小，取得缓存中的tpId，并查出详情
 		for (int j = 0; j < counterArray.length; j++) {
-			if(counterArray[j]==0) break;
+			if (counterArray[j] == 0)
+				break;
 			for (String tpId : map.keySet()) {
 				if (map.get(tpId) == counterArray[j]) {
 					TPicDetails tpic = this.getTPicDetailsById(tpId);
@@ -666,22 +635,24 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				}
 			}
 
-			//后移排序码小于R[i]的记录
-            for( j = i-1;j >= left;j-- )
-            {
-                array[j+1] = array[j];
-            }
+			// 后移排序码小于R[i]的记录
+			for (j = i - 1; j >= left; j--) {
+				array[j + 1] = array[j];
+			}
 			// 插入
 			array[left] = num;
 		}
-
 
 	}
 
 	@Override
 	public List<StoryDetails> getClassicalPintu() {
 		List<StoryDetails> classicalList = new ArrayList<StoryDetails>();
-		List<Story> list = dbVisitor.getClassicalPintu();
+		// List<Story> list = dbVisitor.getClassicalPintu();
+		// 取得前一天更新的经典story
+		List<Story> list = dbVisitor
+				.getClassicalPintuByIds(MidnightTask.newClassicalStoryIds
+						.toString());
 		if (list.size() > 0) {
 			for (int i = 0; i < list.size(); i++) {
 				Story story = list.get(i);
@@ -702,6 +673,287 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		return classicalList;
 	}
 
+	@Override
+	public boolean checkExistFavorite(String userId, String picId) {
+		int i = dbVisitor.checkExistFavorite(userId, picId);
+		if (i > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean markFavoritePic(Favorite fav) {
+		int i = dbVisitor.insertFavorite(fav);
+		if (i > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean deleteOnesFavorite(String picId) {
+		int i = dbVisitor.deleteFavorite(picId);
+		if (i > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public List<TPicItem> getFavoriteTpics(String userId, int pageNum) {
+		int pageSize = Integer.parseInt(propertyConfigurer
+				.getProperty("pageSize"));
+		List<TPicItem> picList = dbVisitor.getFavoriteTpics(userId, pageNum,
+				pageSize);
+		return picList;
+	}
+
+	@Override
+	public List<TPicItem> getTpicsByUser(String userId, int pageNum) {
+		int pageSize = Integer.parseInt(propertyConfigurer
+				.getProperty("pageSize"));
+		List<TPicItem> list = dbVisitor.getTpicsByUser(userId, pageNum,
+				pageSize);
+		return list;
+	}
+
+	@Override
+	public List<StoryDetails> getStroiesByUser(String userId, int pageNum) {
+		List<StoryDetails> resList = new ArrayList<StoryDetails>();
+		int pageSize = Integer.parseInt(propertyConfigurer
+				.getProperty("pageSize"));
+		List<Story> sList = dbVisitor.getStoriesByUser(userId, pageNum,
+				pageSize);
+		for (int i = 0; i < sList.size(); i++) {
+			StoryDetails details = new StoryDetails();
+			String storyId = sList.get(i).getId();
+			details.setId(storyId);
+			details.setFollow(sList.get(i).getFollow());
+			details.setOwner(userId);
+			details.setPublishTime(sList.get(i).getPublishTime());
+			details.setContent(sList.get(i).getContent());
+			details.setClassical(sList.get(i).getClassical());
+			User user = this.getUserInfo(userId);
+			if (user != null) {
+				details.setAuthor(user.getAccount());
+			}
+			List<Vote> voteList = this.getVotesOfStory(storyId);
+			if (voteList != null && voteList.size() > 0) {
+				for (int j = 0; j < voteList.size(); j++) {
+					Vote vote = voteList.get(j);
+					if (vote.getType().equals(Vote.FLOWER_TYPE)) {
+						details.setFlower(vote.getAmount());
+					} else if (vote.getType().equals(Vote.EGG_TYPE)) {
+						details.setEgg(vote.getAmount());
+					} else if (vote.getType().equals(Vote.HEART_TYPE)) {
+						details.setHeart(vote.getAmount());
+					} else if (vote.getType().equals(Vote.STAR_TYPE)) {
+						details.setStar(vote.getAmount());
+					}
+				}
+			} else {
+				details.setFlower(0);
+				details.setEgg(0);
+				details.setHeart(0);
+				details.setStar(0);
+			}
+			resList.add(details);
+		}
+
+		return resList;
+	}
+
+	@Override
+	public List<Gift> getExchangeableGifts() {
+		List<Gift> result = dbVisitor.getExchangeableGifts();
+		return result;
+	}
+
+	@Override
+	public List<Event> getCommunityEvents() {
+		String today = PintuUtils.getToday();
+		List<Event> result = dbVisitor.getCommunityEvents(today);
+		return result;
+	}
+
+	@Override
+	public Boolean publishExchangeableGift(Gift gift) {
+		int i = dbVisitor.insertGift(gift);
+		if (i > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public Boolean publishCommunityEvent(Event event) {
+		int i = dbVisitor.insertEvent(event);
+		if (i > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public List<TPicDesc> getLatestPic() {
+		List<TPicDesc> resultList = new ArrayList<TPicDesc>();
+		List<TPicDesc> thumbnailList = new ArrayList<TPicDesc>();
+		//获取最近一小时内发的品图
+		int nowMinute = getMinutes(String.valueOf(new Date().getTime()));
+		int hourBefore = nowMinute - Integer.parseInt(propertyConfigurer.getProperty("latestTimeSpan"));
+		for (int i = nowMinute; i > hourBefore ; i--) {
+			List<TPicDesc> cacheList = cacheVisitor.getCachedThumbnail(String
+					.valueOf(i));
+			thumbnailList.addAll(cacheList);
+		}
+
+		if (thumbnailList != null) {
+			for (int j = thumbnailList.size() - 1; j >= 0; j--) {
+				resultList.add(thumbnailList.get(j));
+			}
+		}
+
+		return resultList;
+	}
+
+	@Override
+	public String getExistUser(String account, String pwd) {
+		String md5Pwd = Encrypt.encrypt(pwd);
+		User user = dbVisitor.getExistUser(account);
+		if(user != null && user.getId() != null){
+			if(user.getPwd().equals(md5Pwd)){
+				//用户登录成功后将用户信息放缓存
+				cacheVisitor.cacheUser(user);
+				return user.getId();
+			}else{
+				return "PASSWORDERROR";	
+			}
+		}	
+		return "USERNOTEXIST";
+	}
+	
+	@Override
+	public String validateAccount(String account) {
+		User user = dbVisitor.getExistUser(account);
+		if(user != null && user.getId() != null){
+			return "false";
+		}
+		return "true";
+	}
+	
+	private User createUser(String userId, String account, String pwd) {
+		User user = new User();
+		user.setId(userId);
+		user.setAccount(account);
+		user.setPwd(Encrypt.encrypt(pwd));
+		user.setRegisterTime(PintuUtils.getFormatNowTime());
+		return user;
+	}
+
+	@Override
+	public String registerUser(String account, String pwd, String code) {
+		String userId = dbVisitor.getExistApplicant(account, code);
+    	if(!"".equals(userId)){
+	    		User user = createUser(userId,account,pwd);
+	    		int i = dbVisitor.insertUser(user);
+	        	if(i == 1){
+	        		//注册成功用户放缓存
+	        		cacheVisitor.cacheUser(user);
+	        		//删除临时
+	        		int j = dbVisitor.deleteTempUser(userId);
+	        		if(j ==1){
+	        			log.info("删除已注册成功的临时用户"+userId);
+	        		}
+	        		return "REGISTERSUCCESS";
+	        	}else{
+	        		return "REGISTERFAIL";
+	        	}
+	    }else{
+	    	return "Pleaas apply!";
+	    }
+	}
+	
+
+	@Override
+	public String sendApply(String account, String reason) {
+		User tempUser = this.createApplicant(account, reason);
+		int m = dbVisitor.insertApplicant(tempUser);
+		if(m ==1){
+			return "APPLYPROCESSING";
+		}
+		return "APPLYFAIL";
+	}
+	
+	private User createApplicant(String account, String reason) {
+		User user = new User();
+		user.setId(PintuUtils.generateUID());
+		user.setAccount(account);
+		user.setApplyReason(reason);
+		return user;
+	}
+
+	/**
+	 * 发邮件
+	 * @param receiverMail
+	 * @param content
+	 */
+	private void sendMail(String toAddress,String content){
+		MailSenderInfo mailInfo = new MailSenderInfo();
+//		mailInfo.setMailServerPort("25");
+//		mailInfo.setValidate(true);
+		String host = propertyConfigurer.getProperty("mailServiceHost").toString();
+		String username = propertyConfigurer.getProperty("serviceMailUsername").toString();
+		String password = propertyConfigurer.getProperty("serviceMailPassword").toString(); 
+		String address = propertyConfigurer.getProperty("serviceMailAddress").toString(); 
+		mailInfo.setMailServerHost(host);
+		mailInfo.setUserName(username);
+		mailInfo.setPassword(password);// 邮箱密码
+		mailInfo.setFromAddress(address);
+		mailInfo.setToAddress(toAddress);
+		mailInfo.setSubject("申请注册通过通知");
+		//邮件内容
+		mailInfo.setContent(content);
+		// 发送html格式
+		SimpleMailSender.sendHtmlMail(mailInfo);
+	}
+
+	@Override
+	public String acceptApply(String id, String account,String url) {
+		//发邮件啊发邮件java实现发邮件
+		String inviteCode = PintuUtils.generateInviteCode(); 
+		String info = "请使用以下要邀请码到注册页面，或者点击链接注册<br/><br/>";
+		String href ="邀请码为："+inviteCode+"<br/>"+
+				"<a href='"+url+"/register.jsp?account="+account+"&inviteCode="+inviteCode+"' target='_blank'>点击这里可直接注册</a>";
+		String content = info+href;
+		
+		int i = dbVisitor.updateApplicant(inviteCode,id);
+		
+		if(i==1){
+			//数据库用户临时表更新成功发邮件
+			sendMail(account,content);
+			return "Email has been sent to please note to check!";
+			
+		}else{
+			log.info("更新临时用户邀请码和通过与否字段成功");
+		}
+		
+		return "Please contact service";
+	
+	}
+
+	@Override
+	public List<User> getApplicant() {
+		List<User> list = dbVisitor.getApplicant();
+		return list;
+	}
+	
 	// TODO, 实现其他接口方法
+	
 
 }
