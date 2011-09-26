@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -40,6 +41,7 @@ import com.pintu.dao.CacheAccessInterface;
 import com.pintu.dao.DBAccessInterface;
 import com.pintu.jobs.MidnightTask;
 import com.pintu.tools.ImgDataProcessor;
+import com.pintu.utils.EmailTemplate;
 import com.pintu.utils.Encrypt;
 import com.pintu.utils.MailSenderInfo;
 import com.pintu.utils.PintuUtils;
@@ -62,6 +64,12 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	private ImgDataProcessor imgProcessor;
 
 	private Properties propertyConfigurer;
+	
+	private Properties systemConfigurer;
+
+	public void setSystemConfigurer(Properties systemConfigurer) {
+		this.systemConfigurer = systemConfigurer;
+	}
 
 	public void setPropertyConfigurer(Properties propertyConfigurer) {
 		this.propertyConfigurer = propertyConfigurer;
@@ -832,19 +840,19 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				cacheVisitor.cacheUser(user);
 				return user.getId();
 			}else{
-				return "PASSWORDERROR";	
+				return systemConfigurer.getProperty("pwdError").toString();
 			}
 		}	
-		return "USERNOTEXIST";
+		return systemConfigurer.getProperty("userNotExist").toString();
 	}
 	
 	@Override
-	public String validateAccount(String account) {
+	public int validateAccount(String account) {
 		User user = dbVisitor.getExistUser(account);
 		if(user != null && user.getId() != null){
-			return "false";
+			return 1;
 		}
-		return "true";
+		return 0;
 	}
 	
 	private User createUser(String userId, String account, String pwd) {
@@ -870,12 +878,12 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	        		if(j ==1){
 	        			log.info("删除已注册成功的临时用户"+userId);
 	        		}
-	        		return "REGISTERSUCCESS";
+	        		return  systemConfigurer.getProperty("registerPrompt").toString();
 	        	}else{
-	        		return "REGISTERFAIL";
+	        		return  systemConfigurer.getProperty("registerError").toString();
 	        	}
 	    }else{
-	    	return "Pleaas apply!";
+	    	return systemConfigurer.getProperty("applyPrompt").toString();
 	    }
 	}
 	
@@ -885,9 +893,9 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		User tempUser = this.createApplicant(account, reason);
 		int m = dbVisitor.insertApplicant(tempUser);
 		if(m ==1){
-			return "APPLYPROCESSING";
+			return systemConfigurer.getProperty("applyProcess").toString();
 		}
-		return "APPLYFAIL";
+		return systemConfigurer.getProperty("applyError").toString();
 	}
 	
 	private User createApplicant(String account, String reason) {
@@ -924,33 +932,59 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public String acceptApply(String id, String account,String url) {
+	public String acceptApply(String id, String account,String url,String opt) {
 		//发邮件啊发邮件java实现发邮件
 		String inviteCode = PintuUtils.generateInviteCode(); 
-		String info = "请使用以下要邀请码到注册页面，或者点击链接注册<br/><br/>";
-		String href ="邀请码为："+inviteCode+"<br/>"+
-				"<a href='"+url+"/register.jsp?account="+account+"&inviteCode="+inviteCode+"' target='_blank'>点击这里可直接注册</a>";
-		String content = info+href;
-		
-		int i = dbVisitor.updateApplicant(inviteCode,id);
-		
-		if(i==1){
-			//数据库用户临时表更新成功发邮件
+		if(opt.equals("refuse")){
+			String content = propertyConfigurer.getProperty("templateNo").toString();
 			sendMail(account,content);
-			return "Email has been sent to please note to check!";
-			
-		}else{
-			log.info("更新临时用户邀请码和通过与否字段成功");
+		}else if(opt.equals("approve")){
+			String content = propertyConfigurer.getProperty("templateYes").toString();
+			String resContent = editTemplate(url,account,inviteCode,content);
+			int i = dbVisitor.updateApplicant(inviteCode,id);
+			if(i==1){
+				//数据库用户临时表更新成功发邮件
+				sendMail(account,resContent);
+				return systemConfigurer.getProperty("applyEmailPrompt").toString();
+				
+			}else{
+				log.info("更新临时用户邀请码和通过与否字段成功");
+			}
 		}
 		
-		return "Please contact service";
+		return systemConfigurer.getProperty("contactServicePrompt").toString();
 	
+	}
+
+	//从porerties文件中取出邮件模板，并修改相应内容
+	private String editTemplate(String url, String account, String inviteCode,
+			String content) {
+		Map<String,String> map = new HashMap<String,String>();
+		map.put("url", url);
+		map.put("account", account);
+		map.put("inviteCode", inviteCode);
+		String result = EmailTemplate.convert(content, map);
+		return result;
 	}
 
 	@Override
 	public List<User> getApplicant() {
 		List<User> list = dbVisitor.getApplicant();
 		return list;
+	}
+
+	@Override
+	public boolean examineUser(String userId) {
+		User cacheUser = cacheVisitor.getUserById(userId);
+		if(cacheUser.getId()!=null){
+			return true;
+		}else{
+			User dbUser = dbVisitor.getUserById(userId);
+			if(dbUser.getId()!=null){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	// TODO, 实现其他接口方法

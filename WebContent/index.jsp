@@ -4,12 +4,19 @@
 <html>
 <head>
 <title>Pintu Home Page</title>
+<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/jsp/css/style.css" />
 </head>
 <body>
-	<center>Welcome to Pintu community!</center>
-	<a href="logon.jsp">登录系统</a><br/>
-	<a href="register.jsp">新用户注册</a><br/><br/>
-	
-	<a href = "http://localhost:8080/ipintu/pintuapi?method=getApplicant">管理员查看申请注册的新用户</a>
+	<div class="indexmain">
+		<div class="indexcontent">
+			<div class="indextop  indexfont">Welcome to Pintu community!</div>
+			<div class="indextop">
+				<a href="jsp/normal.jsp">普通用户页面</a>
+			</div>
+			<div class="indextop">
+				<a href="jsp/admin.jsp">客服管理页面</a>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

@@ -14,6 +14,8 @@
 		http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
 	<util:properties id="propertyConfigurer" location="classpath:ipintu.properties" />
+	
+	<util:properties id="systemConfigurer" location="classpath:syscfg.properties" />
 
 	<!-- dataSource for MySQL -->
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
@@ -45,6 +47,7 @@
 		<property name="cacheVisitor" ref="cacheAccess" />
 		<property name="imgProcessor" ref="imgProcessor" />
 		<property name="propertyConfigurer" ref="propertyConfigurer" />
+		<property name="systemConfigurer" ref="systemConfigurer" />
 	</bean>
 	<!-- 同步缓存对象到数据库操作 -->
 	<bean id="executor" class="com.pintu.sync.SyncExecute">
