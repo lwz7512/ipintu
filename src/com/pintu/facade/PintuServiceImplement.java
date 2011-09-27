@@ -658,24 +658,28 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		List<StoryDetails> classicalList = new ArrayList<StoryDetails>();
 		// List<Story> list = dbVisitor.getClassicalPintu();
 		// 取得前一天更新的经典story
-		List<Story> list = dbVisitor
-				.getClassicalPintuByIds(MidnightTask.newClassicalStoryIds
-						.toString());
-		if (list.size() > 0) {
-			for (int i = 0; i < list.size(); i++) {
-				Story story = list.get(i);
-				String userId = story.getOwner();
-				User user = this.getUserInfo(userId);
-				StoryDetails sDetails = new StoryDetails();
-				sDetails.setAuthor(user.getAccount());
-				sDetails.setId(story.getId());
-				sDetails.setOwner(userId);
-				sDetails.setAvatarImgPath(user.getAvatar());
-				sDetails.setPublishTime(story.getPublishTime());
-				sDetails.setContent(story.getContent());
-				sDetails.setClassical(story.getClassical());
-				sDetails.setFollow(story.getFollow());
-				classicalList.add(sDetails);
+		StringBuffer strBuffer = MidnightTask.newClassicalStoryIds;
+		//判断如果有经典的就去数据库中取，没有不取
+		if(strBuffer.length() >0){
+			List<Story> list = dbVisitor
+					.getClassicalPintuByIds(MidnightTask.newClassicalStoryIds
+							.toString());
+			if (list.size() > 0) {
+				for (int i = 0; i < list.size(); i++) {
+					Story story = list.get(i);
+					String userId = story.getOwner();
+					User user = this.getUserInfo(userId);
+					StoryDetails sDetails = new StoryDetails();
+					sDetails.setAuthor(user.getAccount());
+					sDetails.setId(story.getId());
+					sDetails.setOwner(userId);
+					sDetails.setAvatarImgPath(user.getAvatar());
+					sDetails.setPublishTime(story.getPublishTime());
+					sDetails.setContent(story.getContent());
+					sDetails.setClassical(story.getClassical());
+					sDetails.setFollow(story.getFollow());
+					classicalList.add(sDetails);
+				}
 			}
 		}
 		return classicalList;
