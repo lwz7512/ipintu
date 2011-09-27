@@ -928,7 +928,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		mailInfo.setPassword(password);// 邮箱密码
 		mailInfo.setFromAddress(address);
 		mailInfo.setToAddress(toAddress);
-		mailInfo.setSubject("申请注册通过通知");
+		mailInfo.setSubject("申请注册爱品图通知");
 		//邮件内容
 		mailInfo.setContent(content);
 		// 发送html格式
@@ -942,6 +942,12 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		if(opt.equals("refuse")){
 			String content = propertyConfigurer.getProperty("templateNo").toString();
 			sendMail(account,content);
+			//拒绝加入系统将其从临时用户表中删除
+			int j = dbVisitor.deleteTempUser(id);
+    		if(j ==1){
+    			log.info("删除已注册成功的临时用户"+id);
+    		}
+			
 		}else if(opt.equals("approve")){
 			String content = propertyConfigurer.getProperty("templateYes").toString();
 			String resContent = editTemplate(url,account,inviteCode,content);
