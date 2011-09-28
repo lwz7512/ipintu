@@ -89,13 +89,6 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 
 		boolean isMultipart = ServletFileUpload.isMultipartContent(req);
 		System.out.println("isMultipart value is:" + isMultipart);
-		//安全验证：如果不是上传文件请求，取用户id参数，判断是否为正常用户
-//		if(!isMultipart){
-//			String userId = req.getParameter("user");
-//			if(!apiAdaptor.examineUser(userId)){
-//				return;
-//			}
-//		}
 		
 		if (action == null && isMultipart == false) {
 			res.setContentType("text/plain;charset=UTF-8");
@@ -104,7 +97,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			pw.close();
 			return;
 		}
-
+		
 		if (action == null && isMultipart) {
 			// 因上传文件enctype的特殊处理，所以得不到参数，故只判断isMultipart
 			res.setContentType("text/plain;charset=UTF-8");
@@ -112,8 +105,81 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			// 授理上传图片的请求
 			processMultiPart(req, pw);
 			pw.close();
-			
-		} else if (action.equals(AppStarter.GETGALLERYBYTIME)) {
+		
+		}else if (action.equals(AppStarter.LOGON)) {
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String account = req.getParameter("account");
+			String pwd = req.getParameter("password");
+			// 登录成功后，返回一个用户的id，否则返回错误信息
+			String result = apiAdaptor.getExistUser(account, pwd);
+			System.out.println(result);
+			pw.println(result);
+
+		} else if (action.equals(AppStarter.REGISTER)) {
+			// 注册，验证用户输入的验证码是否与发给他的一致，比较后完成注册返回相应信息
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String account = req.getParameter("account");
+			String pwd = req.getParameter("password");
+			String code = req.getParameter("inviteCode");
+			String result = apiAdaptor.registerUser(account, pwd, code);
+			System.out.println(result);
+			pw.write(result);
+
+		} else if (action.equals(AppStarter.APPLY)) {
+			// 申请，发送后由管理员授理
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String account = req.getParameter("account");
+			String reason = req.getParameter("reason");
+			String result = apiAdaptor.sendApply(account, reason);
+			System.out.println(result);
+			pw.write(result);
+
+		} else if (action.equals(AppStarter.GETAPPLICANT)) {
+			List<User> list = apiAdaptor.getApplicant();
+			req.setAttribute("tempUser", list);
+			req.getRequestDispatcher("jsp/accept.jsp").forward(req, res);
+
+		} else if (action.equals(AppStarter.ACCEPT)) {
+			// 管理员处理申请，审核后发带邀请码的链接的为内容的邮件~
+			// "Email has been sent to please note to check!"
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			// 申请人，即消息的发送者
+			String id = req.getParameter("id");
+			String account = req.getParameter("account");
+			String opt = req.getParameter("opt");
+
+			// String url = req.getRequestURL().toString();
+
+			String url = req.getScheme() + "://" + req.getServerName() + ":"
+					+ req.getServerPort() + req.getContextPath();
+
+			String result = apiAdaptor.acceptApply(id, account, url, opt);
+			System.out.println(result);
+			pw.println(result);
+
+		} else if (action.equals(AppStarter.VALIDATE)) {
+			// 验证注册的账户是否已被用
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String account = req.getParameter("account");
+			int result = apiAdaptor.validateAccount(account);
+			System.out.println(result);
+			pw.println(result);
+		}
+		
+		// 安全验证：如果不是上传文件请求，取用户id参数，判断是否为正常用户
+		if (!isMultipart) {
+			String userId = req.getParameter("user");
+			if (!apiAdaptor.examineUser(userId)) {
+				return;
+			}
+		}
+		
+		if (action.equals(AppStarter.GETGALLERYBYTIME)) {
 			// 处理取长廊缩略图信息的请求
 			res.setContentType("text/plain;charset=UTF-8");
 			String startTime = req.getParameter("startTime");
@@ -188,7 +254,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			String amount = req.getParameter("amount");
 			String voter = req.getParameter("owner");
 			String receiver = req.getParameter("receiver");
-			apiAdaptor.addVoteToStory(follow, type, amount,voter,receiver);
+			apiAdaptor.addVoteToStory(follow, type, amount, voter, receiver);
 
 		} else if (action.equals(AppStarter.GETUSERDETAIL)) {
 			// 根据用户id得到该用户详情
@@ -227,7 +293,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			System.out.println(result);
 			pw.println(result);
 			pw.close();
-			
+
 		} else if (action.equals(AppStarter.CHANGEMSGSTATE)) {
 
 			String msgIds = req.getParameter("msgIds");
@@ -259,20 +325,20 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			pw.println(result);
 			pw.close();
 		} else if (action.equals(AppStarter.MARKTHEPIC)) {
-			//收藏图片
+			// 收藏图片
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String userId = req.getParameter("userId");
 			String picId = req.getParameter("picId");
-			boolean flag = apiAdaptor.markFavoritePic(userId,picId);
+			boolean flag = apiAdaptor.markFavoritePic(userId, picId);
 			if (flag) {
 				pw.println("收藏图片成功！");
 			} else {
 				pw.println("收藏图片失败！");
 			}
-			
+
 		} else if (action.equals(AppStarter.DELETEONEFAVOR)) {
-			//删除收藏的图片
+			// 删除收藏的图片
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String fId = req.getParameter("fId");
@@ -282,143 +348,80 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			} else {
 				pw.println("删除收藏失败！");
 			}
-			
+
 		} else if (action.equals(AppStarter.GETFAVORITEPICS)) {
-			//获取收藏列表
+			// 获取收藏列表
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String userId = req.getParameter("userId");
 			int pageNum = Integer.parseInt(req.getParameter("pageNum"));
-			String result = apiAdaptor.getFavorTpics(userId,pageNum);
+			String result = apiAdaptor.getFavorTpics(userId, pageNum);
 			System.out.println(result);
 			pw.println(result);
-			
+
 		} else if (action.equals(AppStarter.GETTPICSBYUSER)) {
-			//获取指定用户图片列表
+			// 获取指定用户图片列表
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String userId = req.getParameter("userId");
 			int pageNum = Integer.parseInt(req.getParameter("pageNum"));
-			String result = apiAdaptor.getTpicsByUser(userId,pageNum);
+			String result = apiAdaptor.getTpicsByUser(userId, pageNum);
 			System.out.println(result);
 			pw.println(result);
-			
+
 		} else if (action.equals(AppStarter.GETSTORIESBYUSER)) {
-			//获取指定用户故事列表
+			// 获取指定用户故事列表
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String userId = req.getParameter("userId");
 			int pageNum = Integer.parseInt(req.getParameter("pageNum"));
-			String result = apiAdaptor.getStoryiesByUser(userId,pageNum);
+			String result = apiAdaptor.getStoryiesByUser(userId, pageNum);
 			System.out.println(result);
 			pw.println(result);
-		
+
 		} else if (action.equals(AppStarter.GETGIFTS)) {
-			//获取可换礼物
+			// 获取可换礼物
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getExchangeableGifts();
 			System.out.println(result);
 			pw.println(result);
-			
+
 		} else if (action.equals(AppStarter.GETEVENTS)) {
-			//获取今日社区
+			// 获取今日社区
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getCommunityEvents();
 			System.out.println(result);
 			pw.println(result);
-			
+
 		} else if (action.equals(AppStarter.ADDEVENT)) {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String title = req.getParameter("title");
 			String detail = req.getParameter("detail");
 			String time = req.getParameter("time");
-			boolean flag = apiAdaptor.publishCommunityEvent(title,detail,time);
+			boolean flag = apiAdaptor
+					.publishCommunityEvent(title, detail, time);
 			if (flag) {
 				pw.println("发布社区事件成功！");
 			} else {
 				pw.println("发布社区事件失败！");
 			}
-			
+
 		} else if (action.equals(AppStarter.ADDGIFT)) {
 			res.setContentType("text/plain;charset=UTF-8");
-//			PrintWriter pw = res.getWriter();
-			//TODO 这里发布礼物时候要有图片上传
+			// PrintWriter pw = res.getWriter();
+			// TODO 这里发布礼物时候要有图片上传
 			apiAdaptor.publishExchangeableGift();
-			
-		} else if (action.equals(AppStarter.GETLATESTPIC)) {	
+
+		} else if (action.equals(AppStarter.GETLATESTPIC)) {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getLatestPic();
 			System.out.println(result);
 			pw.println(result);
-			
-		} else if (action.equals(AppStarter.LOGON)) {	
-			res.setContentType("text/plain;charset=UTF-8");
-			PrintWriter pw = res.getWriter();
-			String account = req.getParameter("account");
-			String pwd = req.getParameter("password");
-			//登录成功后，返回一个用户的id，否则返回错误信息
-			String result = apiAdaptor.getExistUser(account,pwd);
-			System.out.println(result);
-			pw.println(result);
-			
-		} else if (action.equals(AppStarter.REGISTER)) {	
-			//注册，验证用户输入的验证码是否与发给他的一致，比较后完成注册返回相应信息
-			res.setContentType("text/plain;charset=UTF-8");
-			PrintWriter pw = res.getWriter();
-			String account = req.getParameter("account");
-			String pwd = req.getParameter("password");
-			String code = req.getParameter("inviteCode");
-			String result = apiAdaptor.registerUser(account,pwd,code);
-			System.out.println(result);
-			pw.write(result);
-			
-		} else if (action.equals(AppStarter.APPLY)) {	
-			//申请，发送后由管理员授理
-			res.setContentType("text/plain;charset=UTF-8");
-			PrintWriter pw = res.getWriter();
-			String account = req.getParameter("account");
-			String reason = req.getParameter("reason");
-			String result = apiAdaptor.sendApply(account,reason);
-			System.out.println(result);
-			pw.write(result);
-			
-		} else if (action.equals(AppStarter.GETAPPLICANT)) {
-			List<User> list = apiAdaptor.getApplicant();
-			req.setAttribute("tempUser", list);
-			req.getRequestDispatcher("jsp/accept.jsp").forward(req, res);
-			
-		} else if (action.equals(AppStarter.ACCEPT)) {	
-			//管理员处理申请，审核后发带邀请码的链接的为内容的邮件~
-			//"Email has been sent to please note to check!"
-			res.setContentType("text/plain;charset=UTF-8");
-			PrintWriter pw = res.getWriter();
-			//申请人，即消息的发送者
-			String id = req.getParameter("id");
-			String account = req.getParameter("account");
-			String opt = req.getParameter("opt");
-			
-//			String url = req.getRequestURL().toString();
-			
-			String url = req.getScheme() + "://" + req.getServerName()+ ":"
-					+ req.getServerPort() + req.getContextPath();
 
-			String result = apiAdaptor.acceptApply( id, account,url,opt);
-			System.out.println(result);
-			pw.println(result);
-			
-		} else if (action.equals(AppStarter.VALIDATE)) {	
-			//验证注册的账户是否已被用
-			res.setContentType("text/plain;charset=UTF-8");
-			PrintWriter pw = res.getWriter();
-			String account = req.getParameter("account");
-			int result = apiAdaptor.validateAccount(account);
-			System.out.println(result);
-			pw.println(result);
-			
 		} else {
 
 		}
@@ -433,9 +436,9 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			log.debug("<<< Uploading complete!");
 			// 送由适配器解析参数前，先检查一下是否是正常用户
 			boolean flag = examine(fileItems);
-			if(flag){
+			if (flag) {
 				apiAdaptor.createTastePic(fileItems);
-			}else{
+			} else {
 				return;
 			}
 		} catch (SizeLimitExceededException e) {
@@ -450,21 +453,21 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 		}
 
 	}
-	
-	private boolean examine(List<FileItem> fileItems){
+
+	private boolean examine(List<FileItem> fileItems) {
 		boolean flag = false;
 		Iterator<FileItem> iter = fileItems.iterator();
-		while(iter.hasNext()){
+		while (iter.hasNext()) {
 			FileItem item = iter.next();
-			if(item.isFormField()){
-				if(item.getFieldName().equals("user")){
+			if (item.isFormField()) {
+				if (item.getFieldName().equals("user")) {
 					String userId = item.getString();
-				    flag = apiAdaptor.examineUser(userId);
-				    break;
+					flag = apiAdaptor.examineUser(userId);
+					break;
 				}
 			}
 		}
-	 return flag;
+		return flag;
 	}
 
 	@Override

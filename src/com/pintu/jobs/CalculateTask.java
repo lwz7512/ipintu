@@ -96,7 +96,7 @@ public class CalculateTask extends TimerTask {
 		// FIXME 这里后期加入登录可缓存用户了后即可删除
 		if (liveList.size() == 0) {
 			// 缺省用户,这里的id是我本身数据库里存在的一个用户id(必须保证存在)
-			User user = this.dbAccess.getUserById("a053beae20125b5b");
+			User user = this.dbAccess.getUserById(propertyConfigurer.getProperty("admin").toString());
 			userSet.add(user);
 		}
 

@@ -841,6 +841,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		if(user != null && user.getId() != null){
 			if(user.getPwd().equals(md5Pwd)){
 				//用户登录成功后将用户信息放缓存
+				user.setLastUpdateTime(System.currentTimeMillis());
 				cacheVisitor.cacheUser(user);
 				return user.getId();
 			}else{
@@ -876,13 +877,14 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	    		int i = dbVisitor.insertUser(user);
 	        	if(i == 1){
 	        		//注册成功用户放缓存
+	        		user.setLastUpdateTime(System.currentTimeMillis());
 	        		cacheVisitor.cacheUser(user);
 	        		//删除临时
 	        		int j = dbVisitor.deleteTempUser(userId);
 	        		if(j ==1){
 	        			log.info("删除已注册成功的临时用户"+userId);
 	        		}
-	        		return  systemConfigurer.getProperty("registerPrompt").toString();
+	        		return  systemConfigurer.getProperty("registerSuccess").toString();
 	        	}else{
 	        		return  systemConfigurer.getProperty("registerError").toString();
 	        	}

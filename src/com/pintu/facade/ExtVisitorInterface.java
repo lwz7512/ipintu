@@ -12,6 +12,8 @@ public interface ExtVisitorInterface {
 	
 	public static final String LOGON ="logon";
 	
+	public static final String SETAVATAR ="avatar";
+	
 	public static final String APPLY ="apply";
 	
 	public static final String GETAPPLICANT = "getApplicant";
