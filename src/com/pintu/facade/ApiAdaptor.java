@@ -67,7 +67,6 @@ public class ApiAdaptor {
 		while(iter.hasNext()){
 			FileItem item = iter.next();
 			if(item.isFormField()){
-				
 				if(item.getFieldName().equals("user")){
 					pic.setUser(item.getString());
 				}
@@ -401,8 +400,8 @@ public class ApiAdaptor {
 		return prompt;
 	}
 	
-	public String validateAccount(String account) {
-		String result = pintuService.validateAccount(account);
+	public int validateAccount(String account) {
+		int result = pintuService.validateAccount(account);
 		return result;
 	}
 
@@ -411,14 +410,19 @@ public class ApiAdaptor {
 		return prompt;
 	}
 
-	public String acceptApply(String id, String account,String url) {
-		String prompt = pintuService.acceptApply(id,account,url);
+	public String acceptApply(String id, String account,String url, String opt) {
+		String prompt = pintuService.acceptApply(id,account,url,opt);
 		return prompt;
 	}
 
 	public List<User> getApplicant() {
 		List<User> list = pintuService.getApplicant();
 		return list;
+	}
+
+	public boolean examineUser(String userId) {
+		boolean flag = pintuService.examineUser(userId);
+		return flag;
 	}
 
 

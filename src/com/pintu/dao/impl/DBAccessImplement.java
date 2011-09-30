@@ -1072,7 +1072,7 @@ public class DBAccessImplement implements DBAccessInterface {
 	@Override
 	public List<User> getApplicant() {
 		List<User> resList = new ArrayList<User>();
-		String sql = "select * from t_applicant where  a_passed=0 and isNull(a_inviteCode) ";
+		String sql = "select * from t_applicant where  a_passed=0 and isNull(a_inviteCode)";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {

@@ -3,6 +3,7 @@ package com.pintu.facade;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -88,7 +89,14 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 
 		boolean isMultipart = ServletFileUpload.isMultipartContent(req);
 		System.out.println("isMultipart value is:" + isMultipart);
-
+		//安全验证：如果不是上传文件请求，取用户id参数，判断是否为正常用户
+//		if(!isMultipart){
+//			String userId = req.getParameter("user");
+//			if(!apiAdaptor.examineUser(userId)){
+//				return;
+//			}
+//		}
+		
 		if (action == null && isMultipart == false) {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
@@ -193,7 +201,6 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			pw.close();
 
 		} else if (action.equals(AppStarter.SENDMSG)) {
-			// 发消息 TODO, ...
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 
@@ -382,8 +389,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 		} else if (action.equals(AppStarter.GETAPPLICANT)) {
 			List<User> list = apiAdaptor.getApplicant();
 			req.setAttribute("tempUser", list);
-//			res.sendRedirect("accept.jsp");
-			req.getRequestDispatcher("accept.jsp").forward(req, res);
+			req.getRequestDispatcher("jsp/accept.jsp").forward(req, res);
 			
 		} else if (action.equals(AppStarter.ACCEPT)) {	
 			//管理员处理申请，审核后发带邀请码的链接的为内容的邮件~
@@ -393,13 +399,14 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			//申请人，即消息的发送者
 			String id = req.getParameter("id");
 			String account = req.getParameter("account");
+			String opt = req.getParameter("opt");
 			
 //			String url = req.getRequestURL().toString();
 			
 			String url = req.getScheme() + "://" + req.getServerName()+ ":"
 					+ req.getServerPort() + req.getContextPath();
 
-			String result = apiAdaptor.acceptApply( id, account,url);
+			String result = apiAdaptor.acceptApply( id, account,url,opt);
 			System.out.println(result);
 			pw.println(result);
 			
@@ -408,7 +415,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String account = req.getParameter("account");
-			String result = apiAdaptor.validateAccount(account);
+			int result = apiAdaptor.validateAccount(account);
 			System.out.println(result);
 			pw.println(result);
 			
@@ -424,8 +431,13 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			List<FileItem> fileItems = (List<FileItem>) upload
 					.parseRequest(req);
 			log.debug("<<< Uploading complete!");
-			// 送由适配器解析参数
-			apiAdaptor.createTastePic(fileItems);
+			// 送由适配器解析参数前，先检查一下是否是正常用户
+			boolean flag = examine(fileItems);
+			if(flag){
+				apiAdaptor.createTastePic(fileItems);
+			}else{
+				return;
+			}
 		} catch (SizeLimitExceededException e) {
 
 			System.out.println(">>> 文件尺寸超过限制，不能上传！");
@@ -437,6 +449,22 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			e.printStackTrace();
 		}
 
+	}
+	
+	private boolean examine(List<FileItem> fileItems){
+		boolean flag = false;
+		Iterator<FileItem> iter = fileItems.iterator();
+		while(iter.hasNext()){
+			FileItem item = iter.next();
+			if(item.isFormField()){
+				if(item.getFieldName().equals("user")){
+					String userId = item.getString();
+				    flag = apiAdaptor.examineUser(userId);
+				    break;
+				}
+			}
+		}
+	 return flag;
 	}
 
 	@Override
