@@ -94,7 +94,7 @@ public class DailySync implements Runnable{
 		 * @param picNames
 		 */
 		private void syncThumbnailTask(List<String> picNames) {
-			log.info("将文件路径下保存的缩略图同步到缓存开始...");
+			log.info(">>>Will save file path of the thumbnail synchronization to cache is begin...");
 			if(picNames != null && picNames.size() > 0){
 				for(int i=0;i<picNames.size();i++){
 					String picId = picNames.get(i).substring(0,picNames.get(i).lastIndexOf("."));
@@ -110,16 +110,16 @@ public class DailySync implements Runnable{
 						thumbnail.setStatus("0");
 						cacheVisitor.cacheThumbnail(thumbnail);
 					} else{
-						log.info("与原品图:"+picNames.get(i)+"对应的缩略图不存在！");
+						log.info(">>>Thumbnail is missing!");
 					}
 				}
 			}
-			log.info("同步缩略图到缓存结束。。。");
+			log.info(">>>Synchronous thumbnail to cache is over!");
 		}
 
 
 		private void syncVoteTask(String storyIds) {
-				log.info("同步数据库投票到缓存开始...");
+				log.info(">>>Synchronous vote to cache is begin...");
 				List<Vote> voteList=dbVisitor.getVoteForCache(storyIds);
 				if(voteList != null){
 					for(int i=0;i<voteList.size();i++){
@@ -127,12 +127,12 @@ public class DailySync implements Runnable{
 						cacheVisitor.syncDBVoteToCache(vote);
 					}
 				}
-				log.info("同步投票到缓存结束，voteSize:"+voteList.size());
+				log.info(">>>Synchronous vote to cache is over，voteSize:"+voteList.size());
 		}
 
 
 		private String syncStoryTask(String picIds) {
-			log.info("同步数据库故事到缓存开始...");
+			log.info(">>>Synchronous stroy to cache is begin..");
 			// 这里因是要取出story的id给vote用，构造出一个类似('storyId','storyId')的串给sql语句用
 			StringBuffer storyIds= new StringBuffer();
 //			List<Story> storyList=dbVisitor.getStoryForCache(today);
@@ -150,13 +150,13 @@ public class DailySync implements Runnable{
 					cacheVisitor.syncDBStoryToCache(story);
 				}
 			}
-			log.info("同步故事到缓存结束，storySize:"+storyList.size()+"  storyIds:"+storyIds.toString());
+			log.info(">>>Synchronous story to cache is over，storySize:"+storyList.size()+"  storyIds:"+storyIds.toString());
 			return storyIds.toString();
 		}
 
 
 		private void syncCommentTask(String picIds) {
-			log.info("同步数据库评论到缓存开始...");
+			log.info(">>>Synchronous vote to cache is begin..");
 //			List<Comment> commList=dbVisitor.getCommentForCache(today);
 			List<Comment> commList = dbVisitor.getCommentForCache(picIds);
 			if(commList != null){
@@ -165,11 +165,11 @@ public class DailySync implements Runnable{
 					cacheVisitor.syncDBCommnetToCache(comm);
 				}
 			}
-			log.info("同步评论到缓存结束，commentSize:"+commList.size());
+			log.info(">>>Synchronous comment to cache is over，commentSize:"+commList.size());
 		}
 
 		private Map<String,String> syncPictureTask(String startTime,String endTime){
-			log.info("同步数据库图片到缓存开始...");
+			log.info(">>>Synchronous picture to cache is begin...");
 			Map<String,String> resMap = new HashMap<String,String>();
 			List<TPicItem> picList=dbVisitor.getPictureForCache(startTime,endTime);
 			if(picList != null){
@@ -179,7 +179,7 @@ public class DailySync implements Runnable{
 					resMap.put(pic.getId(), pic.getName());
 				}
 			}
-			log.info("同步图片到缓存结束，pictureSize:"+picList.size());
+			log.info(">>>Synchronous picture to cache is over，pictureSize:"+picList.size());
 			return resMap;
 		}
 		

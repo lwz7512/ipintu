@@ -12,9 +12,9 @@ public class TestSendMail {
 		mailInfo.setMailServerHost("smtp.163.com");
 //		mailInfo.setMailServerPort("25");
 //		mailInfo.setValidate(true);
-		mailInfo.setUserName("liu3385ml");
-		mailInfo.setPassword("15100357236");// 邮箱密码
-		mailInfo.setFromAddress("liu3385ml@163.com");
+		mailInfo.setUserName("iptxiaolajiao");
+		mailInfo.setPassword("ipintu123");// 邮箱密码
+		mailInfo.setFromAddress("iptxiaolajiao@163.com");
 		mailInfo.setToAddress("826299671@qq.com");
 		mailInfo.setSubject("测试邮件hmtl格式");
 		

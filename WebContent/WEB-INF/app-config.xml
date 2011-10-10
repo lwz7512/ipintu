@@ -22,8 +22,8 @@
 		destroy-method="close">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
 		<property name="url" value="jdbc:mysql://localhost:3306/ipintu"/>
-		<property name="username" value="root" />
-		<property name="password" value="root" />
+		<property name="username" value="ipintu" />
+		<property name="password" value="123" />
 	</bean>
 
 	<!-- WebEntrance servlet调用，负责处理客户端请求参数并启动任务 -->

@@ -47,7 +47,7 @@ public class CalculateTask extends TimerTask {
 		Long start = System.currentTimeMillis() - 60 * 60 * 1000;
 		Long end = System.currentTimeMillis();
 		
-		System.out.println(">>> calculate task executed...时间范围："+PintuUtils.formatLong(start)+"--"+PintuUtils.formatLong(end));
+		System.out.println(">>> calculate task executed...timespan："+PintuUtils.formatLong(start)+"--"+PintuUtils.formatLong(end));
 
 		// 取得活跃用户或缺省用户的信息
 		List<User> userList = getLiveOrDefaultUser(start, end);
@@ -86,6 +86,7 @@ public class CalculateTask extends TimerTask {
 		List<User> liveList = new ArrayList<User>();
 
 		liveList = this.cacheAccess.getActiveUser(start, end);
+		System.out.println("Active user size is "+liveList.size());
 		if (liveList.size() > 0) {
 			for (int j = 0; j < liveList.size(); j++) {
 				User user = liveList.get(j);
@@ -96,7 +97,7 @@ public class CalculateTask extends TimerTask {
 		// FIXME 这里后期加入登录可缓存用户了后即可删除
 		if (liveList.size() == 0) {
 			// 缺省用户,这里的id是我本身数据库里存在的一个用户id(必须保证存在)
-			User user = this.dbAccess.getUserById("a053beae20125b5b");
+			User user = this.dbAccess.getUserById(propertyConfigurer.getProperty("admin").toString());
 			userSet.add(user);
 		}
 
@@ -159,9 +160,9 @@ public class CalculateTask extends TimerTask {
 		if (resultList.size() > 0) {
 			int m = this.dbAccess.updateUserScore(resultList);
 			if (m == resultList.size()) {
-				log.info("更新数据库用户积分成功！");
+				log.info(">>>Update score success！");
 			} else {
-				log.info("更新数据库用户积分失败！");
+				log.info(">>>Update score failed！");
 			}
 		}
 		return resultList;
@@ -188,9 +189,9 @@ public class CalculateTask extends TimerTask {
 		
 		int rows = this.dbAccess.updateUserLevel(idLevelList);
 		if(rows == idLevelList.size()){
-			log.info("更新用户等级成功!");
+			log.info(">>>Update level success!");
 		}else{
-			log.info("更新用户等级有误！");
+			log.info(">>>Update level failed!");
 		}
 	}
 	
@@ -275,7 +276,7 @@ public class CalculateTask extends TimerTask {
 							typeAmountMap.get(Wealth.REMAIN_SCORE));
 					if (row == 1) {
 						typeAmountMap.remove(Wealth.REMAIN_SCORE);
-						log.info("更新用户可用积分字段成功！");
+						log.info(">>>Update exchangeScore success!");
 					}
 				}
 
@@ -392,7 +393,7 @@ public class CalculateTask extends TimerTask {
 				// 若某一类型的财富值变成0，则删除该条记录
 				int n = this.dbAccess.deleteOnesWealth(type, userId);
 				if (n == 1) {
-					log.info("删除用户:" + userId + "的已为零的" + type + "类型财产成功！");
+					log.info(">>>Delete user's wealth which equals 0");
 				}
 			}
 		}
@@ -400,7 +401,7 @@ public class CalculateTask extends TimerTask {
 		if (updateList.size() > 0) {
 			int row = this.dbAccess.updateOnesWealth(updateList);
 			if (row == updateList.size()) {
-				log.info("更新用户的财产信息成功！");
+				log.info(">>>Update wealth success!");
 			}
 		}
 	}
@@ -422,7 +423,7 @@ public class CalculateTask extends TimerTask {
 		if (wealthList.size() > 0) {
 			int row = this.dbAccess.insertOnesWealth(wealthList);
 			if (row == wealthList.size()) {
-				log.info("插入用户的财产信息成功！");
+				log.info(">>>Insert wealth success！");
 			}
 		}
 

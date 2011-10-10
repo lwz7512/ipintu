@@ -841,6 +841,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		if(user != null && user.getId() != null){
 			if(user.getPwd().equals(md5Pwd)){
 				//用户登录成功后将用户信息放缓存
+				user.setLastUpdateTime(System.currentTimeMillis());
 				cacheVisitor.cacheUser(user);
 				return user.getId();
 			}else{
@@ -876,13 +877,14 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	    		int i = dbVisitor.insertUser(user);
 	        	if(i == 1){
 	        		//注册成功用户放缓存
+	        		user.setLastUpdateTime(System.currentTimeMillis());
 	        		cacheVisitor.cacheUser(user);
 	        		//删除临时
 	        		int j = dbVisitor.deleteTempUser(userId);
 	        		if(j ==1){
-	        			log.info("删除已注册成功的临时用户"+userId);
+	        			log.info(" >>>Delete rgistered user."+userId);
 	        		}
-	        		return  systemConfigurer.getProperty("registerPrompt").toString();
+	        		return  systemConfigurer.getProperty("registerSuccess").toString();
 	        	}else{
 	        		return  systemConfigurer.getProperty("registerError").toString();
 	        	}
@@ -928,7 +930,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		mailInfo.setPassword(password);// 邮箱密码
 		mailInfo.setFromAddress(address);
 		mailInfo.setToAddress(toAddress);
-		mailInfo.setSubject("申请注册通过通知");
+		mailInfo.setSubject("申请注册爱品图通知");
 		//邮件内容
 		mailInfo.setContent(content);
 		// 发送html格式
@@ -942,6 +944,12 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		if(opt.equals("refuse")){
 			String content = propertyConfigurer.getProperty("templateNo").toString();
 			sendMail(account,content);
+			//拒绝加入系统将其从临时用户表中删除
+			int j = dbVisitor.deleteTempUser(id);
+    		if(j ==1){
+    			log.info(">>>Delete refused temp user."+id);
+    		}
+			
 		}else if(opt.equals("approve")){
 			String content = propertyConfigurer.getProperty("templateYes").toString();
 			String resContent = editTemplate(url,account,inviteCode,content);
@@ -951,8 +959,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				sendMail(account,resContent);
 				return systemConfigurer.getProperty("applyEmailPrompt").toString();
 				
-			}else{
-				log.info("更新临时用户邀请码和通过与否字段成功");
 			}
 		}
 		

@@ -6,6 +6,9 @@
 <title>Register page</title>
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/jsp/css/style.css" />
+<script language=javascript
+	src="<%=request.getContextPath()%>/jsp/js/jquery.js"
+	type=text/javascript></script>
 </head>
 
 <script language=javascript  type=text/javascript>
@@ -17,6 +20,30 @@ function checkNull(){
 		return false;
 	}
 	return true;
+}
+
+function checkEmail(){
+	var emailStr=document.getElementById("account").value;
+	var emailPat = new RegExp(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/g);
+	if (!emailPat.test(emailStr)) {
+		 $('#prompt1').show();
+		  $('#prompt1').html('*邮箱格式不正确');
+		  document.getElementById("account").value=null;
+	}else{
+		$('#prompt1').hide();
+	}
+	return true;
+}
+
+function checkLength(){
+	var pwd = document.getElementById("password").value;
+	if(pwd.length <6 || pwd.length>8){
+		  $('#prompt2').show();
+		  $('#prompt2').html('*长度6~8位');
+		  document.getElementById("password").value=null;
+	}else{
+		 $('#prompt2').hide();
+	}
 }
 </script>
 <body>
@@ -47,10 +74,12 @@ function checkNull(){
 					
 				</div>
 				<div class="pageju">
-					账&nbsp;&nbsp;号：<input type="text" name="account"  id="account" value ="<%=account %>" />
+					账&nbsp;&nbsp;号：<input type="text" name="account"  id="account" value ="<%=account %>"  onblur="checkEmail()"/>
+				<div class = "prompt"><span style="display: none;" id=prompt1></span></div>
 				</div>
 				<div class="pageju">
-					密&nbsp;&nbsp;码：<input type="password" name = "password"  id="password"/>
+					密&nbsp;&nbsp;码：<input type="password" name = "password"  id="password" onblur="checkLength()"/>
+				<div class = "prompt"><span style="display: none;" id="prompt2"></span></div>
 				</div>
 				<div class="pageju">
 				    邀请码：<input type="text" name = "inviteCode"  id="inviteCode"  value ="<%=inviteCode %>"/>

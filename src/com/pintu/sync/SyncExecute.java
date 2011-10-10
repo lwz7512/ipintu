@@ -99,11 +99,11 @@ public class SyncExecute implements Runnable {
 				for (int j = 0; j < rightObjList.size(); j++) {
 					TPicItem tpic = (TPicItem) rightObjList.get(j);
 					needRemoveIds.add(tpic.getId());
-					log.info("即将删除已入库图片为："+tpic.getId());
+					log.info(">>>Will delete already put in db for pictures："+tpic.getId());
 				}
 				cachedObjIds.removeAll(needRemoveIds);
 			} else {
-				log.warn("图片入库数目与实际不符");
+				log.warn(">>>Picture does not match with the actual number of db");
 			}
 		} else {
 			// log.info("当前没有需要入库的图片！");
@@ -123,10 +123,10 @@ public class SyncExecute implements Runnable {
 				TPicItem tpic = (TPicItem) objList.get(i);
 				if (tpic.isValid()) {
 					resList.add(tpic);
-					log.info("校验通过准备入库的故事：" + tpic.getId());
+					log.info(">>>Check the picture by preparing to db：" + tpic.getId());
 				} else {
 					// 有属性字段为空时为不全法的入库对象
-					log.warn("不能入库的图片对象，ID为：" + tpic.getId());
+					log.warn(">>>Can not insert picture object，ID：" + tpic.getId());
 				}
 			}
 		}
@@ -148,7 +148,7 @@ public class SyncExecute implements Runnable {
 				// 成功入库后，全部删除已入库的对象id
 				cachedMap.clear();
 			} else {
-				log.warn("评论入库失败");
+				log.warn(">>>Comments to db failed!");
 			}
 		} else {
 			// log.info("当前没有需要入库的评论！");
@@ -163,10 +163,10 @@ public class SyncExecute implements Runnable {
 				Comment cmt = (Comment) objList.get(i);
 				if (cmt.isValid()) {
 					resList.add(cmt);
-					log.info("校验通过准备入库的评论：" + cmt.getId());
+					log.info(">>>Check the comment by preparing to db：" + cmt.getId());
 				} else {
 					// 有属性字段为空时为不合法的入库对象
-					log.warn("不能入库的评论对象，ID为：" + cmt.getId());
+					log.warn(">>>Can not insert comment object，ID：" + cmt.getId());
 				}
 			}
 		}
@@ -188,7 +188,7 @@ public class SyncExecute implements Runnable {
 				// 成功入库后，全部删除已入库的对象id
 				cachedMap.clear();
 			} else {
-				log.warn("故事入库失败");
+				log.warn(">>>Stroies to db failed!");
 			}
 		} else {
 			// log.info("当前没有需要入库的故事！");
@@ -203,9 +203,9 @@ public class SyncExecute implements Runnable {
 				Story story = (Story) objList.get(i);
 				if (story.isValid()) {
 					resList.add(story);
-					log.info("校验通过准备入库的故事：" + story.getId());
+					log.info(">>>Can not insert story object：" + story.getId());
 				} else {
-					log.warn("不能入库的故事对象，ID为：" + story.getId());
+					log.warn(">>>Can not insert story object，ID为：" + story.getId());
 				}
 			}
 		}
@@ -245,11 +245,11 @@ public class SyncExecute implements Runnable {
 				for (int j = 0; j < rightObjList.size(); j++) {
 					Vote vote = (Vote) rightObjList.get(j);
 					cachedMap.get(vote.getFollow()).remove(vote.getId());
-					log.info("即将删除已入库投票为：" + vote.getId());
+					log.info("Will delete already put in db for votes：" + vote.getId());
 					
 				}
 			} else {
-				log.warn("投票入库失败");
+				log.warn(">>>Votes to db failed!");
 			}
 
 		} else {
@@ -278,9 +278,9 @@ public class SyncExecute implements Runnable {
 				
 				int res = dbVisitor.insertMessage(msg);
 				if(res == 1){
-					log.info("投票附加消息入库成功");
+					log.info(">>>Successful vote additional message to db!");
 				}else{
-					log.info("投票附加消息入库失败");
+					log.info(">>>Failure to vote additional message to db!");
 				}
 			}
 		}
@@ -293,9 +293,9 @@ public class SyncExecute implements Runnable {
 				Vote vote = (Vote) objList.get(i);
 				if (vote.isValid()) {
 					resList.add(vote);
-					log.info("校验通过准备入库的投票：" + vote.getId());
+					log.info(">>>Check the vote by preparing to db：" + vote.getId());
 				} else {
-					log.warn("不能入库的投票对象，ID为：" + vote.getId());
+					log.warn(">>>Can not insert vote object，ID：" + vote.getId());
 				}
 			}
 		}
