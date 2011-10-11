@@ -40,6 +40,9 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 	private Logger log = Logger.getLogger(AppStarter.class);
 
 	private static final long serialVersionUID = 1L;
+	
+	//FIXME debug测试某些代码(发布时修改为false)
+	private boolean isDebug = false;
 
 	// 由Spring注入
 	private ApiAdaptor apiAdaptor;
@@ -154,8 +157,14 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 
 			// String url = req.getRequestURL().toString();
 
-			String url = req.getScheme() + "://" + req.getServerName() + ":"
-					+ req.getServerPort() + req.getContextPath();
+			String url = "";
+					
+			if(isDebug){
+				url =  req.getServerName() + ":"
+						+ req.getServerPort() + req.getContextPath();
+			}else{
+				url = "ipintu.com/ipintu";
+			}
 
 			String result = apiAdaptor.acceptApply(id, account, url, opt);
 			System.out.println(result);
@@ -486,7 +495,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 				System.out.println(">>>>> init file upload component...");
 				initUploadComponent(tempPath);
 			} else {
-				log.warn(">>>>> !!! 文件上传路径tempPath环境变量为空，不能初始化上传组件!");
+				log.warn(">>>>> !!! 文件上传路径tempPath环境变量为null，不能初始化上传组件!");
 			}
 
 			if (apiAdaptor != null) {
@@ -495,7 +504,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 				if (filePath != null) {
 					apiAdaptor.setImagePath(filePath);
 				} else {
-					log.warn(">>>>> !!! 文件上传路径filePath环境变量为空，不能初始化上传路径!");
+					log.warn(">>>>> !!! 文件上传路径filePath环境变量为null，不能初始化上传路径!");
 				}
 			}
 			if (taskStarter != null) {

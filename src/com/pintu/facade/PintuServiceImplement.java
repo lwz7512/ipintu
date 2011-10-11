@@ -882,7 +882,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	        		//删除临时
 	        		int j = dbVisitor.deleteTempUser(userId);
 	        		if(j ==1){
-	        			log.info("删除已注册成功的临时用户"+userId);
+	        			log.info(" >>>Delete rgistered user."+userId);
 	        		}
 	        		return  systemConfigurer.getProperty("registerSuccess").toString();
 	        	}else{
@@ -947,7 +947,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			//拒绝加入系统将其从临时用户表中删除
 			int j = dbVisitor.deleteTempUser(id);
     		if(j ==1){
-    			log.info("删除已注册成功的临时用户"+id);
+    			log.info(">>>Delete refused temp user."+id);
     		}
 			
 		}else if(opt.equals("approve")){
@@ -959,8 +959,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				sendMail(account,resContent);
 				return systemConfigurer.getProperty("applyEmailPrompt").toString();
 				
-			}else{
-				log.info("更新临时用户邀请码和通过与否字段成功");
 			}
 		}
 		

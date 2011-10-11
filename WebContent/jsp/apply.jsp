@@ -73,7 +73,7 @@
 						onblur="check()" /> <span style="display: none;" id="prompt"></span>
 				</div>
 				<div class="pageju">
-					申请理由：<input type="text" name="reason" id="reason" />
+					申请理由：<textarea rows="5"  cols= "30" name="reason" id="reason" ></textarea>
 				</div>
 				<div class="pageju pagecenter pagebuttom">
 					<input type="submit" value="提交申请" />

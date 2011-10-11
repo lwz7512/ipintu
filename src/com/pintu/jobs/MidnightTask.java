@@ -91,9 +91,9 @@ public class MidnightTask extends TimerTask {
 			int res = this.dbAccess
 					.updateStoryClassical(needUpdateStoryIds);
 			if (res == needUpdateStoryIds.size()) {
-				log.info("更新故事经典字段成功！");
+				log.info("Update story classical success!");
 			} else {
-				log.info("更新故事经典字段有误！");
+				log.info("Update story classical failed!");
 			}
 		}
 		

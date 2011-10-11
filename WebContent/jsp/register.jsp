@@ -29,6 +29,8 @@ function checkEmail(){
 		 $('#prompt1').show();
 		  $('#prompt1').html('*邮箱格式不正确');
 		  document.getElementById("account").value=null;
+	}else{
+		$('#prompt1').hide();
 	}
 	return true;
 }
@@ -39,6 +41,8 @@ function checkLength(){
 		  $('#prompt2').show();
 		  $('#prompt2').html('*长度6~8位');
 		  document.getElementById("password").value=null;
+	}else{
+		 $('#prompt2').hide();
 	}
 }
 </script>

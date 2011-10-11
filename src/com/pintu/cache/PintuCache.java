@@ -9,12 +9,16 @@ import java.util.Map;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+import net.sf.ehcache.config.CacheConfiguration;
+import net.sf.ehcache.config.Configuration;
+import net.sf.ehcache.config.SearchAttribute;
+import net.sf.ehcache.config.Searchable;
 import net.sf.ehcache.search.Attribute;
 import net.sf.ehcache.search.Query;
 import net.sf.ehcache.search.Result;
 import net.sf.ehcache.search.Results;
-
-//import org.apache.log4j.Logger;
+import net.sf.ehcache.search.attribute.AttributeExtractor;
+import net.sf.ehcache.search.attribute.AttributeExtractorException;
 
 import com.pintu.beans.Comment;
 import com.pintu.beans.Story;
@@ -31,7 +35,7 @@ import com.pintu.beans.Vote;
  */
 public class PintuCache {
 
-	private CacheManager manager;
+	private CacheManager cacheManager;
 
 	private Cache pictureCache;
 
@@ -48,17 +52,38 @@ public class PintuCache {
 	// private Logger log = Logger.getLogger(PintuCache.class);
 
 	public PintuCache() {
+		initUserCache();
+		cacheManager = CacheManager.getInstance();
 
-		// 配置文件里配置各种缓存实例参数
-		manager = CacheManager.getInstance();
-		// // 用户使用默认缓存
-		// manager.addCache("userCache");
-		userCache = manager.getCache("usercache");
-		pictureCache = manager.getCache("picturecache");
-		commentCache = manager.getCache("commentcache");
-		storyCache = manager.getCache("storycache");
-		voteCache = manager.getCache("votecache");
-		thumbnailCache = manager.getCache("thumbnailcache");
+//		 userCache = cacheManager.getCache("usercache");
+//		 Searchable searchable = new Searchable();
+//		 searchable.addSearchAttribute(new
+//		 SearchAttribute().name("lastUpdateTime")
+//		 .className(UpdateAttributeExtractor.class.getName()));
+//		 userCache.getCacheConfiguration().addSearchable(searchable);
+
+		pictureCache = cacheManager.getCache("picturecache");
+		commentCache = cacheManager.getCache("commentcache");
+		storyCache = cacheManager.getCache("storycache");
+		voteCache = cacheManager.getCache("votecache");
+		thumbnailCache = cacheManager.getCache("thumbnailcache");
+	}
+
+	private void initUserCache() {
+		Configuration cacheManagerConfig = new Configuration();
+		CacheConfiguration cacheConfig = new CacheConfiguration("usercache", -1)
+				.eternal(true);
+		Searchable searchable = new Searchable();
+		cacheConfig.addSearchable(searchable);
+
+		searchable.addSearchAttribute(new SearchAttribute().name(
+				"lastUpdateTime").className(
+				UpdateAttributeExtractor.class.getName()));
+
+		cacheManagerConfig.addCache(cacheConfig);
+
+		cacheManager = new CacheManager(cacheManagerConfig);
+		userCache = (Cache) cacheManager.getEhcache("usercache");
 	}
 
 	public void traceAll() {
@@ -123,6 +148,16 @@ public class PintuCache {
 				User user = (User) ele.getObjectValue();
 				user.setLastUpdateTime(updateTime);
 			}
+		}
+	}
+
+	public static class UpdateAttributeExtractor implements AttributeExtractor {
+		private static final long serialVersionUID = -5857114497229946414L;
+
+		@Override
+		public Object attributeFor(Element element, String str)
+				throws AttributeExtractorException {
+			return ((User) element.getValue()).getLastUpdateTime();
 		}
 	}
 
