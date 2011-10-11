@@ -10,13 +10,10 @@
 <body>
 	<div class="main">
 		<div class="indextop">
-			<a href="logon.jsp">登录系统</a>
+			<a href="jsp/upload.jsp">上传图片</a>
 		</div>
 		<div class="indextop">
-			<a href="register.jsp">新用户注册</a>
-		</div>
-		<div class="indextop">
-			<a href="apply.jsp">加入系统申请</a>
+			<a href="jsp/gallery.jsp">社区长廊</a>
 		</div>
 	</div>
 </body>

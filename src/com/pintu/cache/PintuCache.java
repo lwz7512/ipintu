@@ -10,7 +10,6 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
-import net.sf.ehcache.config.Configuration;
 import net.sf.ehcache.config.SearchAttribute;
 import net.sf.ehcache.config.Searchable;
 import net.sf.ehcache.search.Attribute;
@@ -19,6 +18,7 @@ import net.sf.ehcache.search.Result;
 import net.sf.ehcache.search.Results;
 import net.sf.ehcache.search.attribute.AttributeExtractor;
 import net.sf.ehcache.search.attribute.AttributeExtractorException;
+import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
 
 import com.pintu.beans.Comment;
 import com.pintu.beans.Story;
@@ -52,15 +52,10 @@ public class PintuCache {
 	// private Logger log = Logger.getLogger(PintuCache.class);
 
 	public PintuCache() {
-		initUserCache();
+		
 		cacheManager = CacheManager.getInstance();
-
-//		 userCache = cacheManager.getCache("usercache");
-//		 Searchable searchable = new Searchable();
-//		 searchable.addSearchAttribute(new
-//		 SearchAttribute().name("lastUpdateTime")
-//		 .className(UpdateAttributeExtractor.class.getName()));
-//		 userCache.getCacheConfiguration().addSearchable(searchable);
+		
+		initUserCache();
 
 		pictureCache = cacheManager.getCache("picturecache");
 		commentCache = cacheManager.getCache("commentcache");
@@ -70,22 +65,22 @@ public class PintuCache {
 	}
 
 	private void initUserCache() {
-		Configuration cacheManagerConfig = new Configuration();
-		CacheConfiguration cacheConfig = new CacheConfiguration("usercache", -1)
-				.eternal(true);
 		Searchable searchable = new Searchable();
-		cacheConfig.addSearchable(searchable);
-
 		searchable.addSearchAttribute(new SearchAttribute().name(
 				"lastUpdateTime").className(
 				UpdateAttributeExtractor.class.getName()));
 
-		cacheManagerConfig.addCache(cacheConfig);
+		CacheConfiguration cacheConfig = new CacheConfiguration("usercache",
+				10000).memoryStoreEvictionPolicy(MemoryStoreEvictionPolicy.LFU)
+				.overflowToDisk(false).eternal(false).timeToLiveSeconds(7200)
+				.timeToIdleSeconds(3600).diskPersistent(false);
+		cacheConfig.addSearchable(searchable);
 
-		cacheManager = new CacheManager(cacheManagerConfig);
-		userCache = (Cache) cacheManager.getEhcache("usercache");
+		userCache = new Cache(cacheConfig);
+		cacheManager.addCache(userCache);
 	}
 
+	
 	public void traceAll() {
 		System.out.println("--------------- trace begin: -----------------");
 		System.out.println(">>> commentCache status: "
@@ -480,6 +475,12 @@ public class PintuCache {
 		}
 
 		return list;
+	}
+
+	public boolean removeTPicById(String id) {
+		synchronized (pictureCache) {
+				return pictureCache.remove(id);
+			}
 	}
 
 }

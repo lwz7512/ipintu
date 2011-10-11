@@ -40,7 +40,7 @@ public class CacheAccessImplement implements CacheAccessInterface {
 
 	@Override
 	public void cachePicture(TPicItem pic) {
-		System.out.println("4 图片信息放缓存");
+		System.out.println("4 Add TPicItem info to cache");
 		// 1. 把对象放到pintuCache中
 		// 2. 把ID放到toSavedCacheIds中的LinkedList中
 		pintuCache.cachePicture( pic.getId(), pic);
@@ -234,6 +234,11 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	@Override
 	public User getUserById(String userId) {
 		return pintuCache.getCachedUser(userId);
+	}
+
+	@Override
+	public boolean removeTPic(String id) {
+		return pintuCache.removeTPicById(id);
 	}
 
 	

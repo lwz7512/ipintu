@@ -4,17 +4,18 @@
 <html>
 <head>
 <title>Pintu Home Page</title>
-<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/jsp/css/style.css" />
+<link rel="stylesheet" type="text/css"
+	href="<%=request.getContextPath()%>/jsp/css/style.css" />
 </head>
 <body>
 	<div class="indexmain">
 		<div class="indexcontent">
 			<div class="indextop  indexfont">Welcome to Pintu community!</div>
 			<div class="indextop">
-				<a href="jsp/normal.jsp">普通用户页面</a>
+				<a href="jsp/logon.jsp">登录</a>
 			</div>
 			<div class="indextop">
-				<a href="jsp/admin.jsp">客服管理页面</a>
+				<a href="jsp/apply.jsp">申请加入系统</a>
 			</div>
 		</div>
 	</div>
