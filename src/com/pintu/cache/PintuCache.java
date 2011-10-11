@@ -52,15 +52,9 @@ public class PintuCache {
 	// private Logger log = Logger.getLogger(PintuCache.class);
 
 	public PintuCache() {
-<<<<<<< HEAD
-
-		cacheManager = CacheManager.getInstance();
-
-=======
 		
 		cacheManager = CacheManager.getInstance();
 		
->>>>>>> b702bc6fd55cc0c96408d05048ebb3747cf8f515
 		initUserCache();
 
 		pictureCache = cacheManager.getCache("picturecache");
@@ -77,11 +71,7 @@ public class PintuCache {
 				UpdateAttributeExtractor.class.getName()));
 
 		CacheConfiguration cacheConfig = new CacheConfiguration("usercache",
-<<<<<<< HEAD
-				1000).memoryStoreEvictionPolicy(MemoryStoreEvictionPolicy.LFU)
-=======
 				10000).memoryStoreEvictionPolicy(MemoryStoreEvictionPolicy.LFU)
->>>>>>> b702bc6fd55cc0c96408d05048ebb3747cf8f515
 				.overflowToDisk(false).eternal(false).timeToLiveSeconds(7200)
 				.timeToIdleSeconds(3600).diskPersistent(false);
 		cacheConfig.addSearchable(searchable);
