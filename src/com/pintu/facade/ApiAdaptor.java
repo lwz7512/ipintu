@@ -102,7 +102,7 @@ public class ApiAdaptor {
 	 */
 	public String getGalleryByTime(String startTime,String endTime){
 		long queryTimeSpan = Long.valueOf(endTime)-Long.valueOf(startTime);
-		System.out.println(">>> query time span: "+queryTimeSpan/(60*1000)+" minutes;");
+		System.out.println(">>> query time span:"+queryTimeSpan/(60*1000)+" minutes;");
 		
 		long oneDayMiliSeconds = 24*60*60*1000;
 		if(queryTimeSpan>oneDayMiliSeconds){

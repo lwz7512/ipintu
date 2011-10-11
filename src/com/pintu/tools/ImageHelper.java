@@ -137,9 +137,9 @@ public class ImageHelper {
 		}
 
 		if (type.equals("mobile")) {
-			System.out.println("生成手机图：size:宽" + size[0] + "高" + size[1]);
+			System.out.println("create mobile pic size:width" + size[0] + "height" + size[1]);
 		} else {
-			System.out.println("生成缩略图：size:宽" + size[0] + "高" + size[1]);
+			System.out.println("create thumbnail pic size:width" + size[0] + "height" + size[1]);
 		}
 		return size;
 	}

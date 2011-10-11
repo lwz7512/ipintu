@@ -47,7 +47,7 @@ public class CalculateTask extends TimerTask {
 		Long start = System.currentTimeMillis() - 60 * 60 * 1000;
 		Long end = System.currentTimeMillis();
 		
-		System.out.println(">>> calculate task executed...timespan："+PintuUtils.formatLong(start)+"--"+PintuUtils.formatLong(end));
+		System.out.println(">>> calculate task executed...timespan:"+PintuUtils.formatLong(start)+"--"+PintuUtils.formatLong(end));
 
 		// 取得活跃用户或缺省用户的信息
 		List<User> userList = getLiveOrDefaultUser(start, end);

@@ -18,7 +18,7 @@ public class TaskStarter  {
 	private TaskTimer fixRunTimer;
 	
 	//常规计算都是每隔1小时计算一次
-	private int calculateInterval = 1;
+	private int calculateInterval = 60;
 	
 	//由Spring注入
 	private DBAccessInterface dbVisitor;

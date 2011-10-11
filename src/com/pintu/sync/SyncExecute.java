@@ -1,6 +1,7 @@
 package com.pintu.sync;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,9 @@ public class SyncExecute implements Runnable {
 
 	// 同步运行开关
 	private Boolean syncFlag = true;
+	
+	//用于存储未通过校验的图片id和它尝试通过校验的次数
+	private static Map<String,Integer> illegalCountMap = new HashMap<String,Integer>();
 
 	private Logger log = Logger.getLogger(SyncExecute.class);
 
@@ -56,6 +60,9 @@ public class SyncExecute implements Runnable {
 			// 批量同步图片
 			// 并删除已同步的对象ID；
 			syncPictureToDB();
+			
+			//处理错误图片
+			dealErrorPicture();
 
 			// 批量同步故事
 			// 并删除已同步的对象ID；
@@ -90,18 +97,19 @@ public class SyncExecute implements Runnable {
 
 		// 分离出可入库的正确图片对象
 		List<Object> rightObjList = getVaildPicture(unSavedObjList);
-
+		List<String> needRemoveIds = new ArrayList<String>();
+		
 		if (rightObjList != null && rightObjList.size() > 0) {
 			int m = dbVisitor.insertPicture(rightObjList);
 			if (m == rightObjList.size()) {
-				List<String> needRemoveIds = new ArrayList<String>();
 				// 成功入库后，全部删除已入库的对象id
 				for (int j = 0; j < rightObjList.size(); j++) {
 					TPicItem tpic = (TPicItem) rightObjList.get(j);
 					needRemoveIds.add(tpic.getId());
-					log.info(">>>Will delete already put in db for pictures："+tpic.getId());
+					log.info(">>>Will delete already put in db for pictures:"+tpic.getId());
 				}
 				cachedObjIds.removeAll(needRemoveIds);
+				
 			} else {
 				log.warn(">>>Picture does not match with the actual number of db");
 			}
@@ -121,16 +129,47 @@ public class SyncExecute implements Runnable {
 		if (objList != null && objList.size() > 0) {
 			for (int i = 0; i < objList.size(); i++) {
 				TPicItem tpic = (TPicItem) objList.get(i);
+				String picId = tpic.getId();
 				if (tpic.isValid()) {
 					resList.add(tpic);
-					log.info(">>>Check the picture by preparing to db：" + tpic.getId());
+					log.info(">>>Check the picture by preparing to db:" + tpic.getId());
 				} else {
+					//将不合法的图片统计
+					if(illegalCountMap.size() > 0){
+						for(String id:illegalCountMap.keySet()){
+							if(picId.equals(id)){
+								int count = illegalCountMap.get(id);
+								illegalCountMap.put(id, count+1);
+								//这里因为如果是第二次累加，那就是要删除的问题图片了
+								log.warn(">>>Question picture detail:" +tpic.toString());
+							}
+						}
+					}else{
+						illegalCountMap.put(picId, 1);
+					}
+							
 					// 有属性字段为空时为不全法的入库对象
-					log.warn(">>>Can not insert picture object，ID：" + tpic.getId());
+					log.warn(">>>Can not insert picture object,ID:" + tpic.getId());
 				}
 			}
 		}
 		return resList;
+	}
+	
+
+	private void dealErrorPicture() {
+		if(illegalCountMap.size() > 0){
+			for(String id:illegalCountMap.keySet()){
+				if(illegalCountMap.get(id) >=2){
+					//删除缓存的图片id
+					CacheAccessInterface.toSavedUserPicIds.get(CacheAccessInterface.PICTURE_TYPE).remove(id);
+					//删除缓存中的图片对象
+					cacheVisitor.removeTPic(id);
+					//输出图片问题信息
+					log.warn(">>>Question picture:" +id );
+				}
+			}
+		}
 	}
 
 	private void syncCommentToDB() {
@@ -163,10 +202,10 @@ public class SyncExecute implements Runnable {
 				Comment cmt = (Comment) objList.get(i);
 				if (cmt.isValid()) {
 					resList.add(cmt);
-					log.info(">>>Check the comment by preparing to db：" + cmt.getId());
+					log.info(">>>Check the comment by preparing to db:" + cmt.getId());
 				} else {
 					// 有属性字段为空时为不合法的入库对象
-					log.warn(">>>Can not insert comment object，ID：" + cmt.getId());
+					log.warn(">>>Can not insert comment object,ID:" + cmt.getId());
 				}
 			}
 		}
@@ -203,9 +242,9 @@ public class SyncExecute implements Runnable {
 				Story story = (Story) objList.get(i);
 				if (story.isValid()) {
 					resList.add(story);
-					log.info(">>>Can not insert story object：" + story.getId());
+					log.info(">>>Can not insert story object:" + story.getId());
 				} else {
-					log.warn(">>>Can not insert story object，ID为：" + story.getId());
+					log.warn(">>>Can not insert story object,ID:" + story.getId());
 				}
 			}
 		}
@@ -245,7 +284,7 @@ public class SyncExecute implements Runnable {
 				for (int j = 0; j < rightObjList.size(); j++) {
 					Vote vote = (Vote) rightObjList.get(j);
 					cachedMap.get(vote.getFollow()).remove(vote.getId());
-					log.info("Will delete already put in db for votes：" + vote.getId());
+					log.info("Will delete already put in db for votes:" + vote.getId());
 					
 				}
 			} else {
@@ -293,9 +332,9 @@ public class SyncExecute implements Runnable {
 				Vote vote = (Vote) objList.get(i);
 				if (vote.isValid()) {
 					resList.add(vote);
-					log.info(">>>Check the vote by preparing to db：" + vote.getId());
+					log.info(">>>Check the vote by preparing to db:" + vote.getId());
 				} else {
-					log.warn(">>>Can not insert vote object，ID：" + vote.getId());
+					log.warn(">>>Can not insert vote object,ID:" + vote.getId());
 				}
 			}
 		}

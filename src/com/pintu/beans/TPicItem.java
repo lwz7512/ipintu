@@ -48,6 +48,17 @@ public class TPicItem implements Serializable {
 
 	}
 
+	@Override
+	public String toString() {
+		return "TPicItem [id=" + id + ", name=" + name + ", owner=" + owner
+				+ ", publishTime=" + publishTime + ", description="
+				+ description + ", tags=" + tags + ", allowStory=" + allowStory
+				+ ", mobImgId=" + mobImgId + ", mobImgSize=" + mobImgSize
+				+ ", mobImgPath=" + mobImgPath + ", rawImgId=" + rawImgId
+				+ ", rawImgSize=" + rawImgSize + ", rawImgPath=" + rawImgPath
+				+ ", pass=" + pass + "]";
+	}
+
 	public String getId() {
 		return id;
 	}

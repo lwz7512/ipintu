@@ -10,7 +10,6 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
-import net.sf.ehcache.config.Configuration;
 import net.sf.ehcache.config.SearchAttribute;
 import net.sf.ehcache.config.Searchable;
 import net.sf.ehcache.search.Attribute;
@@ -53,9 +52,15 @@ public class PintuCache {
 	// private Logger log = Logger.getLogger(PintuCache.class);
 
 	public PintuCache() {
+<<<<<<< HEAD
 
 		cacheManager = CacheManager.getInstance();
 
+=======
+		
+		cacheManager = CacheManager.getInstance();
+		
+>>>>>>> b702bc6fd55cc0c96408d05048ebb3747cf8f515
 		initUserCache();
 
 		pictureCache = cacheManager.getCache("picturecache");
@@ -72,7 +77,11 @@ public class PintuCache {
 				UpdateAttributeExtractor.class.getName()));
 
 		CacheConfiguration cacheConfig = new CacheConfiguration("usercache",
+<<<<<<< HEAD
 				1000).memoryStoreEvictionPolicy(MemoryStoreEvictionPolicy.LFU)
+=======
+				10000).memoryStoreEvictionPolicy(MemoryStoreEvictionPolicy.LFU)
+>>>>>>> b702bc6fd55cc0c96408d05048ebb3747cf8f515
 				.overflowToDisk(false).eternal(false).timeToLiveSeconds(7200)
 				.timeToIdleSeconds(3600).diskPersistent(false);
 		cacheConfig.addSearchable(searchable);
@@ -81,6 +90,7 @@ public class PintuCache {
 		cacheManager.addCache(userCache);
 	}
 
+	
 	public void traceAll() {
 		System.out.println("--------------- trace begin: -----------------");
 		System.out.println(">>> commentCache status: "
@@ -475,6 +485,12 @@ public class PintuCache {
 		}
 
 		return list;
+	}
+
+	public boolean removeTPicById(String id) {
+		synchronized (pictureCache) {
+				return pictureCache.remove(id);
+			}
 	}
 
 }

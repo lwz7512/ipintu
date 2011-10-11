@@ -106,5 +106,7 @@ public interface CacheAccessInterface {
 	public List<Story> getStoriesOfPic(String tpId);
 
 	public User getUserById(String userId);
+
+	public boolean removeTPic(String id);
 	
 }

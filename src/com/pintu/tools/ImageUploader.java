@@ -138,9 +138,9 @@ public class ImageUploader extends HttpServlet {
 		String fileType = fileName.substring(dotPos+1);
 		
 		if(fileType.equals("png") || fileType.equals("jpg") || fileType.equals("gif")){
-			System.out.println(">>> 当前图片文件类型为："+fileType);
+			System.out.println(">>>The current file type is:"+fileType);
 		}else{
-			pw.println(">>> 当前文件不是图片文件，不予生成");
+			pw.println(">>> The current file is not a picture file, not to generate!");
 			return;			
 		}
 
@@ -166,8 +166,8 @@ public class ImageUploader extends HttpServlet {
 		
 		// 返回客户端信息
 		pw.println(fileName + " 文件保存完毕 ...");
-		pw.println("文件大小为 ：" + sizeInK);
-		pw.println("文件路径为：" + uploadFile.getAbsolutePath() + "\r\n");
+		pw.println("file size is:" + sizeInK);
+		pw.println("file route is:" + uploadFile.getAbsolutePath() + "\r\n");
 	}
 
 }

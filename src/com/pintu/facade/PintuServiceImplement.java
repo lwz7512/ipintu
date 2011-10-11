@@ -205,13 +205,18 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		int start = getMinutes(startTime);
 		int end = getMinutes(endTime);
 
-		for (int i = start; i <= end; i++) {
+		for (int i = end; i >= start; i--) {
 			List<TPicDesc> cacheList = cacheVisitor.getCachedThumbnail(String
 					.valueOf(i));
 			thumbnailList.addAll(cacheList);
+			//控制画廊图片数量，超过32就不查了~
+			if(thumbnailList.size() > Integer.parseInt(propertyConfigurer
+					.getProperty("galleryImgNum"))){
+				break;
+			}
 		}
 
-		System.out.println("取出缓存对象：" + thumbnailList.size());
+		System.out.println("get cache thumbnial size:" + thumbnailList.size());
 
 		if (thumbnailList != null) {
 			for (int j = thumbnailList.size() - 1; j >= 0; j--) {

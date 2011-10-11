@@ -10,7 +10,7 @@
 <body>
 	<div class="main">
 		<div class="indextop">
-			<a href="accept.jsp">处理申请</a>
+			<a href="jsp/accept.jsp">处理申请</a>
 		</div>
 		<div class="indextop">
 			<a href="">发布可换礼物</a>
