@@ -16,7 +16,7 @@
 				<tr>
 					<td colspan="3">需要处理的申请列表：</td>
 					<td align="center">刷新列表&nbsp;<a
-						href="<%=request.getContextPath()%>/pintuapi?method=getApplicant">
+						href="<%=request.getContextPath()%>/pintuapi?method=getApplicant&userId=a053beae20125b5b">
 							<img src="<%=request.getContextPath()%>/jsp/img/ref.png"> </a>
 					</td>
 				</tr>
