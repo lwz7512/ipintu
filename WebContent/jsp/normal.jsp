@@ -10,10 +10,10 @@
 <body>
 	<div class="main">
 		<div class="indextop">
-			<a href="jsp/upload.jsp">上传图片</a>
+			<a href="upload.jsp">上传图片</a>
 		</div>
 		<div class="indextop">
-			<a href="jsp/gallery.jsp">社区长廊</a>
+			<a href="gallery.jsp">社区长廊</a>
 		</div>
 	</div>
 </body>

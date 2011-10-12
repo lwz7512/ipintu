@@ -848,7 +848,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				//用户登录成功后将用户信息放缓存
 				user.setLastUpdateTime(System.currentTimeMillis());
 				cacheVisitor.cacheUser(user);
-				return user.getId();
+				return user.getRole()+"@"+user.getId();
 			}else{
 				return systemConfigurer.getProperty("pwdError").toString();
 			}
