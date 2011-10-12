@@ -23,7 +23,6 @@ function checkNull(){
 
 function check(){
 	var flag = checkNull();
-	alert("chekcNull:"+flag);
 	if(flag){
 		var account = document.getElementById("account").value;
 		var password = document.getElementById("password").value;
@@ -34,10 +33,8 @@ function check(){
 		}, 
 		//回调函数
 		function (result) {
-			alert("result:"+result+"type:"+typeof(result));
 			var res =result.trim();
-			alert("res:"+res);
-			if( res == "admin@a053beae20125b5b" ){//若result为管理员
+			if( res.indexOf('admin') > -1){//若result为管理员
 				//转到管理员页面admin.jsp
 				window.location.replace("<%=request.getContextPath()%>/jsp/admin.jsp");
 			}else if( res == "0" ){

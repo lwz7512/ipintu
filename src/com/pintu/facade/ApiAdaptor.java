@@ -67,7 +67,7 @@ public class ApiAdaptor {
 		while(iter.hasNext()){
 			FileItem item = iter.next();
 			if(item.isFormField()){
-				if(item.getFieldName().equals("user")){
+				if(item.getFieldName().equals("userId")){
 					pic.setUser(item.getString());
 				}
 				if(item.getFieldName().equals("description")){

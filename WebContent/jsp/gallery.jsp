@@ -12,7 +12,7 @@
 <div class="main">
 	<form action="<%=request.getContextPath()%>/pintuapi" method="post">
 		<input type="hidden" name="method" value="getGalleryByTime" /> <input
-			type="hidden" name="user" value="a053beae20125b5b" /><br /> 开始时间：<input
+			type="hidden" name="userId" value="b05a847f81fc593e" /><br /> 开始时间：<input
 			type="text" name="startTime"
 			value="<%=new Date().getTime() - 1000 * 60 * 60 * 60%>" /> 结束时间：<input
 			type="text" name="endTime" value="<%=new Date().getTime()%>" /> <input

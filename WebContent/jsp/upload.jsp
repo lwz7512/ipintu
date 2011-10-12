@@ -43,7 +43,6 @@
 		if(selectedFile==""){
 			var objMSG = document.getElementById('msg');//显示提示信息用的DIV
 			objMSG.innerHTML="No file selected!";
-			alert("is blank!");
 			return false;			
 		}else{
 			return true;
@@ -65,9 +64,9 @@
 			onsubmit="return checkBlank();" onreset="clearMsg();"
 			action="<%=request.getContextPath()%>/pintuapi" method="post"
 			enctype="multipart/form-data">
-			<div id="msg"></div>
+			
 			<input type="hidden" name="method" value="upload" /><br /> <input
-				type="hidden" name="user" value="a053beae20125b5b" /><br /> <input
+				type="hidden" name="userId" value="b05a847f81fc593e" /><br /> <input
 				type="hidden" name="tags" value="123" /><br /> <input
 				type="hidden" name="description" value="1" /><br />
 			<div class="pagetop">
@@ -81,6 +80,7 @@
 					<input type="submit" name="submit" value="上传"> <input
 						type="reset" name="reset" value="重置">
 				</div>
+				<div class = "prompt"><div id="msg"></div></div>
 			</div>
 		</form>
 	</div>
