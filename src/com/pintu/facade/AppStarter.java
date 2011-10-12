@@ -42,7 +42,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 	private static final long serialVersionUID = 1L;
 
 	// FIXME debug测试某些代码(发布时修改为false)
-	private boolean isDebug = false;
+	private boolean isDebug = true;
 
 	// 由Spring注入
 	private ApiAdaptor apiAdaptor;
@@ -85,8 +85,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 
 		System.out.println(">>> appstater start to analyze form...");
 
-		// 这里将客户端参数解析出来传给apiAdaptor
-		// 由apiAdaptor组装参数给服务
+		// 这里将客户端参数解析出来传给apiAdaptor,由apiAdaptor组装参数给服务
 		String action = req.getParameter("method");
 		System.out.println("method:" + action);
 
@@ -108,8 +107,42 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			// 授理上传图片的请求
 			processMultiPart(req, pw);
 			pw.close();
+			return;
+		}
 
-		} else if (action.equals(AppStarter.LOGON)) {
+		if (action != null
+				&& (action.equals(AppStarter.LOGON)
+						|| action.equals(AppStarter.REGISTER)
+						|| action.equals(AppStarter.APPLY) || action
+							.equals(AppStarter.VALIDATE))) {
+			
+			demandProcess(action, req, res);
+			return;
+		} 
+		
+		if (action != null
+				&& (action.equals(AppStarter.GETIMAGEFILE) || action
+						.equals(AppStarter.GETIMAGEBYPATH))) {
+			
+			doGetProcess(action, req, res);
+		} else {
+			doPostProcess(action, req, res);
+		}
+
+	}
+	
+	
+	/**
+	 * 处理 登录、 注册、申请、验证用户
+	 * 
+	 * @param action
+	 * @param req
+	 * @param res
+	 * @throws IOException
+	 */
+	private void demandProcess(String action, HttpServletRequest req,
+			HttpServletResponse res) throws IOException {
+		if (action.equals(AppStarter.LOGON)) {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String account = req.getParameter("account");
@@ -118,12 +151,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			String result = apiAdaptor.getExistUser(account, pwd);
 			System.out.println(result);
 			pw.println(result);
-			
-			if(!result.equals("0") && !result.equals("-1") && result.equals("a053beae20125b5b")){
-				req.getRequestDispatcher("jsp/admin.jsp").forward(req, res);
-			}else if(!result.equals("0") && !result.equals("-1") ){
-				req.getRequestDispatcher("jsp/normal.jsp").forward(req, res);
-			}
+			pw.close();
 
 		} else if (action.equals(AppStarter.REGISTER)) {
 			// 注册，验证用户输入的验证码是否与发给他的一致，比较后完成注册返回相应信息
@@ -135,6 +163,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			String result = apiAdaptor.registerUser(account, pwd, code);
 			System.out.println(result);
 			pw.write(result);
+			pw.close();
 
 		} else if (action.equals(AppStarter.APPLY)) {
 			// 申请，发送后由管理员授理
@@ -145,11 +174,63 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			String result = apiAdaptor.sendApply(account, reason);
 			System.out.println(result);
 			pw.write(result);
+			pw.close();
 
-		} else if (action.equals(AppStarter.GETAPPLICANT)) {
+		} else if (action.equals(AppStarter.VALIDATE)) {
+			// 验证注册的账户是否已被用
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String account = req.getParameter("account");
+			int result = apiAdaptor.validateAccount(account);
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
+		}
+	}
+
+	/**
+	 * 处理get方式的用户请求
+	 * 
+	 * @param action
+	 * @param req
+	 * @param res
+	 */
+	private void doGetProcess(String action, HttpServletRequest req,
+			HttpServletResponse res) {
+		if (action.equals(AppStarter.GETIMAGEFILE)) {
+			// 要所图片id得到相应图片
+			String tpId = req.getParameter("tpId");
+			apiAdaptor.getImageFile(tpId, res);
+
+		} else if (action.equals(AppStarter.GETIMAGEBYPATH)) {
+			// 根据路径得img(主要用于得到头像图)
+			String path = req.getParameter("path");
+			apiAdaptor.getImageByPath(path, res);
+		}
+	}
+
+	
+	/**
+	 * 处理正常用户登录post的请求
+	 * @param action
+	 * @param req
+	 * @param res
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	private void doPostProcess(String action, HttpServletRequest req,
+			HttpServletResponse res) throws ServletException, IOException {
+		
+		// 安全验证：如果不是上传文件请求，取用户id参数，判断是否为正常用户
+		String user = req.getParameter("userId");
+		if (!apiAdaptor.examineUser(user)) {
+			return;
+		}
+
+		if (action.equals(AppStarter.GETAPPLICANT)) {
 			List<User> list = apiAdaptor.getApplicant();
-			req.setAttribute("tempUser", list);
-			req.getRequestDispatcher("jsp/accept.jsp").forward(req, res);
+			 req.setAttribute("tempUser", list);
+			 req.getRequestDispatcher("jsp/accept.jsp").forward(req, res);
 
 		} else if (action.equals(AppStarter.ACCEPT)) {
 			// 管理员处理申请，审核后发带邀请码的链接的为内容的邮件~
@@ -175,277 +256,260 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			String result = apiAdaptor.acceptApply(id, account, url, opt);
 			System.out.println(result);
 			pw.println(result);
+			pw.close();
 
-		} else if (action.equals(AppStarter.VALIDATE)) {
-			// 验证注册的账户是否已被用
+		} else if (action.equals(AppStarter.ADDEVENT)) {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
-			String account = req.getParameter("account");
-			int result = apiAdaptor.validateAccount(account);
+			String title = req.getParameter("title");
+			String detail = req.getParameter("detail");
+			String time = req.getParameter("time");
+			boolean flag = apiAdaptor
+					.publishCommunityEvent(title, detail, time);
+			if (flag) {
+				pw.println("发布社区事件成功！");
+			} else {
+				pw.println("发布社区事件失败！");
+			}
+			pw.close();
+
+		} else if (action.equals(AppStarter.ADDGIFT)) {
+			res.setContentType("text/plain;charset=UTF-8");
+			// PrintWriter pw = res.getWriter();
+			// TODO 这里发布礼物时候要有图片上传(之后做)
+			apiAdaptor.publishExchangeableGift();
+
+		} else if (action.equals(AppStarter.GETLATESTPIC)) {
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String result = apiAdaptor.getLatestPic();
 			System.out.println(result);
 			pw.println(result);
-
+			pw.close();
 			
-		} else if (!isMultipart) {
-			// 安全验证：如果不是上传文件请求，取用户id参数，判断是否为正常用户
-			String user = req.getParameter("user");
-			if (!apiAdaptor.examineUser(user)) {
-				return;
+		} else if (action.equals(AppStarter.GETGALLERYBYTIME)) {
+			// 处理取长廊缩略图信息的请求
+			res.setContentType("text/plain;charset=UTF-8");
+			String startTime = req.getParameter("startTime");
+			String endTime = req.getParameter("endTime");
+			PrintWriter pw = res.getWriter();
+			String result = apiAdaptor.getGalleryByTime(startTime, endTime);
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
+
+		} else if (action.equals(AppStarter.GETPICDETAIL)) {
+			// 取得一副图片的详情
+			res.setContentType("text/plain;charset=UTF-8");
+			String tpId = req.getParameter("tpId");
+			PrintWriter pw = res.getWriter();
+			String result = apiAdaptor.getTPicDetailsById(tpId);
+			System.out.println(result);
+			pw.write(result);
+			pw.close();
+
+		} else if (action.equals(AppStarter.ADDSTORY)) {
+			// 为图片添加故事
+			res.setContentType("text/plain;charset=UTF-8");
+			String follow = req.getParameter("follow");
+			String owner = req.getParameter("owner");
+			String content = req.getParameter("content");
+
+			apiAdaptor.addStoryToPicture(follow, owner, content);
+
+		} else if (action.equals(AppStarter.ADDCOMMENT)) {
+			// 为图片添加评论
+			String follow = req.getParameter("follow");
+			String owner = req.getParameter("owner");
+			String content = req.getParameter("content");
+
+			apiAdaptor.addCommentToPicture(follow, owner, content);
+
+		} else if (action.equals(AppStarter.GETSTORIESOFPIC)) {
+			// 得到某副图片的所有故事
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String tpId = req.getParameter("tpId");
+			String result = apiAdaptor.getStoryDetailsOfPic(tpId);
+			System.out.println(result);
+			pw.write(result);
+			pw.close();
+
+		} else if (action.equals(AppStarter.GETCOMMENTSOFPIC)) {
+			// 得到某副图片的所有评论
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String tpId = req.getParameter("tpId");
+			String result = apiAdaptor.getCommentsOfPic(tpId);
+			System.out.println(result);
+			pw.write(result);
+			pw.close();
+
+		} else if (action.equals(AppStarter.ADDVOTE)) {
+			// 为故事添加投票
+			String follow = req.getParameter("follow");
+			String type = req.getParameter("type");
+			String amount = req.getParameter("amount");
+			String voter = req.getParameter("owner");
+			String receiver = req.getParameter("receiver");
+			apiAdaptor.addVoteToStory(follow, type, amount, voter, receiver);
+
+		} else if (action.equals(AppStarter.GETUSERDETAIL)) {
+			// 根据用户id得到该用户详情
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String userId = req.getParameter("userId");
+			String result = apiAdaptor.getUserDetail(userId);
+			System.out.println(result);
+			pw.write(result);
+			pw.close();
+
+		} else if (action.equals(AppStarter.SENDMSG)) {
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+
+			String sender = req.getParameter("userId");
+			String receiver = req.getParameter("receiver");
+			String content = req.getParameter("content");
+
+			boolean flag = apiAdaptor.sendMessage(sender, receiver, content);
+			System.out.println(flag);
+
+			if (flag) {
+				pw.println("发送消息成功！");
 			} else {
-				if (action.equals(AppStarter.GETGALLERYBYTIME)) {
-					// 处理取长廊缩略图信息的请求
-					res.setContentType("text/plain;charset=UTF-8");
-					String startTime = req.getParameter("startTime");
-					String endTime = req.getParameter("endTime");
-					PrintWriter pw = res.getWriter();
-					String result = apiAdaptor.getGalleryByTime(startTime,
-							endTime);
-					System.out.println(result);
-					pw.println(result);
-					pw.close();
-
-				} else if (action.equals(AppStarter.GETIMAGEFILE)) {
-					// 要所图片id得到相应图片
-					String tpId = req.getParameter("tpId");
-					apiAdaptor.getImageFile(tpId, res);
-
-				} else if (action.equals(AppStarter.GETPICDETAIL)) {
-					// 取得一副图片的详情
-					res.setContentType("text/plain;charset=UTF-8");
-					String tpId = req.getParameter("tpId");
-					PrintWriter pw = res.getWriter();
-					String result = apiAdaptor.getTPicDetailsById(tpId);
-					System.out.println(result);
-					pw.write(result);
-					pw.close();
-
-				} else if (action.equals(AppStarter.GETIMAGEBYPATH)) {
-					// 根据路径得img(主要用于得到头像图)
-					String path = req.getParameter("path");
-					apiAdaptor.getImageByPath(path, res);
-
-				} else if (action.equals(AppStarter.ADDSTORY)) {
-					// 为图片添加故事
-					res.setContentType("text/plain;charset=UTF-8");
-					String follow = req.getParameter("follow");
-					String owner = req.getParameter("owner");
-					String content = req.getParameter("content");
-
-					apiAdaptor.addStoryToPicture(follow, owner, content);
-
-				} else if (action.equals(AppStarter.ADDCOMMENT)) {
-					// 为图片添加评论
-					String follow = req.getParameter("follow");
-					String owner = req.getParameter("owner");
-					String content = req.getParameter("content");
-
-					apiAdaptor.addCommentToPicture(follow, owner, content);
-
-				} else if (action.equals(AppStarter.GETSTORIESOFPIC)) {
-					// 得到某副图片的所有故事
-					res.setContentType("text/plain;charset=UTF-8");
-					PrintWriter pw = res.getWriter();
-					String tpId = req.getParameter("tpId");
-					String result = apiAdaptor.getStoryDetailsOfPic(tpId);
-					System.out.println(result);
-					pw.write(result);
-					pw.close();
-
-				} else if (action.equals(AppStarter.GETCOMMENTSOFPIC)) {
-					// 得到某副图片的所有评论
-					res.setContentType("text/plain;charset=UTF-8");
-					PrintWriter pw = res.getWriter();
-					String tpId = req.getParameter("tpId");
-					String result = apiAdaptor.getCommentsOfPic(tpId);
-					System.out.println(result);
-					pw.write(result);
-					pw.close();
-
-				} else if (action.equals(AppStarter.ADDVOTE)) {
-					// 为故事添加投票
-					String follow = req.getParameter("follow");
-					String type = req.getParameter("type");
-					String amount = req.getParameter("amount");
-					String voter = req.getParameter("owner");
-					String receiver = req.getParameter("receiver");
-					apiAdaptor.addVoteToStory(follow, type, amount, voter,
-							receiver);
-
-				} else if (action.equals(AppStarter.GETUSERDETAIL)) {
-					// 根据用户id得到该用户详情
-					res.setContentType("text/plain;charset=UTF-8");
-					PrintWriter pw = res.getWriter();
-					String userId = req.getParameter("userId");
-					String result = apiAdaptor.getUserDetail(userId);
-					System.out.println(result);
-					pw.write(result);
-					pw.close();
-
-				} else if (action.equals(AppStarter.SENDMSG)) {
-					res.setContentType("text/plain;charset=UTF-8");
-					PrintWriter pw = res.getWriter();
-
-					String sender = req.getParameter("userId");
-					String receiver = req.getParameter("receiver");
-					String content = req.getParameter("content");
-
-					boolean flag = apiAdaptor.sendMessage(sender, receiver,
-							content);
-					System.out.println(flag);
-
-					if (flag) {
-						pw.println("发送消息成功！");
-					} else {
-						pw.println("发送消息失败！");
-					}
-
-				} else if (action.equals(AppStarter.GETUSERMSG)) {
-					// 得到收件箱详情
-					res.setContentType("text/plain;charset=UTF-8");
-					PrintWriter pw = res.getWriter();
-
-					String userId = req.getParameter("userId");
-					String result = apiAdaptor.getUserMsg(userId);
-					System.out.println(result);
-					pw.println(result);
-					pw.close();
-
-				} else if (action.equals(AppStarter.CHANGEMSGSTATE)) {
-
-					String msgIds = req.getParameter("msgIds");
-					apiAdaptor.changeMsgState(msgIds);
-
-				} else if (action.equals(AppStarter.GETHOTPICTURE)) {
-					// 取得热图
-					res.setContentType("text/plain;charset=UTF-8");
-					PrintWriter pw = res.getWriter();
-					String result = apiAdaptor.getHotPicture();
-					System.out.println(result);
-					pw.println(result);
-					pw.close();
-				} else if (action.equals(AppStarter.GETClASSICALPINTU)) {
-					// 取得经典品图
-					res.setContentType("text/plain;charset=UTF-8");
-					PrintWriter pw = res.getWriter();
-					String result = apiAdaptor.getClassicalStory();
-					System.out.println(result);
-					pw.println(result);
-					pw.close();
-				} else if (action.equals(AppStarter.GETUSERESTATE)) {
-					// 取得用户基本信息和资产详情
-					res.setContentType("text/plain;charset=UTF-8");
-					PrintWriter pw = res.getWriter();
-					String userId = req.getParameter("userId");
-					String result = apiAdaptor.getUserEstate(userId);
-					System.out.println(result);
-					pw.println(result);
-					pw.close();
-				} else if (action.equals(AppStarter.MARKTHEPIC)) {
-					// 收藏图片
-					res.setContentType("text/plain;charset=UTF-8");
-					PrintWriter pw = res.getWriter();
-					String userId = req.getParameter("userId");
-					String picId = req.getParameter("picId");
-					boolean flag = apiAdaptor.markFavoritePic(userId, picId);
-					if (flag) {
-						pw.println("收藏图片成功！");
-					} else {
-						pw.println("收藏图片失败！");
-					}
-
-				} else if (action.equals(AppStarter.DELETEONEFAVOR)) {
-					// 删除收藏的图片
-					res.setContentType("text/plain;charset=UTF-8");
-					PrintWriter pw = res.getWriter();
-					String fId = req.getParameter("fId");
-					boolean flag = apiAdaptor.deleteOneFavorite(fId);
-					if (flag) {
-						pw.println("删除收藏成功！");
-					} else {
-						pw.println("删除收藏失败！");
-					}
-
-				} else if (action.equals(AppStarter.GETFAVORITEPICS)) {
-					// 获取收藏列表
-					res.setContentType("text/plain;charset=UTF-8");
-					PrintWriter pw = res.getWriter();
-					String userId = req.getParameter("userId");
-					int pageNum = Integer.parseInt(req.getParameter("pageNum"));
-					String result = apiAdaptor.getFavorTpics(userId, pageNum);
-					System.out.println(result);
-					pw.println(result);
-
-				} else if (action.equals(AppStarter.GETTPICSBYUSER)) {
-					// 获取指定用户图片列表
-					res.setContentType("text/plain;charset=UTF-8");
-					PrintWriter pw = res.getWriter();
-					String userId = req.getParameter("userId");
-					int pageNum = Integer.parseInt(req.getParameter("pageNum"));
-					String result = apiAdaptor.getTpicsByUser(userId, pageNum);
-					System.out.println(result);
-					pw.println(result);
-
-				} else if (action.equals(AppStarter.GETSTORIESBYUSER)) {
-					// 获取指定用户故事列表
-					res.setContentType("text/plain;charset=UTF-8");
-					PrintWriter pw = res.getWriter();
-					String userId = req.getParameter("userId");
-					int pageNum = Integer.parseInt(req.getParameter("pageNum"));
-					String result = apiAdaptor.getStoryiesByUser(userId,
-							pageNum);
-					System.out.println(result);
-					pw.println(result);
-
-				} else if (action.equals(AppStarter.GETGIFTS)) {
-					// 获取可换礼物
-					res.setContentType("text/plain;charset=UTF-8");
-					PrintWriter pw = res.getWriter();
-					String result = apiAdaptor.getExchangeableGifts();
-					System.out.println(result);
-					pw.println(result);
-
-				} else if (action.equals(AppStarter.GETEVENTS)) {
-					// 获取今日社区
-					res.setContentType("text/plain;charset=UTF-8");
-					PrintWriter pw = res.getWriter();
-					String result = apiAdaptor.getCommunityEvents();
-					System.out.println(result);
-					pw.println(result);
-
-				} else if (action.equals(AppStarter.ADDEVENT)) {
-					res.setContentType("text/plain;charset=UTF-8");
-					PrintWriter pw = res.getWriter();
-					String title = req.getParameter("title");
-					String detail = req.getParameter("detail");
-					String time = req.getParameter("time");
-					boolean flag = apiAdaptor.publishCommunityEvent(title,
-							detail, time);
-					if (flag) {
-						pw.println("发布社区事件成功！");
-					} else {
-						pw.println("发布社区事件失败！");
-					}
-
-				} else if (action.equals(AppStarter.ADDGIFT)) {
-					res.setContentType("text/plain;charset=UTF-8");
-					// PrintWriter pw = res.getWriter();
-					// TODO 这里发布礼物时候要有图片上传
-					apiAdaptor.publishExchangeableGift();
-
-				} else if (action.equals(AppStarter.GETLATESTPIC)) {
-					res.setContentType("text/plain;charset=UTF-8");
-					PrintWriter pw = res.getWriter();
-					String result = apiAdaptor.getLatestPic();
-					System.out.println(result);
-					pw.println(result);
-
-				} else {
-
-				}
+				pw.println("发送消息失败！");
 			}
+			pw.close();
+			
+		} else if (action.equals(AppStarter.GETUSERMSG)) {
+			// 得到收件箱详情
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+
+			String userId = req.getParameter("userId");
+			String result = apiAdaptor.getUserMsg(userId);
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
+
+		} else if (action.equals(AppStarter.CHANGEMSGSTATE)) {
+
+			String msgIds = req.getParameter("msgIds");
+			apiAdaptor.changeMsgState(msgIds);
+
+		} else if (action.equals(AppStarter.GETHOTPICTURE)) {
+			// 取得热图
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String result = apiAdaptor.getHotPicture();
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
+			
+		} else if (action.equals(AppStarter.GETClASSICALPINTU)) {
+			// 取得经典品图
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String result = apiAdaptor.getClassicalStory();
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
+			
+		} else if (action.equals(AppStarter.GETUSERESTATE)) {
+			// 取得用户基本信息和资产详情
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String userId = req.getParameter("userId");
+			String result = apiAdaptor.getUserEstate(userId);
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
+			
+		} else if (action.equals(AppStarter.MARKTHEPIC)) {
+			// 收藏图片
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String userId = req.getParameter("userId");
+			String picId = req.getParameter("picId");
+			boolean flag = apiAdaptor.markFavoritePic(userId, picId);
+			if (flag) {
+				pw.println("收藏图片成功！");
+			} else {
+				pw.println("收藏图片失败！");
+			}
+			pw.close();
+
+		} else if (action.equals(AppStarter.DELETEONEFAVOR)) {
+			// 删除收藏的图片
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String fId = req.getParameter("fId");
+			boolean flag = apiAdaptor.deleteOneFavorite(fId);
+			if (flag) {
+				pw.println("删除收藏成功！");
+			} else {
+				pw.println("删除收藏失败！");
+			}
+			pw.close();
+
+		} else if (action.equals(AppStarter.GETFAVORITEPICS)) {
+			// 获取收藏列表
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String userId = req.getParameter("userId");
+			int pageNum = Integer.parseInt(req.getParameter("pageNum"));
+			String result = apiAdaptor.getFavorTpics(userId, pageNum);
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
+
+		} else if (action.equals(AppStarter.GETTPICSBYUSER)) {
+			// 获取指定用户图片列表
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String userId = req.getParameter("userId");
+			int pageNum = Integer.parseInt(req.getParameter("pageNum"));
+			String result = apiAdaptor.getTpicsByUser(userId, pageNum);
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
+
+		} else if (action.equals(AppStarter.GETSTORIESBYUSER)) {
+			// 获取指定用户故事列表
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String userId = req.getParameter("userId");
+			int pageNum = Integer.parseInt(req.getParameter("pageNum"));
+			String result = apiAdaptor.getStoryiesByUser(userId, pageNum);
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
+
+		} else if (action.equals(AppStarter.GETGIFTS)) {
+			// 获取可换礼物
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String result = apiAdaptor.getExchangeableGifts();
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
+
+		} else if (action.equals(AppStarter.GETEVENTS)) {
+			// 获取今日社区
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String result = apiAdaptor.getCommunityEvents();
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
+
+		} else {
+
 		}
 
 	}
+
 
 	@SuppressWarnings("unchecked")
 	private void processMultiPart(HttpServletRequest req, PrintWriter pw) {
