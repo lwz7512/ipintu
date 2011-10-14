@@ -226,8 +226,8 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			}
 		} catch (SizeLimitExceededException e) {
 
-			System.out.println(">>> 文件尺寸超过限制，不能上传！");
-			pw.println(">>> 文件尺寸超过限制，不能上传！");
+			System.out.println(">>> File size exceeds the limit, can not upload!");
+			pw.println(">>> File size exceeds the limit, can not upload!");
 			return;
 
 		} catch (FileUploadException e) {
@@ -258,7 +258,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 		// ApplicationContext 已经准备好，Spring配置初始化完成，可以启动任务了
 		if (event instanceof ContextRefreshedEvent) {
 
-			System.out.println(">>>>>>>> Server 启动完成， 开始启动自动任务 <<<<<<<");
+			System.out.println(">>>>>>>> Server startup complete, automatic task started <<<<<<<");
 
 			// 上传文件保存路径
 			String filePath = System.getProperty("filePath");
@@ -268,7 +268,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 				System.out.println(">>>>> init file upload component...");
 				initUploadComponent(tempPath);
 			} else {
-				log.warn(">>>>> !!! 文件上传路径tempPath环境变量为null，不能初始化上传组件!");
+				log.warn(">>>>> !!! File upload path tempPath environment variable is null, can not initialize the upload component!");
 			}
 
 			if (apiAdaptor != null) {
@@ -277,7 +277,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 				if (filePath != null) {
 					apiAdaptor.setImagePath(filePath);
 				} else {
-					log.warn(">>>>> !!! 文件上传路径filePath环境变量为null，不能初始化上传路径!");
+					log.warn(">>>>> !!! File upload path filePath environment variable is null, can not initialize the upload component!");
 				}
 			}
 			if (taskStarter != null) {

@@ -62,7 +62,7 @@ public class SyncExecute implements Runnable {
 			syncPictureToDB();
 			
 			//处理错误图片
-			dealErrorPicture();
+			processErrorPicture();
 
 			// 批量同步故事
 			// 并删除已同步的对象ID；
@@ -157,16 +157,19 @@ public class SyncExecute implements Runnable {
 	}
 	
 
-	private void dealErrorPicture() {
+	private void processErrorPicture() {
 		if(illegalCountMap.size() > 0){
 			for(String id:illegalCountMap.keySet()){
 				if(illegalCountMap.get(id) >=2){
 					//删除缓存的图片id
 					CacheAccessInterface.toSavedUserPicIds.get(CacheAccessInterface.PICTURE_TYPE).remove(id);
 					//删除缓存中的图片对象
-					cacheVisitor.removeTPic(id);
-					//输出图片问题信息
-					log.warn(">>>Question picture:" +id );
+					boolean flag = cacheVisitor.removeTPic(id);
+					if(flag){
+						illegalCountMap.remove(id);
+						//输出图片问题信息
+						log.warn(">>>Deleted question picture is:" +id );
+					}
 				}
 			}
 		}

@@ -20,13 +20,14 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	// Inject by Spring
 	private PintuCache pintuCache;
 
-	// Inject by Spring
 	public CacheAccessImplement() {
 		// 初始化要缓存对象ID的类型及容器，单个缓存，批量入库，批量删除
 		toSavedUserPicIds.put(PICTURE_TYPE, new LinkedList<String>());
+		
 		toSavedCacheIds.put(STORY_TYPE, new HashMap<String,LinkedList<String>>());
 		toSavedCacheIds.put(COMMENT_TYPE, new HashMap<String,LinkedList<String>>());
 		toSavedCacheIds.put(VOTE_TYPE, new HashMap<String,LinkedList<String>>());
+		
 	}
 
 	public void setPintuCache(PintuCache pintuCache) {
@@ -158,7 +159,7 @@ public class CacheAccessImplement implements CacheAccessInterface {
 		List<Object> list = new ArrayList<Object>();
 		List<String> ids = new ArrayList<String>();
 		Map<String,LinkedList<String>> map = new HashMap<String,LinkedList<String>>();
-		//FIXME TODO 改
+		
 		if (type.equals(PICTURE_TYPE)) {
 			ids = toSavedUserPicIds.get(PICTURE_TYPE);
 			list = pintuCache.getCachedPicture(ids);
