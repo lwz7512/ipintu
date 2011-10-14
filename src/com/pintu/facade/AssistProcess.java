@@ -2,13 +2,10 @@ package com.pintu.facade;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.pintu.beans.User;
 
 public class AssistProcess {
 	
@@ -36,9 +33,11 @@ public class AssistProcess {
 		}
 
 		if (action.equals(AppStarter.GETAPPLICANT)) {
-			List<User> list = apiAdaptor.getApplicant();
-			req.setAttribute("tempUser", list);
-			req.getRequestDispatcher("jsp/accept.jsp").forward(req, res);
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String result= apiAdaptor.getApplicant();
+			System.out.println(result);
+			pw.println(result);
 
 		} else if (action.equals(AppStarter.ACCEPT)) {
 			// 管理员处理申请，审核后发带邀请码的链接的为内容的邮件~

@@ -9,11 +9,12 @@
 </head>
 <body>
 	<div class="main">
+	<%String userId = request.getParameter("userId"); %>
 		<div class="indextop">
-			<a href="upload.jsp">上传图片</a>
+			<a href="upload.jsp?userId=<%=userId %>">上传图片</a>
 		</div>
 		<div class="indextop">
-			<a href="gallery.jsp">社区长廊</a>
+			<a href="gallery.jsp?userId=<%=userId %>">社区长廊</a>
 		</div>
 	</div>
 </body>

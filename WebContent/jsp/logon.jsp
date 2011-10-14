@@ -34,9 +34,11 @@ function check(){
 		//回调函数
 		function (result) {
 			var res =result.trim();
+			var userId="";
 			if( res.indexOf('admin') > -1){//若result为管理员
 				//转到管理员页面admin.jsp
-				window.location.replace("<%=request.getContextPath()%>/jsp/admin.jsp");
+				userId = res.substring(6);
+				window.location.replace("<%=request.getContextPath()%>/jsp/admin.jsp?userId="+userId);
 			}else if( res == "0" ){
 				 $('#prompt').show();
 				$('#prompt').html('密码不正确');
@@ -48,7 +50,8 @@ function check(){
 				document.getElementById("password").value=null;
 			}else{
 				//转到普通用户页面normal.jsp
-				window.location.replace("<%=request.getContextPath()%>/jsp/normal.jsp");
+				userId = res.substring(8);
+				window.location.replace("<%=request.getContextPath()%>/jsp/normal.jsp?userId="+userId);
 			}
 		});
 	}

@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.pintu.beans.Applicant;
 import com.pintu.beans.Comment;
 import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
@@ -196,7 +197,7 @@ public interface PintuServiceInterface {
 
 	public String  acceptApply(String id, String account,String url,String opt);
 
-	public List<User> getApplicant();
+	public List<Applicant> getApplicant();
 
 	public boolean examineUser(String userId);
 
