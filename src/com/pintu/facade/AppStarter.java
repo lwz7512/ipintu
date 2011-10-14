@@ -277,7 +277,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 				if (filePath != null) {
 					apiAdaptor.setImagePath(filePath);
 				} else {
-					log.warn(">>>>> !!! 文件上传路径filePath环境变量为null，不能初始化上传路径!");
+					log.warn(">>>>> !!! File upload path filePath environment variable is null, can not initialize the upload component!");
 				}
 			}
 			if (taskStarter != null) {
