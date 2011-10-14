@@ -3,6 +3,7 @@ package com.pintu.dao;
 import java.util.List;
 import java.util.Map;
 
+import com.pintu.beans.Applicant;
 import com.pintu.beans.Comment;
 import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
@@ -154,7 +155,7 @@ public interface DBAccessInterface {
 	
 	public int insertApplicant(User tempUser);
 	
-	public List<User> getApplicant();
+	public List<Applicant> getApplicant();
 	
 	public int deleteTempUser(String userId);
 	

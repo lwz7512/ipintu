@@ -14,6 +14,7 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.fileupload.FileItem;
 
+import com.pintu.beans.Applicant;
 import com.pintu.beans.Comment;
 import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
@@ -415,9 +416,9 @@ public class ApiAdaptor {
 		return prompt;
 	}
 
-	public List<User> getApplicant() {
-		List<User> list = pintuService.getApplicant();
-		return list;
+	public String getApplicant() {
+		List<Applicant> list = pintuService.getApplicant();
+		return JSONArray.fromCollection(list).toString();
 	}
 
 	public boolean examineUser(String userId) {

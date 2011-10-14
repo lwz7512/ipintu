@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
+import com.pintu.beans.Applicant;
 import com.pintu.beans.Comment;
 import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
@@ -983,8 +984,8 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public List<User> getApplicant() {
-		List<User> list = dbVisitor.getApplicant();
+	public List<Applicant> getApplicant() {
+		List<Applicant> list = dbVisitor.getApplicant();
 		return list;
 	}
 

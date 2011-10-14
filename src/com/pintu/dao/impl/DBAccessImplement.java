@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 
+import com.pintu.beans.Applicant;
 import com.pintu.beans.Comment;
 import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
@@ -1070,14 +1071,14 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public List<User> getApplicant() {
-		List<User> resList = new ArrayList<User>();
+	public List<Applicant> getApplicant() {
+		List<Applicant> resList = new ArrayList<Applicant>();
 		String sql = "select * from t_applicant where  a_passed=0 and (isNull(a_inviteCode) or a_inviteCode='')";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
 				Map<String, Object> map = (Map<String, Object>) rows.get(i);
-				User user = new User();
+				Applicant user = new Applicant();
 				user.setId(map.get("a_id").toString());
 				user.setAccount(map.get("a_account").toString());
 				user.setApplyReason(map.get("a_applyReason").toString());

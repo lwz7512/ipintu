@@ -6,17 +6,44 @@
 <title>获取社区长廊</title>
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/jsp/css/style.css" />
+	<script language=javascript
+	src="<%=request.getContextPath()%>/jsp/js/jquery.js"
+	type=text/javascript></script>
 </head>
 
-<body>
+<script type="text/javascript">
+
+function loadGallery(){
+	var flag = true;
+	if(flag){
+		var end =<%=new Date().getTime()%>;
+		var start = end - 1000 * 60 * 60;
+		alert(typeof(end)+end+typeof(start)+start);
+		$.post('<%=request.getContextPath()%>/pintuapi', {
+		'method'  : 'getGalleryByTime',
+		'userId'	: '<%= request.getParameter("userId")%>',
+		'startTime' : start ,
+		'endTime' : end
+		}, 
+		//回调函数
+		function (result) {
+			var res =result.trim();
+			alert(res);
+			if( res=='[]'){//若result为管理员
+				$('#prompt').show();
+				$('#prompt').html('当前画廊贴图数目为0');
+			}else{
+				$('#prompt').show();
+				$('#prompt').html(res);
+			}
+		});
+	}
+}
+</script>
+
+<body onload="loadGallery()">
 <div class="main">
-	<form action="<%=request.getContextPath()%>/pintuapi" method="post">
-		<input type="hidden" name="method" value="getGalleryByTime" /> <input
-			type="hidden" name="userId" value="b05a847f81fc593e" /><br /> 开始时间：<input
-			type="text" name="startTime"
-			value="<%=new Date().getTime() - 1000 * 60 * 60 * 60%>" /> 结束时间：<input
-			type="text" name="endTime" value="<%=new Date().getTime()%>" /> <input
-			type="submit" name="submit" value="测试">
-	</form>
+	<input type="button"  value="刷新画廊"  onclick = "loadGallery()"/><br/>
+	<div class = "prompt"><span style="display: none;" id="prompt"></span></div>
 	</div>
 </html>

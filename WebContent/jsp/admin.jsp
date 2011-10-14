@@ -9,8 +9,9 @@
 </head>
 <body>
 	<div class="main">
+	<%String userId = request.getParameter("userId"); %>
 		<div class="indextop">
-			<a href="accept.jsp">处理申请</a>
+			<a href="accept.jsp?userId=<%=userId %>">处理申请</a>
 		</div>
 		<div class="indextop">
 			<a href="">发布可换礼物</a>
