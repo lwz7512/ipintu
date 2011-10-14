@@ -52,9 +52,9 @@ public class PintuCache {
 	// private Logger log = Logger.getLogger(PintuCache.class);
 
 	public PintuCache() {
-		
+
 		cacheManager = CacheManager.getInstance();
-		
+
 		initUserCache();
 
 		pictureCache = cacheManager.getCache("picturecache");
@@ -80,7 +80,6 @@ public class PintuCache {
 		cacheManager.addCache(userCache);
 	}
 
-	
 	public void traceAll() {
 		System.out.println("--------------- trace begin: -----------------");
 		System.out.println(">>> commentCache status: "
@@ -478,9 +477,11 @@ public class PintuCache {
 	}
 
 	public boolean removeTPicById(String id) {
+		boolean del = false;
 		synchronized (pictureCache) {
-				return pictureCache.remove(id);
-			}
+			del=pictureCache.remove(id);
+		}
+		return del;
 	}
-
+	
 }

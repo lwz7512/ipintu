@@ -163,9 +163,12 @@ public class SyncExecute implements Runnable {
 					//删除缓存的图片id
 					CacheAccessInterface.toSavedUserPicIds.get(CacheAccessInterface.PICTURE_TYPE).remove(id);
 					//删除缓存中的图片对象
-					cacheVisitor.removeTPic(id);
-					//输出图片问题信息
-					log.warn(">>>Question picture:" +id );
+					boolean flag = cacheVisitor.removeTPic(id);
+					if(flag){
+						illegalCountMap.remove(id);
+						//输出图片问题信息
+						log.warn(">>>Deleted question picture is:" +id );
+					}
 				}
 			}
 		}

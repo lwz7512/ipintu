@@ -1,6 +1,6 @@
 package com.pintu.sync;
 /**
- * 在每次系统启动时，将当天从0点开始的内容同步的缓存中
+ * 在每次系统启动时,将当天从0点开始的内容同步的缓存中
  * @author liumingli
  *
  */
@@ -80,7 +80,7 @@ public class DailySync implements Runnable{
 					String storyIds = syncStoryTask(picIds.toString());
 					
 					//同步故事对应的数据库投票到缓存
-					//若没有同步到故事的缓存，即storyId没有，就不用同步投票了吧
+					//若没有同步到故事的缓存,即storyId没有,就不用同步投票了吧
 					if(storyIds.length()>0){
 						syncVoteTask(storyIds);
 					}
@@ -90,7 +90,7 @@ public class DailySync implements Runnable{
 		}
 
 		/**
-		 * 这里，因为系统设计图片名即为id.扩展名的格式，所以直接用name取缩略图
+		 * 这里,因为系统设计图片名即为id.扩展名的格式,所以直接用name取缩略图
 		 * @param picNames
 		 */
 		private void syncThumbnailTask(List<String> picNames) {
@@ -127,13 +127,13 @@ public class DailySync implements Runnable{
 						cacheVisitor.syncDBVoteToCache(vote);
 					}
 				}
-				log.info(">>>Synchronous vote to cache is over，voteSize:"+voteList.size());
+				log.info(">>>Synchronous vote to cache is over, voteSize:"+voteList.size());
 		}
 
 
 		private String syncStoryTask(String picIds) {
 			log.info(">>>Synchronous stroy to cache is begin..");
-			// 这里因是要取出story的id给vote用，构造出一个类似('storyId','storyId')的串给sql语句用
+			// 这里因是要取出story的id给vote用,构造出一个类似('storyId','storyId')的串给sql语句用
 			StringBuffer storyIds= new StringBuffer();
 //			List<Story> storyList=dbVisitor.getStoryForCache(today);
 			List<Story> storyList=dbVisitor.getStoryForCache(picIds);
@@ -150,7 +150,7 @@ public class DailySync implements Runnable{
 					cacheVisitor.syncDBStoryToCache(story);
 				}
 			}
-			log.info(">>>Synchronous story to cache is over，storySize:"+storyList.size()+"  storyIds:"+storyIds.toString());
+			log.info(">>>Synchronous story to cache is over,storySize:"+storyList.size()+"  storyIds:"+storyIds.toString());
 			return storyIds.toString();
 		}
 
@@ -165,7 +165,7 @@ public class DailySync implements Runnable{
 					cacheVisitor.syncDBCommnetToCache(comm);
 				}
 			}
-			log.info(">>>Synchronous comment to cache is over，commentSize:"+commList.size());
+			log.info(">>>Synchronous comment to cache is over,commentSize:"+commList.size());
 		}
 
 		private Map<String,String> syncPictureTask(String startTime,String endTime){
@@ -179,7 +179,7 @@ public class DailySync implements Runnable{
 					resMap.put(pic.getId(), pic.getName());
 				}
 			}
-			log.info(">>>Synchronous picture to cache is over，pictureSize:"+picList.size());
+			log.info(">>>Synchronous picture to cache is over,pictureSize:"+picList.size());
 			return resMap;
 		}
 		

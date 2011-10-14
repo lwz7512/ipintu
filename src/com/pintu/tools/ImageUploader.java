@@ -50,7 +50,7 @@ public class ImageUploader extends HttpServlet {
 		if (!tp.exists())
 			tp.mkdir();
 
-		System.out.println("文件存放目录、临时文件目录准备完毕 ...");
+		System.out.println("File storage directory, the temporary file directory is ready ...");
 		System.out.println("filePah: " + filePath);
 		System.out.println("tempPah: " + tempPath);
 	}
@@ -71,8 +71,8 @@ public class ImageUploader extends HttpServlet {
 		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 		// 不是文件上传请求
 		if (!isMultipart) {
-			System.out.println(">>> 无效请求，不予处理！！！");
-			pw.write(">>> 无效请求，不予处理！！！");
+			System.out.println(">>>Invalid request, not to deal with! ! !");
+			pw.write(">>> Invalid request, not to deal with! ! !");
 			pw.close();
 			return;
 		}			
@@ -96,10 +96,10 @@ public class ImageUploader extends HttpServlet {
 			while (iter.hasNext()) {
 				FileItem item = iter.next();
 				if (item.isFormField()) {
-					System.out.println("处理表单内容 ...");
+					System.out.println("Processing the contents of the form...");
 					processFormField(item, pw);
 				} else {
-					System.out.println("处理上传的文件 ...");
+					System.out.println("Upload file handling...");
 					processUploadFile(item, pw);
 				}
 			}// end while()
@@ -109,12 +109,12 @@ public class ImageUploader extends HttpServlet {
 
 		} catch (SizeLimitExceededException e) {
 			
-			System.out.println(">>> 文件尺寸超过限制，不能上传！");
-			pw.println(">>> 文件尺寸超过限制，不能上传！");
+			System.out.println(">>>File size exceeds the limit, can not upload!");
+			pw.println(">>> File size exceeds the limit, can not upload!");
 			return;
 			
 		} catch (Exception e) {
-			System.out.println("使用 fileupload 包时发生异常 ...");
+			System.out.println("Exception occurs when using fileupload package...");
 			e.printStackTrace();
 		}// end try ... catch ...
 
@@ -153,7 +153,7 @@ public class ImageUploader extends HttpServlet {
 		String sizeInK = (int) fileSize / 1024 + "K";
 
 		if ("".equals(fileName) && fileSize == 0) {
-			System.out.println("文件名为空 ...");
+			System.out.println("fileName is null ...");
 			return;
 		}
 
@@ -162,10 +162,10 @@ public class ImageUploader extends HttpServlet {
 		item.write(uploadFile);
 	
 		
-		System.out.println(fileName + " 文件保存完毕 ...");
+		System.out.println(fileName + " File is complete ...");
 		
 		// 返回客户端信息
-		pw.println(fileName + " 文件保存完毕 ...");
+		pw.println(fileName + " File is complete ...");
 		pw.println("file size is:" + sizeInK);
 		pw.println("file route is:" + uploadFile.getAbsolutePath() + "\r\n");
 	}
