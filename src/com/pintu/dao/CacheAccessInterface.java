@@ -16,11 +16,16 @@ public interface CacheAccessInterface {
 
 	// 存放要同步入库的对象ID，该对象在缓冲中已存放；
 	// 同步入库后要从该列表中清除；
-	// type,(id,id...);
 	
-	//FIXME TODO 要改这个toSavedCacheIds
+	//存储图片id（后续可能加上存用户）
 	public static Map<String, LinkedList<String>> toSavedUserPicIds = new HashMap<String, LinkedList<String>>();
+	
+	//存储评论、投票、故事id，按从属关系~
 	public static Map<String,Map<String,LinkedList<String>>>  toSavedCacheIds = new HashMap<String,Map<String,LinkedList<String>>>();
+
+	//用于存放热图的id和点击量的对应关系（每当查看详情后将被查看的图片id放到这里）
+	//在每天零点计算积分等级等时，顺便将这个清空
+	public static Map<String, Integer> hotPicCacheIds = new HashMap<String,Integer>();
 	
 	public static String USER_TYPE = "user";
 	
@@ -32,11 +37,6 @@ public interface CacheAccessInterface {
 
 	public static String VOTE_TYPE = "vote";
 
-	
-	//用于存放热图的id和点击量的对应关系（每当查看详情后将被查看的图片id放到这里）
-	//在每天零点计算积分等级等时，顺便将这个清空
-	public static Map<String, Integer> hotPicCacheIds = new HashMap<String,Integer>();
-	
 	//清空热图MAP
 	public void clearHotPicCacheIds();
 	
@@ -76,7 +76,6 @@ public interface CacheAccessInterface {
 
 	// 读取未入库的所有某type的对象
 	public List<Object> getUnSavedObj(String type);
-
 
 	// 缓存缩略图
 	public void cacheThumbnail(TPicDesc tpicDesc);

@@ -62,7 +62,7 @@ public class SyncExecute implements Runnable {
 			syncPictureToDB();
 			
 			//处理错误图片
-			dealErrorPicture();
+			processErrorPicture();
 
 			// 批量同步故事
 			// 并删除已同步的对象ID；
@@ -156,7 +156,7 @@ public class SyncExecute implements Runnable {
 	}
 	
 
-	private void dealErrorPicture() {
+	private void processErrorPicture() {
 		if(illegalCountMap.size() > 0){
 			for(String id:illegalCountMap.keySet()){
 				if(illegalCountMap.get(id) >=2){
