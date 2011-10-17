@@ -157,7 +157,7 @@ public class SyncExecute implements Runnable {
 	
 
 	private void processErrorPicture() {
-		if(illegalCountMap.size() > 0){
+		if(illegalCountMap != null && illegalCountMap.size() > 0){
 			for(String id:illegalCountMap.keySet()){
 				if(illegalCountMap.get(id) >=2){
 					//删除缓存的图片id
