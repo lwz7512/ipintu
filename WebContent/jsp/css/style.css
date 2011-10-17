@@ -1,0 +1,93 @@
+/* CSS Document */
+body {
+	font-family: "宋体";
+	font-size: 12px;
+	color: rgb(70, 122, 167);
+}
+
+div,span {
+	margin: 0px;
+	padding: 0;
+	border: 0;
+}
+
+.indexmain {
+	margin: 0 auto;
+	width: 960px;
+	height: 600px;
+	background: url(../img/indexbg1.jpg);
+}
+
+.indexcontent {
+	width: 300px;
+	height: 200px;
+	padding-top: 150px;
+	padding-left: 250px;
+}
+
+.indextop {
+	padding-top: 30px;
+}
+
+.main {
+	margin: 0 auto;
+	width: 800px;
+	height: 532px;
+	margin-top: 20px;
+	background: url(../img/indexbg.jpg);
+	
+}
+
+.pagetop {
+	width: 300px;
+	height: 37px;
+}
+
+.pagetop .topfont {
+	padding-left: 30px;
+	display: block;
+	padding-top: 10px;
+}
+
+.pagemid {
+	border: #d5d5d5 1px solid;
+	width: 297px;
+}
+
+.pageju {
+	padding-top: 20px;
+	padding-left: 10px;
+}
+
+.pagecenter {
+	text-align: center;
+}
+
+.pagebuttom {
+	margin-bottom: 20px;
+}
+
+.prompt {
+	font: 12px;
+	color: red;
+}
+
+
+.acceptTable {
+	width: 420px;
+	padding-bottom: 15px;
+	border: 1px solid #d5d5d5;
+	color: rgb(70, 122, 167);
+	font-size: 12px;
+	border-collapse: collapse;
+	cellpadding:"0" ;
+	cellspacing:"0";
+}
+.acceptTable td {
+	align: center;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	border: 1px solid #d5d5d5;
+	color: rgb(70, 122, 167);
+}
+
