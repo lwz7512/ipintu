@@ -14,13 +14,14 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 
 import com.pintu.beans.Applicant;
-import com.pintu.beans.Comment;
 import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
 import com.pintu.beans.Gift;
 import com.pintu.beans.Message;
 import com.pintu.beans.Story;
+import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TPicItem;
+import com.pintu.beans.Tag;
 import com.pintu.beans.User;
 import com.pintu.beans.Vote;
 import com.pintu.beans.Wealth;
@@ -95,8 +96,8 @@ public class DBAccessImplement implements DBAccessInterface {
 	@Override
 	public int insertPicture(final List<Object> objList) {
 		String sql = "INSERT INTO t_picture "
-				+ "(p_id,p_name,p_owner,p_publishTime,p_tags,p_description,p_allowStory,p_mobImgId,p_mobImgSize,p_mobImgPath,p_rawImgId,p_rawImgSize,p_rawImgPath,p_pass,p_memo) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+				+ "(p_id,p_name,p_owner,p_publishTime,p_source,p_description,p_isOriginal,p_mobImgId,p_mobImgSize,p_mobImgPath,p_rawImgId,p_rawImgSize,p_rawImgPath,p_browseCount,p_pass,p_memo) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		int[] res = jdbcTemplate.batchUpdate(sql,
 				new BatchPreparedStatementSetter() {
@@ -107,17 +108,18 @@ public class DBAccessImplement implements DBAccessInterface {
 						ps.setString(2, picture.getName());
 						ps.setString(3, picture.getOwner());
 						ps.setString(4, picture.getPublishTime());
-						ps.setString(5, picture.getDescription());
-						ps.setString(6, picture.getTags());
-						ps.setInt(7, picture.getAllowStory());
+						ps.setString(5, picture.getSource());
+						ps.setString(6, picture.getDescription());
+						ps.setInt(7, picture.getIsOriginal());
 						ps.setString(8, picture.getMobImgId());
 						ps.setString(9, picture.getMobImgSize());
 						ps.setString(10, picture.getMobImgPath());
 						ps.setString(11, picture.getRawImgId());
 						ps.setString(12, picture.getRawImgSize());
 						ps.setString(13, picture.getRawImgPath());
-						ps.setInt(14, picture.getPass());
-						ps.setString(15, "");
+						ps.setInt(14, picture.getBrowseCount());
+						ps.setInt(15, picture.getPass());
+						ps.setString(16, "");
 					}
 
 					public int getBatchSize() {
@@ -142,8 +144,8 @@ public class DBAccessImplement implements DBAccessInterface {
 				tpicItem.setOwner(map.get("p_owner").toString());
 				tpicItem.setPublishTime(map.get("p_publishTime").toString());
 				tpicItem.setDescription(map.get("p_description").toString());
-				tpicItem.setTags(map.get("p_tags").toString());
-				tpicItem.setAllowStory(Integer.parseInt(map.get("p_allowStory")
+				tpicItem.setSource(map.get("p_source").toString());
+				tpicItem.setIsOriginal(Integer.parseInt(map.get("p_isOriginal")
 						.toString()));
 				tpicItem.setMobImgId(map.get("p_mobImgId").toString());
 				tpicItem.setMobImgSize(map.get("p_mobImgSize").toString());
@@ -151,6 +153,8 @@ public class DBAccessImplement implements DBAccessInterface {
 				tpicItem.setRawImgId(map.get("p_rawImgId").toString());
 				tpicItem.setRawImgSize(map.get("p_rawImgSize").toString());
 				tpicItem.setRawImgPath(map.get("p_rawImgPath").toString());
+				tpicItem.setBrowseCount(Integer.parseInt(map.get("p_browseCount")
+						.toString()));
 				resList.add(tpicItem);
 			}
 		}
@@ -180,27 +184,6 @@ public class DBAccessImplement implements DBAccessInterface {
 		return resList;
 	}
 
-	@Override
-	public List<Comment> getCommentForCache(String picIds) {
-		List<Comment> resList = new ArrayList<Comment>();
-//		String sql = "select * from t_comment where c_publishTime >='" + today + "'";
-		String sql = "select * from t_comment where c_follow in (" + picIds + ")";
-		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
-		if (rows != null && rows.size() > 0) {
-			for (int i = 0; i < rows.size(); i++) {
-				Map<String, Object> map = (Map<String, Object>) rows.get(i);
-				Comment comment = new Comment();
-				comment.setId(map.get("c_id").toString());
-				comment.setFollow(map.get("c_follow").toString());
-				comment.setOwner(map.get("c_owner").toString());
-				comment.setPublishTime(map.get("c_publishTime").toString());
-				comment.setContent(map.get("c_content").toString());
-				resList.add(comment);
-			}
-		}
-		
-		return resList;
-	}
 
 	@Override
 	public List<Vote> getVoteForCache(String storyIds) {
@@ -231,6 +214,7 @@ public class DBAccessImplement implements DBAccessInterface {
 			user.setId(map.get("u_id").toString());
 			user.setAccount(map.get("u_account").toString());
 			user.setAvatar(map.get("u_avatar").toString());
+			user.setNickName(map.get("u_nickName").toString());
 			user.setRole(map.get("u_role").toString());
 			user.setLevel(Integer.parseInt(map.get("u_level").toString()));
 			user.setScore(Integer.parseInt(map.get("u_score").toString()));
@@ -239,31 +223,6 @@ public class DBAccessImplement implements DBAccessInterface {
 		return user;
 	}
 
-	@Override
-	public int insertComment(final List<Object> objList) {
-		String sql = "INSERT INTO t_comment "
-				 + "(c_id,c_follow,c_owner,c_publishTime,c_content,c_memo) "
-				 + "VALUES (?, ?, ?, ?, ?, ?)";
-
-		int[] res = jdbcTemplate.batchUpdate(sql,
-				new BatchPreparedStatementSetter() {
-					public void setValues(PreparedStatement ps, int i)
-							throws SQLException {
-						Comment cmt = (Comment) objList.get(i);
-						ps.setString(1, cmt.getId());
-						ps.setString(2, cmt.getFollow());
-						ps.setString(3, cmt.getOwner());
-						ps.setString(4, cmt.getPublishTime());
-						ps.setString(5, cmt.getContent());
-						ps.setString(6, "");
-					}
-
-					public int getBatchSize() {
-						return objList.size();
-					}
-				});
-		return res.length;
-	}
 
 	@Override
 	public int insertStory(final List<Object> objList) {
@@ -292,25 +251,6 @@ public class DBAccessImplement implements DBAccessInterface {
 		return res.length;
 	}
 
-	@Override
-	public List<Comment> getCommentsOfPic(String tpId) {
-		List<Comment> cmtList = new ArrayList<Comment>();
-		String sql = "select * from t_comment where c_follow = '"+tpId+"'";
-		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
-		if(rows!=null && rows.size()>0){
-			for(int i = 0;i<rows.size();i++){
-				Map<String, Object> map = (Map<String, Object>) rows.get(i);
-				Comment comment = new Comment();
-				comment.setId(map.get("c_id").toString());
-				comment.setFollow(map.get("c_follow").toString());
-				comment.setOwner(map.get("c_owner").toString());
-				comment.setPublishTime(map.get("c_publishTime").toString());
-				comment.setContent(map.get("c_content").toString());
-				cmtList.add(comment);
-			}
-		}
-		return cmtList;
-	}
 
 	@Override
 	public List<Story> getStoriesOfPic(String tpId) {
@@ -430,9 +370,9 @@ public class DBAccessImplement implements DBAccessInterface {
 			pic.setName(map.get("p_name").toString());
 			pic.setOwner(map.get("p_owner").toString());
 			pic.setPublishTime(map.get("p_publishTime").toString());
-			pic.setTags(map.get("p_tags").toString());
+			pic.setSource(map.get("p_source").toString());
 			pic.setDescription(map.get("p_description").toString());
-			pic.setAllowStory(Integer.parseInt(map.get("p_allowStory").toString()));
+			pic.setIsOriginal(Integer.parseInt(map.get("p_isOriginal").toString()));
 			pic.setMobImgId(map.get("p_mobImgId").toString());
 			pic.setMobImgSize(map.get("p_mobImgSize").toString());
 			pic.setMobImgPath(map.get("p_mobImgPath").toString());
@@ -440,6 +380,7 @@ public class DBAccessImplement implements DBAccessInterface {
 			pic.setRawImgSize(map.get("p_rawImgSize").toString());
 			pic.setRawImgPath(map.get("p_rawImgPath").toString());
 			pic.setPass(Integer.parseInt(map.get("p_pass").toString()));
+			pic.setBrowseCount(Integer.parseInt(map.get("p_browseCount").toString()));
 		}
 		return pic;
 	}
@@ -474,7 +415,7 @@ public class DBAccessImplement implements DBAccessInterface {
 	@Override
 	public List<Message> getUserMessages(String userId) {
 		List<Message> msgList = new ArrayList<Message>();
-		String sql = "select * from t_message where (m_sender = '"+userId+"'"+" or m_receiver = '"+userId+"') and m_read=0";
+		String sql = "select * from t_message where  m_receiver = '"+userId+"' and m_read=0";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -590,7 +531,6 @@ public class DBAccessImplement implements DBAccessInterface {
 				new BatchPreparedStatementSetter() {
 					public void setValues(PreparedStatement ps, int i)
 							throws SQLException {
-						
 						Map<String,Integer> map = idLevelList.get(i);
 						for(String userId:map.keySet()){
 						ps.setInt(1, map.get(userId));
@@ -836,7 +776,7 @@ public class DBAccessImplement implements DBAccessInterface {
 	public List<TPicItem> getFavoriteTpics(String userId, int pageNum, int pageSize) {
 		List<TPicItem> resList = new ArrayList<TPicItem>();
 		int startLine = (pageNum -1)*pageSize;
-		String sql = "select p.p_id,p.p_name,p.p_owner,p.p_publishTime,p.p_description,p.p_tags,p.p_allowStory," +
+		String sql = "select p.p_id,p.p_name,p.p_owner,p.p_publishTime,p.p_description,p.p_source,p.p_isOriginal,p.p_browseCount" +
 				"p.p_mobImgId,p.p_mobImgSize,p.p_mobImgPath,p.p_rawImgId,p.p_rawImgSize,p.p_rawImgPath" +
 				" from t_picture p, t_favorite f where p.p_id = f.f_picture and f.f_owner = '"+userId+"' limit "+startLine+","+pageSize;
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
@@ -849,8 +789,8 @@ public class DBAccessImplement implements DBAccessInterface {
 				tpicItem.setOwner(map.get("p_owner").toString());
 				tpicItem.setPublishTime(map.get("p_publishTime").toString());
 				tpicItem.setDescription(map.get("p_description").toString());
-				tpicItem.setTags(map.get("p_tags").toString());
-				tpicItem.setAllowStory(Integer.parseInt(map.get("p_allowStory")
+				tpicItem.setSource(map.get("p_source").toString());
+				tpicItem.setIsOriginal(Integer.parseInt(map.get("p_isOriginal")
 						.toString()));
 				tpicItem.setMobImgId(map.get("p_mobImgId").toString());
 				tpicItem.setMobImgSize(map.get("p_mobImgSize").toString());
@@ -858,6 +798,7 @@ public class DBAccessImplement implements DBAccessInterface {
 				tpicItem.setRawImgId(map.get("p_rawImgId").toString());
 				tpicItem.setRawImgSize(map.get("p_rawImgSize").toString());
 				tpicItem.setRawImgPath(map.get("p_rawImgPath").toString());
+				tpicItem.setBrowseCount(Integer.parseInt(map.get("p_browseCount").toString()));
 				resList.add(tpicItem);
 			}
 		}
@@ -901,8 +842,8 @@ public class DBAccessImplement implements DBAccessInterface {
 				tpicItem.setOwner(map.get("p_owner").toString());
 				tpicItem.setPublishTime(map.get("p_publishTime").toString());
 				tpicItem.setDescription(map.get("p_description").toString());
-				tpicItem.setTags(map.get("p_tags").toString());
-				tpicItem.setAllowStory(Integer.parseInt(map.get("p_allowStory")
+				tpicItem.setSource(map.get("p_source").toString());
+				tpicItem.setIsOriginal(Integer.parseInt(map.get("p_allowStory")
 						.toString()));
 				tpicItem.setMobImgId(map.get("p_mobImgId").toString());
 				tpicItem.setMobImgSize(map.get("p_mobImgSize").toString());
@@ -910,6 +851,8 @@ public class DBAccessImplement implements DBAccessInterface {
 				tpicItem.setRawImgId(map.get("p_rawImgId").toString());
 				tpicItem.setRawImgSize(map.get("p_rawImgSize").toString());
 				tpicItem.setRawImgPath(map.get("p_rawImgPath").toString());
+				tpicItem.setBrowseCount(Integer.parseInt(map.get("p_browseCount")
+						.toString()));
 				resList.add(tpicItem);
 			}
 		}
@@ -1114,6 +1057,292 @@ public class DBAccessImplement implements DBAccessInterface {
 			}
 		}
 		return id;
+	}
+
+	@Override
+	public int updatePicBrowseCount(final List<Map<String, Integer>> browseCountList) {
+
+		String sql = "update t_picture  set p_browseCount = p_browseCount +? where p_id=?";
+		int[] res = jdbcTemplate.batchUpdate(sql,
+				new BatchPreparedStatementSetter() {
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+							Map<String,Integer> map = browseCountList.get(i);
+							for(String picId:map.keySet()){
+							ps.setInt(1, map.get(picId));
+							ps.setString(2, picId);
+						}
+					}
+
+					public int getBatchSize() {
+						return browseCountList.size();
+					}
+				});
+		return res.length;
+	}
+
+
+	public List<TPicItem> queryByBrowseCount(int pageNum, int pageSize) {
+		List<TPicItem> resList = new ArrayList<TPicItem>();
+		int startLine = (pageNum -1)*pageSize;
+		String sql = "select * from t_picture order by p_browseCount desc limit "+startLine+","+pageSize;
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				TPicItem tpicItem = new TPicItem();
+				tpicItem.setId(map.get("p_id").toString());
+				tpicItem.setName(map.get("p_name").toString());
+				tpicItem.setOwner(map.get("p_owner").toString());
+				tpicItem.setPublishTime(map.get("p_publishTime").toString());
+				tpicItem.setDescription(map.get("p_description").toString());
+				tpicItem.setSource(map.get("p_source").toString());
+				tpicItem.setIsOriginal(Integer.parseInt(map.get("p_isOriginal")
+						.toString()));
+				tpicItem.setMobImgId(map.get("p_mobImgId").toString());
+				tpicItem.setMobImgSize(map.get("p_mobImgSize").toString());
+				tpicItem.setMobImgPath(map.get("p_mobImgPath").toString());
+				tpicItem.setRawImgId(map.get("p_rawImgId").toString());
+				tpicItem.setRawImgSize(map.get("p_rawImgSize").toString());
+				tpicItem.setRawImgPath(map.get("p_rawImgPath").toString());
+				tpicItem.setBrowseCount(Integer.parseInt(map.get("p_browseCount").toString()));
+				resList.add(tpicItem);
+			}
+		}
+		return resList;
+	}
+
+	@Override
+	public List<TPicDetails> classicalStatistics(int topNum) {
+		List<TPicDetails> resList = new ArrayList<TPicDetails>();
+		String sql = "select p.p_id,p.p_name,p.p_owner,p.p_publishTime,p.p_description,p.p_source,p.p_isOriginal,p.p_browseCount," +
+				"p.p_mobImgId,p.p_mobImgSize,p.p_mobImgPath,p.p_rawImgId,p.p_rawImgSize,p.p_rawImgPath," +
+				"u.u_nickName,u.u_avatar,u.u_score,u.u_level" +
+				" from t_picture p,t_user u where u.u_id=p.p_owner order by p.p_browseCount desc limit "+topNum;
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				TPicDetails tpic = new TPicDetails();
+				tpic.setId(map.get("p_id").toString());
+				tpic.setName(map.get("p_name").toString());
+				tpic.setOwner(map.get("p_owner").toString());
+				tpic.setPublishTime(map.get("p_publishTime").toString());
+				tpic.setDescription(map.get("p_description").toString());
+				tpic.setSource(map.get("p_source").toString());
+				tpic.setIsOriginal(Integer.parseInt(map.get("p_isOriginal")
+						.toString()));
+				tpic.setMobImgId(map.get("p_mobImgId").toString());
+				tpic.setMobImgSize(map.get("p_mobImgSize").toString());
+				tpic.setMobImgPath(map.get("p_mobImgPath").toString());
+				tpic.setRawImgId(map.get("p_rawImgId").toString());
+				tpic.setRawImgSize(map.get("p_rawImgSize").toString());
+				tpic.setRawImgPath(map.get("p_rawImgPath").toString());
+				tpic.setBrowseCount(Integer.parseInt(map.get("p_browseCount").toString()));
+				tpic.setAuthor(map.get("u_nickName").toString());
+				tpic.setLevel(Integer.parseInt(map.get("u_level").toString()));
+				tpic.setScore(Integer.parseInt(map.get("u_score").toString()));
+				tpic.setAvatarImgPath(map.get("u_avatar").toString());
+				resList.add(tpic);
+			}
+		}
+		return resList;
+	}
+
+	@Override
+	public List<TPicDetails> collectStatistics(int topNum) {
+		List<TPicDetails> resList = new ArrayList<TPicDetails>();
+		String sql = "select p.p_id,p.p_name,p.p_owner,p.p_publishTime,p.p_description,p.p_source,p.p_isOriginal,p.p_browseCount," +
+				"p.p_mobImgId,p.p_mobImgSize,p.p_mobImgPath,p.p_rawImgId,p.p_rawImgSize,p.p_rawImgPath," +
+				"u.u_nickName,u.u_avatar,u.u_score,u.u_level" +
+				" from t_picture p,t_user u,t_favorite f where u.u_id=p.p_owner and f.f_picture=p.p_id " +
+				"order by f.f_collectTime desc limit "+topNum;
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				TPicDetails tpic = new TPicDetails();
+				tpic.setId(map.get("p_id").toString());
+				tpic.setName(map.get("p_name").toString());
+				tpic.setOwner(map.get("p_owner").toString());
+				tpic.setPublishTime(map.get("p_publishTime").toString());
+				tpic.setDescription(map.get("p_description").toString());
+				tpic.setSource(map.get("p_source").toString());
+				tpic.setIsOriginal(Integer.parseInt(map.get("p_isOriginal")
+						.toString()));
+				tpic.setMobImgId(map.get("p_mobImgId").toString());
+				tpic.setMobImgSize(map.get("p_mobImgSize").toString());
+				tpic.setMobImgPath(map.get("p_mobImgPath").toString());
+				tpic.setRawImgId(map.get("p_rawImgId").toString());
+				tpic.setRawImgSize(map.get("p_rawImgSize").toString());
+				tpic.setRawImgPath(map.get("p_rawImgPath").toString());
+				tpic.setBrowseCount(Integer.parseInt(map.get("p_browseCount").toString()));
+				tpic.setAuthor(map.get("u_nickName").toString());
+				tpic.setLevel(Integer.parseInt(map.get("u_level").toString()));
+				tpic.setScore(Integer.parseInt(map.get("u_score").toString()));
+				tpic.setAvatarImgPath(map.get("u_avatar").toString());
+				resList.add(tpic);
+			}
+		}
+		
+		return resList;
+	}
+
+	@Override
+	public List<TPicDetails> getGalleryForWeb(int pageNum,int pageSize) {
+		List<TPicDetails> resList = new ArrayList<TPicDetails>();
+		int startLine = (pageNum -1)*pageSize;
+		String sql = "select p.p_id,p.p_name,p.p_owner,p.p_publishTime,p.p_description,p.p_source,p.p_isOriginal,p.p_browseCount," +
+				"p.p_mobImgId,p.p_mobImgSize,p.p_mobImgPath,p.p_rawImgId,p.p_rawImgSize,p.p_rawImgPath," +
+				"u.u_nickName,u.u_avatar,u.u_score,u.u_level" +
+				" from t_picture p,t_user u where u.u_id=p.p_owner" +
+				"order by p.p_publishTime desc limit "+startLine+","+pageSize;
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				TPicDetails tpic = new TPicDetails();
+				tpic.setId(map.get("p_id").toString());
+				tpic.setName(map.get("p_name").toString());
+				tpic.setOwner(map.get("p_owner").toString());
+				tpic.setPublishTime(map.get("p_publishTime").toString());
+				tpic.setDescription(map.get("p_description").toString());
+				tpic.setSource(map.get("p_source").toString());
+				tpic.setIsOriginal(Integer.parseInt(map.get("p_isOriginal")
+						.toString()));
+				tpic.setMobImgId(map.get("p_mobImgId").toString());
+				tpic.setMobImgSize(map.get("p_mobImgSize").toString());
+				tpic.setMobImgPath(map.get("p_mobImgPath").toString());
+				tpic.setRawImgId(map.get("p_rawImgId").toString());
+				tpic.setRawImgSize(map.get("p_rawImgSize").toString());
+				tpic.setRawImgPath(map.get("p_rawImgPath").toString());
+				tpic.setBrowseCount(Integer.parseInt(map.get("p_browseCount").toString()));
+				tpic.setAuthor(map.get("u_nickName").toString());
+				tpic.setLevel(Integer.parseInt(map.get("u_level").toString()));
+				tpic.setScore(Integer.parseInt(map.get("u_score").toString()));
+				tpic.setAvatarImgPath(map.get("u_avatar").toString());
+				resList.add(tpic);
+			}
+		}
+		return resList;
+	}
+
+	@Override
+	public List<TPicDetails> searchByTag(String tag) {
+		List<TPicDetails> resList = new ArrayList<TPicDetails>();
+		String sql = "select p.p_id,p.p_name,p.p_owner,p.p_publishTime,p.p_description,p.p_source,p.p_isOriginal,p.p_browseCount" +
+				"p.p_mobImgId,p.p_mobImgSize,p.p_mobImgPath,p.p_rawImgId,p.p_rawImgSize,p.p_rawImgPath,u.u_nickName,u.u" +
+				"from t_picture p,t_user u,t_tag t,t_categary c where u.u_id=p.p_owner and p.p_id=c.c_picture and c.c_tag=t.t_id"+
+				"and t.t_name in (" + tag + ")";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				TPicDetails tpic = new TPicDetails();
+				tpic.setId(map.get("p_id").toString());
+				tpic.setName(map.get("p_name").toString());
+				tpic.setOwner(map.get("p_owner").toString());
+				tpic.setPublishTime(map.get("p_publishTime").toString());
+				tpic.setDescription(map.get("p_description").toString());
+				tpic.setSource(map.get("p_source").toString());
+				tpic.setIsOriginal(Integer.parseInt(map.get("p_isOriginal")
+						.toString()));
+				tpic.setMobImgId(map.get("p_mobImgId").toString());
+				tpic.setMobImgSize(map.get("p_mobImgSize").toString());
+				tpic.setMobImgPath(map.get("p_mobImgPath").toString());
+				tpic.setRawImgId(map.get("p_rawImgId").toString());
+				tpic.setRawImgSize(map.get("p_rawImgSize").toString());
+				tpic.setRawImgPath(map.get("p_rawImgPath").toString());
+				tpic.setBrowseCount(Integer.parseInt(map.get("p_browseCount").toString()));
+				tpic.setAuthor(map.get("u_nickName").toString());
+				tpic.setLevel(Integer.parseInt(map.get("u_level").toString()));
+				tpic.setScore(Integer.parseInt(map.get("u_score").toString()));
+				tpic.setAvatarImgPath(map.get("u_avatar").toString());
+				resList.add(tpic);
+			}
+		}
+		return resList;
+	}
+
+	@Override
+	public String searchTags(String tag) {
+		String sql ="select t_id from t_tag where t_name='"+tag+"'";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		String id="";
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				id =map.get("t_id").toString();
+			}
+		}
+		return id;
+	}
+
+	@Override
+	public String insertTag(final Tag tag) {
+		String sql = "insert into t_tag(t_id,t_name,t_type,t_browseCount,t_memo) values (?,?,?,?,?)";
+		jdbcTemplate.update(sql, new PreparedStatementSetter() {
+			public void setValues(PreparedStatement ps) {
+				try {
+					ps.setString(1,tag.getId());
+					ps.setString(2, tag.getName());
+					ps.setString(3, tag.getType());
+					ps.setInt(4, tag.getBrowseCount());
+					ps.setString(5, "");
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		return tag.getId();
+	}
+	
+	@Override
+	public int updateTagBrowse(String tagId) {
+		String sql="update t_tag set t_browseCount=t_browseCount+1 where t_id ='"+tagId+"'";
+		int res = jdbcTemplate.update(sql);
+		return res;
+	}
+
+	@Override
+	public int insertCategory(final String id,final String picId, final String tagId) {
+		String sql = "insert into t_category (c_id,c_picture,c_tag,c_memo) values (?,?,?,?)";
+		int res=jdbcTemplate.update(sql, new PreparedStatementSetter() {
+			public void setValues(PreparedStatement ps) {
+				try {
+					ps.setString(1, id);
+					ps.setString(2, picId);
+					ps.setString(3, tagId);
+					ps.setString(4, "");
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		return res;
+	}
+
+	@Override
+	public List<Tag> getHotTags(int topNum) {
+		List<Tag> resList = new ArrayList<Tag>();
+		String sql = "select * from t_tag order by t_browseCount desc  limit "+topNum;
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Tag tag = new Tag();
+				tag.setId(map.get("t_id").toString());
+				tag.setName(map.get("t_name").toString());
+				tag.setType(map.get("t_type").toString());
+				tag.setBrowseCount(Integer.parseInt(map.get("t_browseCount").toString()));
+				resList.add(tag);
+			}
+		}
+		return resList;
 	}
 
 

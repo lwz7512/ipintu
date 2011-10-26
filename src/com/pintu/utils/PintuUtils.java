@@ -58,4 +58,8 @@ public class PintuUtils {
 	public static String generateInviteCode(){
 		return Encrypt.encrypt(String.valueOf(System.currentTimeMillis())).substring(0, 6);
 	}
+	
+	public static void main(String[] args) {
+		System.out.println(generateUID());
+	}
 }

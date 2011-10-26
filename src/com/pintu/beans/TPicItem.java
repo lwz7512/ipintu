@@ -17,17 +17,13 @@ public class TPicItem implements Serializable {
 	private String name;
 	// 贴图作者
 	private String owner;
-
 	// 发布时间，可以保存为毫秒数
 	// 到达客户端时，再格式化为xx分钟或者xx小时前
 	private String publishTime;
-
 	// 贴图描述
 	private String description;
-	// 贴图标签
-	private String tags;
-	// 是否允许品图
-	private int allowStory;
+	// 贴图来源
+	private String source;
 	// 生成的移动图ID，这个ID是由pId+"_Mob"构成
 	private String mobImgId;
 	// 生成的移动图文件大小，单位是KB
@@ -40,24 +36,40 @@ public class TPicItem implements Serializable {
 	private String rawImgSize;
 	// 生成的原始图磁盘保存路径
 	private String rawImgPath;
+	//浏览次数
+	private int browseCount;
+	//是否原创
+	private int isOriginal;
 	// 是否审核通过，默认都是1，即通过，不通过变为0
 	private int pass;
-	
+
+	private String tags;
+
+	public String getTags() {
+		return tags;
+	}
+
+	public void setTags(String tags) {
+		this.tags = tags;
+	}
+
 
 	public TPicItem() {
 
 	}
 
+
 	@Override
 	public String toString() {
 		return "TPicItem [id=" + id + ", name=" + name + ", owner=" + owner
 				+ ", publishTime=" + publishTime + ", description="
-				+ description + ", tags=" + tags + ", allowStory=" + allowStory
-				+ ", mobImgId=" + mobImgId + ", mobImgSize=" + mobImgSize
-				+ ", mobImgPath=" + mobImgPath + ", rawImgId=" + rawImgId
-				+ ", rawImgSize=" + rawImgSize + ", rawImgPath=" + rawImgPath
-				+ ", pass=" + pass + "]";
+				+ description + ", source=" + source + ", mobImgId=" + mobImgId
+				+ ", mobImgSize=" + mobImgSize + ", mobImgPath=" + mobImgPath
+				+ ", rawImgId=" + rawImgId + ", rawImgSize=" + rawImgSize
+				+ ", rawImgPath=" + rawImgPath + ", browseCount=" + browseCount
+				+ ", isOriginal=" + isOriginal + ", pass=" + pass + "]";
 	}
+
 
 	public String getId() {
 		return id;
@@ -91,28 +103,22 @@ public class TPicItem implements Serializable {
 		this.description = description;
 	}
 
-	public String getTags() {
-		return tags;
-	}
-
-	public void setTags(String tags) {
-		this.tags = tags;
-	}
-
 	public String getPublishTime() {
 		return publishTime;
 	}
 
+	public int getBrowseCount() {
+		return browseCount;
+	}
+
+
+	public void setBrowseCount(int browseCount) {
+		this.browseCount = browseCount;
+	}
+
+
 	public void setPublishTime(String string) {
 		this.publishTime = string;
-	}
-
-	public int getAllowStory() {
-		return allowStory;
-	}
-
-	public void setAllowStory(int allowStory) {
-		this.allowStory = allowStory;
 	}
 
 	public String getMobImgId() {
@@ -171,6 +177,28 @@ public class TPicItem implements Serializable {
 		this.pass = pass;
 	}
 
+	public String getSource() {
+		return source;
+	}
+
+
+	public void setSource(String source) {
+		this.source = source;
+	}
+
+
+
+
+	public int getIsOriginal() {
+		return isOriginal;
+	}
+
+
+	public void setIsOriginal(int isOriginal) {
+		this.isOriginal = isOriginal;
+	}
+
+
 	/**
 	 * 校验类是否完全被赋值
 	 * 
@@ -179,11 +207,11 @@ public class TPicItem implements Serializable {
 	 */
 	public boolean isValid() {
 		boolean flag = false;
-		if (this.id != null && this.allowStory > -1 && this.description != null
+		if (this.id != null && this.description != null
 				&& this.publishTime != null && this.mobImgId != null
 				&& this.mobImgPath != null && this.mobImgSize != null
 				&& this.rawImgSize != null && this.rawImgId != null
-				&& this.rawImgPath != null && this.tags != null
+				&& this.rawImgPath != null && this.source != null
 				&& this.owner != null && this.name != null && this.pass > -1) {
 			flag = true;
 		} 

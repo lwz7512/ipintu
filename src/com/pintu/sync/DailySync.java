@@ -14,7 +14,6 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
-import com.pintu.beans.Comment;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicItem;
@@ -73,9 +72,6 @@ public class DailySync implements Runnable{
 				}
 				
 				if(picIds.length() > 0){
-					//同步图片对应的数据库评论到缓存
-					syncCommentTask(picIds.toString());
-					
 					//同步图片对应的数据库故事到缓存
 					String storyIds = syncStoryTask(picIds.toString());
 					
@@ -154,19 +150,6 @@ public class DailySync implements Runnable{
 			return storyIds.toString();
 		}
 
-
-		private void syncCommentTask(String picIds) {
-			log.info(">>>Synchronous vote to cache is begin..");
-//			List<Comment> commList=dbVisitor.getCommentForCache(today);
-			List<Comment> commList = dbVisitor.getCommentForCache(picIds);
-			if(commList != null){
-				for(int i=0;i<commList.size();i++){
-					Comment comm = commList.get(i);
-					cacheVisitor.syncDBCommnetToCache(comm);
-				}
-			}
-			log.info(">>>Synchronous comment to cache is over,commentSize:"+commList.size());
-		}
 
 		private Map<String,String> syncPictureTask(String startTime,String endTime){
 			log.info(">>>Synchronous picture to cache is begin...");

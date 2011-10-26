@@ -1,10 +1,9 @@
-#Mon Oct 17 14:56:04 CST 2011
+#Wed Oct 19 09:53:52 CST 2011
 =\=\=\=\=\=\=
 <<<<<<<=HEAD
 >>>>>>>=upstream/master
 eclipse.preferences.version=1
 encoding//src/com/pintu/beans=UTF-8
-encoding//src/com/pintu/beans/Comment.java=UTF-8
 encoding//src/com/pintu/cache=UTF-8
 encoding//src/com/pintu/facade=UTF-8
 encoding//src/com/pintu/jobs=UTF-8

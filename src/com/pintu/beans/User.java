@@ -13,6 +13,8 @@ public class User implements Serializable{
 	private String id;
 	//用户名
 	private String account;
+	//昵称
+	private String nickName;
 	//密码
 	private String pwd;
 	//肖像
@@ -91,6 +93,14 @@ public class User implements Serializable{
 		return account;
 	}
 
+
+	public String getNickName() {
+		return nickName;
+	}
+
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
 
 	public void setAccount(String account) {
 		this.account = account;

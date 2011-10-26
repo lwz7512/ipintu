@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.pintu.beans.Comment;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicItem;
@@ -25,7 +24,6 @@ public class CacheAccessImplement implements CacheAccessInterface {
 		toSavedUserPicIds.put(PICTURE_TYPE, new LinkedList<String>());
 		
 		toSavedCacheIds.put(STORY_TYPE, new HashMap<String,LinkedList<String>>());
-		toSavedCacheIds.put(COMMENT_TYPE, new HashMap<String,LinkedList<String>>());
 		toSavedCacheIds.put(VOTE_TYPE, new HashMap<String,LinkedList<String>>());
 		
 	}
@@ -50,21 +48,6 @@ public class CacheAccessImplement implements CacheAccessInterface {
 		toSavedUserPicIds.get(PICTURE_TYPE).add(pic.getId());
 	}
 	
-	@Override
-	public void cacheComment(Comment comment) {
-			String picId = comment.getFollow();
-			String cmtId = comment.getId();
-			pintuCache.cacheComment(picId,cmtId, comment);
-			
-			LinkedList<String> cmtIdList = toSavedCacheIds.get(COMMENT_TYPE).get(picId);
-			if(cmtIdList == null){
-				LinkedList<String> idList = new LinkedList<String>();
-				idList.add(cmtId);
-				toSavedCacheIds.get(COMMENT_TYPE).put(picId, idList);
-			}else{
-				toSavedCacheIds.get(COMMENT_TYPE).get(picId).add(cmtId);
-			}
-	}
 
 	@Override
 	public void cacheStory(Story story) {
@@ -138,12 +121,6 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	}
 	
 //	@Override
-//	public Comment getSpecificComment(String cid) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-//	
-//	@Override
 //	public Story getSpecificStory(String sid) {
 //		// TODO Auto-generated method stub
 //		return null;
@@ -163,9 +140,6 @@ public class CacheAccessImplement implements CacheAccessInterface {
 		if (type.equals(PICTURE_TYPE)) {
 			ids = toSavedUserPicIds.get(PICTURE_TYPE);
 			list = pintuCache.getCachedPicture(ids);
-		} else if (type.equals(COMMENT_TYPE)) {
-			map = toSavedCacheIds.get(COMMENT_TYPE);
-			list = pintuCache.getCachedComment(map);
 		} else if (type.equals(STORY_TYPE)) {
 			map = toSavedCacheIds.get(STORY_TYPE);
 			list = pintuCache.getCachedStory(map);
@@ -187,10 +161,6 @@ public class CacheAccessImplement implements CacheAccessInterface {
 		pintuCache.cachePicture(tpicItem.getId(), tpicItem);
 	}
 
-	@Override
-	public void syncDBCommnetToCache(Comment comment) {
-		pintuCache.cacheComment(comment.getFollow(),comment.getId(), comment);
-	}
 
 	@Override
 	public void syncDBStoryToCache(Story story) {
@@ -219,13 +189,6 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	}
 	
 	@Override
-	public List<Comment> getCommentsOfPic(String tpId) {
-		List<String> ids = new ArrayList<String>();
-		ids.add(tpId);
-		return pintuCache.getCachedCommentByPid(ids);
-	}
-
-	@Override
 	public List<Story> getStoriesOfPic(String tpId) {
 		List<String> ids = new ArrayList<String>();
 		ids.add(tpId);
@@ -241,8 +204,6 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	public boolean removeTPic(String id) {
 		return pintuCache.removeTPicById(id);
 	}
-
-	
 
 
 } // end of class

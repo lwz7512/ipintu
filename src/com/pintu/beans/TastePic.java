@@ -19,13 +19,14 @@ public class TastePic implements Serializable{
 	private String description;
 	//标签
 	private String tags;
-	//是否允许品图
-	private String allowStory;
+	//来源
+	private String source;
+	//是否原创
+	private int isOriginal;
 	
 	//原始上传图像数据，是图片文件生成的依据	
 	private FileItem rawImageData;
 	
-
 	
 	public TastePic() {
 		
@@ -64,31 +65,21 @@ public class TastePic implements Serializable{
 		this.description = description;
 	}
 
-
-
-	public String getTags() {
-		return tags;
+	public String getSource() {
+		return source;
 	}
 
-
-
-	public void setTags(String tags) {
-		this.tags = tags;
+	public void setSource(String source) {
+		this.source = source;
 	}
 
-
-
-	public String getAllowStory() {
-		return allowStory;
+	public int getIsOriginal() {
+		return isOriginal;
 	}
 
-
-
-	public void setAllowStory(String allowStory) {
-		this.allowStory = allowStory;
+	public void setIsOriginal(int isOriginal) {
+		this.isOriginal = isOriginal;
 	}
-
-
 
 	public FileItem getRawImageData() {
 		return rawImageData;
@@ -98,6 +89,14 @@ public class TastePic implements Serializable{
 
 	public void setRawImageData(FileItem rawImageData) {
 		this.rawImageData = rawImageData;
+	}
+
+	public String getTags() {
+		return tags;
+	}
+
+	public void setTags(String tags) {
+		this.tags = tags;
 	}
 	
 	
