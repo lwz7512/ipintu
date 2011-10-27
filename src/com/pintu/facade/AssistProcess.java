@@ -241,6 +241,9 @@ public class AssistProcess {
 			PrintWriter pw = res.getWriter();
 			String userId = req.getParameter("userId");
 			int pageNum = Integer.parseInt(req.getParameter("pageNum"));
+			if(pageNum<=0){
+				pageNum = 1;
+			}
 			String result = apiAdaptor.getFavorTpics(userId, pageNum);
 			System.out.println(result);
 			pw.println(result);
@@ -252,6 +255,9 @@ public class AssistProcess {
 			PrintWriter pw = res.getWriter();
 			String userId = req.getParameter("userId");
 			int pageNum = Integer.parseInt(req.getParameter("pageNum"));
+			if(pageNum<=0){
+				pageNum = 1;
+			}
 			String result = apiAdaptor.getTpicsByUser(userId, pageNum);
 			System.out.println(result);
 			pw.println(result);
@@ -295,6 +301,9 @@ public class AssistProcess {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			int pageNum = Integer.parseInt(req.getParameter("pageNum"));
+			if(pageNum<=0){
+				pageNum = 1;
+			}
 			String result = apiAdaptor.getGalleryForWeb(pageNum);
 			System.out.println(result);
 			pw.println(result);

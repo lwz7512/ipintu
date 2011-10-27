@@ -174,7 +174,7 @@ public class ApiAdaptor {
 	 * @return
 	 */
 	public String getStoryDetailsOfPic(String tpId){
-		return JSONArray.fromCollection(pintuService.getStroyDetailsOfPic(tpId)).toString();
+		return JSONArray.fromCollection(pintuService.getStoryDetailsOfPic(tpId)).toString();
 	}
 	
 	private Story createStory(String follow,String owner,String content){

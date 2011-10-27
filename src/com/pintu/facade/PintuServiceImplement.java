@@ -282,7 +282,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public List<StoryDetails> getStroyDetailsOfPic(String tpId) {
+	public List<StoryDetails> getStoryDetailsOfPic(String tpId) {
 		List<StoryDetails> storyDeatilList = new ArrayList<StoryDetails>();
 		List<Story> storyList = cacheVisitor.getStoriesOfPic(tpId);
 		if (storyList.size() == 0) {
@@ -303,26 +303,26 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				if (user != null) {
 					storyDetail.setAuthor(user.getAccount());
 				}
-				List<Vote> voteList = this.getVotesOfStory(storyId);
-				if (voteList != null && voteList.size() > 0) {
-					for (int j = 0; j < voteList.size(); j++) {
-						Vote vote = voteList.get(j);
-						if (vote.getType().equals(Vote.FLOWER_TYPE)) {
-							storyDetail.setFlower(vote.getAmount());
-						} else if (vote.getType().equals(Vote.EGG_TYPE)) {
-							storyDetail.setEgg(vote.getAmount());
-						} else if (vote.getType().equals(Vote.HEART_TYPE)) {
-							storyDetail.setHeart(vote.getAmount());
-						} else if (vote.getType().equals(Vote.STAR_TYPE)) {
-							storyDetail.setStar(vote.getAmount());
-						}
-					}
-				} else {
-					storyDetail.setFlower(0);
-					storyDetail.setEgg(0);
-					storyDetail.setHeart(0);
-					storyDetail.setStar(0);
-				}
+//				List<Vote> voteList = this.getVotesOfStory(storyId);
+//				if (voteList != null && voteList.size() > 0) {
+//					for (int j = 0; j < voteList.size(); j++) {
+//						Vote vote = voteList.get(j);
+//						if (vote.getType().equals(Vote.FLOWER_TYPE)) {
+//							storyDetail.setFlower(vote.getAmount());
+//						} else if (vote.getType().equals(Vote.EGG_TYPE)) {
+//							storyDetail.setEgg(vote.getAmount());
+//						} else if (vote.getType().equals(Vote.HEART_TYPE)) {
+//							storyDetail.setHeart(vote.getAmount());
+//						} else if (vote.getType().equals(Vote.STAR_TYPE)) {
+//							storyDetail.setStar(vote.getAmount());
+//						}
+//					}
+//				} else {
+//					storyDetail.setFlower(0);
+//					storyDetail.setEgg(0);
+//					storyDetail.setHeart(0);
+//					storyDetail.setStar(0);
+//				}
 				storyDeatilList.add(storyDetail);
 			}
 		}

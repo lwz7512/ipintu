@@ -107,7 +107,7 @@ public interface PintuServiceInterface {
 	public void addStoryToPintu(Story story);
 
 	// 查看一个品图的故事
-	public List<StoryDetails> getStroyDetailsOfPic(String tpId);
+	public List<StoryDetails> getStoryDetailsOfPic(String tpId);
 
 	// 为故事投票
 	public void addVoteToStory(Vote vote);
