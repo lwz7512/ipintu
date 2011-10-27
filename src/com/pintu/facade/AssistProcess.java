@@ -11,8 +11,6 @@ public class AssistProcess {
 	
 	// 由Spring注入
 	private ApiAdaptor apiAdaptor;
-	// FIXME debug测试某些代码(发布时修改为false)
-	private boolean isDebug = true;
 
 	/**
 	 * 处理正常用户登录post的请求
@@ -27,7 +25,7 @@ public class AssistProcess {
 			HttpServletResponse res) throws ServletException, IOException {
 
 		// 安全验证：如果不是上传文件请求，取用户id参数，判断是否为正常用户
-		if(!isDebug){
+		if(!GlobalController.isDebug){
 			String user = req.getParameter("userId");
 			if (!apiAdaptor.examineUser(user)) {
 				return;
@@ -55,7 +53,7 @@ public class AssistProcess {
 
 			String url = "";
 
-			if (isDebug) {
+			if (GlobalController.isDebug) {
 				url = req.getServerName() + ":" + req.getServerPort()
 						+ req.getContextPath();
 			} else {

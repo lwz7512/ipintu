@@ -40,9 +40,6 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 
 	private static final long serialVersionUID = 1L;
 	
-	// FIXME debug测试某些代码(发布时修改为false)
-	private boolean isDebug = true;
-	
 	// 由Spring注入
 	private ApiAdaptor apiAdaptor;
 	
@@ -221,7 +218,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 					.parseRequest(req);
 			log.debug("<<< Uploading complete!");
 			
-			if(isDebug){
+			if(GlobalController.isDebug){
 				apiAdaptor.createTastePic(fileItems);
 			}else{
 				// 送由适配器解析参数前，先检查一下是否是正常用户
