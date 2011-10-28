@@ -39,7 +39,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 	private Logger log = Logger.getLogger(AppStarter.class);
 
 	private static final long serialVersionUID = 1L;
-
+	
 	// 由Spring注入
 	private ApiAdaptor apiAdaptor;
 	
@@ -217,13 +217,19 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			List<FileItem> fileItems = (List<FileItem>) upload
 					.parseRequest(req);
 			log.debug("<<< Uploading complete!");
-			// 送由适配器解析参数前，先检查一下是否是正常用户
-			boolean flag = examine(fileItems);
-			if (flag) {
+			
+			if(GlobalController.isDebug){
 				apiAdaptor.createTastePic(fileItems);
-			} else {
-				return;
+			}else{
+				// 送由适配器解析参数前，先检查一下是否是正常用户
+				boolean flag = examine(fileItems);
+				if (flag) {
+					apiAdaptor.createTastePic(fileItems);
+				} else {
+					return;
+				}
 			}
+			
 		} catch (SizeLimitExceededException e) {
 
 			System.out.println(">>> File size exceeds the limit, can not upload!");

@@ -15,7 +15,6 @@ import net.sf.json.JSONObject;
 import org.apache.commons.fileupload.FileItem;
 
 import com.pintu.beans.Applicant;
-import com.pintu.beans.Comment;
 import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
 import com.pintu.beans.Gift;
@@ -25,6 +24,7 @@ import com.pintu.beans.StoryDetails;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TPicItem;
+import com.pintu.beans.Tag;
 import com.pintu.beans.TastePic;
 import com.pintu.beans.User;
 import com.pintu.beans.UserDetail;
@@ -62,25 +62,47 @@ public class ApiAdaptor {
 	}
 	
 	public void createTastePic(List<FileItem> fileItems) {		
-		System.out.println("2 分析图片对象apiadaptor createTastePic");
+		System.out.println("2 Analyse pic obj: apiadaptor createTastePic");
 		TastePic pic = new TastePic();
 		Iterator<FileItem> iter = fileItems.iterator();
+		String source="";
 		while(iter.hasNext()){
 			FileItem item = iter.next();
 			if(item.isFormField()){
 				if(item.getFieldName().equals("userId")){
 					pic.setUser(item.getString());
 				}
+				
+				if(item.getFieldName().equals("source")){
+					if(item.getString().equals("desktop")){
+						source = "desktop";
+						pic.setSource(item.getString());
+					}else{
+						pic.setSource(UTF8Formater.changeToWord(item.getString()));
+					}
+					System.out.println("source:"+pic.getSource());
+				}
+				
 				if(item.getFieldName().equals("description")){
-				    pic.setDescription(UTF8Formater.changeToWord(item.getString()));
+					if(source.equals("desktop")){
+						pic.setDescription(item.getString());
+					}else{
+						pic.setDescription(UTF8Formater.changeToWord(item.getString()));
+					}
 					System.out.println("description:"+pic.getDescription());
 				}
+				
 				if(item.getFieldName().equals("tags")){
-					pic.setTags(UTF8Formater.changeToWord(item.getString()));
-					System.out.println("tags:"+pic.getTags());
+				    if(source.equals("desktop")){
+				    	pic.setTags(item.getString());
+				    }else{
+					    pic.setTags(UTF8Formater.changeToWord(item.getString()));
+				    }
+				    System.out.println("tags:"+pic.getTags());
 				}
-				if(item.getFieldName().equals("allowStory")){
-					pic.setAllowStory(item.getString());
+				
+				if(item.getFieldName().equals("isOriginal")){
+					pic.setIsOriginal(Integer.parseInt(item.getString()));
 				}				
 				
 			}else{
@@ -147,22 +169,12 @@ public class ApiAdaptor {
 	}
 	
 	/**
-	 * 得到品图评论
-	 * @param story
-	 * @return
-	 */
-	
-	public String getCommentsOfPic(String tpID){
-		return JSONArray.fromCollection(pintuService.getCommentsOfPic(tpID)).toString();
-	}
-	
-	/**
 	 * 	得到品图故事
 	 * @param tpID
 	 * @return
 	 */
 	public String getStoryDetailsOfPic(String tpId){
-		return JSONArray.fromCollection(pintuService.getStroyDetailsOfPic(tpId)).toString();
+		return JSONArray.fromCollection(pintuService.getStoryDetailsOfPic(tpId)).toString();
 	}
 	
 	private Story createStory(String follow,String owner,String content){
@@ -186,27 +198,6 @@ public class ApiAdaptor {
 		 pintuService.addStoryToPintu(story);
 	}
 	
-	
-	private Comment createComment(String follow,String owner,String content ){
-		Comment cmt = new Comment();
-		cmt.setId(PintuUtils.generateUID());
-		cmt.setFollow(follow);
-		cmt.setOwner(owner);
-		cmt.setPublishTime(PintuUtils.getFormatNowTime());
-		cmt.setContent(UTF8Formater.changeToWord(content));
-		return cmt;
-	}
-	
-	/**
-	 * 为一个品图添加评论
-	 * @param cmt
-	 * @return
-	 */
-	public void addCommentToPicture(String follow,String owner,String content){
-		Comment cmt = this.createComment(follow, owner, content);
-		 pintuService.addCommentToPintu(cmt);
-	}
-
 	
 	private Vote createVote(String follow,String type,String amount,String voter, String receiver){
 		Vote vote = new Vote();
@@ -424,6 +415,41 @@ public class ApiAdaptor {
 	public boolean examineUser(String userId) {
 		boolean flag = pintuService.examineUser(userId);
 		return flag;
+	}
+
+//	public String queryByCollect(int pageNum) {
+//		List<TPicItem> list = pintuService.queryByCollect(pageNum);
+//		return  JSONArray.fromCollection(list).toString();
+//	}
+//
+//	public String queryByBrowseCount(int pageNum) {
+//		List<TPicItem> list = pintuService.queryByBrowseCount(pageNum);
+//		return  JSONArray.fromCollection(list).toString();
+//	}
+
+	public String collectStatistics() {
+		List<TPicDetails> list = pintuService.collectStatistics();
+		return  JSONArray.fromCollection(list).toString();
+	}
+
+	public String classicalStatistics() {
+		List<TPicDetails> list = pintuService.classicalStatistics();
+		return  JSONArray.fromCollection(list).toString();
+	}
+
+	public String getGalleryForWeb(int pageNum) {
+		List<TPicDetails> list = pintuService.getGalleryForWeb(pageNum);
+		return  JSONArray.fromCollection(list).toString();
+	}
+
+	public String searchByTag(String tags) {
+		List<TPicDetails> list = pintuService.searchByTag(tags);
+		return JSONArray.fromCollection(list).toString();
+	}
+
+	public String getHotTags() {
+		List<Tag> tagList = pintuService.getHotTags();
+		return JSONArray.fromCollection(tagList).toString();
 	}
 
 

@@ -11,8 +11,6 @@ public class AssistProcess {
 	
 	// 由Spring注入
 	private ApiAdaptor apiAdaptor;
-	// FIXME debug测试某些代码(发布时修改为false)
-	private boolean isDebug = true;
 
 	/**
 	 * 处理正常用户登录post的请求
@@ -27,9 +25,11 @@ public class AssistProcess {
 			HttpServletResponse res) throws ServletException, IOException {
 
 		// 安全验证：如果不是上传文件请求，取用户id参数，判断是否为正常用户
-		String user = req.getParameter("userId");
-		if (!apiAdaptor.examineUser(user)) {
-			return;
+		if(!GlobalController.isDebug){
+			String user = req.getParameter("userId");
+			if (!apiAdaptor.examineUser(user)) {
+				return;
+			}
 		}
 
 		if (action.equals(AppStarter.GETAPPLICANT)) {
@@ -53,7 +53,7 @@ public class AssistProcess {
 
 			String url = "";
 
-			if (isDebug) {
+			if (GlobalController.isDebug) {
 				url = req.getServerName() + ":" + req.getServerPort()
 						+ req.getContextPath();
 			} else {
@@ -65,7 +65,7 @@ public class AssistProcess {
 			pw.println(result);
 			pw.close();
 
-		} else if (action.equals(AppStarter.ADDEVENT)) {
+		} else if (action.equals(AppStarter.PUBLISHEVENT)) {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String title = req.getParameter("title");
@@ -80,7 +80,7 @@ public class AssistProcess {
 			}
 			pw.close();
 
-		} else if (action.equals(AppStarter.ADDGIFT)) {
+		} else if (action.equals(AppStarter.PUBLISHGIFT)) {
 			res.setContentType("text/plain;charset=UTF-8");
 			// PrintWriter pw = res.getWriter();
 			// TODO 这里发布礼物时候要有图片上传(之后做)
@@ -124,14 +124,6 @@ public class AssistProcess {
 
 			apiAdaptor.addStoryToPicture(follow, owner, content);
 
-		} else if (action.equals(AppStarter.ADDCOMMENT)) {
-			// 为图片添加评论
-			String follow = req.getParameter("follow");
-			String owner = req.getParameter("owner");
-			String content = req.getParameter("content");
-
-			apiAdaptor.addCommentToPicture(follow, owner, content);
-
 		} else if (action.equals(AppStarter.GETSTORIESOFPIC)) {
 			// 得到某副图片的所有故事
 			res.setContentType("text/plain;charset=UTF-8");
@@ -142,24 +134,14 @@ public class AssistProcess {
 			pw.write(result);
 			pw.close();
 
-		} else if (action.equals(AppStarter.GETCOMMENTSOFPIC)) {
-			// 得到某副图片的所有评论
-			res.setContentType("text/plain;charset=UTF-8");
-			PrintWriter pw = res.getWriter();
-			String tpId = req.getParameter("tpId");
-			String result = apiAdaptor.getCommentsOfPic(tpId);
-			System.out.println(result);
-			pw.write(result);
-			pw.close();
-
-		} else if (action.equals(AppStarter.ADDVOTE)) {
-			// 为故事添加投票
-			String follow = req.getParameter("follow");
-			String type = req.getParameter("type");
-			String amount = req.getParameter("amount");
-			String voter = req.getParameter("owner");
-			String receiver = req.getParameter("receiver");
-			apiAdaptor.addVoteToStory(follow, type, amount, voter, receiver);
+//		} else if (action.equals(AppStarter.ADDVOTE)) {
+//			// 为故事添加投票
+//			String follow = req.getParameter("follow");
+//			String type = req.getParameter("type");
+//			String amount = req.getParameter("amount");
+//			String voter = req.getParameter("owner");
+//			String receiver = req.getParameter("receiver");
+//			apiAdaptor.addVoteToStory(follow, type, amount, voter, receiver);
 
 		} else if (action.equals(AppStarter.GETUSERDETAIL)) {
 			// 根据用户id得到该用户详情
@@ -214,15 +196,6 @@ public class AssistProcess {
 			pw.println(result);
 			pw.close();
 
-		} else if (action.equals(AppStarter.GETClASSICALPINTU)) {
-			// 取得经典品图
-			res.setContentType("text/plain;charset=UTF-8");
-			PrintWriter pw = res.getWriter();
-			String result = apiAdaptor.getClassicalStory();
-			System.out.println(result);
-			pw.println(result);
-			pw.close();
-
 		} else if (action.equals(AppStarter.GETUSERESTATE)) {
 			// 取得用户基本信息和资产详情
 			res.setContentType("text/plain;charset=UTF-8");
@@ -266,6 +239,9 @@ public class AssistProcess {
 			PrintWriter pw = res.getWriter();
 			String userId = req.getParameter("userId");
 			int pageNum = Integer.parseInt(req.getParameter("pageNum"));
+			if(pageNum<=0){
+				pageNum = 1;
+			}
 			String result = apiAdaptor.getFavorTpics(userId, pageNum);
 			System.out.println(result);
 			pw.println(result);
@@ -277,18 +253,10 @@ public class AssistProcess {
 			PrintWriter pw = res.getWriter();
 			String userId = req.getParameter("userId");
 			int pageNum = Integer.parseInt(req.getParameter("pageNum"));
+			if(pageNum<=0){
+				pageNum = 1;
+			}
 			String result = apiAdaptor.getTpicsByUser(userId, pageNum);
-			System.out.println(result);
-			pw.println(result);
-			pw.close();
-
-		} else if (action.equals(AppStarter.GETSTORIESBYUSER)) {
-			// 获取指定用户故事列表
-			res.setContentType("text/plain;charset=UTF-8");
-			PrintWriter pw = res.getWriter();
-			String userId = req.getParameter("userId");
-			int pageNum = Integer.parseInt(req.getParameter("pageNum"));
-			String result = apiAdaptor.getStoryiesByUser(userId, pageNum);
 			System.out.println(result);
 			pw.println(result);
 			pw.close();
@@ -303,7 +271,7 @@ public class AssistProcess {
 			pw.close();
 
 		} else if (action.equals(AppStarter.GETEVENTS)) {
-			// 获取今日社区
+			// 获取今日社区事件
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getCommunityEvents();
@@ -311,8 +279,54 @@ public class AssistProcess {
 			pw.println(result);
 			pw.close();
 
-		} else {
+		} else  if(action.equals(AppStarter.COLLECTSTATISTICS)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String result = apiAdaptor.collectStatistics();
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
 
+		} else  if(action.equals(AppStarter.CLASSICALSTATISTICS)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String result = apiAdaptor.classicalStatistics();
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
+
+		} else  if(action.equals(AppStarter.GETGALLERYFORWEB)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			int pageNum = Integer.parseInt(req.getParameter("pageNum"));
+			if(pageNum<=0){
+				pageNum = 1;
+			}
+			String result = apiAdaptor.getGalleryForWeb(pageNum);
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
+			
+		}else if(action.equals(AppStarter.SEARCHBYTAG)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String tags = req.getParameter("tags");
+			String result = apiAdaptor.searchByTag(tags);
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
+			
+			//取得最热标签前三
+		}else if(action.equals(AppStarter.GETHOTTAGS)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String result = apiAdaptor.getHotTags();
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
+			
+		}else{
+			
 		}
 
 	}

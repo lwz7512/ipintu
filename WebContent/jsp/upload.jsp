@@ -48,7 +48,6 @@
 			return true;
 		}
 
-							
 	} 
 
 	function clearMsg(){
@@ -67,8 +66,12 @@
 			
 			<input type="hidden" name="method" value="upload" /><br /> <input
 				type="hidden" name="userId" value="<%= request.getParameter("userId")%>" /><br /> <input
-				type="hidden" name="tags" value="123" /><br /> <input
+				type="hidden" name="source" value="desktop" /><br /> <input
 				type="hidden" name="description" value="1" /><br />
+				<input
+				type="hidden" name="tags" value="1 2" /><br />
+				<input
+				type="hidden" name="isOriginal" value="0" /><br />
 			<div class="pagetop">
 				<span class="topfont">上传图片</span>
 			</div>

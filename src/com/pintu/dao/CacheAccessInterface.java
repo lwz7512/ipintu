@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.pintu.beans.Comment;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicItem;
@@ -26,14 +25,12 @@ public interface CacheAccessInterface {
 	//用于存放热图的id和点击量的对应关系（每当查看详情后将被查看的图片id放到这里）
 	//在每天零点计算积分等级等时，顺便将这个清空
 	public static Map<String, Integer> hotPicCacheIds = new HashMap<String,Integer>();
-	
+	 
 	public static String USER_TYPE = "user";
 	
 	public static String PICTURE_TYPE = "picture";
 
 	public static String STORY_TYPE = "story";
-
-	public static String COMMENT_TYPE = "comment";
 
 	public static String VOTE_TYPE = "vote";
 
@@ -51,10 +48,6 @@ public interface CacheAccessInterface {
 	//顺便把id存到toSavedCacheIds
 	public void cacheStory(Story story);
 	
-	// 缓存评论
-	//顺便把id存到toSavedCacheIds
-	public void cacheComment(Comment comment);
-	
 	// 缓存投票
 	// 顺便把id存到toSavedCacheIds
 	public void cacheVote(Vote vote);
@@ -67,9 +60,6 @@ public interface CacheAccessInterface {
 
 	// 读取故事
 //	public Story getSpecificStory(String sid);
-
-	// 读取评论
-//	public Comment getSpecificComment(String cid);
 
 	// 读取投票
 //	public Vote getSpecificVote(String vid);
@@ -85,8 +75,6 @@ public interface CacheAccessInterface {
 	
 	public void syncDBPictureToCache(TPicItem tpicItem);
 	
-	public void syncDBCommnetToCache(Comment comment);
-	
 	public void syncDBStoryToCache(Story story);
 	
 	public void syncDBVoteToCache(Vote vote);
@@ -100,12 +88,10 @@ public interface CacheAccessInterface {
 	// 读取活动用户
 	public List<User> getActiveUser(Long startTime,Long endTime);
 
-	public List<Comment> getCommentsOfPic(String tpId);
-
 	public List<Story> getStoriesOfPic(String tpId);
 
 	public User getUserById(String userId);
 
 	public boolean removeTPic(String id);
-	
+
 }

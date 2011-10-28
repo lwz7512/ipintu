@@ -120,8 +120,8 @@ public class ImageHelper {
 				.parseFloat(String.valueOf(theImgHeight));
 		float theImgWidthFloat = Float.parseFloat(String.valueOf(theImgWidth));
 
-		if ((type.equals("mobile") && theImgWidth <= defWidth)
-				|| (type.equals("thumbnail") && theImgWidth < defWidth)) {
+		if ((type.equals("mobile") || type.equals("thumbnail"))
+				&& theImgWidth <= defWidth && theImgHeight <= defHeight){
 			size[0] = theImgWidth;
 			size[1] = theImgHeight;
 		} else {
@@ -137,9 +137,11 @@ public class ImageHelper {
 		}
 
 		if (type.equals("mobile")) {
-			System.out.println("create mobile pic size:width" + size[0] + "height" + size[1]);
+			System.out.println("create mobile pic size:width" + size[0]
+					+ "height" + size[1]);
 		} else {
-			System.out.println("create thumbnail pic size:width" + size[0] + "height" + size[1]);
+			System.out.println("create thumbnail pic size:width" + size[0]
+					+ "height" + size[1]);
 		}
 		return size;
 	}

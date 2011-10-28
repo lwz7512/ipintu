@@ -3,7 +3,6 @@ package com.pintu.test;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import org.junit.After;
 import org.junit.Before;
@@ -11,7 +10,7 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
-import com.pintu.beans.Comment;
+import com.pintu.beans.Story;
 import com.pintu.beans.TPicItem;
 import com.pintu.beans.User;
 import com.pintu.beans.Vote;
@@ -79,9 +78,7 @@ public class PintuUnitTest {
 		pic.setName("1234567890abcdef.jpg");
 		pic.setOwner("aa");
 		pic.setPublishTime(PintuUtils.getFormatNowTime());
-		pic.setTags("33333333");
 		pic.setDescription("中文问题");
-		pic.setAllowStory(1);
 		pic.setMobImgId("1");
 		pic.setMobImgSize("121");
 		pic.setMobImgPath("pajt");
@@ -99,8 +96,7 @@ public class PintuUnitTest {
 	public void getDBPicture(){
 		String today = "2011-08-09 00:00:00";
 //		List<TPicItem> list = dbAccess.getPictureForCache(today);
-//			List<Story> list=dbAccess.getStoryForCache(today);
-	List<Comment> list = dbAccess.getCommentForCache(today);
+		List<Story> list=dbAccess.getStoryForCache(today);
 		if(list != null){
 			for(int i = 0; i<list.size();i++){
 				System.out.println(list.get(i));
@@ -108,31 +104,6 @@ public class PintuUnitTest {
 		}
 	}
 	
-	@Test
-	public void testInsertComment(){
-		List<Object> objList = new ArrayList<Object>();
-		Comment cmt1 = new Comment();
-		String id = UUID.randomUUID().toString().replace("-", "").substring(16);
-		cmt1.setId(id);
-		cmt1.setFollow("b4f48a485bc6cece");
-		cmt1.setOwner("a053beae20125b5b");
-		cmt1.setPublishTime(PintuUtils.getFormatNowTime());
-		cmt1.setContent("junitTestComment");
-		objList.add(cmt1);
-		Comment cmt2= new Comment();
-		String id2 = UUID.randomUUID().toString().replace("-", "").substring(16);
-		cmt2.setId(id2);
-		cmt2.setFollow("b4f48a485bc6cece");
-		cmt2.setOwner("a053beae20125b5b");
-		cmt2.setPublishTime(PintuUtils.getFormatNowTime());
-		cmt2.setContent("junitTestComment");
-		objList.add(cmt2);
-		int i = dbAccess.insertComment(objList);
-		if(i>0){
-			System.out.println("插入数据库成功"+i);
-		}
-		
-	}
 	
 	@Test
 	public void insertVote(){

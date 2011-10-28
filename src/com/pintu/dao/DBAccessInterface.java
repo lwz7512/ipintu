@@ -4,13 +4,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.pintu.beans.Applicant;
-import com.pintu.beans.Comment;
 import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
 import com.pintu.beans.Gift;
 import com.pintu.beans.Message;
 import com.pintu.beans.Story;
+import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TPicItem;
+import com.pintu.beans.Tag;
 import com.pintu.beans.User;
 import com.pintu.beans.Vote;
 import com.pintu.beans.Wealth;
@@ -76,8 +77,6 @@ public interface DBAccessInterface {
 	
 	public List<Story> getStoryForCache(String picIds);
 	
-	public List<Comment> getCommentForCache(String picIds);
-
 	/**
 	 * 根据故事的id来取评论到缓存
 	 * @param storyIds
@@ -85,15 +84,11 @@ public interface DBAccessInterface {
 	 */
 	public List<Vote> getVoteForCache(String storyIds);
 
-	public int insertComment(List<Object> objList);
-
 	public int insertStory(List<Object> objList);
 	
 	public int insertVote(Vote vote);
 	
 	public int updateVote(Vote vote);
-
-	public List<Comment> getCommentsOfPic(String tpID);
 
 	public List<Story> getStoriesOfPic(String tpID);
 	
@@ -128,7 +123,7 @@ public interface DBAccessInterface {
 	
 	public int insertFavorite(Favorite fav);
 	
-	public int deleteFavorite(String picId);
+	public int deleteFavorite(String fId);
 	
 	public int checkExistFavorite(String userId, String picId);
 	
@@ -162,5 +157,27 @@ public interface DBAccessInterface {
 	public int updateApplicant(String inviteCode,String id);
 	
 	public String getExistApplicant(String account, String inviteCode);
+	
+	public int updatePicBrowseCount(List<Map<String, Integer>> browseCountList);
+	
+	public List<TPicDetails> classicalStatistics(int topNum);
+	
+	public List<TPicDetails> collectStatistics(int topNum);
+	
+	public List<TPicDetails> getGalleryForWeb(int pageNum,int pageSize);
+	
+	public List<TPicDetails> searchByTag(String tag);
+	
+	public String searchTags(String string);
+	
+	public String insertTag(Tag tag);
+	
+	public int updateTagBrowse(String tagId);
+	
+	public int insertCategory(String id,String picId, String tagId);
+	
+	public List<Tag> getHotTags(int topNum);
+	
+	
 
 }

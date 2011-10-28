@@ -23,9 +23,7 @@ public class TPicDetails extends TPicItem {
 	private int level;
 	
 	//品图数目（故事）数目
-	public int storiesNum;
-	//评论数目
-	public int commentsNum;
+	private int storiesNum;
 
 	//为今日热点做累加点击数
 	private int counter;
@@ -48,15 +46,6 @@ public class TPicDetails extends TPicItem {
 	}
 
 
-	public int getCommentsNum() {
-		return commentsNum;
-	}
-
-
-	public void setCommentsNum(int commentsNum) {
-		this.commentsNum = commentsNum;
-	}
-
 
 	public TPicDetails() {
 		
@@ -67,11 +56,9 @@ public class TPicDetails extends TPicItem {
 		return avatarImgPath;
 	}
 
-
 	public String getAuthor() {
 		return author;
 	}
-
 
 	public void setAuthor(String author) {
 		this.author = author;

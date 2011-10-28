@@ -10,7 +10,7 @@
 <body>
 	<div class="indexmain">
 		<div class="indexcontent">
-			<div class="indextop  indexfont">Welcome to Pintu community!</div>
+			Welcome to Pintu community!
 			<div class="indextop">
 				<a href="jsp/logon.jsp">登录</a>
 			</div>

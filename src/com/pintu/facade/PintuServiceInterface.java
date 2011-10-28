@@ -6,7 +6,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pintu.beans.Applicant;
-import com.pintu.beans.Comment;
 import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
 import com.pintu.beans.Gift;
@@ -16,6 +15,7 @@ import com.pintu.beans.StoryDetails;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TPicItem;
+import com.pintu.beans.Tag;
 import com.pintu.beans.TastePic;
 import com.pintu.beans.User;
 import com.pintu.beans.UserDetail;
@@ -106,14 +106,8 @@ public interface PintuServiceInterface {
 	// 为社区中的品图论足邀请添加品评
 	public void addStoryToPintu(Story story);
 
-	// 对其他用户贴图进行评价
-	public void addCommentToPintu(Comment cmt);
-
 	// 查看一个品图的故事
-	public List<StoryDetails> getStroyDetailsOfPic(String tpId);
-
-	// 查看一个品图的评论
-	public List<Comment> getCommentsOfPic(String tpId);
+	public List<StoryDetails> getStoryDetailsOfPic(String tpId);
 
 	// 为故事投票
 	public void addVoteToStory(Vote vote);
@@ -157,7 +151,7 @@ public interface PintuServiceInterface {
 	public boolean markFavoritePic(Favorite fav);
 
 	// 删除收藏的某一图片
-	public boolean deleteOnesFavorite(String picId);
+	public boolean deleteOnesFavorite(String fId);
 
 	// 查看自己的收藏图片(要用到分页)
 	public List<TPicItem> getFavoriteTpics(String userId, int pageNum);
@@ -192,14 +186,26 @@ public interface PintuServiceInterface {
 	//比较邀请码是否正确，正确即注册，否则返回错误信息
 	public String registerUser(String account, String pwd, String code);
 
-	//这里由管理员授理请求，并发带注册码的链接邮件给申请者邮箱
+	//
 	public String sendApply(String account, String reason);
 
+	//这里由管理员授理请求，并发带注册码的链接邮件给申请者邮箱
 	public String  acceptApply(String id, String account,String url,String opt);
 
 	public List<Applicant> getApplicant();
 
 	public boolean examineUser(String userId);
+
+	public List<TPicDetails> collectStatistics();
+
+	public List<TPicDetails> classicalStatistics();
+
+	public List<TPicDetails> getGalleryForWeb(int pageNum);
+
+	public List<TPicDetails> searchByTag(String tags);
+
+	public List<Tag> getHotTags();
+
 
 	// ANYMORE NECESSARY???
 

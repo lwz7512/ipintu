@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import com.pintu.beans.Applicant;
-import com.pintu.beans.Comment;
 import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
 import com.pintu.beans.Gift;
@@ -33,6 +32,7 @@ import com.pintu.beans.StoryDetails;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TPicItem;
+import com.pintu.beans.Tag;
 import com.pintu.beans.TastePic;
 import com.pintu.beans.User;
 import com.pintu.beans.UserDetail;
@@ -118,7 +118,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 	@Override
 	public void createTastePic(TastePic pic, String user) {
-		System.out.println("3 构造对象 pintuservice createTastePic");
+		System.out.println("3 Construct obj: pintuservice createTastePic");
 		System.out.println("TastePic:" + pic.getFileType() + "   user:" + user);
 		if (pic != null && user != null) {
 			// 1. 构造TPicItem对象
@@ -128,17 +128,17 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			tpicItem.setId(pid);
 			tpicItem.setName(pid + "." + pic.getFileType());
 			tpicItem.setOwner(user);
-
+			tpicItem.setTags(pic.getTags());
 			tpicItem.setPublishTime(PintuUtils.getFormatNowTime());
 			System.out.println("publishTime:" + tpicItem.getPublishTime());
 
 			tpicItem.setDescription(pic.getDescription());
-			tpicItem.setTags(pic.getTags());
+			tpicItem.setSource(pic.getSource());
 
-			if (pic.getAllowStory() != null) {
-				tpicItem.setAllowStory(Integer.parseInt(pic.getAllowStory()));
+			if (pic.getIsOriginal() > -1) {
+				tpicItem.setIsOriginal(pic.getIsOriginal());
 			} else {
-				tpicItem.setAllowStory(1);
+				tpicItem.setIsOriginal(0);
 			}
 			tpicItem.setPass(1);
 
@@ -168,11 +168,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		//FIXME 更新用户的最后操作时间
 		Long updateTime = System.currentTimeMillis();
 		cacheVisitor.updateCachedUser(story.getOwner(), updateTime);
-	}
-
-	@Override
-	public void addCommentToPintu(Comment cmt) {
-		cacheVisitor.cacheComment(cmt);
 	}
 
 	@Override
@@ -247,16 +242,11 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		String userId = item.getOwner();
 		// 得到图片的所有者即userId,再到数据库里取出user的详细信息
 		User user = this.getUserInfo(userId);
-		int commentNum = cacheVisitor.getCommentsOfPic(tpId).size();
-		if (commentNum == 0) {
-			commentNum = dbVisitor.getCommentsOfPic(tpId).size();
-		}
 		int storyNum = cacheVisitor.getStoriesOfPic(tpId).size();
 		if (storyNum == 0) {
 			storyNum = dbVisitor.getStoriesOfPic(tpId).size();
 		}
 		details.setStoriesNum(storyNum);
-		details.setCommentsNum(commentNum);
 		if (user != null) {
 			details.setAuthor(user.getAccount());
 			details.setScore(user.getScore());
@@ -270,8 +260,9 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		details.setRawImgId(item.getRawImgId());
 		details.setPublishTime(item.getPublishTime());
 		details.setDescription(item.getDescription());
-		details.setTags(item.getTags());
-		details.setAllowStory(item.getAllowStory());
+		details.setSource(item.getSource());
+		details.setIsOriginal(item.getIsOriginal());
+		details.setBrowseCount(item.getBrowseCount());
 		// 取一个图片详情时，我们认为这张图获得了一个点击量
 		int counter = 1;
 
@@ -291,7 +282,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public List<StoryDetails> getStroyDetailsOfPic(String tpId) {
+	public List<StoryDetails> getStoryDetailsOfPic(String tpId) {
 		List<StoryDetails> storyDeatilList = new ArrayList<StoryDetails>();
 		List<Story> storyList = cacheVisitor.getStoriesOfPic(tpId);
 		if (storyList.size() == 0) {
@@ -312,56 +303,32 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				if (user != null) {
 					storyDetail.setAuthor(user.getAccount());
 				}
-				List<Vote> voteList = this.getVotesOfStory(storyId);
-				if (voteList != null && voteList.size() > 0) {
-					for (int j = 0; j < voteList.size(); j++) {
-						Vote vote = voteList.get(j);
-						if (vote.getType().equals(Vote.FLOWER_TYPE)) {
-							storyDetail.setFlower(vote.getAmount());
-						} else if (vote.getType().equals(Vote.EGG_TYPE)) {
-							storyDetail.setEgg(vote.getAmount());
-						} else if (vote.getType().equals(Vote.HEART_TYPE)) {
-							storyDetail.setHeart(vote.getAmount());
-						} else if (vote.getType().equals(Vote.STAR_TYPE)) {
-							storyDetail.setStar(vote.getAmount());
-						}
-					}
-				} else {
-					storyDetail.setFlower(0);
-					storyDetail.setEgg(0);
-					storyDetail.setHeart(0);
-					storyDetail.setStar(0);
-				}
+//				List<Vote> voteList = this.getVotesOfStory(storyId);
+//				if (voteList != null && voteList.size() > 0) {
+//					for (int j = 0; j < voteList.size(); j++) {
+//						Vote vote = voteList.get(j);
+//						if (vote.getType().equals(Vote.FLOWER_TYPE)) {
+//							storyDetail.setFlower(vote.getAmount());
+//						} else if (vote.getType().equals(Vote.EGG_TYPE)) {
+//							storyDetail.setEgg(vote.getAmount());
+//						} else if (vote.getType().equals(Vote.HEART_TYPE)) {
+//							storyDetail.setHeart(vote.getAmount());
+//						} else if (vote.getType().equals(Vote.STAR_TYPE)) {
+//							storyDetail.setStar(vote.getAmount());
+//						}
+//					}
+//				} else {
+//					storyDetail.setFlower(0);
+//					storyDetail.setEgg(0);
+//					storyDetail.setHeart(0);
+//					storyDetail.setStar(0);
+//				}
 				storyDeatilList.add(storyDetail);
 			}
 		}
 		return storyDeatilList;
 	}
 
-	@Override
-	public List<Comment> getCommentsOfPic(String tpId) {
-		List<Comment> resList = new ArrayList<Comment>();
-		List<Comment> cmtList = cacheVisitor.getCommentsOfPic(tpId);
-		if (cmtList.size() == 0) {
-			cmtList = dbVisitor.getCommentsOfPic(tpId);
-		}
-		if (cmtList.size() > 0) {
-			for (int i = 0; i < cmtList.size(); i++) {
-				Comment comt = new Comment();
-				Comment cmt = cmtList.get(i);
-				String userId = cmt.getOwner();
-				User user = this.getUserInfo(userId);
-				comt.setId(cmt.getId());
-				comt.setAuthor(user.getAccount());
-				comt.setFollow(cmt.getFollow());
-				comt.setOwner(cmt.getOwner());
-				comt.setContent(cmt.getContent());
-				comt.setPublishTime(cmt.getPublishTime());
-				resList.add(comt);
-			}
-		}
-		return resList;
-	}
 
 	@Override
 	public List<Vote> getVotesOfStory(String storyId) {
@@ -712,8 +679,8 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public boolean deleteOnesFavorite(String picId) {
-		int i = dbVisitor.deleteFavorite(picId);
+	public boolean deleteOnesFavorite(String fId) {
+		int i = dbVisitor.deleteFavorite(fId);
 		if (i > 0) {
 			return true;
 		} else {
@@ -1002,7 +969,84 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		}
 		return false;
 	}
-	
+
+//	@Override
+//	public List<TPicItem> queryByBrowseCount(int pageNum) {
+//		int pageSize = Integer.parseInt(propertyConfigurer
+//				.getProperty("pageSize"));
+//		List<TPicItem> picList = dbVisitor.queryByBrowseCount(pageNum,pageSize);
+//		return picList;
+//	}
+//
+//	@Override
+//	public List<TPicItem> queryByCollect(int pageNum) {
+//		int pageSize = Integer.parseInt(propertyConfigurer
+//				.getProperty("pageSize"));
+//		List<TPicItem> picList = dbVisitor.queryByCollect(pageNum,pageSize);
+//		return picList;
+//	}
+
+	@Override
+	public List<TPicDetails> collectStatistics() {
+		if(MidnightTask.collectList.size() > 0){
+			return MidnightTask.collectList;
+		}else{
+			int topNum = Integer.parseInt(propertyConfigurer
+					.getProperty("pageSizeForWeb"));
+			List<TPicDetails> picList = dbVisitor.collectStatistics(topNum);
+			return picList;
+		}
+	}
+
+	@Override
+	public List<TPicDetails> classicalStatistics() {
+		if(MidnightTask.classicalList.size() > 0){
+			return MidnightTask.classicalList;
+		}else{
+			int topNum = Integer.parseInt(propertyConfigurer
+					.getProperty("pageSizeForWeb"));
+			List<TPicDetails> picList = dbVisitor.classicalStatistics(topNum);
+			return picList;
+		}
+	}
+
+	@Override
+	public List<TPicDetails> getGalleryForWeb(int pageNum) {
+		int pageSize = Integer.parseInt(propertyConfigurer
+				.getProperty("pageSizeForWeb"));
+		List<TPicDetails> picList = dbVisitor.getGalleryForWeb(pageNum,pageSize);
+		return picList;
+	}
+
+	@Override
+	public List<TPicDetails> searchByTag(String tags) {
+		StringBuffer tag = new StringBuffer();
+		//TODO 在这里将用空格分隔的tags转变成sql可识别的'',''
+		String[] arr = tags.split(" ");
+		if(arr.length>0){
+			for(int i=0;i<arr.length;i++){
+				if(!"".equals(arr[i].trim())){
+					if(tag.length()>0){
+						tag.append(",");
+					}
+					tag.append("'");
+					tag.append(arr[i]);
+					tag.append("'");
+				}
+			}
+		}
+		List<TPicDetails> list = dbVisitor.searchByTag(tag.toString());
+		return list;
+	}
+
+	@Override
+	public List<Tag> getHotTags() {
+		int topNum = Integer.parseInt(propertyConfigurer
+				.getProperty("pageSizeForWeb"));
+		List<Tag> list=dbVisitor.getHotTags(topNum);
+		return list;
+	}
+
 	// TODO, 实现其他接口方法
 	
 

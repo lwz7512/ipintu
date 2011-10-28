@@ -20,7 +20,6 @@ import net.sf.ehcache.search.attribute.AttributeExtractor;
 import net.sf.ehcache.search.attribute.AttributeExtractorException;
 import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
 
-import com.pintu.beans.Comment;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicItem;
@@ -39,8 +38,6 @@ public class PintuCache {
 
 	private Cache pictureCache;
 
-	private Cache commentCache;
-
 	private Cache storyCache;
 
 	private Cache userCache;
@@ -58,7 +55,6 @@ public class PintuCache {
 		initUserCache();
 
 		pictureCache = cacheManager.getCache("picturecache");
-		commentCache = cacheManager.getCache("commentcache");
 		storyCache = cacheManager.getCache("storycache");
 		voteCache = cacheManager.getCache("votecache");
 		thumbnailCache = cacheManager.getCache("thumbnailcache");
@@ -82,9 +78,6 @@ public class PintuCache {
 
 	public void traceAll() {
 		System.out.println("--------------- trace begin: -----------------");
-		System.out.println(">>> commentCache status: "
-				+ pictureCache.getStatus() + " commentCache size: "
-				+ commentCache.getKeysNoDuplicateCheck().size());
 		System.out.println(">>> storyCache status: " + storyCache.getStatus()
 				+ " pictureCache size: "
 				+ storyCache.getKeysNoDuplicateCheck().size());
@@ -198,29 +191,6 @@ public class PintuCache {
 		}
 	}
 
-	public void cacheComment(String picId, String cmtId, Comment cmt) {
-		Element savedPic = commentCache.get(picId);
-		if (savedPic == null) {
-			// 评论所属图片，评论id,评论对象
-			Element elmt = new Element(picId, new HashMap<String, TPicItem>());
-			@SuppressWarnings("unchecked")
-			HashMap<String, Comment> cmtsForOnePic = (HashMap<String, Comment>) elmt
-					.getObjectValue();
-			cmtsForOnePic.put(cmtId, cmt);
-			synchronized (commentCache) {
-				commentCache.put(elmt);
-			}
-		} else {
-			@SuppressWarnings("unchecked")
-			HashMap<String, Comment> savedMap = (HashMap<String, Comment>) savedPic
-					.getObjectValue();
-			savedMap.put(cmtId, cmt);
-			Element ele = new Element(picId, savedMap);
-			synchronized (commentCache) {
-				commentCache.put(ele);
-			}
-		}
-	}
 
 	public void cacheStory(String picId, String storyId, Story story) {
 		Element savedPic = storyCache.get(picId);
@@ -347,23 +317,6 @@ public class PintuCache {
 		return list;
 	}
 
-	public List<Comment> getCachedCommentByPid(List<String> ids) {
-		List<Comment> list = new ArrayList<Comment>();
-		synchronized (commentCache) {
-			for (String picId : ids) {
-				Element savedPic = commentCache.get(picId);
-				if (savedPic != null) {
-					@SuppressWarnings("unchecked")
-					HashMap<String, Comment> cmtMap = (HashMap<String, Comment>) savedPic
-							.getObjectValue();
-					if (cmtMap != null) {
-						list.addAll(cmtMap.values());
-					}
-				}
-			}
-		}
-		return list;
-	}
 
 	public List<Story> getCachedStoryByPid(List<String> ids) {
 		List<Story> list = new ArrayList<Story>();
@@ -401,30 +354,6 @@ public class PintuCache {
 		return list;
 	}
 
-	public List<Object> getCachedComment(Map<String, LinkedList<String>> map) {
-		List<Object> list = new ArrayList<Object>();
-		synchronized (commentCache) {
-			for (String picId : map.keySet()) {
-				Element savedPic = commentCache.get(picId);
-				if (savedPic != null) {
-					@SuppressWarnings("unchecked")
-					HashMap<String, Comment> cmtMap = (HashMap<String, Comment>) savedPic
-							.getObjectValue();
-					for (LinkedList<String> cmtIdList : map.values()) {
-						if (cmtIdList != null) {
-							for (int i = 0; i < cmtIdList.size(); i++) {
-								if (cmtMap != null) {
-									list.add(cmtMap.get(cmtIdList.get(i)));
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-		return list;
-	}
 
 	public List<Object> getCachedStory(Map<String, LinkedList<String>> map) {
 		List<Object> list = new ArrayList<Object>();

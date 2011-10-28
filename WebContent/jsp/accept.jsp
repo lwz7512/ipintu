@@ -15,9 +15,9 @@
 function loadApplicant(){
 	var flag = true;
 	if(flag){
-		var table ="<table><tr><td align='center'>申请邮箱</td>"+
+		var table ="<table class='acceptTable'><tr><td align='center'>申请邮箱</td>"+
 		"<td align='center'>理由</td>"+
-		"<td colspan='2' align='center'>授理意见</td><td></td></tr>";
+		"<td colspan='2' align='center'>授理意见</td></tr>";
 		
 		$.post('<%=request.getContextPath()%>/pintuapi', {
 			'method'  : 'getApplicant',

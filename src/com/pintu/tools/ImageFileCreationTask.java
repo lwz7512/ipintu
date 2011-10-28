@@ -46,7 +46,7 @@ public class ImageFileCreationTask implements Runnable {
 				picObj.setMobImgId(picObj.getId()+"_Mob");
 				picObj.setMobImgPath(route+picObj.getMobImgId()+getFileType());
 				try {
-					 ImageHelper.thumbnailHandler(fileItem, 440, 300, true,imgType,picObj.getMobImgPath());
+					 ImageHelper.thumbnailHandler(fileItem, 440, 440, true,imgType,picObj.getMobImgPath());
 //					先生成小图片后写文件再给size赋值
 					 File file= new File(picObj.getMobImgPath());
 					 if(file.length() > 0){
