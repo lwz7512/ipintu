@@ -121,8 +121,9 @@ public class AssistProcess {
 			String follow = req.getParameter("follow");
 			String owner = req.getParameter("owner");
 			String content = req.getParameter("content");
-
-			apiAdaptor.addStoryToPicture(follow, owner, content);
+			String source = req.getParameter("source");
+			
+			apiAdaptor.addStoryToPicture(follow, owner, content, source);
 
 		} else if (action.equals(AppStarter.GETSTORIESOFPIC)) {
 			// 得到某副图片的所有故事
@@ -160,8 +161,9 @@ public class AssistProcess {
 			String sender = req.getParameter("userId");
 			String receiver = req.getParameter("receiver");
 			String content = req.getParameter("content");
+			String source = req.getParameter("source");
 
-			boolean flag = apiAdaptor.sendMessage(sender, receiver, content);
+			boolean flag = apiAdaptor.sendMessage(sender, receiver, content,source);
 			System.out.println(flag);
 
 			if (flag) {
