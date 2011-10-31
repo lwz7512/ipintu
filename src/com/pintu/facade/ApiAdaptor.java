@@ -312,7 +312,7 @@ public class ApiAdaptor {
 	}
 
 	public boolean deleteOneFavorite(String fId){
-		return pintuService.deleteOnesFavorite(fId);
+		return pintuService.deleteOneFavorite(fId);
 	}
 
 	private void removeJsonKey(JSONArray jsonArray){
@@ -417,16 +417,6 @@ public class ApiAdaptor {
 		return flag;
 	}
 
-//	public String queryByCollect(int pageNum) {
-//		List<TPicItem> list = pintuService.queryByCollect(pageNum);
-//		return  JSONArray.fromCollection(list).toString();
-//	}
-//
-//	public String queryByBrowseCount(int pageNum) {
-//		List<TPicItem> list = pintuService.queryByBrowseCount(pageNum);
-//		return  JSONArray.fromCollection(list).toString();
-//	}
-
 	public String collectStatistics() {
 		List<TPicDetails> list = pintuService.collectStatistics();
 		return  JSONArray.fromCollection(list).toString();
@@ -451,8 +441,19 @@ public class ApiAdaptor {
 		List<Tag> tagList = pintuService.getHotTags();
 		return JSONArray.fromCollection(tagList).toString();
 	}
+	
+	public String geSystemTags() {
+		List<Tag> tagList = pintuService.geSystemTags();
+		return JSONArray.fromCollection(tagList).toString();
+	}
 
+	public boolean deleteOneCmt(String sId) {
+		return pintuService.deleteOneComment(sId);
+	}
 
+	public boolean deleteOnePic(String pId) {
+		return pintuService.deleteOnePicture(pId);
+	}
 
 	
 } //end of class

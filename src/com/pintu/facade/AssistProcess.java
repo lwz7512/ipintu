@@ -325,6 +325,40 @@ public class AssistProcess {
 			pw.println(result);
 			pw.close();
 			
+		}else if(action.equals(AppStarter.GETSYSTEMTAGS)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String result = apiAdaptor.geSystemTags();
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
+			
+		}else if (action.equals(AppStarter.DELETEONECMT)) {
+				// 删除收藏的图片
+				res.setContentType("text/plain;charset=UTF-8");
+				PrintWriter pw = res.getWriter();
+				String sId = req.getParameter("sId");
+				boolean flag = apiAdaptor.deleteOneCmt(sId);
+				if (flag) {
+					pw.println("删除评论成功！");
+				} else {
+					pw.println("删除评论失败！");
+				}
+				pw.close();
+
+		}else if (action.equals(AppStarter.DELETEONEPIC)) {
+			// 删除收藏的图片
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String pId = req.getParameter("pId");
+			boolean flag = apiAdaptor.deleteOnePic(pId);
+			if (flag) {
+				pw.println("删除发图成功！");
+			} else {
+				pw.println("删除发图失败！");
+			}
+			pw.close();
+
 		}else{
 			
 		}

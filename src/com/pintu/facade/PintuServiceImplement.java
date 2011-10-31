@@ -165,7 +165,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	public void addStoryToPintu(Story story) {
 		cacheVisitor.cacheStory(story);
 		
-		//FIXME 更新用户的最后操作时间
+		// 更新用户的最后操作时间
 		Long updateTime = System.currentTimeMillis();
 		cacheVisitor.updateCachedUser(story.getOwner(), updateTime);
 	}
@@ -679,8 +679,8 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public boolean deleteOnesFavorite(String fId) {
-		int i = dbVisitor.deleteFavorite(fId);
+	public boolean deleteOneFavorite(String fId) {
+		int i = dbVisitor.deleteFavoriteById(fId);
 		if (i > 0) {
 			return true;
 		} else {
@@ -970,22 +970,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		return false;
 	}
 
-//	@Override
-//	public List<TPicItem> queryByBrowseCount(int pageNum) {
-//		int pageSize = Integer.parseInt(propertyConfigurer
-//				.getProperty("pageSize"));
-//		List<TPicItem> picList = dbVisitor.queryByBrowseCount(pageNum,pageSize);
-//		return picList;
-//	}
-//
-//	@Override
-//	public List<TPicItem> queryByCollect(int pageNum) {
-//		int pageSize = Integer.parseInt(propertyConfigurer
-//				.getProperty("pageSize"));
-//		List<TPicItem> picList = dbVisitor.queryByCollect(pageNum,pageSize);
-//		return picList;
-//	}
-
 	@Override
 	public List<TPicDetails> collectStatistics() {
 		if(MidnightTask.collectList.size() > 0){
@@ -1021,7 +1005,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	@Override
 	public List<TPicDetails> searchByTag(String tags) {
 		StringBuffer tag = new StringBuffer();
-		//TODO 在这里将用空格分隔的tags转变成sql可识别的'',''
+		//在这里将用空格分隔的tags转变成sql可识别的'',''
 		String[] arr = tags.split(" ");
 		if(arr.length>0){
 			for(int i=0;i<arr.length;i++){
@@ -1046,6 +1030,33 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		List<Tag> list=dbVisitor.getHotTags(topNum);
 		return list;
 	}
+
+	@Override
+	public List<Tag> geSystemTags() {
+		List<Tag> list=dbVisitor.geSystemTags();
+		return list;
+	}
+	
+	@Override
+	public boolean deleteOneComment(String sId) {
+		int i = dbVisitor.deleteCmtById(sId);
+		if (i > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean deleteOnePicture(String pId) {
+		int i = dbVisitor.deletePictureById(pId);
+		if (i > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 
 	// TODO, 实现其他接口方法
 	

@@ -18,7 +18,6 @@ function loadGallery(){
 	if(flag){
 		var end =<%=new Date().getTime()%>;
 		var start = end - 1000 * 60 * 60;
-		alert(typeof(end)+end+typeof(start)+start);
 		$.post('<%=request.getContextPath()%>/pintuapi', {
 		'method'  : 'getGalleryByTime',
 		'userId'	: '<%= request.getParameter("userId")%>',
@@ -28,7 +27,6 @@ function loadGallery(){
 		//回调函数
 		function (result) {
 			var res =result.trim();
-			alert(res);
 			if( res=='[]'){//若result为管理员
 				$('#prompt').show();
 				$('#prompt').html('当前画廊贴图数目为0');

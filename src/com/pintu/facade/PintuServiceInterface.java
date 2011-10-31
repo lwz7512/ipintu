@@ -151,7 +151,7 @@ public interface PintuServiceInterface {
 	public boolean markFavoritePic(Favorite fav);
 
 	// 删除收藏的某一图片
-	public boolean deleteOnesFavorite(String fId);
+	public boolean deleteOneFavorite(String fId);
 
 	// 查看自己的收藏图片(要用到分页)
 	public List<TPicItem> getFavoriteTpics(String userId, int pageNum);
@@ -186,7 +186,7 @@ public interface PintuServiceInterface {
 	//比较邀请码是否正确，正确即注册，否则返回错误信息
 	public String registerUser(String account, String pwd, String code);
 
-	//
+	//发送请求
 	public String sendApply(String account, String reason);
 
 	//这里由管理员授理请求，并发带注册码的链接邮件给申请者邮箱
@@ -205,6 +205,12 @@ public interface PintuServiceInterface {
 	public List<TPicDetails> searchByTag(String tags);
 
 	public List<Tag> getHotTags();
+	
+	public List<Tag> geSystemTags();
+
+	public boolean deleteOneComment(String sId);
+
+	public boolean deleteOnePicture(String pId);
 
 
 	// ANYMORE NECESSARY???

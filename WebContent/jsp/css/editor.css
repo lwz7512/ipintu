@@ -1,0 +1,76 @@
+.content {
+  margin-top: 20px;
+  min-height: 450px;}
+
+.info-title {
+  font: 1.6em 'Ubuntu', 'Century Gothic', 'Trebuchet MS', 'Lucida Grande', Helvetica, Arial, sans-serif;
+  color: #010837;}
+
+.zone-info {
+  min-height: 25px;}
+
+.zone-editor {
+  margin-top: 20px;}
+
+.subtitle-inputs {
+  margin-top: 10px;}
+
+.time-input {
+  margin-top: 2px;}
+
+.subtitle-input {
+  height: 50px;}
+
+.smp-player {
+  margin-top: 10px;
+  width: 380px;}
+
+.log-title {
+  margin-top: 10px;}
+.log-title span {
+  font: 1.2em 'Ubuntu', 'Century Gothic', 'Trebuchet MS', 'Lucida Grande', Helvetica, Arial, sans-serif;
+  color: #4B86BB;
+  font-weight: bold;}
+
+.log-filter {
+  margin-top: 10px;
+  height: 40px;}
+.log-filter p {
+  position: relative;}
+
+.filter-label {
+  font: 1.1em 'Ubuntu', 'Century Gothic', 'Trebuchet MS', 'Lucida Grande', Helvetica, Arial, sans-serif;
+  position: absolute;
+  text-align: left;
+  top: 2px;
+  left: 10px;}
+
+.filter-input {
+  font: 1.1em 'Ubuntu', 'Century Gothic', 'Trebuchet MS', 'Lucida Grande', Helvetica, Arial, sans-serif;
+  background: #FCFCFC;
+  border: 1px solid #CCCCCC;
+  padding: 5px;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  width: 340px;}
+
+.smp_logs {
+  margin-top: 2px;}
+
+.smp-log {
+  font: 1em 'Ubuntu', 'Century Gothic', 'Trebuchet MS', 'Lucida Grande', Helvetica, Arial, sans-serif;
+  height: 28px;
+  padding-top: 12px;
+  padding-left: 10px;
+  spa: n;
+  margin-left: 2px;
+  font-weight: bold;}
+
+.info-log {
+  background-color: #94CBFE;
+  color: #225893;}
+
+.debug-log {
+  background-color: #ECECEC;
+  color: #C40605;}
