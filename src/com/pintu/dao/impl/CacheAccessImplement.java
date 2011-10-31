@@ -13,6 +13,7 @@ import com.pintu.beans.User;
 import com.pintu.beans.Vote;
 import com.pintu.cache.PintuCache;
 import com.pintu.dao.CacheAccessInterface;
+import com.pintu.utils.PintuUtils;
 
 public class CacheAccessImplement implements CacheAccessInterface {
 
@@ -203,6 +204,13 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	@Override
 	public boolean removeTPic(String id) {
 		return pintuCache.removeTPicById(id);
+	}
+
+	@Override
+	public boolean removeThumbnail(String date,String id) {
+	    long time = (PintuUtils.parseToDate(date)).getTime();
+	    String thumbnailId = id+"_Thumbnail";
+		return pintuCache.removeThumbnailById(time,thumbnailId);
 	}
 
 

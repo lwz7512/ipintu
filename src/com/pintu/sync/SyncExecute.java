@@ -1,5 +1,6 @@
 package com.pintu.sync;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -177,8 +178,20 @@ public class SyncExecute implements Runnable {
 								int count = illegalCountMap.get(id);
 								illegalCountMap.put(id, count + 1);
 								// 这里因为如果是第二次累加，那就是要删除的问题图片了
-								log.warn(">>>Question picture detail:"
-										+ tpic.toString());
+								log.warn(">>>Question picture detail:"+ tpic.toString());
+								
+								//删除缓存中的缩略图
+								boolean flag = cacheVisitor.removeThumbnail(tpic.getPublishTime(),id);
+								if(flag){
+									log.info(">>>Deleted question thumbnial");
+								}
+								
+								//TODO 删除文件目录下的图片(包括三个)
+								deleteErrorPicture(tpic.getRawImgPath());
+								deleteErrorPicture(tpic.getMobImgPath());
+								String thumbnailPath = tpic.getRawImgPath().replace("Raw", "Thumbnail");
+								deleteErrorPicture(thumbnailPath);
+								
 							}
 						}
 					} else {
@@ -192,6 +205,16 @@ public class SyncExecute implements Runnable {
 			}
 		}
 		return resList;
+	}
+	
+	private void deleteErrorPicture(String path){
+		File file = new File(path);
+		if(file.exists()){
+			boolean rawFlag=file.delete();
+			if(rawFlag){
+				log.info("File delete success, the deleted file is "+path);
+			}
+		}
 	}
 
 	private void processErrorPicture() {
@@ -208,6 +231,7 @@ public class SyncExecute implements Runnable {
 						// 输出图片问题信息
 						log.warn(">>>Deleted question picture is:" + id);
 					}
+					
 				}
 			}
 		}

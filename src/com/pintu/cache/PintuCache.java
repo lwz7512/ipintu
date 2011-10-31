@@ -412,5 +412,28 @@ public class PintuCache {
 		}
 		return del;
 	}
+
+	public boolean removeThumbnailById(long time, String thumbnailId) {
+		boolean del = false;
+		long minlong = time / (60 * 1000);
+		int min = Math.round(minlong);
+		String key = String.valueOf(min);
+		synchronized (thumbnailCache) {
+			Element savedMinute = thumbnailCache.get(key);
+			if (savedMinute != null) {
+				@SuppressWarnings("unchecked")
+				HashMap<String, TPicDesc> savedMap = (HashMap<String, TPicDesc>) savedMinute
+						.getObjectValue();
+				for(String id:savedMap.keySet()){
+					if(thumbnailId.equals(id)){
+						savedMap.remove(id);
+						del = true;
+					}
+				}
+			}
+		}
+		
+		return del;
+	}
 	
 }
