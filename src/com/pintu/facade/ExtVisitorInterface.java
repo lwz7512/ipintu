@@ -90,7 +90,7 @@ public interface ExtVisitorInterface {
 	//按浏览数查询经典top12
 	public static final String CLASSICALSTATISTICS = "classicalStatistics";
 
-	//按被收藏的多少查询
+	//按被收藏的多少查询（这个相当于先用and后用or）
 	public static final String SEARCHBYTAG="searchByTag";
 	
 	//查询手机图作为web版画廊，pageSize待定
@@ -98,5 +98,14 @@ public interface ExtVisitorInterface {
     
     //最热标签
     public static final String GETHOTTAGS = "getHotTags";
+    
+    //列出所有系统标签
+    public static final String GETSYSTEMTAGS = "getSystemTags";
+    
+    //删除评论
+    public static final String DELETEONECMT = "deleteOneCmt";
+    
+    //删除发过的图
+    public static final String DELETEONEPIC ="deleteOnePic";
 	
 }

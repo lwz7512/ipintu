@@ -759,7 +759,7 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public int deleteFavorite(String fId) {
+	public int deleteFavoriteById(String fId) {
 		String sql = "delete from t_favorite where f_id ='"+fId+"'"; 
 		int rows = jdbcTemplate.update(sql);
 		return rows;
@@ -1344,6 +1344,39 @@ public class DBAccessImplement implements DBAccessInterface {
 			}
 		}
 		return resList;
+	}
+	
+	@Override
+	public List<Tag> geSystemTags() {
+		List<Tag> resList = new ArrayList<Tag>();
+		String sql = "select * from t_tag where t_type='system'";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Tag tag = new Tag();
+				tag.setId(map.get("t_id").toString());
+				tag.setName(map.get("t_name").toString());
+				tag.setType(map.get("t_type").toString());
+				tag.setBrowseCount(Integer.parseInt(map.get("t_browseCount").toString()));
+				resList.add(tag);
+			}
+		}
+		return resList;
+	}
+
+	@Override
+	public int deleteCmtById(String sId) {
+		String sql = "delete from t_story where s_id ='"+sId+"'"; 
+		int rows = jdbcTemplate.update(sql);
+		return rows;
+	}
+
+	@Override
+	public int deletePictureById(String pId) {
+		String sql = "delete from t_picture where p_id ='"+pId+"'"; 
+		int rows = jdbcTemplate.update(sql);
+		return rows;
 	}
 
 

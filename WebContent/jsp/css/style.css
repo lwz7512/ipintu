@@ -1,4 +1,22 @@
-/* CSS Document */
+body {
+  color: #225893;}
+
+.logo {
+  font-family: 'Shadows Into Light';
+  font-weight: bold;
+  font-size: 2.5em;
+  color: #010837;
+  padding-top: 20px;}
+
+.copyright {
+  float: right;
+  font-family: 'Shadows Into Light';
+  font-weight: bold;
+  font-size: 1.2em  ;
+  color: #4B86BB;}
+
+  
+  /* CSS Document */
 body {
 	font-family: "宋体";
 	font-size: 12px;
@@ -91,3 +109,4 @@ div,span {
 	color: rgb(70, 122, 167);
 }
 
+  

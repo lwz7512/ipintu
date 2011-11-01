@@ -121,8 +121,9 @@ public class AssistProcess {
 			String follow = req.getParameter("follow");
 			String owner = req.getParameter("owner");
 			String content = req.getParameter("content");
-
-			apiAdaptor.addStoryToPicture(follow, owner, content);
+			String source = req.getParameter("source");
+			
+			apiAdaptor.addStoryToPicture(follow, owner, content, source);
 
 		} else if (action.equals(AppStarter.GETSTORIESOFPIC)) {
 			// 得到某副图片的所有故事
@@ -160,8 +161,9 @@ public class AssistProcess {
 			String sender = req.getParameter("userId");
 			String receiver = req.getParameter("receiver");
 			String content = req.getParameter("content");
+			String source = req.getParameter("source");
 
-			boolean flag = apiAdaptor.sendMessage(sender, receiver, content);
+			boolean flag = apiAdaptor.sendMessage(sender, receiver, content,source);
 			System.out.println(flag);
 
 			if (flag) {
@@ -325,6 +327,40 @@ public class AssistProcess {
 			pw.println(result);
 			pw.close();
 			
+		}else if(action.equals(AppStarter.GETSYSTEMTAGS)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String result = apiAdaptor.geSystemTags();
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
+			
+		}else if (action.equals(AppStarter.DELETEONECMT)) {
+				// 删除收藏的图片
+				res.setContentType("text/plain;charset=UTF-8");
+				PrintWriter pw = res.getWriter();
+				String sId = req.getParameter("sId");
+				boolean flag = apiAdaptor.deleteOneCmt(sId);
+				if (flag) {
+					pw.println("删除评论成功！");
+				} else {
+					pw.println("删除评论失败！");
+				}
+				pw.close();
+
+		}else if (action.equals(AppStarter.DELETEONEPIC)) {
+			// 删除收藏的图片
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String pId = req.getParameter("pId");
+			boolean flag = apiAdaptor.deleteOnePic(pId);
+			if (flag) {
+				pw.println("删除发图成功！");
+			} else {
+				pw.println("删除发图失败！");
+			}
+			pw.close();
+
 		}else{
 			
 		}

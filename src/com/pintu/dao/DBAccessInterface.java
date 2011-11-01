@@ -123,7 +123,7 @@ public interface DBAccessInterface {
 	
 	public int insertFavorite(Favorite fav);
 	
-	public int deleteFavorite(String fId);
+	public int deleteFavoriteById(String fId);
 	
 	public int checkExistFavorite(String userId, String picId);
 	
@@ -177,6 +177,12 @@ public interface DBAccessInterface {
 	public int insertCategory(String id,String picId, String tagId);
 	
 	public List<Tag> getHotTags(int topNum);
+	
+	public List<Tag> geSystemTags();
+	
+	public int deleteCmtById(String sId);
+	
+	public int deletePictureById(String pId);
 	
 	
 
