@@ -165,39 +165,13 @@ public class SyncExecute implements Runnable {
 		if (objList != null && objList.size() > 0) {
 			for (int i = 0; i < objList.size(); i++) {
 				TPicItem tpic = (TPicItem) objList.get(i);
-				String picId = tpic.getId();
 				if (tpic.isValid()) {
 					resList.add(tpic);
 					log.info(">>>Check the picture by preparing to db:"
 							+ tpic.getId());
 				} else {
 					// 将不合法的图片统计
-					if (illegalCountMap.size() > 0) {
-						for (String id : illegalCountMap.keySet()) {
-							if (picId.equals(id)) {
-								int count = illegalCountMap.get(id);
-								illegalCountMap.put(id, count + 1);
-								// 这里因为如果是第二次累加，那就是要删除的问题图片了
-								log.warn(">>>Question picture detail:"+ tpic.toString());
-								
-								//删除缓存中的缩略图
-								boolean flag = cacheVisitor.removeThumbnail(tpic.getPublishTime(),id);
-								if(flag){
-									log.info(">>>Deleted question thumbnial");
-								}
-								
-								//TODO 删除文件目录下的图片(包括三个)
-								deleteErrorPicture(tpic.getRawImgPath());
-								deleteErrorPicture(tpic.getMobImgPath());
-								String thumbnailPath = tpic.getRawImgPath().replace("Raw", "Thumbnail");
-								deleteErrorPicture(thumbnailPath);
-								
-							}
-						}
-					} else {
-						illegalCountMap.put(picId, 1);
-					}
-
+					processIllegalCountMap(tpic);
 					// 有属性字段为空时为不全法的入库对象
 					log.warn(">>>Can not insert picture object,ID:"
 							+ tpic.getId());
@@ -206,6 +180,36 @@ public class SyncExecute implements Runnable {
 		}
 		return resList;
 	}
+	
+	private void processIllegalCountMap(TPicItem tpic){
+		if (illegalCountMap.size() > 0) {
+			for (String id : illegalCountMap.keySet()) {
+				if (tpic.getId().equals(id)) {
+					int count = illegalCountMap.get(id);
+					illegalCountMap.put(id, count + 1);
+					// 这里因为如果是第二次累加，那就是要删除的问题图片了
+					log.warn(">>>Question picture detail:"+ tpic.toString());
+					
+					//删除缓存中的缩略图
+					boolean flag = cacheVisitor.removeThumbnail(tpic.getPublishTime(),id);
+					if(flag){
+						log.info(">>>Deleted question thumbnial");
+					}
+					
+					//删除文件目录下的图片(包括三个)
+					deleteErrorPicture(tpic.getRawImgPath());
+					deleteErrorPicture(tpic.getMobImgPath());
+					String thumbnailPath = tpic.getRawImgPath().replace("Raw", "Thumbnail");
+					deleteErrorPicture(thumbnailPath);
+					
+				}
+			}
+		} else {
+			illegalCountMap.put(tpic.getId(), 1);
+		}
+
+	}
+	
 	
 	private void deleteErrorPicture(String path){
 		File file = new File(path);
