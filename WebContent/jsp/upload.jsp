@@ -64,8 +64,10 @@
 			action="<%=request.getContextPath()%>/pintuapi" method="post"
 			enctype="multipart/form-data">
 			
-			<input type="hidden" name="method" value="upload" /><br /> <input
-				type="hidden" name="userId" value="<%= request.getParameter("userId")%>" /><br /> <input
+			<input type="hidden" name="method" value="upload" /><br />
+			 <input
+				type="hidden" name="userId" value="<%= request.getParameter("userId")%>" /><br /> 
+				<input
 				type="hidden" name="source" value="desktop" /><br /> <input
 				type="hidden" name="description" value="1" /><br />
 				<input
