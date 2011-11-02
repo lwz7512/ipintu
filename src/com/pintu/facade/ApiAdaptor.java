@@ -78,8 +78,9 @@ public class ApiAdaptor {
 			}
 		}
 
-		while (iter.hasNext()) {
-			FileItem item = iter.next();
+		Iterator<FileItem> ite = fileItems.iterator();
+		while (ite.hasNext()) {
+			FileItem item = ite.next();
 			
 			if(!item.isFormField()){
 				// 图片数据
