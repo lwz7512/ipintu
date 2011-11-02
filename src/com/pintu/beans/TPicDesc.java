@@ -13,6 +13,8 @@ public class TPicDesc implements Serializable{
 	
 	private static final long serialVersionUID = 5476127095951218320L;
 
+	public static final String THUMBNIAL = "_Thumbnail";
+	
 	//品图ID
 	private String tpId;
 	

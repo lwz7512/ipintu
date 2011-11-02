@@ -212,6 +212,8 @@ public interface PintuServiceInterface {
 
 	public boolean deleteOnePicture(String pId);
 
+	public List<TPicDesc> getThumbnailsByTag(String tagId, int pageNum);
+
 
 	// ANYMORE NECESSARY???
 

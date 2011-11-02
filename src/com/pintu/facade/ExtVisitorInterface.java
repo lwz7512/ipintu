@@ -108,4 +108,7 @@ public interface ExtVisitorInterface {
     //删除发过的图
     public static final String DELETEONEPIC ="deleteOnePic";
 	
+    //查看某tag的所有图片
+    public static final String GETTHUMBNAILSBYTAG = "getThumbnailsByTag";
+
 }

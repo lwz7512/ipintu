@@ -361,6 +361,19 @@ public class AssistProcess {
 			}
 			pw.close();
 
+		}else if(action.equals(AppStarter.GETTHUMBNAILSBYTAG)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String tagId = req.getParameter("tagId");
+			int pageNum = Integer.parseInt(req.getParameter("pageNum"));
+			if(pageNum<=0){
+				pageNum = 1;
+			}
+			String result = apiAdaptor.getThumbnailsByTag(tagId,pageNum);
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
+			
 		}else{
 			
 		}
