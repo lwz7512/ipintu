@@ -490,4 +490,9 @@ public class ApiAdaptor {
 		return pintuService.deleteOnePicture(pId);
 	}
 
+	public String getThumbnailsByTag(String tagId, int pageNum) {
+		List<TPicDesc> list = pintuService.getThumbnailsByTag(tagId,pageNum);
+		return JSONArray.fromCollection(list).toString();
+	}
+
 } // end of class

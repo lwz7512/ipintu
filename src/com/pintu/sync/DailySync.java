@@ -95,12 +95,12 @@ public class DailySync implements Runnable{
 				for(int i=0;i<picNames.size();i++){
 					String picId = picNames.get(i).substring(0,picNames.get(i).lastIndexOf("."));
 					String suffix = picNames.get(i).substring(picNames.get(i).lastIndexOf("."));
-					String thumbnailName = picId+"_Thumbnail"+suffix;
+					String thumbnailName = picId+TPicDesc.THUMBNIAL+suffix;
 					File file = pintuService.getThumbnail(thumbnailName);
 					if(file.exists()){
 						Long creationTime = file.lastModified();
 						TPicDesc thumbnail = new TPicDesc();
-						thumbnail.setThumbnailId( picId+"_Thumbnail");
+						thumbnail.setThumbnailId( picId+TPicDesc.THUMBNIAL);
 						thumbnail.setTpId(picId);
 						thumbnail.setCreationTime(String.valueOf(creationTime));
 						thumbnail.setStatus("0");

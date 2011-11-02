@@ -9,6 +9,7 @@ import com.pintu.beans.Favorite;
 import com.pintu.beans.Gift;
 import com.pintu.beans.Message;
 import com.pintu.beans.Story;
+import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TPicItem;
 import com.pintu.beans.Tag;
@@ -183,6 +184,9 @@ public interface DBAccessInterface {
 	public int deleteCmtById(String sId);
 	
 	public int deletePictureById(String pId);
+	
+	public List<TPicDesc> getThumbnailByTag(String tagId, int pageNum,
+			int pageSize);
 	
 	
 

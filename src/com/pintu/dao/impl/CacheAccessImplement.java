@@ -209,7 +209,7 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	@Override
 	public boolean removeThumbnail(String date,String id) {
 	    long time = (PintuUtils.parseToDate(date)).getTime();
-	    String thumbnailId = id+"_Thumbnail";
+	    String thumbnailId = id+TPicDesc.THUMBNIAL;
 		return pintuCache.removeThumbnailById(time,thumbnailId);
 	}
 

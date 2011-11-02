@@ -19,6 +19,7 @@ import com.pintu.beans.Favorite;
 import com.pintu.beans.Gift;
 import com.pintu.beans.Message;
 import com.pintu.beans.Story;
+import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TPicItem;
 import com.pintu.beans.Tag;
@@ -26,6 +27,7 @@ import com.pintu.beans.User;
 import com.pintu.beans.Vote;
 import com.pintu.beans.Wealth;
 import com.pintu.dao.DBAccessInterface;
+import com.pintu.utils.PintuUtils;
 
 public class DBAccessImplement implements DBAccessInterface {
 
@@ -1377,6 +1379,29 @@ public class DBAccessImplement implements DBAccessInterface {
 		String sql = "delete from t_picture where p_id ='"+pId+"'"; 
 		int rows = jdbcTemplate.update(sql);
 		return rows;
+	}
+
+	@Override
+	public List<TPicDesc> getThumbnailByTag(String tagId, int pageNum,
+			int pageSize) {
+		List<TPicDesc> resList = new ArrayList<TPicDesc>();
+		String sql = "select p.p_id,p.p_publishTime "+
+				"from t_picture p,t_user u,t_tag t,t_category c where u.u_id=p.p_owner and p.p_id=c.c_picture and c.c_tag=t.t_id "+
+				"and t.t_id ='" + tagId + "'";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				TPicDesc thumbnail = new TPicDesc();
+				thumbnail.setTpId(map.get("p_id").toString());
+				thumbnail.setThumbnailId(map.get("p_id").toString()+TPicDesc.THUMBNIAL);
+				String creationTime =String.valueOf(PintuUtils.parseToDate( map.get("p_publishTime").toString()).getTime());
+				thumbnail.setCreationTime(creationTime);
+				thumbnail.setStatus("0");
+				resList.add(thumbnail);
+			}
+		}
+		return resList;
 	}
 
 

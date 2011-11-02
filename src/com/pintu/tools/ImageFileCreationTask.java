@@ -60,7 +60,7 @@ public class ImageFileCreationTask implements Runnable {
 				
 			}else if(imgType.equals("thumbnail")){
 				//因缩略图不用入库，所以id可以不遵循数据库中设计的长度
-				String thumbnailId=picObj.getId()+"_Thumbnail";
+				String thumbnailId=picObj.getId()+TPicDesc.THUMBNIAL;
 				//函数设计传参需要，因不写文件，帮用不到
 				String thumbnailPath=route+thumbnailId+getFileType();
 				ImageHelper.thumbnailHandler(fileItem, 100, 100, true,imgType,thumbnailPath);
