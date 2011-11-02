@@ -64,10 +64,10 @@ public class ApiAdaptor {
 	public void createTastePic(List<FileItem> fileItems) {
 		System.out.println("2 Analyse pic obj: apiadaptor createTastePic");
 		TastePic pic = new TastePic();
-		Iterator<FileItem> iter = fileItems.iterator();
 		String source = "";
-		while (iter.hasNext()) {
-			FileItem item = iter.next();
+
+		for (int i = 0; i < fileItems.size(); i++) {
+			FileItem item = fileItems.get(i);
 			if (item.isFormField()) {
 				if (item.getFieldName().equals("source")) {
 					if (item.getString().equals("desktop")) {
@@ -78,17 +78,15 @@ public class ApiAdaptor {
 			}
 		}
 
-		Iterator<FileItem> ite = fileItems.iterator();
-		while (ite.hasNext()) {
-			FileItem item = ite.next();
-			
-			if(!item.isFormField()){
+		for (int i = 0; i < fileItems.size(); i++) {
+			FileItem item = fileItems.get(i);
+			if (!item.isFormField()) {
 				// 图片数据
 				pic.setRawImageData(item);
 			}
-			
+
 			if (item.isFormField()) {
-				//取描述
+				// 取描述
 				if (item.getFieldName().equals("description")) {
 					if (source.equals("desktop")) {
 						pic.setDescription(item.getString());
@@ -97,7 +95,7 @@ public class ApiAdaptor {
 								.getString()));
 					}
 				}
-				//标签
+				// 标签
 				if (item.getFieldName().equals("tags")) {
 					if (source.equals("desktop")) {
 						pic.setTags(item.getString());
@@ -105,11 +103,11 @@ public class ApiAdaptor {
 						pic.setTags(UTF8Formater.changeToWord(item.getString()));
 					}
 				}
-				//取用户
+				// 取用户
 				if (item.getFieldName().equals("userId")) {
 					pic.setUser(item.getString());
 				}
-				//取来源
+				// 取来源
 				if (item.getFieldName().equals("source")) {
 					pic.setSource(item.getString());
 				}
@@ -194,15 +192,16 @@ public class ApiAdaptor {
 				.toString();
 	}
 
-	private Story createStory(String follow, String owner, String content, String source) {
+	private Story createStory(String follow, String owner, String content,
+			String source) {
 		Story story = new Story();
 		story.setId(PintuUtils.generateUID());
 		story.setFollow(follow);
 		story.setOwner(owner);
 		story.setPublishTime(PintuUtils.getFormatNowTime());
-		if(source.equals("desktop")){
+		if (source.equals("desktop")) {
 			story.setContent(content);
-		}else{
+		} else {
 			story.setContent(UTF8Formater.changeToWord(content));
 		}
 		story.setClassical(0);
@@ -211,12 +210,14 @@ public class ApiAdaptor {
 
 	/**
 	 * 为一个品图添加故事
-	 * @param source 
+	 * 
+	 * @param source
 	 * 
 	 * @param story
 	 */
-	public void addStoryToPicture(String follow, String owner, String content, String source) {
-		Story story = this.createStory(follow, owner, content,source);
+	public void addStoryToPicture(String follow, String owner, String content,
+			String source) {
+		Story story = this.createStory(follow, owner, content, source);
 		pintuService.addStoryToPintu(story);
 	}
 
@@ -256,14 +257,15 @@ public class ApiAdaptor {
 		return JSONObject.fromObject(user).toString();
 	}
 
-	private Message createMessage(String sender, String receiver, String content, String source) {
+	private Message createMessage(String sender, String receiver,
+			String content, String source) {
 		Message msg = new Message();
 		msg.setId(PintuUtils.generateUID());
 		msg.setSender(sender);
 		msg.setReceiver(receiver);
-		if(source.equals("desktop")){
+		if (source.equals("desktop")) {
 			msg.setContent(content);
-		}else{
+		} else {
 			msg.setContent(UTF8Formater.changeToWord(content));
 		}
 		msg.setWriteTime(PintuUtils.getFormatNowTime());
@@ -277,10 +279,11 @@ public class ApiAdaptor {
 	 * @param sender
 	 * @param receiver
 	 * @param content
-	 * @param source 
+	 * @param source
 	 */
-	public boolean sendMessage(String sender, String receiver, String content, String source) {
-		Message msg = this.createMessage(sender, receiver, content,source);
+	public boolean sendMessage(String sender, String receiver, String content,
+			String source) {
+		Message msg = this.createMessage(sender, receiver, content, source);
 		return pintuService.sendMessage(msg);
 	}
 
@@ -492,7 +495,7 @@ public class ApiAdaptor {
 	}
 
 	public String getThumbnailsByTag(String tagId, int pageNum) {
-		List<TPicDesc> list = pintuService.getThumbnailsByTag(tagId,pageNum);
+		List<TPicDesc> list = pintuService.getThumbnailsByTag(tagId, pageNum);
 		return JSONArray.fromCollection(list).toString();
 	}
 
