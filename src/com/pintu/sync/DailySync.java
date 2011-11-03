@@ -67,7 +67,7 @@ public class DailySync implements Runnable{
 				
 				
 				//同步图片对应的缓存图片
-				if(picNameList.size() == 0){
+				if(picNameList.size() > 0){
 					syncThumbnailTask(picNameList);
 				}
 				
@@ -91,6 +91,7 @@ public class DailySync implements Runnable{
 		 */
 		private void syncThumbnailTask(List<String> picNames) {
 			log.info(">>>Will save file path of the thumbnail synchronization to cache is begin...");
+			int thumbnialCount = 0;
 			if(picNames != null && picNames.size() > 0){
 				for(int i=0;i<picNames.size();i++){
 					String picId = picNames.get(i).substring(0,picNames.get(i).lastIndexOf("."));
@@ -105,12 +106,13 @@ public class DailySync implements Runnable{
 						thumbnail.setCreationTime(String.valueOf(creationTime));
 						thumbnail.setStatus("0");
 						cacheVisitor.cacheThumbnail(thumbnail);
+						thumbnialCount++;
 					} else{
 						log.info(">>>Thumbnail is missing!");
 					}
 				}
 			}
-			log.info(">>>Synchronous thumbnail to cache is over!");
+			log.info(">>>Synchronous thumbnail to cache is over, thumbnialSize:"+thumbnialCount);
 		}
 
 
