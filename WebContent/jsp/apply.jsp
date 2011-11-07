@@ -1,5 +1,6 @@
 <%@ page language="java" import="java.util.*"
 	contentType="text/html; charset=UTF-8"%>
+<%@include file="header.jsp"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
@@ -14,8 +15,8 @@
 <script language=javascript type=text/javascript>
 
 	function checkNull(){
-		var account = document.getElementById("account").value;
-		var reason = document.getElementById("reason").value;
+		var account = $("#account").attr("value");
+		var reason =$("#reason").attr("value");
 		if(account == null || reason == null || account == "" || reason == ""){
 			return false;
 		}
@@ -24,7 +25,7 @@
 
 	
 	function checkEmail(){
-		var emailStr=document.getElementById("account").value;
+		var emailStr = $("#account").attr("value");
 		var emailPat = new RegExp(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/g);
 		if (!emailPat.test(emailStr)) {
 			return false;
@@ -35,20 +36,19 @@
 	function check(){
 		var flag = checkEmail();
 		if(flag){
-			var account = document.getElementById("account").value;
+			$('#prompt').show().html('<img src="<%=request.getContextPath()%>/jsp/img/loading.gif">');
+			var account = $("#account").attr("value");
 			$.post('<%=request.getContextPath()%>/pintuapi', {
-			'method'  : 'validate',
-			'account'	: account
+				'method'  : 'validate',
+				'account'	: account
 			}, 
 			//回调函数
 			function (result) {
 				if(result == 1){//result为1，用户已存在
-				    $('#prompt').show();
-					$('#prompt').html('<img src="<%=request.getContextPath()%>/jsp/img/no.png">');
-					document.getElementById("account").value=null;
+				    $('#prompt').show().html('<img src="<%=request.getContextPath()%>/jsp/img/no.png">');
+				    $("#account").val("");
 				}else{
-					 $('#prompt').show();
-					$('#prompt').html('<img src="<%=request.getContextPath()%>/jsp/img/ok.png">');
+					 $('#prompt').show().html('<img src="<%=request.getContextPath()%>/jsp/img/ok.png">');
 				}
 			});
 		}
@@ -57,28 +57,23 @@
 </script>
 
 <body>
-
-	<div class="main">
-		<form action="<%=request.getContextPath()%>/pintuapi" method="post"
+	<div id="contact-form"> 
+		<form id="contact"  action="<%=request.getContextPath()%>/pintuapi" method="post"
 			name="applyForm" onsubmit="return checkNull()">
-			<div class="pagetop">
-				<span class="topfont">用户申请</span>
-			</div>
-			<div class="pagemid">
-				<div>
-					<input type="hidden" name="method" value="apply" />
-				</div>
-				<div class="pageju">
-					注册邮箱：<input type="text" name="account" id="account"
-						onblur="check()" /> <span style="display: none;" id="prompt"></span>
-				</div>
-				<div class="pageju">
-					申请理由：<textarea rows="5"  cols= "30" name="reason" id="reason" ></textarea>
-				</div>
-				<div class="pageju pagecenter pagebuttom">
-					<input type="submit" value="提交申请" />
-				</div>
-			</div>
+		<fieldset>  
+			<label for="header" class="header">申请</label>
+				<input type="hidden" name="method" value="apply" />
+			<label for="email">注册邮箱</label>
+				<input type="text" name="account" id="account" onblur="check()" />
+					<span style="display: none;" id="prompt"></span>
+			<label for="message">申请理由</label>
+				<textarea name="reason" id="reason" ></textarea>
+			<p class="applyBtn">
+				<input type="submit"  name="submit" class="button" id="submit"  value="我要申请" />
+			</p>
+		</fieldset>
 		</form>
 	</div>
+	</body>
+<%@include file="footer.jsp"%>
 </html>

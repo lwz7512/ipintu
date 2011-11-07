@@ -1,11 +1,13 @@
 <%@ page language="java" import="java.util.*"
-	contentType="text/html; charset=utf-8"%>
+	contentType="text/html; charset=UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
 <title>上传图片页面</title>
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/jsp/css/style.css" />
+<link rel="stylesheet" type="text/css"
+	href="<%=request.getContextPath()%>/jsp/css/header.css" />
 </head>
 
 <script type="text/javascript" language="javascript">
@@ -41,6 +43,7 @@
 		var selectedFile = new String(objFileUpload.value);//文件名
 					
 		if(selectedFile==""){
+			//var account = $("#account").attr("value");
 			var objMSG = document.getElementById('msg');//显示提示信息用的DIV
 			objMSG.innerHTML="No file selected!";
 			return false;			
@@ -57,36 +60,32 @@
 	
 </script>
 <body>
-
-	<div class="main">
-		<form name="uploadForm" id="uploadForm"
-			onsubmit="return checkBlank();" onreset="clearMsg();"
-			action="<%=request.getContextPath()%>/pintuapi" method="post"
-			enctype="multipart/form-data">
-			
-			<input type="hidden" name="method" value="upload" /><br />
-			 <input
-				type="hidden" name="userId" value="<%= request.getParameter("userId")%>" /><br /> 
-				<input
-				type="hidden" name="source" value="desktop" /><br /> <input
-				type="hidden" name="description" value="1" /><br />
-				<input
-				type="hidden" name="tags" value="1 2" /><br />
-				<input
-				type="hidden" name="isOriginal" value="0" /><br />
-			<div class="pagetop">
-				<span class="topfont">上传图片</span>
-			</div>
-			<div class="pagemid">
-				<input type="file" name="file1" id="file1" size="20"
-					onchange="CheckFileType();" /> <br />
-				<br />
-				<div class="pageju pagecenter pagebuttom">
-					<input type="submit" name="submit" value="上传"> <input
-						type="reset" name="reset" value="重置">
-				</div>
-				<div class = "prompt"><div id="msg"></div></div>
-			</div>
-		</form>
+<div class="xft">
+	<div class="xq" id="xit">
+		<a href="../index.jsp" class="xdt" id="zh-top-link-logo"></a>
 	</div>
+</div>
+<form name="uploadForm"  id="contact" 
+	onsubmit="return checkBlank();" onreset="clearMsg();"
+	action="<%=request.getContextPath()%>/pintuapi" method="post"
+	enctype="multipart/form-data">
+		<fieldset>
+			<label for="header" class="header">上传</label>
+			<input type="hidden" name="method" value="upload" /><br />
+			<input type="hidden" name="userId" value="<%= request.getParameter("userId")%>" />
+			<input type="hidden" name="source" value="desktop" />
+			<input type="hidden" name="description" value="1" />
+			<input type="hidden" name="tags" value="1 2" />
+			<input type="hidden" name="isOriginal" value="0" />
+			<input type="file" name="file1" id="file1" size="20" onchange="CheckFileType();" />
+			<p class="twoBtn">
+			<input type="submit" value="上传" name="submit" class="button" id="submit"/>
+			<input type="reset" value="重置" name="reset" class="button" id="reset"/> 
+			</p>
+			<label for="prompt" class="error">
+					<span id="msg"></span>
+			</label>
+		</fieldset>
+</form>
+</body>
 </html>

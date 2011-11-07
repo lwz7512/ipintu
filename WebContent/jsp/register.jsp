@@ -1,5 +1,6 @@
 <%@ page language="java" import="java.util.*"
 	contentType="text/html; charset=UTF-8"%>
+<%@include file="header.jsp"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
@@ -13,9 +14,9 @@
 
 <script language=javascript  type=text/javascript>
 function checkNull(){
-	var account = document.getElementById("account").value;
-	var password = document.getElementById("password").value;
-	var inviteCode = document.getElementById("inviteCode").value;
+	var account = $("#account").attr("value");
+	var password =  $("#password").attr("value");
+	var inviteCode = $("inviteCode").attr("value");
 	if(account == null || password == null || inviteCode==null || account == "" || password == "" || inviteCode=="" ){
 		return false;
 	}
@@ -23,12 +24,11 @@ function checkNull(){
 }
 
 function checkEmail(){
-	var emailStr=document.getElementById("account").value;
+	var emailStr = $("#account").attr("value");
 	var emailPat = new RegExp(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/g);
 	if (!emailPat.test(emailStr)) {
-		 $('#prompt1').show();
-		  $('#prompt1').html('*邮箱格式不正确');
-		  document.getElementById("account").value=null;
+		 $('#prompt1').show().html('*邮箱格式不正确');
+		 $("account").val("");
 	}else{
 		$('#prompt1').hide();
 	}
@@ -36,17 +36,17 @@ function checkEmail(){
 }
 
 function checkLength(){
-	var pwd = document.getElementById("password").value;
+	var pwd =  $("#password").attr("value");
 	if(pwd.length <6 || pwd.length>8){
-		  $('#prompt2').show();
-		  $('#prompt2').html('*长度6~8位');
-		  document.getElementById("password").value=null;
+		  $('#prompt2').show().html('*长度6~8位');
+		  $("#password").val("");
 	}else{
 		 $('#prompt2').hide();
 	}
 }
 </script>
 <body>
+	<div id="contact-form"> 
 	<%
 		String id = request.getParameter("id");
 		String account = request.getParameter("account");
@@ -61,34 +61,32 @@ function checkLength(){
 			inviteCode="";
 		}
 		%>
-	<div class="main">
-		<form action="<%=request.getContextPath()%>/pintuapi" method="post"
+
+<form   id="contact"  action="<%=request.getContextPath()%>/pintuapi" method="post"
 			name="registerForm" onsubmit="return checkNull()">
-			<div class="pagetop">
-				<span class="topfont">用户注册</span>
-			</div>
-			<div class="pagemid">
-				<div>
-					<input type="hidden" name="method" value="register" />
-							<input type="hidden" name="id" value="<%=id%>" /> 
-					
-				</div>
-				<div class="pageju">
-					账&nbsp;&nbsp;号：<input type="text" name="account"  id="account" value ="<%=account %>"  onblur="checkEmail()"/>
-				<div class = "prompt"><span style="display: none;" id=prompt1></span></div>
-				</div>
-				<div class="pageju">
-					密&nbsp;&nbsp;码：<input type="password" name = "password"  id="password" onblur="checkLength()"/>
-				<div class = "prompt"><span style="display: none;" id="prompt2"></span></div>
-				</div>
-				<div class="pageju">
-				    邀请码：<input type="text" name = "inviteCode"  id="inviteCode"  value ="<%=inviteCode %>"/>
-				 </div>
-				<div class="pageju pagecenter pagebuttom">
-					<input type="submit" value="注册"/>&nbsp; 
-					<input type="reset" value="重置"/>&nbsp; 
-				</div>
-			</div>
-		</form>
-	</div>
+	<fieldset>  
+		<label for="header" class="header">我要注册</label>
+
+		<input type="hidden" name="method" value="register" />
+		<input type="hidden" name="id" value="<%=id%>" /> 
+
+		<label for="email">账户</label>
+			<input type="text" name="account"  id="account" value ="<%=account %>"  onblur="checkEmail()"/>
+			<div class = "prompt"><span style="display: none;" id=prompt1></span></div>
+			
+		<label for="pwd">密码</label>
+			<input type="password" name = "password"  id="password" onblur="checkLength()"/>
+			<div class = "prompt"><span style="display: none;" id="prompt2"></span></div>
+	
+		<label for="pwd">邀请码</label>
+	   		 <input type="text" name = "inviteCode"  id="inviteCode"  value ="<%=inviteCode %>"/>
+		 <p class="twoBtn">
+			<input type="submit" value="注册" name="submit" class="button" id="submit"/>
+			<input type="reset" value="重置" name="reset" class="button" id="reset"/> 
+		<p>
+	</fieldset>
+</form>
+</div>
+</body>
+<%@include file="footer.jsp"%>
 </html>
