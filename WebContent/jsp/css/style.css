@@ -1,112 +1,221 @@
-body {
-  color: #225893;}
+/*---------------------------------
+RESETS 
+------------------------------------------*/
 
-.logo {
-  font-family: 'Shadows Into Light';
-  font-weight: bold;
-  font-size: 2.5em;
-  color: #010837;
-  padding-top: 20px;}
-
-.copyright {
-  float: right;
-  font-family: 'Shadows Into Light';
-  font-weight: bold;
-  font-size: 1.2em  ;
-  color: #4B86BB;}
-
-  
-  /* CSS Document */
-body {
-	font-family: "宋体";
-	font-size: 12px;
-	color: rgb(70, 122, 167);
+* { 
+    margin: 0; 
+    padding: 0; 
 }
 
-div,span {
-	margin: 0px;
+a  { 
+	text-decoration: none; 
+	outline: 0; 
+}
+
+a img { border: 0; }
+
+.stretch,
+.clear {
+	clear: both;
+	height: 1px;
+	margin: 0;
 	padding: 0;
-	border: 0;
+	font-size: 15px;
+	line-height: 1px;
 }
 
-.indexmain {
-	margin: 0 auto;
-	width: 960px;
-	height: 600px;
-	background: url(../img/indexbg1.jpg);
-}
-
-.indexcontent {
-	width: 300px;
-	height: 200px;
-	padding-top: 150px;
-	padding-left: 250px;
-}
-
-.indextop {
-	padding-top: 30px;
-}
-
-.main {
-	margin: 0 auto;
-	width: 800px;
-	height: 532px;
-	margin-top: 20px;
-	background: url(../img/indexbg.jpg);
-	
-}
-
-.pagetop {
-	width: 300px;
-	height: 37px;
-}
-
-.pagetop .topfont {
-	padding-left: 30px;
+.clearfix:after {
+	clear: both;
+	height: 0;
 	display: block;
-	padding-top: 10px;
+	visibility: hidden;
+	content: ".";
 }
 
-.pagemid {
-	border: #d5d5d5 1px solid;
-	width: 297px;
+p { line-height: 1.5; margin: 0 0 15px 0; }
+
+
+/*-------------------------------------
+GLOBAL
+------------------------------------------*/
+
+html, body { 
+	margin: 0 ;
+ 	padding:0 ;
+ 	background-color: #f0f0f4;
+ 	text-align: center; 
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 15px;
+	color: #000000;
 }
 
-.pageju {
-	padding-top: 20px;
-	padding-left: 10px;
+/*-------------------------------------
+LINKS
+------------------------------------------*/
+
+/* a:link { color: #06C; text-decoration: underline;margin: 10px; } */
+/* a:visited { color: #06C; text-decoration: underline; } */
+/* a:hover { color: #06C; text-decoration: underline; } */
+/* a:active { color: #06C; text-decoration: underline; } */
+
+p.loginBtn{ 
+	margin: 0  20px 0px  210px;
+}
+p.applyBtn{ 
+	margin: 0  20px 0px  190px;
 }
 
-.pagecenter {
+p.twoBtn{ 
+	margin: 0  10px 0px  60px;
+}
+
+
+.table {
+	padding: 0 auto;
+	margin: 100 auto;
+	width: 520px;
+	font-size: 11pt;
+	border-collapse: collapse;
+	text-align: center;
+	marign: 0 auto;
+}
+
+.table_header td {
+	clear: both;
+    background: #b3d563;
+    background: -webkit-gradient(linear, left top, left bottom,  from(#00BC12), to(#0C8918));
+    background: -moz-linear-gradient(top,  #1a85cb,  #105e99);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00BC12', endColorstr='#0C8918');
+    -moz-box-shadow: 0 0 1px #eee inset;
+    -webkit-box-shadow: 0 0 1px #eee inset;
+    -o-box-shadow: 0 0 1px #eee inset;
+    box-shadow: 0 0 1px #eee inset;
+    border: 1px solid #ccc;
+    color: #FFFFFF;
+    ight: 33px;
+    line-height: 33px;
+    padding: 0 0 0 15px;
+	font-size: 12px; 
+}
+
+.table_line td {
+	padding: 5px 10px;
+	color: #000;
+	border: 1px solid #ccc;
+	font-size: 11px;
+}
+
+.table_title td {
+	padding: 5px 10px;
+	color: #000;
+/* 	border: 1px solid #ccc; */
+	font-size: 11px;
+}
+
+/*-------------------------------------	
+FORM CORE
+------------------------------------------*/
+#contact-form{
+	min-height:100%; 
+    position:relative;
+    padding-bottom:60px;    /* 等于footer的高度 */
+	height:380px; 
+}
+
+form#contact fieldset {
+	padding: 0 auto;
+	margin: 80px auto;
+	border: 0;
+	background-color: #fff;
+	width: 320px;
+	text-align: left;
+	border-radius: 5px;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    -moz-box-shadow: 0px 0px 10px #d3d3d3; 
+	-webkit-box-shadow: 0px 2px 10px #d3d3d3; 
+	box-shadow: 0px 0px 10px #d3d3d3; 
+}
+
+form#contact input[type="text"], input[type="url"], 
+input[type="email"], input[type="password"], textarea {
+	margin: 0px 0px 0px 15px;
+	padding: 5px; 
+	width: 270px; 
+	font-family: arial, sans-serif; 
+	font-size: 12px; 
+	border: 1px solid #ccc;
+    background: -webkit-gradient(linear, left top, left 15, from(#FFFFFF), color-stop(4%, #f4f4f4), to(#FFFFFF));
+    background: -moz-linear-gradient(top, #FFFFFF, #f4f4f4 1px, #FFFFFF 15px);
+}
+
+form#contact textarea {
+	width: 270px; 
+	height: 150px;
+}
+
+form#contact label {
+	display: block;
+	font-size: 13px;
+	color: #666;
+	font-weight: bold;
+	padding: 2px 0px 0px 15px; 
+	margin:8px 0px 4px 0px;
+}
+
+form#contact label.header {
+	clear: both;
+    background: #b3d563;
+    background: -webkit-gradient(linear, left top, left bottom,  from(#00BC12), to(#0C8918));
+    background: -moz-linear-gradient(top,  #1a85cb,  #105e99);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00BC12', endColorstr='#0C8918');
+    -moz-box-shadow: 0 0 1px #eee inset;
+    -webkit-box-shadow: 0 0 1px #eee inset;
+    -o-box-shadow: 0 0 1px #eee inset;
+    box-shadow: 0 0 1px #eee inset;
+    border: 1px solid #ccc;
+    color: #FFFFFF;
+    height: 33px;
+    line-height: 33px;
+    padding: 0 0 0 15px;
+    font-size: 14px;
+    text-shadow: 0 -1px 0 #0b3f61;
+	-webkit-border-top-left-radius: 5px;
+    -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+form#contact label.error { 
+	width: 240px;
+/* 	margin: 3px 0 0 0; */
+	display: block;
+	color: #cf0101;                              
+	font-size: 11px; 
 	text-align: center;
 }
 
-.pagebuttom {
-	margin-bottom: 20px;
+form#contact .button {
+	display: inline-block;
+	margin: 25px;
+	padding: 5px 15px 5px 15px;
+	background-color: #00BC12;
+	border: none;
+	color: #fff;
+	-moz-border-radius: 15px;
+	-webkit-border-radius: 15px;
+	border-radius: 5px;
 }
 
-.prompt {
-	font: 12px;
-	color: red;
+form#contact .button:hover {
+	background-color: #0C8918;
+	cursor: pointer;
 }
 
-
-.acceptTable {
-	width: 420px;
-	padding-bottom: 15px;
-	border: 1px solid #d5d5d5;
-	color: rgb(70, 122, 167);
-	font-size: 12px;
-	border-collapse: collapse;
-	cellpadding:"0" ;
-	cellspacing:"0";
+form#contact .button:active {
+/* 	margin-top: 6px; */
+	background-color: #41555D;
+	cursor: pointer;
 }
-.acceptTable td {
-	align: center;
-	padding-top: 5px;
-	padding-bottom: 5px;
-	border: 1px solid #d5d5d5;
-	color: rgb(70, 122, 167);
-}
-
-  

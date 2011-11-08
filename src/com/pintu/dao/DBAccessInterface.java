@@ -167,7 +167,9 @@ public interface DBAccessInterface {
 	
 	public List<TPicDetails> getGalleryForWeb(int pageNum,int pageSize);
 	
-	public List<TPicDetails> searchByTag(String tag);
+	public List<TPicDetails> searchByTagOr(String tagOr);
+	
+	public List<TPicDetails> searchByTagAnd(String[] tagArr);
 	
 	public String searchTags(String string);
 	
@@ -189,5 +191,4 @@ public interface DBAccessInterface {
 			int pageSize);
 	
 	
-
 }

@@ -8,7 +8,7 @@ public class Encrypt {
 		try {
 			MessageDigest md = MessageDigest.getInstance("MD5");
 			BASE64Encoder encoder = new BASE64Encoder();
-			byte[] b = md.digest(str.getBytes("utf-8"));
+			byte[] b = md.digest(str.getBytes("UTF-8"));
 			String encryptStr = encoder.encode(b);
 			return encryptStr;
 		} catch (Exception e) {

@@ -100,7 +100,7 @@ public class SimpleMailSender {
 			// 创建一个包含HTML内容的MimeBodyPart
 			BodyPart html = new MimeBodyPart();
 			// 设置HTML内容
-			html.setContent(mailInfo.getContent(), "text/html; charset=utf-8");
+			html.setContent(mailInfo.getContent(), "text/html; charset=UTF-8");
 			mainPart.addBodyPart(html);
 			// 将MiniMultipart对象设置为邮件内容
 			mailMessage.setContent(mainPart);

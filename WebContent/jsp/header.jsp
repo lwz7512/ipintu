@@ -3,14 +3,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<title>普通用户操作页面</title>
+<title>爱品图</title>
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/jsp/css/header.css" />
-	<link rel="stylesheet" type="text/css"
-	href="<%=request.getContextPath()%>/jsp/css/style.css" />
 </head>
-
-	<%String userId = request.getParameter("userId"); %>
 <body>
 <div class="xft">
 <div class="xq" id="xit">
@@ -22,18 +18,18 @@
 <a class="xhs" href="../index.jsp">首页</a>
 </li>
 <li class="xis">
-<a class="xhs" href="upload.jsp?userId=<%=userId %>">图片上传</a>
+<a class="xhs" href="login.jsp">登录</a>
 </li>
 <li class="xis">
-<a class="xhs" href="gallery.jsp?userId=<%=userId %>">社区长廊</a>
+<a class="xhs" href="apply.jsp">申请</a>
+</li>
+<li class="xis">
+<a class="xhs" href="register.jsp">注册</a>
 </li>
 </ul>
 </div>
 
 </div>
 </div>
-<div id="contact-form">
-</div>
 </body>
-<%@include file="footer.jsp"%>
 </html>
