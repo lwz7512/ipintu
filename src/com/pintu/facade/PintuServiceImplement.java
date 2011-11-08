@@ -1004,23 +1004,47 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 	@Override
 	public List<TPicDetails> searchByTag(String tags) {
-		StringBuffer tag = new StringBuffer();
+		List<TPicDetails> resList = new  ArrayList<TPicDetails>();
+		List<TPicDetails> andList = new  ArrayList<TPicDetails>();
+		List<TPicDetails> orList = new  ArrayList<TPicDetails>();
+		StringBuffer tagOr = new StringBuffer();
 		//在这里将用空格分隔的tags转变成sql可识别的'',''
-		String[] arr = tags.split(" ");
-		if(arr.length>0){
-			for(int i=0;i<arr.length;i++){
-				if(!"".equals(arr[i].trim())){
-					if(tag.length()>0){
-						tag.append(",");
+		String[] tagArr = tags.split(" ");
+		if(tagArr.length>0){
+			for(int i=0;i<tagArr.length;i++){
+				if(!"".equals(tagArr[i].trim())){
+					if(tagOr.length()>0){
+						tagOr.append(",");
 					}
-					tag.append("'");
-					tag.append(arr[i]);
-					tag.append("'");
+					tagOr.append("'");
+					tagOr.append(tagArr[i]);
+					tagOr.append("'");
 				}
 			}
+			andList = dbVisitor.searchByTagAnd(tagArr);
+			orList = dbVisitor.searchByTagOr(tagOr.toString());
 		}
-		List<TPicDetails> list = dbVisitor.searchByTag(tag.toString());
-		return list;
+		
+		resList = combineResult(andList,orList);
+		
+		return resList;
+	}
+
+	//将and的结果与or的结果合并
+	private List<TPicDetails> combineResult(List<TPicDetails> andList,
+			List<TPicDetails> orList) {
+		for(int m=0;m<andList.size();m++){
+			TPicDetails tPic = andList.get(m);
+			String id=tPic.getId();
+			for(int n=0;n<orList.size();n++){
+				TPicDetails pic=orList.get(n);
+				if(id.equals(pic.getId())){
+					orList.remove(n);
+				}
+			}
+		}	
+		andList.addAll(orList);
+		return andList;
 	}
 
 	@Override

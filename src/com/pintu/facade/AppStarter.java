@@ -308,6 +308,12 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			dailySync.stop();
 		}
 
+		if(GlobalController.isDebug){
+			log.info(">>>Pintu app running in debug mode!!!");
+		}else{
+			log.info(">>>pintu app running in release mode!!!");
+		}
+		
 	} // end of onApplicationEvent
 
 	private void initUploadComponent(String tempPath) {
