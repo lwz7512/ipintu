@@ -189,12 +189,13 @@ form#contact label.header {
 }
 
 form#contact label.error { 
+	margin: 10px 0px 0px 15px;
+	padding: 5px; 
 	width: 240px;
-/* 	margin: 3px 0 0 0; */
 	display: block;
 	color: #cf0101;                              
 	font-size: 11px; 
-	text-align: center;
+	text-align: left;
 }
 
 form#contact .button {

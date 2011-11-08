@@ -51,10 +51,10 @@ function check(){
 				userId = res.substring(6);
 				window.location.replace("<%=request.getContextPath()%>/jsp/admin.jsp?userId="+userId);
 			}else if( res == "0" ){
-				 $('#prompt').show().html('密码不正确');
+				 $('#prompt').show().html('*密码不正确');
 				 $("#password").val("");
 			}else if( res == "-1"){
-				 $('#prompt').show().html('用户不存在，请申请注册');
+				 $('#prompt').show().html('*用户不存在，请申请注册');
 				 $("#account").val("");
 				 $("#password").val("");
 			}else{
@@ -78,12 +78,14 @@ function check(){
 			  <input type="text" name="account" id="account" />
 		<label for="pwd">密码</label>
 			  <input type="password" name="password" id="password" />
-		<p class="loginBtn">
-			<input type="button" name="submit" class="button" id="submit" value="登录" onclick="check()" />
-		</p>
+			  
 		<label for="prompt" class="error">
 			<span style="display: none;" id="prompt"></span>
 		</label>
+		
+		<p class="loginBtn">
+			<input type="button" name="submit" class="button" id="submit" value="登录" onclick="check()" />
+		</p>
 	</fieldset>
 </form>
 </div>
