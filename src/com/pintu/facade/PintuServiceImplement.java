@@ -410,22 +410,22 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public Boolean sendMessage(Message msg) {
+	public String sendMessage(Message msg) {
 		int i = dbVisitor.insertMessage(msg);
 		if (i > 0) {
-			return true;
+			return systemConfigurer.getProperty("rightPrompt").toString();
 		} else {
-			return false;
+			return systemConfigurer.getProperty("wrongPrompt").toString();
 		}
 	}
 
 	@Override
-	public boolean changeMsgState(List<String> msgIdList) {
+	public String changeMsgState(List<String> msgIdList) {
 		int rows = dbVisitor.updateMsg(msgIdList);
 		if (rows > 0) {
-			return true;
+			return systemConfigurer.getProperty("rightPrompt").toString();
 		} else {
-			return false;
+			return systemConfigurer.getProperty("wrongPrompt").toString();
 		}
 	}
 
@@ -669,22 +669,22 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public boolean markFavoritePic(Favorite fav) {
+	public String markFavoritePic(Favorite fav) {
 		int i = dbVisitor.insertFavorite(fav);
 		if (i > 0) {
-			return true;
+			return systemConfigurer.getProperty("rightPrompt").toString();
 		} else {
-			return false;
+			return systemConfigurer.getProperty("wrongPrompt").toString();
 		}
 	}
 
 	@Override
-	public boolean deleteOneFavorite(String fId) {
+	public String deleteOneFavorite(String fId) {
 		int i = dbVisitor.deleteFavoriteById(fId);
 		if (i > 0) {
-			return true;
+			return systemConfigurer.getProperty("rightPrompt").toString();
 		} else {
-			return false;
+			return systemConfigurer.getProperty("wrongPrompt").toString();
 		}
 	}
 
@@ -766,22 +766,22 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public Boolean publishExchangeableGift(Gift gift) {
+	public String publishExchangeableGift(Gift gift) {
 		int i = dbVisitor.insertGift(gift);
 		if (i > 0) {
-			return true;
+			return systemConfigurer.getProperty("rightPrompt").toString();
 		} else {
-			return false;
+			return systemConfigurer.getProperty("wrongPrompt").toString();
 		}
 	}
 
 	@Override
-	public Boolean publishCommunityEvent(Event event) {
+	public String publishCommunityEvent(Event event) {
 		int i = dbVisitor.insertEvent(event);
 		if (i > 0) {
-			return true;
+			return systemConfigurer.getProperty("rightPrompt").toString();
 		} else {
-			return false;
+			return systemConfigurer.getProperty("wrongPrompt").toString();
 		}
 	}
 
@@ -1058,22 +1058,22 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 	
 	@Override
-	public boolean deleteOneComment(String sId) {
+	public String deleteOneComment(String sId) {
 		int i = dbVisitor.deleteCmtById(sId);
 		if (i > 0) {
-			return true;
+			return systemConfigurer.getProperty("rightPrompt").toString();
 		} else {
-			return false;
+			return systemConfigurer.getProperty("wrongPrompt").toString();
 		}
 	}
 
 	@Override
-	public boolean deleteOnePicture(String pId) {
+	public String deleteOnePicture(String pId) {
 		int i = dbVisitor.deletePictureById(pId);
 		if (i > 0) {
-			return true;
+			return systemConfigurer.getProperty("rightPrompt").toString();
 		} else {
-			return false;
+			return systemConfigurer.getProperty("wrongPrompt").toString();
 		}
 	}
 

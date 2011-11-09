@@ -71,13 +71,9 @@ public class AssistProcess {
 			String title = req.getParameter("title");
 			String detail = req.getParameter("detail");
 			String time = req.getParameter("time");
-			boolean flag = apiAdaptor
+			String result = apiAdaptor
 					.publishCommunityEvent(title, detail, time);
-			if (flag) {
-				pw.println("发布社区事件成功！");
-			} else {
-				pw.println("发布社区事件失败！");
-			}
+			pw.print(result);
 			pw.close();
 
 		} else if (action.equals(AppStarter.PUBLISHGIFT)) {
@@ -163,14 +159,9 @@ public class AssistProcess {
 			String content = req.getParameter("content");
 			String source = req.getParameter("source");
 
-			boolean flag = apiAdaptor.sendMessage(sender, receiver, content,source);
-			System.out.println(flag);
-
-			if (flag) {
-				pw.println("发送消息成功！");
-			} else {
-				pw.println("发送消息失败！");
-			}
+			String result = apiAdaptor.sendMessage(sender, receiver, content,source);
+			System.out.println(result);
+			pw.println(result);
 			pw.close();
 
 		} else if (action.equals(AppStarter.GETUSERMSG)) {
@@ -214,12 +205,8 @@ public class AssistProcess {
 			PrintWriter pw = res.getWriter();
 			String userId = req.getParameter("userId");
 			String picId = req.getParameter("picId");
-			boolean flag = apiAdaptor.markFavoritePic(userId, picId);
-			if (flag) {
-				pw.println("收藏图片成功！");
-			} else {
-				pw.println("收藏图片失败！");
-			}
+			String result = apiAdaptor.markFavoritePic(userId, picId);
+			pw.println(result);
 			pw.close();
 
 		} else if (action.equals(AppStarter.DELETEONEFAVOR)) {
@@ -227,12 +214,8 @@ public class AssistProcess {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String fId = req.getParameter("fId");
-			boolean flag = apiAdaptor.deleteOneFavorite(fId);
-			if (flag) {
-				pw.println("删除收藏成功！");
-			} else {
-				pw.println("删除收藏失败！");
-			}
+			String result = apiAdaptor.deleteOneFavorite(fId);
+			pw.println(result);
 			pw.close();
 
 		} else if (action.equals(AppStarter.GETFAVORITEPICS)) {
@@ -340,12 +323,8 @@ public class AssistProcess {
 				res.setContentType("text/plain;charset=UTF-8");
 				PrintWriter pw = res.getWriter();
 				String sId = req.getParameter("sId");
-				boolean flag = apiAdaptor.deleteOneCmt(sId);
-				if (flag) {
-					pw.println("删除评论成功！");
-				} else {
-					pw.println("删除评论失败！");
-				}
+				String result = apiAdaptor.deleteOneCmt(sId);
+				pw.println(result);
 				pw.close();
 
 		}else if (action.equals(AppStarter.DELETEONEPIC)) {
@@ -353,12 +332,8 @@ public class AssistProcess {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String pId = req.getParameter("pId");
-			boolean flag = apiAdaptor.deleteOnePic(pId);
-			if (flag) {
-				pw.println("删除发图成功！");
-			} else {
-				pw.println("删除发图失败！");
-			}
+			String result = apiAdaptor.deleteOnePic(pId);
+			pw.println(result);
 			pw.close();
 
 		}else if(action.equals(AppStarter.GETTHUMBNAILSBYTAG)){

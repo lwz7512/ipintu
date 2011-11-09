@@ -280,7 +280,7 @@ public class ApiAdaptor {
 	 * @param content
 	 * @param source
 	 */
-	public boolean sendMessage(String sender, String receiver, String content,
+	public String sendMessage(String sender, String receiver, String content,
 			String source) {
 		Message msg = this.createMessage(sender, receiver, content, source);
 		return pintuService.sendMessage(msg);
@@ -302,7 +302,7 @@ public class ApiAdaptor {
 	 * 
 	 * @param read
 	 */
-	public boolean changeMsgState(String msgIds) {
+	public String changeMsgState(String msgIds) {
 		List<String> msgIdList = new ArrayList<String>();
 		String[] idArray = msgIds.split(",");
 		for (int i = 0; i < idArray.length; i++) {
@@ -335,17 +335,17 @@ public class ApiAdaptor {
 		return fav;
 	}
 
-	public boolean markFavoritePic(String userId, String picId) {
+	public String markFavoritePic(String userId, String picId) {
 		boolean flag = pintuService.checkExistFavorite(userId, picId);
 		if (flag) {// 图片已收藏，禁止重复收藏
-			return false;
+			return "alerady collect";
 		} else {
 			Favorite fav = this.createFavorite(userId, picId);
 			return pintuService.markFavoritePic(fav);
 		}
 	}
 
-	public boolean deleteOneFavorite(String fId) {
+	public String deleteOneFavorite(String fId) {
 		return pintuService.deleteOneFavorite(fId);
 	}
 
@@ -400,7 +400,7 @@ public class ApiAdaptor {
 		return JSONArray.fromCollection(list).toString();
 	}
 
-	public boolean publishCommunityEvent(String title, String detail,
+	public String publishCommunityEvent(String title, String detail,
 			String time) {
 		Event eve = new Event();
 		eve.setId(PintuUtils.generateUID());
@@ -485,11 +485,11 @@ public class ApiAdaptor {
 		return JSONArray.fromCollection(tagList).toString();
 	}
 
-	public boolean deleteOneCmt(String sId) {
+	public String deleteOneCmt(String sId) {
 		return pintuService.deleteOneComment(sId);
 	}
 
-	public boolean deleteOnePic(String pId) {
+	public String deleteOnePic(String pId) {
 		return pintuService.deleteOnePicture(pId);
 	}
 

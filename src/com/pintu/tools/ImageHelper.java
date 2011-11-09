@@ -77,23 +77,23 @@ public class ImageHelper {
 		if (image == null)
 			return;
 
-		if (fileType.toLowerCase().equals("png")) {
-			// PngEncoder encoder = new
-			// PngEncoder(PngEncoder.COLOR_TRUECOLOR_ALPHA);
-			// try {
-			// encoder.encode(image, new FileOutputStream(strBuffer));
-			// } catch (IOException e) {
-			// e.printStackTrace();
-			// }
-
-			try {
-				File file = new File(strBuffer);
-				ImageIO.write((RenderedImage) image, "png", file);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-		} else {
+//		if (fileType.toLowerCase().equals("png")) {
+//			// PngEncoder encoder = new
+//			// PngEncoder(PngEncoder.COLOR_TRUECOLOR_ALPHA);
+//			// try {
+//			// encoder.encode(image, new FileOutputStream(strBuffer));
+//			// } catch (IOException e) {
+//			// e.printStackTrace();
+//			// }
+//
+//			try {
+//				File file = new File(strBuffer);
+//				ImageIO.write((RenderedImage) image, "png", file);
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//
+//		} else {
 			BufferedImage tag = new BufferedImage(width, height,
 					BufferedImage.TYPE_INT_RGB);
 			// tag.getGraphics().drawImage(image, 0, 0, width, height, null);
@@ -109,7 +109,7 @@ public class ImageHelper {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
+//		}
 	}
 
 	private static int[] adjustImageSize(int theImgWidth, int theImgHeight,
