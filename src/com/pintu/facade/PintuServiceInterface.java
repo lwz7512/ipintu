@@ -214,6 +214,10 @@ public interface PintuServiceInterface {
 
 	public List<TPicDesc> getThumbnailsByTag(String tagId, int pageNum);
 
+	public List<User> getPicDaren();
+
+	public List<User> getCmtDaren();
+
 
 	// ANYMORE NECESSARY???
 

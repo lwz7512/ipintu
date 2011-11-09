@@ -498,4 +498,14 @@ public class ApiAdaptor {
 		return JSONArray.fromCollection(list).toString();
 	}
 
+	public String getPicDaren() {
+		List<User> list = pintuService.getPicDaren();
+		return JSONArray.fromCollection(list).toString();
+	}
+
+	public String getCmtDaren() {
+		List<User> list = pintuService.getCmtDaren();
+		return JSONArray.fromCollection(list).toString();
+	}
+
 } // end of class

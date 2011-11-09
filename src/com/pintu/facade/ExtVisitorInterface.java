@@ -110,5 +110,11 @@ public interface ExtVisitorInterface {
 	
     //查看某tag的所有图片
     public static final String GETTHUMBNAILSBYTAG = "getThumbnailsByTag";
-
+    
+    //贴图达人
+    public static final String PICDARENSTATISTICS = "pictureDarenStatistics";
+    
+    //评论达人
+    public static final String CMTDARENSTATISTICS = "commentDarenStatistics";
+    
 }

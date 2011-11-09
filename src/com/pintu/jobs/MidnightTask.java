@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicDetails;
+import com.pintu.beans.User;
 import com.pintu.beans.Vote;
 import com.pintu.dao.CacheAccessInterface;
 import com.pintu.dao.DBAccessInterface;
@@ -26,10 +27,19 @@ public class MidnightTask extends TimerTask {
 	// 新更新classical的故事id（'','',''）
 	public static StringBuffer newClassicalStoryIds = new StringBuffer();
 	
+	//经典列表
 	public  static List<TPicDetails> classicalList = new ArrayList<TPicDetails>();
 	
+	//收藏列表
 	public  static List<TPicDetails> collectList = new ArrayList<TPicDetails>();
-
+	
+	//贴图达人列表
+	public static List<User> picDarenList = new ArrayList<User>();
+	
+	//发评论达人列表
+	public static List<User> cmtDarenList = new ArrayList<User>();
+	
+	
 	private Logger log = Logger.getLogger(MidnightTask.class);
 
 	public MidnightTask(DBAccessInterface dbVisitor,
@@ -52,16 +62,24 @@ public class MidnightTask extends TimerTask {
 		clearCounter();
 		
 		//将一天新的top经典和收藏查了放缓存
-		getClassicalAndCollectTop();
+		calculateClassicalAndCollectTop();
+		
+		//将社区发图和发评论达人查询放缓存
+		calculatePicAndCmtDaren();
 	}
 	
-	private void getClassicalAndCollectTop() {
-		int topNum = Integer.parseInt(propertyConfigurer
-				.getProperty("pageSizeForWeb"));
+	private void calculatePicAndCmtDaren() {
+		picDarenList.clear();
+		picDarenList=this.dbAccess.getPicDaren();
+		cmtDarenList.clear();
+		cmtDarenList=this.dbAccess.getCmtDaren();
+	}
+
+	private void calculateClassicalAndCollectTop() {
 		classicalList.clear();
-		classicalList=this.dbAccess.classicalStatistics(topNum);
+		classicalList=this.dbAccess.classicalStatistics();
 		collectList.clear();
-		collectList=this.dbAccess.collectStatistics(topNum);
+		collectList=this.dbAccess.collectStatistics();
 	}
 
 	private void findAndSetClassical() {

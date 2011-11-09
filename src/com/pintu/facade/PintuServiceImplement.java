@@ -975,9 +975,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		if(MidnightTask.collectList.size() > 0){
 			return MidnightTask.collectList;
 		}else{
-			int topNum = Integer.parseInt(propertyConfigurer
-					.getProperty("pageSizeForWeb"));
-			List<TPicDetails> picList = dbVisitor.collectStatistics(topNum);
+			List<TPicDetails> picList = dbVisitor.collectStatistics();
 			return picList;
 		}
 	}
@@ -987,9 +985,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		if(MidnightTask.classicalList.size() > 0){
 			return MidnightTask.classicalList;
 		}else{
-			int topNum = Integer.parseInt(propertyConfigurer
-					.getProperty("pageSizeForWeb"));
-			List<TPicDetails> picList = dbVisitor.classicalStatistics(topNum);
+			List<TPicDetails> picList = dbVisitor.classicalStatistics();
 			return picList;
 		}
 	}
@@ -1087,6 +1083,27 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				.getProperty("pageSizeForWeb"));
 		List<TPicDesc> list = dbVisitor.getThumbnailByTag(tagId,pageNum,pageSize);
 		return list;
+	}
+
+	@Override
+	public List<User> getPicDaren() {
+		if(MidnightTask.picDarenList.size() > 0){
+			return MidnightTask.picDarenList;
+		}else{
+			List<User> list = dbVisitor.getPicDaren();
+			return list;
+		}
+	}
+
+	@Override
+	public List<User> getCmtDaren() {
+		if(MidnightTask.cmtDarenList.size() > 0){
+			return MidnightTask.cmtDarenList;
+		}else{
+			List<User> list = dbVisitor.getCmtDaren();
+			return list;
+		}
+	
 	}
 
 

@@ -33,8 +33,8 @@ public class User implements Serializable{
 	//最后动作时间（即最后更新时间）存毫秒数
 	private Long lastUpdateTime;
 	
-
 	private int storyNum;
+	
 	private int tpicNum;
 
 	//申请理由

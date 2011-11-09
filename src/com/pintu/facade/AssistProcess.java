@@ -373,6 +373,22 @@ public class AssistProcess {
 			System.out.println(result);
 			pw.println(result);
 			pw.close();
+		
+		}else if(action.equals(AppStarter.PICDARENSTATISTICS)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String result = apiAdaptor.getPicDaren();
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
+			
+		}else if(action.equals(AppStarter.CMTDARENSTATISTICS)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String result = apiAdaptor.getCmtDaren();
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
 			
 		}else{
 			
