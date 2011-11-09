@@ -217,6 +217,7 @@ public class DBAccessImplement implements DBAccessInterface {
 			user.setAccount(map.get("u_account").toString());
 			user.setAvatar(map.get("u_avatar").toString());
 			user.setNickName(map.get("u_nickName").toString());
+			user.setRegisterTime(map.get("u_registerTime").toString());
 			user.setRole(map.get("u_role").toString());
 			user.setLevel(Integer.parseInt(map.get("u_level").toString()));
 			user.setScore(Integer.parseInt(map.get("u_score").toString()));
@@ -976,6 +977,7 @@ public class DBAccessImplement implements DBAccessInterface {
 				Map<String, Object> map = (Map<String, Object>) rows.get(i);
 				user.setId(map.get("u_id").toString());
 				user.setAccount(map.get("u_account").toString());
+				user.setNickName(map.get("u_nickName").toString());
 			    user.setPwd(map.get("u_pwd").toString());
 			    user.setAvatar(map.get("u_avatar").toString());
 			    user.setRegisterTime(map.get("u_registerTime").toString());
@@ -1115,12 +1117,12 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public List<TPicDetails> classicalStatistics(int topNum) {
+	public List<TPicDetails> classicalStatistics() {
 		List<TPicDetails> resList = new ArrayList<TPicDetails>();
 		String sql = "select p.p_id,p.p_name,p.p_owner,p.p_publishTime,p.p_description,p.p_source,p.p_isOriginal,p.p_browseCount," +
 				"p.p_mobImgId,p.p_mobImgSize,p.p_mobImgPath,p.p_rawImgId,p.p_rawImgSize,p.p_rawImgPath," +
 				"u.u_nickName,u.u_avatar,u.u_score,u.u_level" +
-				" from t_picture p,t_user u where u.u_id=p.p_owner order by p.p_browseCount desc limit "+topNum;
+				" from t_picture p,t_user u where u.u_id=p.p_owner order by p.p_browseCount desc limit 12";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -1152,13 +1154,13 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public List<TPicDetails> collectStatistics(int topNum) {
+	public List<TPicDetails> collectStatistics() {
 		List<TPicDetails> resList = new ArrayList<TPicDetails>();
 		String sql = "select p.p_id,p.p_name,p.p_owner,p.p_publishTime,p.p_description,p.p_source,p.p_isOriginal,p.p_browseCount," +
 				"p.p_mobImgId,p.p_mobImgSize,p.p_mobImgPath,p.p_rawImgId,p.p_rawImgSize,p.p_rawImgPath," +
 				"u.u_nickName,u.u_avatar,u.u_score,u.u_level " +
 				"from t_picture p,t_user u,t_favorite f where u.u_id=p.p_owner and f.f_picture=p.p_id " +
-				"order by f.f_collectTime desc limit "+topNum;
+				"order by f.f_collectTime desc limit 12";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -1448,6 +1450,60 @@ public class DBAccessImplement implements DBAccessInterface {
 			}
 		}
 		return resList;
+	}
+
+	@Override
+	public List<User> getPicDaren() {
+		List<User> userList = new ArrayList<User>();
+		String sql="select u.u_id,u.u_account,u.u_nickName,u.u_registerTime,u.u_role,u.u_level,u.u_score,u.u_exchangeScore,u.u_avatar," +
+				"count(distinct p.p_id) as picNum from t_user u ,t_picture p "+
+				"where u.u_id=p.p_owner group by u.u_id order by picNum desc limit 10";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				User user = new User();
+				user.setId(map.get("u_id").toString());
+				user.setAccount(map.get("u_account").toString());
+				user.setNickName(map.get("u_nickName").toString());
+			    user.setAvatar(map.get("u_avatar").toString());
+			    user.setRegisterTime(map.get("u_registerTime").toString());
+			    user.setRole(map.get("u_role").toString());
+			    user.setLevel(Integer.parseInt(map.get("u_level").toString()));
+			    user.setScore(Integer.parseInt(map.get("u_score").toString()));
+			    user.setExchangeScore(Integer.parseInt(map.get("u_exchangeScore").toString()));
+			    user.setTpicNum(Integer.parseInt(map.get("picNum").toString()));
+			    userList.add(user);
+			}
+		}
+		return userList;
+	}
+
+	@Override
+	public List<User> getCmtDaren() {
+		List<User> userList = new ArrayList<User>();
+		String sql="select u.u_id,u.u_account,u.u_nickName,u.u_registerTime,u.u_level,u.u_role,u.u_role,u.u_score,u.u_exchangeScore,u.u_avatar," +
+				"count(distinct s.s_id) as storyNum from t_user u,t_story s "+
+				"where u.u_id = s.s_owner group by u.u_id order by storyNum desc limit 10";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				User user = new User();
+				user.setId(map.get("u_id").toString());
+				user.setAccount(map.get("u_account").toString());
+				user.setNickName(map.get("u_nickName").toString());
+			    user.setAvatar(map.get("u_avatar").toString());
+			    user.setRegisterTime(map.get("u_registerTime").toString());
+			    user.setRole(map.get("u_role").toString());
+			    user.setLevel(Integer.parseInt(map.get("u_level").toString()));
+			    user.setScore(Integer.parseInt(map.get("u_score").toString()));
+			    user.setExchangeScore(Integer.parseInt(map.get("u_exchangeScore").toString()));
+			    user.setStoryNum(Integer.parseInt(map.get("storyNum").toString()));
+			    userList.add(user);
+			}
+		}
+		return userList;
 	}
 
 

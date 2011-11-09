@@ -136,22 +136,22 @@ public interface PintuServiceInterface {
 	public List<Wealth> getWealthDetails(String userId);
 
 	// 发送一个消息
-	public Boolean sendMessage(Message msg);
+	public String sendMessage(Message msg);
 
 	// 查看自己的消息
 	public List<Message> getUserMessages(String userId);
 
 	// 改变消息的状态
-	public boolean changeMsgState(List<String> msgIdList);
+	public String changeMsgState(List<String> msgIdList);
 
 	// 在标记为收藏时来检查是否已收藏
 	public boolean checkExistFavorite(String userId, String picId);
 
 	// 标记收藏
-	public boolean markFavoritePic(Favorite fav);
+	public String markFavoritePic(Favorite fav);
 
 	// 删除收藏的某一图片
-	public boolean deleteOneFavorite(String fId);
+	public String deleteOneFavorite(String fId);
 
 	// 查看自己的收藏图片(要用到分页)
 	public List<TPicItem> getFavoriteTpics(String userId, int pageNum);
@@ -169,10 +169,10 @@ public interface PintuServiceInterface {
 	public List<Event> getCommunityEvents();
 	
 	// 发布可选礼物信息
-	public Boolean publishExchangeableGift(Gift gift);
+	public String publishExchangeableGift(Gift gift);
 	
 	// 发布社区事件
-	public Boolean publishCommunityEvent(Event event);
+	public String publishCommunityEvent(Event event);
 
 	// 获取最近一段时间的贴图
 	public List<TPicDesc> getLatestPic();
@@ -208,11 +208,15 @@ public interface PintuServiceInterface {
 	
 	public List<Tag> geSystemTags();
 
-	public boolean deleteOneComment(String sId);
+	public String deleteOneComment(String sId);
 
-	public boolean deleteOnePicture(String pId);
+	public String deleteOnePicture(String pId);
 
 	public List<TPicDesc> getThumbnailsByTag(String tagId, int pageNum);
+
+	public List<User> getPicDaren();
+
+	public List<User> getCmtDaren();
 
 
 	// ANYMORE NECESSARY???

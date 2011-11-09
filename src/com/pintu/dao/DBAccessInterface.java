@@ -161,9 +161,9 @@ public interface DBAccessInterface {
 	
 	public int updatePicBrowseCount(List<Map<String, Integer>> browseCountList);
 	
-	public List<TPicDetails> classicalStatistics(int topNum);
+	public List<TPicDetails> classicalStatistics();
 	
-	public List<TPicDetails> collectStatistics(int topNum);
+	public List<TPicDetails> collectStatistics();
 	
 	public List<TPicDetails> getGalleryForWeb(int pageNum,int pageSize);
 	
@@ -189,6 +189,10 @@ public interface DBAccessInterface {
 	
 	public List<TPicDesc> getThumbnailByTag(String tagId, int pageNum,
 			int pageSize);
+	
+	public List<User> getPicDaren();
+	
+	public List<User> getCmtDaren();
 	
 	
 }
