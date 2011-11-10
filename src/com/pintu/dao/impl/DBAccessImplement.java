@@ -779,7 +779,7 @@ public class DBAccessImplement implements DBAccessInterface {
 	public List<TPicItem> getFavoriteTpics(String userId, int pageNum, int pageSize) {
 		List<TPicItem> resList = new ArrayList<TPicItem>();
 		int startLine = (pageNum -1)*pageSize;
-		String sql = "select p.p_id,p.p_name,p.p_owner,p.p_publishTime,p.p_description,p.p_source,p.p_isOriginal,p.p_browseCount" +
+		String sql = "select p.p_id,p.p_name,p.p_owner,p.p_publishTime,p.p_description,p.p_source,p.p_isOriginal,p.p_browseCount," +
 				"p.p_mobImgId,p.p_mobImgSize,p.p_mobImgPath,p.p_rawImgId,p.p_rawImgSize,p.p_rawImgPath" +
 				" from t_picture p, t_favorite f where p.p_id = f.f_picture and f.f_owner = '"+userId+"' limit "+startLine+","+pageSize;
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);

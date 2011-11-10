@@ -234,8 +234,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		// 根据图片id到缓存中取图片的基本信息
 		TPicItem item = cacheVisitor.getSpecificPic(tpId);
 		// 若缓存里不存在该图片的信息则转向查数据库
-		String picId = item.getId();
-		if (picId == null) {
+		if ( item.getId() == null) {
 			item = dbVisitor.getPictureById(tpId);
 		}
 
@@ -254,7 +253,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			details.setLevel(user.getLevel());
 			details.setAvatarImgPath(user.getAvatar());
 		}
-		details.setId(picId);
+		details.setId(item.getId());
 		details.setName(item.getName());
 		details.setOwner(userId);
 		details.setMobImgId(item.getMobImgId());
@@ -698,7 +697,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				.getProperty("pageSize"));
 		List<TPicItem> picList = dbVisitor.getFavoriteTpics(userId, pageNum,
 				pageSize);
-		return picList;
+		return  calcPicItemCount(picList);
 	}
 
 	@Override
@@ -707,7 +706,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				.getProperty("pageSize"));
 		List<TPicItem> list = dbVisitor.getTpicsByUser(userId, pageNum,
 				pageSize);
-		return list;
+		return  calcPicItemCount(list);
 	}
 
 	@Override
@@ -976,22 +975,56 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 	@Override
 	public List<TPicDetails> collectStatistics() {
+		List<TPicDetails> picList = new ArrayList<TPicDetails>();
 		if(MidnightTask.collectList.size() > 0){
-			return MidnightTask.collectList;
+			picList = MidnightTask.collectList;
 		}else{
-			List<TPicDetails> picList = dbVisitor.collectStatistics();
-			return picList;
+		   picList = dbVisitor.collectStatistics();
 		}
+		return calcPicDetailCount(picList);
 	}
 
 	@Override
 	public List<TPicDetails> classicalStatistics() {
+		List<TPicDetails> picList = new ArrayList<TPicDetails>();
 		if(MidnightTask.classicalList.size() > 0){
-			return MidnightTask.classicalList;
+			picList = MidnightTask.classicalList;
 		}else{
-			List<TPicDetails> picList = dbVisitor.classicalStatistics();
-			return picList;
+			picList = dbVisitor.classicalStatistics();
 		}
+		return calcPicDetailCount(picList);
+	}
+	
+	//用于处理所有查询图片的处理实时点击量问题
+	private List<TPicDetails> calcPicDetailCount(List<TPicDetails> picList){
+		List<TPicDetails> resultList = new ArrayList<TPicDetails>();
+		if(picList != null && picList.size()>0){
+			for (int i = 0; i < picList.size(); i++) {
+				TPicDetails pic = picList.get(i);
+				if(CacheAccessInterface.hotPicCacheIds.containsKey(pic.getId())){
+					int newCount = pic.getBrowseCount() + CacheAccessInterface.hotPicCacheIds.get(pic.getId());
+					pic.setBrowseCount(newCount);
+				}
+				resultList.add(pic);
+			}
+		}
+		return resultList;
+	}
+
+	//用于处理所有查询图片的处理实时点击量问题
+	private List<TPicItem> calcPicItemCount(List<TPicItem> picList){
+		List<TPicItem> resultList = new ArrayList<TPicItem>();
+		if(picList != null && picList.size()>0){
+			for (int i = 0; i < picList.size(); i++) {
+				TPicItem pic = picList.get(i);
+				if(CacheAccessInterface.hotPicCacheIds.containsKey(pic.getId())){
+					int newCount = pic.getBrowseCount() + CacheAccessInterface.hotPicCacheIds.get(pic.getId());
+					pic.setBrowseCount(newCount);
+				}
+				resultList.add(pic);
+			}
+		}
+		return resultList;
 	}
 
 	@Override
@@ -999,7 +1032,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		int pageSize = Integer.parseInt(propertyConfigurer
 				.getProperty("pageSizeForWeb"));
 		List<TPicDetails> picList = dbVisitor.getGalleryForWeb(pageNum,pageSize);
-		return picList;
+		return  calcPicDetailCount(picList);
 	}
 
 	@Override
@@ -1027,7 +1060,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		
 		resList = combineResult(andList,orList);
 		
-		return resList;
+		return  calcPicDetailCount(resList);
 	}
 
 	//将and的结果与or的结果合并
