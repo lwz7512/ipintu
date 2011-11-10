@@ -67,7 +67,7 @@ function check(){
 }
 
 </script>
-<body>
+<body  onload="document.getElementById('account').focus()">
 <div id="contact-form"> 
 <form id="contact" method="post"
 	action="<%=request.getContextPath()%>/pintuapi">

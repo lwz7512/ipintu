@@ -234,7 +234,8 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		// 根据图片id到缓存中取图片的基本信息
 		TPicItem item = cacheVisitor.getSpecificPic(tpId);
 		// 若缓存里不存在该图片的信息则转向查数据库
-		if (item.getId() == null) {
+		String picId = item.getId();
+		if (picId == null) {
 			item = dbVisitor.getPictureById(tpId);
 		}
 
@@ -253,7 +254,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			details.setLevel(user.getLevel());
 			details.setAvatarImgPath(user.getAvatar());
 		}
-		details.setId(item.getId());
+		details.setId(picId);
 		details.setName(item.getName());
 		details.setOwner(userId);
 		details.setMobImgId(item.getMobImgId());
@@ -262,7 +263,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		details.setDescription(item.getDescription());
 		details.setSource(item.getSource());
 		details.setIsOriginal(item.getIsOriginal());
-		details.setBrowseCount(item.getBrowseCount());
+//		details.setBrowseCount(item.getBrowseCount());
 		// 取一个图片详情时，我们认为这张图获得了一个点击量
 		int counter = 1;
 
@@ -277,7 +278,10 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		}
 
 		details.setCounter(CacheAccessInterface.hotPicCacheIds.get(item.getId()));
-
+		
+		//要根据当天的点击量来累加从库里取出来的浏览次数~即得到最新的浏览次数
+		details.setBrowseCount(item.getBrowseCount()+details.getCounter());
+		
 		return details;
 	}
 
