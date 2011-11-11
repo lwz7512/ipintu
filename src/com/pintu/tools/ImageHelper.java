@@ -2,7 +2,6 @@ package com.pintu.tools;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
