@@ -64,7 +64,7 @@ public class ImageHelper {
 	}
 
 	// 写png图片
-	private static void writePngImage(Image image, int newHeight, int newWidth,
+	private static void writePngImage(Image image, int newWidth, int newHeight,
 			String filePath) {
 		BufferedImage newImage = new BufferedImage(newWidth, newHeight,
 				BufferedImage.TRANSLUCENT);
@@ -73,7 +73,7 @@ public class ImageHelper {
 						image.getScaledInstance(newWidth, newHeight,
 								Image.SCALE_SMOOTH), 0, 0, null);
 		try {
-			PngEncoder encoder = new PngEncoder(PngEncoder.COLOR_INDEXED_ALPHA);
+			PngEncoder encoder = new PngEncoder(PngEncoder.COLOR_TRUECOLOR_ALPHA);
 			FileOutputStream outStream = new FileOutputStream(filePath);
 			encoder.encode(newImage, outStream);
 			outStream.close();
