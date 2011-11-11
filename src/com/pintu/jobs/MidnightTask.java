@@ -137,7 +137,7 @@ public class MidnightTask extends TimerTask {
 		Map<String,Integer> hotPicMap = CacheAccessInterface.hotPicCacheIds;
 		List<Map<String,Integer>> browseCountList = new ArrayList<Map<String,Integer>>();
 		browseCountList.add(hotPicMap);
-		System.out.println("Need to update the picture size is:"+browseCountList.size());
+		System.out.println("Need to update the broseCount picturesize is:"+browseCountList.size());
 		if(browseCountList != null && browseCountList.size() > 0){
 			int res = this.dbAccess.updatePicBrowseCount(browseCountList);
 			if(res == hotPicMap.size()){

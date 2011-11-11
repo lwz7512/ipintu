@@ -1073,8 +1073,9 @@ public class DBAccessImplement implements DBAccessInterface {
 							throws SQLException {
 							Map<String,Integer> map = browseCountList.get(i);
 							for(String picId:map.keySet()){
-							ps.setInt(1, map.get(picId));
-							ps.setString(2, picId);
+								int count = map.get(picId);
+								ps.setInt(1, count);
+								ps.setString(2, picId);
 						}
 					}
 
