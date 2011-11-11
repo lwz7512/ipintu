@@ -1,6 +1,7 @@
 package com.pintu.tools;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 
 import org.apache.commons.fileupload.FileItem;
@@ -46,7 +47,8 @@ public class ImageFileCreationTask implements Runnable {
 				picObj.setMobImgId(picObj.getId()+"_Mob");
 				picObj.setMobImgPath(route+picObj.getMobImgId()+getFileType());
 				try {
-					 ImageHelper.thumbnailHandler(fileItem, 440, 440, true,imgType,picObj.getMobImgPath());
+//					 ImageHelper.thumbnailHandler(fileItem, 440, 440, true,imgType,picObj.getMobImgPath());
+					 ImageHelper.handleImage(fileItem, 440, 440, picObj.getMobImgPath());
 //					先生成小图片后写文件再给size赋值
 					 File file= new File(picObj.getMobImgPath());
 					 if(file.length() > 0){
@@ -63,8 +65,12 @@ public class ImageFileCreationTask implements Runnable {
 				String thumbnailId=picObj.getId()+TPicDesc.THUMBNIAL;
 				//函数设计传参需要，因不写文件，帮用不到
 				String thumbnailPath=route+thumbnailId+getFileType();
-				ImageHelper.thumbnailHandler(fileItem, 100, 100, true,imgType,thumbnailPath);
-				
+//				ImageHelper.thumbnailHandler(fileItem, 100, 100, true,imgType,thumbnailPath);
+				try {
+					ImageHelper.handleImage(fileItem, 100, 100, thumbnailPath);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				//构造出缩略图对象，用于放到缓存中
 				TPicDesc tpicDesc = new TPicDesc();
 				//缩略图对象中存放贴图对象ID，方便对应
