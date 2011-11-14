@@ -188,9 +188,9 @@ public class DBAccessImplement implements DBAccessInterface {
 
 
 	@Override
-	public List<Vote> getVoteForCache(String storyIds) {
+	public List<Vote> getVoteForCache(String picIds) {
 		List<Vote> resList = new ArrayList<Vote>();
-		String sql = "select * from t_vote where v_follow in (" + storyIds + ")";
+		String sql = "select * from t_vote where v_follow in (" + picIds + ")";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -325,9 +325,9 @@ public class DBAccessImplement implements DBAccessInterface {
 
 
 	@Override
-	public List<Vote> getVoteOfStory(String storyId) {
+	public List<Vote> getVoteOfPic(String picId) {
 		List<Vote> voteList = new ArrayList<Vote>();
-		String sql = "select * from t_vote where v_follow = '"+storyId+"'";
+		String sql = "select * from t_vote where v_follow = '"+picId+"'";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -511,20 +511,9 @@ public class DBAccessImplement implements DBAccessInterface {
 
 	@Override
 	public int updateUserLevel(final String userId,final int level) {
-		String sql = "update t_user  set u_level = ? where u_id =?";
-		int[] res = jdbcTemplate.batchUpdate(sql,
-				new BatchPreparedStatementSetter() {
-					public void setValues(PreparedStatement ps, int i)
-							throws SQLException {
-						ps.setInt(1, level);
-						ps.setString(2, userId);
-					}
-
-					public int getBatchSize() {
-						return 1;
-					}
-				});
-		return res.length;
+		String sql = "update t_user  set u_level ="+level+" where u_id ='"+userId+"'";
+		int rows = jdbcTemplate.update(sql); 
+		return rows;
 	}
 
 	@Override
@@ -1065,7 +1054,6 @@ public class DBAccessImplement implements DBAccessInterface {
 
 	@Override
 	public int updatePicBrowseCount(final List<Map<String, Integer>> browseCountList) {
-
 		String sql = "update t_picture  set p_browseCount = p_browseCount +? where p_id=?";
 		int[] res = jdbcTemplate.batchUpdate(sql,
 				new BatchPreparedStatementSetter() {
@@ -1505,6 +1493,13 @@ public class DBAccessImplement implements DBAccessInterface {
 			}
 		}
 		return userList;
+	}
+
+	@Override
+	public int updateUserInfo(String nickName, String avatarPath, String userId) {
+		String sql = "update t_user  set u_nickName ='"+nickName+"' and u_avatar ='"+avatarPath+"' where u_id='"+userId+"";
+		int rows = jdbcTemplate.update(sql); 
+		return rows;
 	}
 
 

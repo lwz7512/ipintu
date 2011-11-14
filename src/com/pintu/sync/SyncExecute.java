@@ -338,10 +338,10 @@ public class SyncExecute implements Runnable {
 				msg.setSender(vote.getVoter());
 				msg.setReceiver(vote.getReceiver());
 				String type = vote.getType();
-				if (type.equals(Vote.EGG_TYPE)) {
-					msg.setContent("so bad story.");
-				} else {
+				if (type.equals(Vote.COOL_TYPE)) {
 					msg.setContent("I like your story and I am on your side.");
+				} else {
+					msg.setContent("Just soso.");
 				}
 				msg.setWriteTime(PintuUtils.getFormatNowTime());
 				msg.setRead(0);

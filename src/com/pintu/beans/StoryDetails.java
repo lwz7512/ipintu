@@ -9,54 +9,65 @@ public class StoryDetails extends Story{
 	//用户头像，用户表存文件路径，从磁盘上找图
 	private String avatarImgPath;
 	
-	private int flower;
+	private int cool;
 	
-	private int heart;
-	
-	private int egg;
-	
-	private int star;
+//	private int flower;
+//	
+//	private int heart;
+//	
+//	private int egg;
+//	
+//	private int star;
+
+
+//	public int getFlower() {
+//		return flower;
+//	}
+//
+//	public void setFlower(int flower) {
+//		this.flower = flower;
+//	}
+//
+//	public int getHeart() {
+//		return heart;
+//	}
+//
+//	public void setHeart(int heart) {
+//		this.heart = heart;
+//	}
+//
+//	public int getEgg() {
+//		return egg;
+//	}
+//
+//	public void setEgg(int egg) {
+//		this.egg = egg;
+//	}
+//
+//	public int getStar() {
+//		return star;
+//	}
+//
+//	public void setStar(int star) {
+//		this.star = star;
+//	}
 
 	public String getAuthor() {
 		return author;
 	}
 
+	public int getCool() {
+		return cool;
+	}
+
+	public void setCool(int cool) {
+		this.cool = cool;
+	}
+
 	public void setAuthor(String author) {
 		this.author = author;
 	}
-
-	public int getFlower() {
-		return flower;
-	}
-
-	public void setFlower(int flower) {
-		this.flower = flower;
-	}
-
-	public int getHeart() {
-		return heart;
-	}
-
-	public void setHeart(int heart) {
-		this.heart = heart;
-	}
-
-	public int getEgg() {
-		return egg;
-	}
-
-	public void setEgg(int egg) {
-		this.egg = egg;
-	}
-
-	public int getStar() {
-		return star;
-	}
-
-	public void setStar(int star) {
-		this.star = star;
-	}
-
+	
 	public String getAvatarImgPath() {
 		return avatarImgPath;
 	}

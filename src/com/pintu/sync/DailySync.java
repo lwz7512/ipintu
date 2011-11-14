@@ -73,13 +73,11 @@ public class DailySync implements Runnable{
 				
 				if(picIds.length() > 0){
 					//同步图片对应的数据库故事到缓存
-					String storyIds = syncStoryTask(picIds.toString());
+				    syncStoryTask(picIds.toString());
 					
-					//同步故事对应的数据库投票到缓存
-					//若没有同步到故事的缓存,即storyId没有,就不用同步投票了吧
-					if(storyIds.length()>0){
-						syncVoteTask(storyIds);
-					}
+					//同步图片对应的数据库投票到缓存
+					//若没有同步到图片的缓存,即picId没有,就不用同步投票了吧
+					syncVoteTask(picIds.toString());
 				}
 			}
 			
@@ -116,9 +114,9 @@ public class DailySync implements Runnable{
 		}
 
 
-		private void syncVoteTask(String storyIds) {
+		private void syncVoteTask(String picIds) {
 				log.info(">>>Synchronous vote to cache is begin...");
-				List<Vote> voteList=dbVisitor.getVoteForCache(storyIds);
+				List<Vote> voteList=dbVisitor.getVoteForCache(picIds);
 				if(voteList != null){
 					for(int i=0;i<voteList.size();i++){
 						Vote vote = voteList.get(i);

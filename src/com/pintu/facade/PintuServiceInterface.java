@@ -112,8 +112,8 @@ public interface PintuServiceInterface {
 	// 为故事投票
 	public void addVoteToStory(Vote vote);
 
-	// 返回一个故事的所有各类的投票
-	public List<Vote> getVotesOfStory(String storyId);
+	// 返回一个图片的赞一个投票
+	public List<Vote> getVotesOfPic(String picId);
 
 	// 查看今日热图（点击量、故事数、评论数）
 	// 系统定时统计出来并保持，然后返回三类图排名10以内的30张图；

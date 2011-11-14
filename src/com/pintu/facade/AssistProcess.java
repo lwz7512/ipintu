@@ -131,14 +131,14 @@ public class AssistProcess {
 			pw.write(result);
 			pw.close();
 
-//		} else if (action.equals(AppStarter.ADDVOTE)) {
-//			// 为故事添加投票
-//			String follow = req.getParameter("follow");
-//			String type = req.getParameter("type");
-//			String amount = req.getParameter("amount");
-//			String voter = req.getParameter("owner");
-//			String receiver = req.getParameter("receiver");
-//			apiAdaptor.addVoteToStory(follow, type, amount, voter, receiver);
+		} else if (action.equals(AppStarter.ADDVOTE)) {
+			// 为故事添加投票
+			String follow = req.getParameter("follow");
+			String type = req.getParameter("type");
+			String amount = req.getParameter("amount");
+			String voter = req.getParameter("owner");
+			String receiver = req.getParameter("receiver");
+			apiAdaptor.addVoteToStory(follow, type, amount, voter, receiver);
 
 		} else if (action.equals(AppStarter.GETUSERDETAIL)) {
 			// 根据用户id得到该用户详情
@@ -363,6 +363,14 @@ public class AssistProcess {
 			String result = apiAdaptor.getCmtDaren();
 			System.out.println(result);
 			pw.println(result);
+			pw.close();
+		
+		}else if(action.equals(AppStarter.ALTERUSERINFO)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+//			String result = apiAdaptor.getCmtDaren();
+//			System.out.println(result);
+//			pw.println(result);
 			pw.close();
 			
 		}else{

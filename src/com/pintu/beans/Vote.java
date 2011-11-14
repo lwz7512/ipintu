@@ -6,11 +6,13 @@ public class Vote implements Serializable{
 
 	private static final long serialVersionUID = -2728077033301616771L;
 	
-	//投票分以下四种类型，分别代表爱心，喜欢，扔蛋和经典
-	public static String HEART_TYPE="heart";
-	public static String FLOWER_TYPE="flower";
-	public static String EGG_TYPE="egg";
-	public static String STAR_TYPE="star";
+//	//投票分以下四种类型，分别代表爱心，喜欢，扔蛋和经典
+//	public static String HEART_TYPE="heart";
+//	public static String FLOWER_TYPE="flower";
+//	public static String EGG_TYPE="egg";
+//	public static String STAR_TYPE="star";
+	
+	public static String COOL_TYPE="cool";
 	
 	private String id;
 	//是对哪个故事的投票
