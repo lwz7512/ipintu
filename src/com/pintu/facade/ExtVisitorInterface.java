@@ -50,7 +50,7 @@ public interface ExtVisitorInterface {
 	
 	public static final String  ADDVOTE= "addVote";
 	
-//	public static final String GETClASSICALPINTU= "getClassicalPintu";
+	public static final String GETPICCOOLCOUNT= "getPicCoolCount";
 	
 	public static final String GETUSERESTATE = "getUserEstate";
 	

@@ -308,18 +308,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 					storyDetail.setAuthor(user.getAccount());
 				}
 				
-				List<Vote> voteList = this.getVotesOfPic(picId);
-				
-				if (voteList != null && voteList.size() > 0) {
-					for (int j = 0; j < voteList.size(); j++) {
-						Vote vote = voteList.get(j);
-						if (vote.getType().equals(Vote.COOL_TYPE)) {
-							storyDetail.setCool(vote.getAmount());
-						}
-					}
-				}else{
-						storyDetail.setCool(0);
-				}
+//				List<Vote> voteList = this.getVotesOfPic(picId);
 //				if (voteList != null && voteList.size() > 0) {
 //					for (int j = 0; j < voteList.size(); j++) {
 //						Vote vote = voteList.get(j);
@@ -743,17 +732,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			if (user != null) {
 				details.setAuthor(user.getAccount());
 			}
-			List<Vote> voteList = this.getVotesOfPic(picId);
-			if (voteList != null && voteList.size() > 0) {
-				for (int j = 0; j < voteList.size(); j++) {
-					Vote vote = voteList.get(j);
-					if (vote.getType().equals(Vote.COOL_TYPE)) {
-						details.setCool(vote.getAmount());
-					}
-				}
-			}else{
-				details.setCool(0);
-			}
+//			List<Vote> voteList = this.getVotesOfPic(picId);
 //			if (voteList != null && voteList.size() > 0) {
 //				for (int j = 0; j < voteList.size(); j++) {
 //					Vote vote = voteList.get(j);
@@ -1168,6 +1147,12 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			return list;
 		}
 	
+	}
+
+	@Override
+	public int getPicCoolCount(String picId) {
+		int coolCount = dbVisitor.getPicCoolCount(picId);
+		return coolCount;
 	}
 
 

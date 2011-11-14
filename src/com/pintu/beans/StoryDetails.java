@@ -9,7 +9,7 @@ public class StoryDetails extends Story{
 	//用户头像，用户表存文件路径，从磁盘上找图
 	private String avatarImgPath;
 	
-	private int cool;
+//	private int cool;
 	
 //	private int flower;
 //	
@@ -52,16 +52,16 @@ public class StoryDetails extends Story{
 //		this.star = star;
 //	}
 
+//	public int getCool() {
+//		return cool;
+//	}
+//
+//	public void setCool(int cool) {
+//		this.cool = cool;
+//	}
+	
 	public String getAuthor() {
 		return author;
-	}
-
-	public int getCool() {
-		return cool;
-	}
-
-	public void setCool(int cool) {
-		this.cool = cool;
 	}
 
 	public void setAuthor(String author) {

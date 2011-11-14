@@ -508,4 +508,9 @@ public class ApiAdaptor {
 		return JSONArray.fromCollection(list).toString();
 	}
 
+	public String getPicCoolCount(String picId) {
+		int result = pintuService.getPicCoolCount(picId);
+		return String.valueOf(result);
+	}
+
 } // end of class

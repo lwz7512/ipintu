@@ -364,6 +364,15 @@ public class AssistProcess {
 			System.out.println(result);
 			pw.println(result);
 			pw.close();
+		}else if(action.equals(AppStarter.GETPICCOOLCOUNT)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String picId = req.getParameter("pId");
+			String result = apiAdaptor.getPicCoolCount(picId);
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
+			
 		
 		}else if(action.equals(AppStarter.ALTERUSERINFO)){
 			res.setContentType("text/plain;charset=UTF-8");
@@ -372,7 +381,6 @@ public class AssistProcess {
 //			System.out.println(result);
 //			pw.println(result);
 			pw.close();
-			
 		}else{
 			
 		}

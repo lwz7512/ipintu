@@ -197,5 +197,7 @@ public interface DBAccessInterface {
 	
 	public List<User> getCmtDaren();
 	
+	public int getPicCoolCount(String picId);
+	
 	
 }

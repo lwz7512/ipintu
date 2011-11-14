@@ -218,6 +218,8 @@ public interface PintuServiceInterface {
 
 	public List<User> getCmtDaren();
 
+	public int getPicCoolCount(String picId);
+
 
 	// ANYMORE NECESSARY???
 
