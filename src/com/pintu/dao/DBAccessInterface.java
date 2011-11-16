@@ -54,6 +54,9 @@ public interface DBAccessInterface {
 	//得到某一用户财产信息
 	public List<Wealth> getOnesWealth(String userId);
 	
+	//更新用户昵称和头像
+	public int updateUserInfo(String nickName,String avatarPath,String userId);
+	
 //	//社区事件入库
 //	public String insertOneEvent(Event event);
 //	
@@ -83,7 +86,7 @@ public interface DBAccessInterface {
 	 * @param storyIds
 	 * @return
 	 */
-	public List<Vote> getVoteForCache(String storyIds);
+	public List<Vote> getVoteForCache(String picIds);
 
 	public int insertStory(List<Object> objList);
 	
@@ -93,7 +96,7 @@ public interface DBAccessInterface {
 
 	public List<Story> getStoriesOfPic(String tpID);
 	
-	public List<Vote> getVoteOfStory(String storyID);
+	public List<Vote> getVoteOfPic(String picId);
 
 	public List<Vote> getVoteByFollowAndType(String storyId, String type);
 
@@ -193,6 +196,8 @@ public interface DBAccessInterface {
 	public List<User> getPicDaren();
 	
 	public List<User> getCmtDaren();
+	
+	public int getPicCoolCount(String picId);
 	
 	
 }

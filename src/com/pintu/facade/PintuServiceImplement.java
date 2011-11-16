@@ -248,7 +248,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		}
 		details.setStoriesNum(storyNum);
 		if (user != null) {
-			details.setAuthor(user.getAccount());
+			details.setAuthor(user.getNickName());
 			details.setScore(user.getScore());
 			details.setLevel(user.getLevel());
 			details.setAvatarImgPath(user.getAvatar());
@@ -297,7 +297,8 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				String storyId = storyList.get(i).getId();
 				String userId = storyList.get(i).getOwner();
 				storyDetail.setId(storyId);
-				storyDetail.setFollow(storyList.get(i).getFollow());
+				String picId = storyList.get(i).getFollow();
+				storyDetail.setFollow(picId);
 				storyDetail.setOwner(userId);
 				storyDetail.setPublishTime(storyList.get(i).getPublishTime());
 				storyDetail.setContent(storyList.get(i).getContent());
@@ -306,7 +307,8 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				if (user != null) {
 					storyDetail.setAuthor(user.getAccount());
 				}
-//				List<Vote> voteList = this.getVotesOfStory(storyId);
+				
+//				List<Vote> voteList = this.getVotesOfPic(picId);
 //				if (voteList != null && voteList.size() > 0) {
 //					for (int j = 0; j < voteList.size(); j++) {
 //						Vote vote = voteList.get(j);
@@ -334,8 +336,8 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 
 	@Override
-	public List<Vote> getVotesOfStory(String storyId) {
-		List<Vote> voteList = dbVisitor.getVoteOfStory(storyId);
+	public List<Vote> getVotesOfPic(String picId) {
+		List<Vote> voteList = dbVisitor.getVoteOfPic(picId);
 		return voteList;
 	}
 
@@ -720,7 +722,8 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			StoryDetails details = new StoryDetails();
 			String storyId = sList.get(i).getId();
 			details.setId(storyId);
-			details.setFollow(sList.get(i).getFollow());
+			String picId = sList.get(i).getFollow();
+			details.setFollow(picId);
 			details.setOwner(userId);
 			details.setPublishTime(sList.get(i).getPublishTime());
 			details.setContent(sList.get(i).getContent());
@@ -729,26 +732,29 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			if (user != null) {
 				details.setAuthor(user.getAccount());
 			}
-			List<Vote> voteList = this.getVotesOfStory(storyId);
-			if (voteList != null && voteList.size() > 0) {
-				for (int j = 0; j < voteList.size(); j++) {
-					Vote vote = voteList.get(j);
-					if (vote.getType().equals(Vote.FLOWER_TYPE)) {
-						details.setFlower(vote.getAmount());
-					} else if (vote.getType().equals(Vote.EGG_TYPE)) {
-						details.setEgg(vote.getAmount());
-					} else if (vote.getType().equals(Vote.HEART_TYPE)) {
-						details.setHeart(vote.getAmount());
-					} else if (vote.getType().equals(Vote.STAR_TYPE)) {
-						details.setStar(vote.getAmount());
-					}
-				}
-			} else {
-				details.setFlower(0);
-				details.setEgg(0);
-				details.setHeart(0);
-				details.setStar(0);
-			}
+//			List<Vote> voteList = this.getVotesOfPic(picId);
+//			if (voteList != null && voteList.size() > 0) {
+//				for (int j = 0; j < voteList.size(); j++) {
+//					Vote vote = voteList.get(j);
+//					if (vote.getType().equals(Vote.COOL_TYPE)) {
+//						details.setCool(vote.getAmount());
+//					}
+//					if (vote.getType().equals(Vote.FLOWER_TYPE)) {
+//						details.setFlower(vote.getAmount());
+//					} else if (vote.getType().equals(Vote.EGG_TYPE)) {
+//						details.setEgg(vote.getAmount());
+//					} else if (vote.getType().equals(Vote.HEART_TYPE)) {
+//						details.setHeart(vote.getAmount());
+//					} else if (vote.getType().equals(Vote.STAR_TYPE)) {
+//						details.setStar(vote.getAmount());
+//					}
+//				}
+//			} else {
+//				details.setFlower(0);
+//				details.setEgg(0);
+//				details.setHeart(0);
+//				details.setStar(0);
+//			}
 			resList.add(details);
 		}
 
@@ -1141,6 +1147,12 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			return list;
 		}
 	
+	}
+
+	@Override
+	public int getPicCoolCount(String picId) {
+		int coolCount = dbVisitor.getPicCoolCount(picId);
+		return coolCount;
 	}
 
 

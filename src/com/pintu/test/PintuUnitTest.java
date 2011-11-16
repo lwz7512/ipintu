@@ -110,7 +110,7 @@ public class PintuUnitTest {
 		Vote v=new Vote();
 		v.setId("1");
 		v.setFollow("2");
-		v.setType(Vote.HEART_TYPE);
+		v.setType(Vote.COOL_TYPE);
 		v.setAmount(3);
 		System.out.println("测试插入投票："+dbAccess.insertVote(v));
 	}
@@ -125,10 +125,10 @@ public class PintuUnitTest {
 		System.out.println("更新投票条数为："+i);
 	}
 	
-	@Test
-	public void getVoteOfStory(){
-		System.out.println("测试根据故事id得投票"+dbAccess.getVoteOfStory("9ab9a9a19396bcfd"));
-	}
+//	@Test
+//	public void getVoteOfStory(){
+//		System.out.println("测试根据故事id得投票"+dbAccess.getVoteOfStory("9ab9a9a19396bcfd"));
+//	}
 	
 	@Test
 	public void getVoteByFollowAndType(){

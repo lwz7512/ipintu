@@ -12,13 +12,13 @@ public interface ExtVisitorInterface {
 	
 	public static final String LOGON ="logon";
 	
-//	public static final String SETAVATAR ="avatar";
-	
 	public static final String APPLY ="apply";
 	
 	public static final String REGISTER ="register";
 	
 	public static final String VALIDATE = "validate";
+	
+	public static final String ALTERUSERINFO ="alterUserInfo";
 	
 //	public static final String UPLOADPICTURE = "upload";
 	
@@ -48,9 +48,9 @@ public interface ExtVisitorInterface {
 	
 	public static final String GETHOTPICTURE = "getHotPicture";
 	
-//	public static final String  ADDVOTE= "addVote";
+	public static final String  ADDVOTE= "addVote";
 	
-//	public static final String GETClASSICALPINTU= "getClassicalPintu";
+	public static final String GETPICCOOLCOUNT= "getPicCoolCount";
 	
 	public static final String GETUSERESTATE = "getUserEstate";
 	
