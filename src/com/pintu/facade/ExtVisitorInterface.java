@@ -18,6 +18,8 @@ public interface ExtVisitorInterface {
 	
 	public static final String VALIDATE = "validate";
 	
+	public static final String EXAMINE = "examine";
+	
 	public static final String ALTERUSERINFO ="alterUserInfo";
 	
 //	public static final String UPLOADPICTURE = "upload";

@@ -110,7 +110,7 @@ public interface PintuServiceInterface {
 	public List<StoryDetails> getStoryDetailsOfPic(String tpId);
 
 	// 为故事投票
-	public void addVoteToStory(Vote vote);
+	public void addVoteToPic(Vote vote);
 
 	// 返回一个图片的赞一个投票
 	public List<Vote> getVotesOfPic(String picId);
@@ -182,6 +182,9 @@ public interface PintuServiceInterface {
 
 	//验证账户名称是否已被占用
 	public int validateAccount(String account);
+	
+	//检测昵称是否已经占用
+	public int examineNickname(String nickName);
 
 	//比较邀请码是否正确，正确即注册，否则返回错误信息
 	public String registerUser(String account, String pwd, String code);
@@ -219,6 +222,8 @@ public interface PintuServiceInterface {
 	public List<User> getCmtDaren();
 
 	public int getPicCoolCount(String picId);
+
+
 
 
 	// ANYMORE NECESSARY???

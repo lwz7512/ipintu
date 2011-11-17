@@ -171,7 +171,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public void addVoteToStory(Vote vote) {
+	public void addVoteToPic(Vote vote) {
 		cacheVisitor.cacheVote(vote);
 	}
 
@@ -1153,6 +1153,12 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	public int getPicCoolCount(String picId) {
 		int coolCount = dbVisitor.getPicCoolCount(picId);
 		return coolCount;
+	}
+
+	@Override
+	public int examineNickname(String nickName) {
+		int result = dbVisitor.getExistNickname(nickName);
+		return result;
 	}
 
 

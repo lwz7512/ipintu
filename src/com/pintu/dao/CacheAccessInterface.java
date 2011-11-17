@@ -20,6 +20,7 @@ public interface CacheAccessInterface {
 	public static Map<String, LinkedList<String>> toSavedUserPicIds = new HashMap<String, LinkedList<String>>();
 	
 	//存储评论、投票、故事id，按从属关系~
+	//toSavedCacheIds结构：<类型，<picId，voteIdList/storyIdList>>
 	public static Map<String,Map<String,LinkedList<String>>>  toSavedCacheIds = new HashMap<String,Map<String,LinkedList<String>>>();
 
 	//用于存放热图的id和点击量的对应关系（每当查看详情后将被查看的图片id放到这里）

@@ -17,7 +17,9 @@ function checkNull(){
 	var account = $("#account").attr("value");
 	var password =  $("#password").attr("value");
 	var inviteCode = $("inviteCode").attr("value");
-	if(account == null || password == null || inviteCode==null || account == "" || password == "" || inviteCode=="" ){
+	var nickName = $("nickName").attr("value");
+	if(account == null || password == null || inviteCode==null ||nickName == null ||
+			nickName ==""|| account == "" || password == "" || inviteCode=="" ){
 		return false;
 	}
 	return true;
@@ -38,12 +40,41 @@ function checkEmail(){
 function checkLength(){
 	var pwd =  $("#password").attr("value");
 	if(pwd.length <6 || pwd.length>8){
-		  $('#prompt2').show().html('*长度6~8位');
+		  $('#prompt2').show().html('*密码长度6~8位');
 		  $("#password").val("");
 	}else{
 		 $('#prompt2').hide();
 	}
 }
+
+function checkNickname(){
+	var nick = $("#nickname").attr("value");
+	if(nick==null || nick==""){
+		return false;
+	}
+	return true;
+}
+
+function check(){
+	var flag = checkNickname();
+	if(flag){
+		$('#prompt').show().html('<img src="<%=request.getContextPath()%>/jsp/img/loading.gif">');
+		var nickName = $("#nickname").attr("value");
+		$.post('<%=request.getContextPath()%>/pintuapi', {
+			'method'  : 'examine',
+			'nickName'	: nickName
+		}, 
+		//回调函数
+		function (result) {
+			if(result == 1){//result为1，用户已存在
+			    $('#prompt').show().html('<img src="<%=request.getContextPath()%>/jsp/img/no.png">');
+			}else{
+				$('#prompt').show().html('<img src="<%=request.getContextPath()%>/jsp/img/ok.png">');
+			}
+		});
+	}
+}
+
 </script>
 <body>
 	<div id="contact-form"> 
@@ -72,18 +103,27 @@ function checkLength(){
 
 		<label for="email">账户</label>
 			<input type="text" name="account"  id="account" value ="<%=account %>"  onblur="checkEmail()"/>
-			<div class = "prompt"><span style="display: none;" id=prompt1></span></div>
+			
+		<label for="pwd">昵称</label>
+			<input type="text" name = "nickname"  id="nickname" onblur="check()"/>
+			<span style="display: none;" id="prompt"></span>
 			
 		<label for="pwd">密码</label>
 			<input type="password" name = "password"  id="password" onblur="checkLength()"/>
-			<div class = "prompt"><span style="display: none;" id="prompt2"></span></div>
-	
+			
 		<label for="pwd">邀请码</label>
 	   		 <input type="text" name = "inviteCode"  id="inviteCode"  value ="<%=inviteCode %>"/>
+	   		 
+   		 <label for="prompt" class="error">
+			<span style="display: none;" id=prompt1></span>
+			<span style="display: none;" id="prompt2"></span>
+		</label>
+			
 		 <p class="twoBtn">
 			<input type="submit" value="注册" name="submit" class="button" id="submit"/>
 			<input type="reset" value="重置" name="reset" class="button" id="reset"/> 
 		<p>
+		
 	</fieldset>
 </form>
 </div>

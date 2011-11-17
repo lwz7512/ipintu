@@ -69,16 +69,16 @@ public class CacheAccessImplement implements CacheAccessInterface {
 
 	@Override
 	public void cacheVote(Vote vote) {
-			String storyId = vote.getFollow();
+			String picId = vote.getFollow();
 			String voteId = vote.getId();
 			pintuCache.cacheVote(vote.getFollow(),vote.getId(), vote);
-			LinkedList<String> voteIdList = toSavedCacheIds.get(VOTE_TYPE).get(storyId);
+			LinkedList<String> voteIdList = toSavedCacheIds.get(VOTE_TYPE).get(picId);
 			if(voteIdList == null){
 				LinkedList<String> idList = new LinkedList<String>();
 				idList.add(voteId);
-				toSavedCacheIds.get(VOTE_TYPE).put(storyId, idList);
+				toSavedCacheIds.get(VOTE_TYPE).put(picId, idList);
 			}else{
-				toSavedCacheIds.get(VOTE_TYPE).get(storyId).add(voteId);
+				toSavedCacheIds.get(VOTE_TYPE).get(picId).add(voteId);
 			}
 	}
 
@@ -102,7 +102,7 @@ public class CacheAccessImplement implements CacheAccessInterface {
 		TPicItem tpicItem = new TPicItem();
 		List<String> list = new ArrayList<String>();
 		list.add(pid);
-		List<Object> resList = pintuCache.getCachedPicture(list);
+		List<Object> resList = pintuCache.getToSavedCachedPicture(list);
 		if(resList != null && resList.size() > 0){
 			tpicItem = (TPicItem) resList.get(0);
 		}
@@ -114,7 +114,7 @@ public class CacheAccessImplement implements CacheAccessInterface {
 		User user = new User();
 		List<String> list = new ArrayList<String>();
 		list.add(userId);
-		List<Object> resList = pintuCache.getCachedPicture(list);
+		List<Object> resList = pintuCache.getToSavedCachedPicture(list);
 		if(resList != null && resList.size() > 0){
 			user = (User) resList.get(0);
 		}
@@ -140,13 +140,13 @@ public class CacheAccessImplement implements CacheAccessInterface {
 		
 		if (type.equals(PICTURE_TYPE)) {
 			ids = toSavedUserPicIds.get(PICTURE_TYPE);
-			list = pintuCache.getCachedPicture(ids);
+			list = pintuCache.getToSavedCachedPicture(ids);
 		} else if (type.equals(STORY_TYPE)) {
 			map = toSavedCacheIds.get(STORY_TYPE);
-			list = pintuCache.getCachedStory(map);
+			list = pintuCache.getToSavedCachedStory(map);
 		} else if (type.equals(VOTE_TYPE)) {
 			map = toSavedCacheIds.get(VOTE_TYPE);
-			list = pintuCache.getCachedVote(map);
+			list = pintuCache.getToSavedCachedVote(map);
 		}
 
 		return list;
@@ -191,9 +191,7 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	
 	@Override
 	public List<Story> getStoriesOfPic(String tpId) {
-		List<String> ids = new ArrayList<String>();
-		ids.add(tpId);
-		return pintuCache.getCachedStoryByPid(ids);
+		return pintuCache.getCachedStoryByPid(tpId);
 	}
 
 	@Override

@@ -308,7 +308,7 @@ public class SyncExecute implements Runnable {
 			}
 
 			if (rows == rightObjList.size()) {
-				// FIXME 在投票入库成功时根据投票者的投票发一条消息给所投品图的故事作者
+				//在投票入库成功时根据投票者的投票发一条消息给所投品图的故事作者
 				addVoteMsg(rightObjList);
 				// 成功入库后，全部删除已入库的对象id
 				for (int j = 0; j < rightObjList.size(); j++) {
@@ -316,7 +316,6 @@ public class SyncExecute implements Runnable {
 					cachedMap.get(vote.getFollow()).remove(vote.getId());
 					log.info("Will delete already put in db for votes:"
 							+ vote.getId());
-
 				}
 			} else {
 				log.warn(">>>Votes to db failed!");

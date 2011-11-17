@@ -114,8 +114,9 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 
 		if (action.equals(AppStarter.LOGON)
 						|| action.equals(AppStarter.REGISTER)
-						|| action.equals(AppStarter.APPLY) || action
-							.equals(AppStarter.VALIDATE)) {
+						|| action.equals(AppStarter.APPLY)
+						|| action.equals(AppStarter.EXAMINE)
+						|| action.equals(AppStarter.VALIDATE)) {
 			
 			demandProcess(action, req, res);
 			return;
@@ -185,7 +186,16 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			System.out.println(result);
 			pw.println(result);
 			pw.close();
-		}
+		} else if (action.equals(AppStarter.EXAMINE)) {
+				// 验证注册的账户是否已被用
+				res.setContentType("text/plain;charset=UTF-8");
+				PrintWriter pw = res.getWriter();
+				String nickName = req.getParameter("nickName");
+				int result = apiAdaptor.examineNickname(nickName);
+				System.out.println(result);
+				pw.println(result);
+				pw.close();
+			}
 	}
 
 	/**
