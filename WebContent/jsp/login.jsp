@@ -74,11 +74,12 @@ function check(){
 	<fieldset>
 		<label for="header" class="header">登录</label>
 		<input type="hidden" name="method" value="logon" />
-		<label for="email">账户	</label>
+		<label for="email">账户</label>
 			  <input type="text" name="account" id="account" />
+			  <span><font  color="red">*</font></span>
 		<label for="pwd">密码</label>
 			  <input type="password" name="password" id="password" />
-			  
+			    <span><font  color="red">*</font></span>
 		<label for="prompt" class="error">
 			<span style="display: none;" id="prompt"></span>
 		</label>

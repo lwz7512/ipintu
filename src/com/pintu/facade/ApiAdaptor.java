@@ -425,8 +425,8 @@ public class ApiAdaptor {
 		return result;
 	}
 
-	public String registerUser(String account, String pwd, String code) {
-		String prompt = pintuService.registerUser(account, pwd, code);
+	public String registerUser(String account, String pwd, String code, String nick) {
+		String prompt = pintuService.registerUser(account, pwd, code,nick);
 		return prompt;
 	}
 

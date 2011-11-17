@@ -47,22 +47,23 @@ public class DBAccessImplement implements DBAccessInterface {
 	@Override
 	public int insertUser(final User user) {
 		String sql = "INSERT INTO t_user "
-				+ "(u_id, u_account, u_pwd, u_avatar, u_role, u_level, u_score, u_exchangeScore,u_registerTime,u_memo) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ? ,? ,?)";
+				+ "(u_id, u_account, u_nickName,u_pwd, u_avatar, u_role, u_level, u_score, u_exchangeScore,u_registerTime,u_memo) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ? ,? ,?,?)";
 
 		int res =jdbcTemplate.update(sql, new PreparedStatementSetter() {
 			public void setValues(PreparedStatement ps) {
 				try {
 					ps.setString(1, user.getId());
 					ps.setString(2, user.getAccount());
-					ps.setString(3, user.getPwd());
-					ps.setString(4, user.getAvatar());
-					ps.setString(5, user.getRole());
-					ps.setInt(6, user.getLevel());
-					ps.setInt(7, user.getScore());
-					ps.setInt(8, user.getExchangeScore());
-					ps.setString(9, user.getRegisterTime());
-					ps.setString(10, "");
+					ps.setString(3,user.getNickName());
+					ps.setString(4, user.getPwd());
+					ps.setString(5, user.getAvatar());
+					ps.setString(6, user.getRole());
+					ps.setInt(7, user.getLevel());
+					ps.setInt(8, user.getScore());
+					ps.setInt(9, user.getExchangeScore());
+					ps.setString(10, user.getRegisterTime());
+					ps.setString(11, "");
 
 				} catch (SQLException e) {
 					e.printStackTrace();
