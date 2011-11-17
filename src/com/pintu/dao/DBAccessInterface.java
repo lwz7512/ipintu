@@ -98,7 +98,7 @@ public interface DBAccessInterface {
 	
 	public List<Vote> getVoteOfPic(String picId);
 
-	public List<Vote> getVoteByFollowAndType(String storyId, String type);
+	public List<Vote> getVoteByFollowAndType(String picId, String type);
 
 	public TPicItem getPictureById(String tpId);
 
@@ -198,6 +198,8 @@ public interface DBAccessInterface {
 	public List<User> getCmtDaren();
 	
 	public int getPicCoolCount(String picId);
+	
+	public int getExistNickname(String nickName);
 	
 	
 }

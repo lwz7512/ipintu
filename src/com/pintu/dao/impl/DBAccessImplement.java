@@ -344,9 +344,9 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public List<Vote> getVoteByFollowAndType(String storyId, String type) {
+	public List<Vote> getVoteByFollowAndType(String picId, String type) {
 		List<Vote> voteList = new ArrayList<Vote>();
-		String sql = "select * from t_vote where v_follow = '"+storyId+"' and v_type = '"+type+"'";
+		String sql = "select * from t_vote where v_follow = '"+picId+"' and v_type = '"+type+"'";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -580,7 +580,7 @@ public class DBAccessImplement implements DBAccessInterface {
 
 	@Override
 	public int deleteOnesWealth(String type, String userId) {
-		String sql = "delete from t_wealth where w_type="+type+" and w_owner="+userId; 
+		String sql = "delete from t_wealth where w_type='"+type+"' and w_owner='"+userId+"'"; 
 		int rows = jdbcTemplate.update(sql);
 		return rows;
 	}
@@ -1497,7 +1497,7 @@ public class DBAccessImplement implements DBAccessInterface {
 
 	@Override
 	public int updateUserInfo(String nickName, String avatarPath, String userId) {
-		String sql = "update t_user  set u_nickName ='"+nickName+"' and u_avatar ='"+avatarPath+"' where u_id='"+userId+"";
+		String sql = "update t_user  set u_nickName ='"+nickName+"' and u_avatar ='"+avatarPath+"' where u_id='"+userId+"'";
 		int rows = jdbcTemplate.update(sql); 
 		return rows;
 	}
@@ -1505,6 +1505,13 @@ public class DBAccessImplement implements DBAccessInterface {
 	@Override
 	public int getPicCoolCount(String picId) {
 		String sql = "select v_amount from t_vote where v_follow ='" + picId + "'";
+		int result = jdbcTemplate.queryForInt(sql);
+		return result;
+	}
+
+	@Override
+	public int getExistNickname(String nickName) {
+		String sql = "select count(*) from t_user where u_nickName = '"+nickName+"'"; 
 		int result = jdbcTemplate.queryForInt(sql);
 		return result;
 	}

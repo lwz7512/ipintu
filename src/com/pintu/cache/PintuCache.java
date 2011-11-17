@@ -191,7 +191,6 @@ public class PintuCache {
 		}
 	}
 
-
 	public void cacheStory(String picId, String storyId, Story story) {
 		Element savedPic = storyCache.get(picId);
 		if (savedPic == null) {
@@ -209,10 +208,6 @@ public class PintuCache {
 			HashMap<String, Story> savedMap = (HashMap<String, Story>) savedPic
 					.getObjectValue();
 			savedMap.put(storyId, story);
-			Element ele = new Element(picId, savedMap);
-			synchronized (storyCache) {
-				storyCache.put(ele);
-			}
 		}
 	}
 
@@ -220,7 +215,7 @@ public class PintuCache {
 		Element savedStory = voteCache.get(storyId);
 		if (savedStory == null) {
 			// 投票所属故事，投票id,投票对象
-			Element elmt = new Element(storyId, new HashMap<String, TPicItem>());
+			Element elmt = new Element(storyId, new HashMap<String, Vote>());
 			@SuppressWarnings("unchecked")
 			HashMap<String, Vote> votesForOneStory = (HashMap<String, Vote>) elmt
 					.getObjectValue();
@@ -233,10 +228,6 @@ public class PintuCache {
 			HashMap<String, Vote> savedMap = (HashMap<String, Vote>) savedStory
 					.getObjectValue();
 			savedMap.put(voteId, vote);
-			Element ele = new Element(storyId, savedMap);
-			synchronized (voteCache) {
-				voteCache.put(ele);
-			}
 		}
 	}
 
@@ -267,10 +258,6 @@ public class PintuCache {
 			HashMap<String, TPicDesc> savedMap = (HashMap<String, TPicDesc>) savedMinute
 					.getObjectValue();
 			savedMap.put(pic.getThumbnailId(), pic);
-			Element ele = new Element(key, savedMap);
-			synchronized (thumbnailCache) {
-				thumbnailCache.put(ele);
-			}
 		}
 	}
 
@@ -304,7 +291,7 @@ public class PintuCache {
 	 * @param picIds
 	 * @return
 	 */
-	public List<Object> getCachedPicture(List<String> picIds) {
+	public List<Object> getToSavedCachedPicture(List<String> picIds) {
 		List<Object> list = new ArrayList<Object>();
 		synchronized (pictureCache) {
 			for (int i = 0; i < picIds.size(); i++) {
@@ -317,102 +304,121 @@ public class PintuCache {
 		return list;
 	}
 
-
-	public List<Story> getCachedStoryByPid(List<String> ids) {
-		List<Story> list = new ArrayList<Story>();
-		synchronized (storyCache) {
-			for (String picId : ids) {
-				Element savedPic = storyCache.get(picId);
-				if (savedPic != null) {
-					@SuppressWarnings("unchecked")
-					HashMap<String, Story> storyMap = (HashMap<String, Story>) savedPic
-							.getObjectValue();
-					if (storyMap != null) {
-						list.addAll(storyMap.values());
-					}
-				}
-			}
-		}
-		return list;
-	}
-
-	public List<Vote> getCachedVoteBySid(List<String> ids) {
-		List<Vote> list = new ArrayList<Vote>();
-		synchronized (voteCache) {
-			for (String storyId : ids) {
-				Element savedStory = voteCache.get(storyId);
-				if (savedStory != null) {
-					@SuppressWarnings("unchecked")
-					HashMap<String, Vote> voteMap = (HashMap<String, Vote>) savedStory
-							.getObjectValue();
-					if (voteMap != null) {
-						list.addAll(voteMap.values());
-					}
-				}
-			}
-		}
-		return list;
-	}
-
-
-	public List<Object> getCachedStory(Map<String, LinkedList<String>> map) {
+	/**
+	 * 获取即将入库的评论
+	 * @param map  <picId,storyIdList>
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Object> getToSavedCachedStory(Map<String, LinkedList<String>> map) {
 		List<Object> list = new ArrayList<Object>();
 		synchronized (storyCache) {
 			for (String picId : map.keySet()) {
+				// 得到一个图片下所有的故事
 				Element savedPic = storyCache.get(picId);
-				if (savedPic != null) {
-					@SuppressWarnings("unchecked")
-					HashMap<String, Story> storyMap = (HashMap<String, Story>) savedPic
-							.getObjectValue();
-					for (LinkedList<String> storyIdList : map.values()) {
-						if (storyIdList != null) {
-							for (int i = 0; i < storyIdList.size(); i++) {
-								if (storyMap != null) {
-									list.add(storyMap.get(storyIdList.get(i)));
-								}
-							}
-						}
-					}
+				
+				if(savedPic==null) continue;
+				
+				// 即将入库的故事ID
+				LinkedList<String> storiesIDs = map.get(picId);
+				// 该图片所有的故事，有入库的也有未入库的
+				HashMap<String, Story> storiesInPic = (HashMap<String, Story>) savedPic
+						.getObjectValue();
+				// 遍历未入库的故事ID
+				for (String storyId : storiesIDs) {
+					if(storiesInPic==null) break;
+					list.add(storiesInPic.get(storyId));
 				}
 			}
 		}
-
 		return list;
 	}
 
-	public List<Object> getCachedVote(Map<String, LinkedList<String>> map) {
+	/**
+	 * 获取即将入库的投票
+	 * @param map <picId,voteIdList>
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Object> getToSavedCachedVote(Map<String, LinkedList<String>> map) {
 		List<Object> list = new ArrayList<Object>();
 		synchronized (voteCache) {
-			for (String storyId : map.keySet()) {
-				Element savedStory = voteCache.get(storyId);
-				if (savedStory != null) {
-					@SuppressWarnings("unchecked")
-					HashMap<String, TPicItem> voteMap = (HashMap<String, TPicItem>) savedStory
+			for (String picId : map.keySet()) {
+				//得到一个图片的所有投票
+				Element savedPic = voteCache.get(picId);
+				
+				if (savedPic == null) continue;
+				
+				//即将入库的投票id
+				LinkedList<String> voteIDs = map.get(picId);
+				//该图片的所有投票，有入库的也有未入库的
+				HashMap<String, Vote> votesInPic = (HashMap<String, Vote>) savedPic
 							.getObjectValue();
-					for (LinkedList<String> voteIdList : map.values()) {
-						if (voteIdList != null) {
-							for (int i = 0; i < voteIdList.size(); i++) {
-								if (voteMap != null) {
-									list.add(voteMap.get(voteIdList.get(i)));
-								}
-							}
-						}
-					}
+				// 遍历未入库的故事ID
+				for (String voteId : voteIDs) {
+					if(votesInPic==null) break;
+					list.add(votesInPic.get(voteId));
 				}
 			}
 		}
-
 		return list;
 	}
 
+	/**
+	 * 根据图片获取故事
+	 * 
+	 * @param ids
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Story> getCachedStoryByPid(String picId) {
+		List<Story> list = new ArrayList<Story>();
+		synchronized (storyCache) {
+			Element savedPic = storyCache.get(picId);
+			if (savedPic != null) {
+				
+				HashMap<String, Story> storyMap = (HashMap<String, Story>) savedPic
+						.getObjectValue();
+				if (storyMap != null) {
+					list.addAll(storyMap.values());
+				}
+			}
+		}
+		return list;
+	}
+
+	/**
+	 * 根据图片id得到投票
+	 * 
+	 * @param ids
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Vote> getCachedVoteByPid(String picId) {
+		List<Vote> list = new ArrayList<Vote>();
+		synchronized (voteCache) {
+			Element savedPic = voteCache.get(picId);
+			if (savedPic != null) {
+				HashMap<String, Vote> voteMap = (HashMap<String, Vote>) savedPic
+						.getObjectValue();
+				if (voteMap != null) {
+					list.addAll(voteMap.values());
+				}
+			}
+		}
+		return list;
+	}
+
+	// 删除缓存中不能入库的问题图片
 	public boolean removeTPicById(String id) {
 		boolean del = false;
 		synchronized (pictureCache) {
-			del=pictureCache.remove(id);
+			del = pictureCache.remove(id);
 		}
 		return del;
 	}
 
+	// 删除不能入库问题图片所对应的缩略图缓存
 	public boolean removeThumbnailById(long time, String thumbnailId) {
 		boolean del = false;
 		long minlong = time / (60 * 1000);
@@ -424,16 +430,16 @@ public class PintuCache {
 				@SuppressWarnings("unchecked")
 				HashMap<String, TPicDesc> savedMap = (HashMap<String, TPicDesc>) savedMinute
 						.getObjectValue();
-				for(String id:savedMap.keySet()){
-					if(thumbnailId.equals(id)){
+				for (String id : savedMap.keySet()) {
+					if (thumbnailId.equals(id)) {
 						savedMap.remove(id);
 						del = true;
 					}
 				}
 			}
 		}
-		
+
 		return del;
 	}
-	
+
 }

@@ -239,10 +239,10 @@ public class ApiAdaptor {
 	 * @param receiver
 	 * @param vote
 	 */
-	public void addVoteToStory(String follow, String type, String amount,
+	public void addVoteToPic(String follow, String type, String amount,
 			String voter, String receiver) {
 		Vote vote = this.createVote(follow, type, amount, voter, receiver);
-		pintuService.addVoteToStory(vote);
+		pintuService.addVoteToPic(vote);
 	}
 
 	/**
@@ -435,6 +435,11 @@ public class ApiAdaptor {
 		return result;
 	}
 
+	public int examineNickname(String nickName) {
+		int result = pintuService.examineNickname(nickName);
+		return result;
+	}
+	
 	public String sendApply(String account, String reason) {
 		String prompt = pintuService.sendApply(account, reason);
 		return prompt;
@@ -512,5 +517,6 @@ public class ApiAdaptor {
 		int result = pintuService.getPicCoolCount(picId);
 		return String.valueOf(result);
 	}
+
 
 } // end of class

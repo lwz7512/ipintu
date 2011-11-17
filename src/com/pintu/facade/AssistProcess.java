@@ -138,7 +138,7 @@ public class AssistProcess {
 			String amount = req.getParameter("amount");
 			String voter = req.getParameter("owner");
 			String receiver = req.getParameter("receiver");
-			apiAdaptor.addVoteToStory(follow, type, amount, voter, receiver);
+			apiAdaptor.addVoteToPic(follow, type, amount, voter, receiver);
 
 		} else if (action.equals(AppStarter.GETUSERDETAIL)) {
 			// 根据用户id得到该用户详情
