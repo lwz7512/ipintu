@@ -67,13 +67,17 @@ function check(){
 		//回调函数
 		function (result) {
 			if(result == 1){//result为1，用户已存在
-			    $('#prompt').show().html('<img src="<%=request.getContextPath()%>/jsp/img/no.png">');
-			}else{
-				$('#prompt').show().html('<img src="<%=request.getContextPath()%>/jsp/img/ok.png">');
+			    $('#prompt').html('<img src="<%=request.getContextPath()%>/jsp/img/no.png">');
+			}else if(result == 0){
+				$('#prompt').html('<img src="<%=request.getContextPath()%>/jsp/img/ok.png">');
 			}
 		});
+	}else{
+		$('#prompt').html('<font  color="red">*</font>');
 	}
 }
+
+	
 
 </script>
 <body>
@@ -103,16 +107,19 @@ function check(){
 
 		<label for="email">账户</label>
 			<input type="text" name="account"  id="account" value ="<%=account %>"  onblur="checkEmail()"/>
+			<span><font  color="red">*</font></span>
 			
 		<label for="pwd">昵称</label>
-			<input type="text" name = "nickname"  id="nickname" onblur="check()"/>
-			<span style="display: none;" id="prompt"></span>
+			<input type="text" name= "nickname"  id="nickname" oninput="check()"/>
+			<span id="prompt"><font  color="red">*</font></span>
 			
 		<label for="pwd">密码</label>
-			<input type="password" name = "password"  id="password" onblur="checkLength()"/>
+			<input type="password" name= "password"  id="password" onblur="checkLength()"/>
+			<span><font  color="red">*</font></span>
 			
 		<label for="pwd">邀请码</label>
-	   		 <input type="text" name = "inviteCode"  id="inviteCode"  value ="<%=inviteCode %>"/>
+	   		 <input type="text" name= "inviteCode"  id="inviteCode"  value ="<%=inviteCode %>"/>
+	   		<span><font  color="red">*</font></span>
 	   		 
    		 <label for="prompt" class="error">
 			<span style="display: none;" id=prompt1></span>

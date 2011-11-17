@@ -195,7 +195,7 @@ public class PintuCache {
 		Element savedPic = storyCache.get(picId);
 		if (savedPic == null) {
 			// 故事所属图片，故事id,故事对象
-			Element elmt = new Element(picId, new HashMap<String, TPicItem>());
+			Element elmt = new Element(picId, new HashMap<String, Story>());
 			@SuppressWarnings("unchecked")
 			HashMap<String, Story> storiesForOnePic = (HashMap<String, Story>) elmt
 					.getObjectValue();

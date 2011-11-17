@@ -842,20 +842,21 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		return 0;
 	}
 	
-	private User createUser(String userId, String account, String pwd) {
+	private User createUser(String userId, String account, String pwd, String nick) {
 		User user = new User();
 		user.setId(userId);
 		user.setAccount(account);
+		user.setNickName(nick);
 		user.setPwd(Encrypt.encrypt(pwd));
 		user.setRegisterTime(PintuUtils.getFormatNowTime());
 		return user;
 	}
 
 	@Override
-	public String registerUser(String account, String pwd, String code) {
+	public String registerUser(String account, String pwd, String code, String nick) {
 		String userId = dbVisitor.getExistApplicant(account, code);
     	if(!"".equals(userId)){
-	    		User user = createUser(userId,account,pwd);
+	    		User user = createUser(userId,account,pwd,nick);
 	    		int i = dbVisitor.insertUser(user);
 	        	if(i == 1){
 	        		//注册成功用户放缓存

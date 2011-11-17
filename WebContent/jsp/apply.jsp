@@ -45,12 +45,14 @@
 			//回调函数
 			function (result) {
 				if(result == 1){//result为1，用户已存在
-				    $('#prompt').show().html('<img src="<%=request.getContextPath()%>/jsp/img/no.png">');
+				    $('#prompt').html('<img src="<%=request.getContextPath()%>/jsp/img/no.png">');
 				    $("#account").val("");
 				}else{
-					 $('#prompt').show().html('<img src="<%=request.getContextPath()%>/jsp/img/ok.png">');
+					 $('#prompt').html('<img src="<%=request.getContextPath()%>/jsp/img/ok.png">');
 				}
 			});
+		}else{
+			$('#prompt').html('<font  color="red">*</font>');
 		}
 	}
 
@@ -64,10 +66,11 @@
 			<label for="header" class="header">申请</label>
 				<input type="hidden" name="method" value="apply" />
 			<label for="email">注册邮箱</label>
-				<input type="text" name="account" id="account" onblur="check()" />
-					<span style="display: none;" id="prompt"></span>
+					<input type="text" name="account" id="account" onblur="check()" />
+					<span id="prompt"><font  color="red">*</font></span>
 			<label for="message">申请理由</label>
 				<textarea name="reason" id="reason" ></textarea>
+				<span><font  color="red">*</font></span>
 			<p class="applyBtn">
 				<input type="submit"  name="submit" class="button" id="submit"  value="我要申请" />
 			</p>

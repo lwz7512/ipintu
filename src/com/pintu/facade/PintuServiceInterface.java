@@ -187,7 +187,7 @@ public interface PintuServiceInterface {
 	public int examineNickname(String nickName);
 
 	//比较邀请码是否正确，正确即注册，否则返回错误信息
-	public String registerUser(String account, String pwd, String code);
+	public String registerUser(String account, String pwd, String code, String nick);
 
 	//发送请求
 	public String sendApply(String account, String reason);

@@ -161,7 +161,8 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			String account = req.getParameter("account");
 			String pwd = req.getParameter("password");
 			String code = req.getParameter("inviteCode");
-			String result = apiAdaptor.registerUser(account, pwd, code);
+			String nick = req.getParameter("nickName");
+			String result = apiAdaptor.registerUser(account, pwd, code,nick);
 			System.out.println(result);
 			pw.write(result);
 			pw.close();

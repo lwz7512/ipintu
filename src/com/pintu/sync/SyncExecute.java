@@ -9,7 +9,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import com.pintu.beans.Message;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicItem;
 import com.pintu.beans.Tag;
@@ -309,8 +308,8 @@ public class SyncExecute implements Runnable {
 			}
 
 			if (rows == rightObjList.size()) {
-				//在投票入库成功时根据投票者的投票发一条消息给所投品图的故事作者
-				addVoteMsg(rightObjList);
+				//FIXME 在投票入库成功时根据投票者的投票发一条消息给所投品图的故事作者
+//				addVoteMsg(rightObjList);
 				// 成功入库后，全部删除已入库的对象id
 				for (int j = 0; j < rightObjList.size(); j++) {
 					Vote vote = (Vote) rightObjList.get(j);
@@ -329,32 +328,32 @@ public class SyncExecute implements Runnable {
 	}
 
 	// 投票附加消息
-	private void addVoteMsg(List<Object> rightObjList) {
-		if (rightObjList.size() > 0) {
-			for (int i = 0; i < rightObjList.size(); i++) {
-				Vote vote = (Vote) rightObjList.get(i);
-				Message msg = new Message();
-				msg.setId(PintuUtils.generateUID());
-				msg.setSender(vote.getVoter());
-				msg.setReceiver(vote.getReceiver());
-				String type = vote.getType();
-				if (type.equals(Vote.COOL_TYPE)) {
-					msg.setContent("I like your story and I am on your side.");
-				} else {
-					msg.setContent("Just soso.");
-				}
-				msg.setWriteTime(PintuUtils.getFormatNowTime());
-				msg.setRead(0);
-
-				int res = dbVisitor.insertMessage(msg);
-				if (res == 1) {
-					log.info(">>>Successful vote additional message to db!");
-				} else {
-					log.info(">>>Failure to vote additional message to db!");
-				}
-			}
-		}
-	}
+//	private void addVoteMsg(List<Object> rightObjList) {
+//		if (rightObjList.size() > 0) {
+//			for (int i = 0; i < rightObjList.size(); i++) {
+//				Vote vote = (Vote) rightObjList.get(i);
+//				Message msg = new Message();
+//				msg.setId(PintuUtils.generateUID());
+//				msg.setSender(vote.getVoter());
+//				msg.setReceiver(vote.getReceiver());
+//				String type = vote.getType();
+//				if (type.equals(Vote.COOL_TYPE)) {
+//					msg.setContent("I like your story and I am on your side.");
+//				} else {
+//					msg.setContent("Just soso.");
+//				}
+//				msg.setWriteTime(PintuUtils.getFormatNowTime());
+//				msg.setRead(0);
+//
+//				int res = dbVisitor.insertMessage(msg);
+//				if (res == 1) {
+//					log.info(">>>Successful vote additional message to db!");
+//				} else {
+//					log.info(">>>Failure to vote additional message to db!");
+//				}
+//			}
+//		}
+//	}
 
 	private List<Object> getVaildVote(List<Object> objList) {
 		List<Object> resList = new ArrayList<Object>();
