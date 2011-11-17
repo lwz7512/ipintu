@@ -1506,8 +1506,12 @@ public class DBAccessImplement implements DBAccessInterface {
 	@Override
 	public int getPicCoolCount(String picId) {
 		String sql = "select v_amount from t_vote where v_follow ='" + picId + "'";
-		int result = jdbcTemplate.queryForInt(sql);
-		return result;
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if(rows.size() > 0){
+			return Integer.parseInt(rows.get(0).get("v_amount").toString());
+		}else{
+			return 0;
+		}
 	}
 
 	@Override
