@@ -1556,5 +1556,12 @@ public class DBAccessImplement implements DBAccessInterface {
 		return rows;
 	}
 
+	@Override
+	public int confirmPassword(String userId, String md5Pwd) {
+		String sql = "select count(*) from t_user where u_id='"+userId+"' and u_pwd='"+md5Pwd+"'";
+		int result = jdbcTemplate.queryForInt(sql);
+		return result;
+	}
+
 
 }

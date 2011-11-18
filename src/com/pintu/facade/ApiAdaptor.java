@@ -523,13 +523,18 @@ public class ApiAdaptor {
 	}
 
 	public String modifyNicknameById(String userId, String nickName) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return pintuService.modifyNicknameById(userId,nickName);
 	}
 
 	public String modifyPasswordById(String userId, String newPwd) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return pintuService.modifyPasswordById(userId,newPwd);
+	}
+
+	public int confirmPassword(String userId, String password) {
+		int result = pintuService.confirmPassword(userId,password);
+		return result;
 	}
 
 

@@ -6,9 +6,12 @@
 <title>Register page</title>
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/jsp/css/style.css" />
+<link rel="stylesheet" type="text/css"
+	href="<%=request.getContextPath()%>/jsp/css/header.css" />
 <script language=javascript
 	src="<%=request.getContextPath()%>/jsp/js/jquery.js"
 	type=text/javascript></script>
+	
 </head>
 
 <script language=javascript  type=text/javascript>
@@ -33,9 +36,9 @@ function check(){
 		}, 
 		//回调函数
 		function (result) {
-			if(result == 1){//result为1，原密码正确
+			if(result == 0){//result为0，原密码正确
 			    $('#prompt').html('<img src="<%=request.getContextPath()%>/jsp/img/no.png">');
-			}else if(result == 0){
+			}else if(result == 1){
 				$('#prompt').html('<img src="<%=request.getContextPath()%>/jsp/img/ok.png">');
 			}
 		});

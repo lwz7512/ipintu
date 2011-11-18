@@ -34,7 +34,7 @@
 <a class="xhs" href="password.jsp?userId=<%=userId %>">修改密码</a>
 </li>
 <li class="xis">
-<a class="xhs" href="nick.jsp?userId=<%=userId %>">修改昵称</a>
+<a class="xhs" href="nickname.jsp?userId=<%=userId %>">修改昵称</a>
 </li>
 </ul>
 </div>

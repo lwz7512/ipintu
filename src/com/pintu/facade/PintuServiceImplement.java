@@ -1189,6 +1189,34 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		return result;
 	}
 
+	@Override
+	public String modifyPasswordById(String userId, String newPwd) {
+		String md5Pwd = Encrypt.encrypt(newPwd);
+		int i = dbVisitor.updatePassword(md5Pwd, userId);
+		if (i > 0) {
+			return systemConfigurer.getProperty("rightPrompt").toString();
+		} else {
+			return systemConfigurer.getProperty("wrongPrompt").toString();
+		}
+	}
+
+	@Override
+	public String modifyNicknameById(String userId, String nickName) {
+		int i = dbVisitor.updateNickname(nickName, userId);
+		if (i > 0) {
+			return systemConfigurer.getProperty("rightPrompt").toString();
+		} else {
+			return systemConfigurer.getProperty("wrongPrompt").toString();
+		}
+	}
+
+	@Override
+	public int confirmPassword(String userId, String password) {
+		String md5Pwd = Encrypt.encrypt(password);
+		int result = dbVisitor.confirmPassword(userId,md5Pwd);
+		return result;
+	}
+
 
 	// TODO, 实现其他接口方法
 	

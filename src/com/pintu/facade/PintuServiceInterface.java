@@ -223,6 +223,12 @@ public interface PintuServiceInterface {
 
 	public int getPicCoolCount(String picId);
 
+	public String modifyPasswordById(String userId, String newPwd);
+
+	public String modifyNicknameById(String userId, String nickName);
+
+	public int confirmPassword(String userId, String password);
+
 
 
 

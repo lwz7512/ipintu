@@ -7,6 +7,8 @@
 <title>Logon page</title>
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/jsp/css/style.css" />
+<link rel="stylesheet" type="text/css"
+	href="<%=request.getContextPath()%>/jsp/css/header.css" />
 <script language=javascript
 	src="<%=request.getContextPath()%>/jsp/js/jquery.js"
 	type=text/javascript></script>
@@ -52,10 +54,10 @@ function check(){
 </div>
 <div id="contact-form"> 
 <form id="contact" method="post"
-	action="<%=request.getContextPath()%>/pintuapi">
+	action="<%=request.getContextPath()%>/pintuapi" onsubmit="return checkNickname()">
 	<fieldset>
 		<label for="header" class="header">修改昵称</label>
-		<input type="hidden" name="method" value="moidfyNickname" />
+		<input type="hidden" name="method" value="modifyNickname" />
 		<input type="hidden" name="userId" value="<%= request.getParameter("userId")%>" />
 		
 		<label for="pwd">新昵称</label>
@@ -63,7 +65,7 @@ function check(){
 			<span id="prompt"><font  color="red">*</font></span>
 			
 		<p class="loginBtn">
-			<input type="button" name="submit" class="submit" id="submit" value="提交"  />
+			<input type="submit" value="提交" name="submit" class="button" id="submit"/>
 		</p>
 	</fieldset>
 </form>

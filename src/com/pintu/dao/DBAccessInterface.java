@@ -209,5 +209,7 @@ public interface DBAccessInterface {
 	
 	public List<Tag> getPicTagsById(String picId);
 	
+	public int confirmPassword(String userId, String md5Pwd);
+	
 	
 }
