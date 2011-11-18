@@ -176,6 +176,8 @@ public class ApiAdaptor {
 		JSONObject json = JSONObject.fromBean(tpicDetails);
 		json.remove("mobImgPath");
 		json.remove("rawImgPath");
+		json.remove("mobImgSize");
+		json.remove("rawImgSize");
 		return json.toString();
 	}
 
@@ -353,6 +355,8 @@ public class ApiAdaptor {
 		for (int i = 0; i < jsonArray.length(); i++) {
 			jsonArray.getJSONObject(i).remove("mobImgPath");
 			jsonArray.getJSONObject(i).remove("rawImgPath");
+			jsonArray.getJSONObject(i).remove("mobImgSize");
+			jsonArray.getJSONObject(i).remove("rawImgSize");
 		}
 	}
 
@@ -516,6 +520,16 @@ public class ApiAdaptor {
 	public String getPicCoolCount(String picId) {
 		int result = pintuService.getPicCoolCount(picId);
 		return String.valueOf(result);
+	}
+
+	public String modifyNicknameById(String userId, String nickName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String modifyPasswordById(String userId, String newPwd) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

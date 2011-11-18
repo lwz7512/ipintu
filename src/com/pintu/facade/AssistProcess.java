@@ -374,13 +374,26 @@ public class AssistProcess {
 			pw.close();
 			
 		
-		}else if(action.equals(AppStarter.ALTERUSERINFO)){
+		}else if(action.equals(AppStarter.MODIFYNICKNAME)){
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
-//			String result = apiAdaptor.getCmtDaren();
-//			System.out.println(result);
-//			pw.println(result);
+			String userId = req.getParameter("userId");
+			String nickName = req.getParameter("nickName");
+			String result = apiAdaptor.modifyNicknameById(userId,nickName);
+			System.out.println(result);
+			pw.println(result);
 			pw.close();
+			
+		}else if(action.equals(AppStarter.MODIFYPASSWORD)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+		    String userId = req.getParameter("userId");
+			String newPwd = req.getParameter("pwd1");
+			String result = apiAdaptor.modifyPasswordById(userId,newPwd);
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
+			
 		}else{
 			
 		}
