@@ -253,7 +253,19 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			details.setLevel(user.getLevel());
 			details.setAvatarImgPath(user.getAvatar());
 		}
-		details.setId(item.getId());
+		
+		//根据图片id要查出标签和被赞个数
+		String picId = item.getId();
+		
+		//查图片标签
+		String tags = this.getTagsById(picId);
+		details.setTags(tags);
+		
+		//查图片被赞次数
+		int coolCount = this.getPicCoolCount(picId);
+		details.setCoolCount(coolCount);
+		
+		details.setId(picId);
 		details.setName(item.getName());
 		details.setOwner(userId);
 		details.setMobImgId(item.getMobImgId());
@@ -282,6 +294,21 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		details.setBrowseCount(item.getBrowseCount()+details.getCounter());
 		
 		return details;
+	}
+
+	private String getTagsById(String picId) {
+		StringBuffer tags = new StringBuffer();
+		List<Tag> tagList = dbVisitor.getPicTagsById(picId);
+		if(tagList.size()>0){
+			for(int i=0;i<tagList.size();i++){
+				Tag tag = tagList.get(i);
+				if(tags.length()>0){
+					tags.append(" ");
+				}
+				tags.append(tag.getName());
+			}
+		}
+		return tags.toString().trim();
 	}
 
 	@Override

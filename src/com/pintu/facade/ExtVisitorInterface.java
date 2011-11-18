@@ -16,13 +16,24 @@ public interface ExtVisitorInterface {
 	
 	public static final String REGISTER ="register";
 	
+	//验证账户
 	public static final String VALIDATE = "validate";
 	
+	//检查昵称
 	public static final String EXAMINE = "examine";
 	
-	public static final String ALTERUSERINFO ="alterUserInfo";
+	//检查密码
+	public static final String CONFIRM = "confirm";
+	
+	public static final String MODIFYNICKNAME ="modifyNickname";
+	
+	public static final String MODIFYPASSWORD = "modifyPassword";
+	
+	public static final String UPLOADAVATAR= "uploadAvatar";
+	
 	
 //	public static final String UPLOADPICTURE = "upload";
+	
 	
 	public static final String GETGALLERYBYTIME = "getGalleryByTime";
 	

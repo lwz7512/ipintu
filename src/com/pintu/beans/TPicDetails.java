@@ -27,6 +27,19 @@ public class TPicDetails extends TPicItem {
 
 	//为今日热点做累加点击数
 	private int counter;
+	
+	//被称赞的数目
+	private int coolCount;
+
+	public int getCoolCount() {
+		return coolCount;
+	}
+
+
+	public void setCoolCount(int coolCount) {
+		this.coolCount = coolCount;
+	}
+
 
 	public int getCounter() {
 		return counter;

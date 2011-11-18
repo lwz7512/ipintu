@@ -836,7 +836,7 @@ public class DBAccessImplement implements DBAccessInterface {
 				tpicItem.setPublishTime(map.get("p_publishTime").toString());
 				tpicItem.setDescription(map.get("p_description").toString());
 				tpicItem.setSource(map.get("p_source").toString());
-				tpicItem.setIsOriginal(Integer.parseInt(map.get("p_allowStory")
+				tpicItem.setIsOriginal(Integer.parseInt(map.get("p_isOriginal")
 						.toString()));
 				tpicItem.setMobImgId(map.get("p_mobImgId").toString());
 				tpicItem.setMobImgSize(map.get("p_mobImgSize").toString());
@@ -1496,12 +1496,7 @@ public class DBAccessImplement implements DBAccessInterface {
 		return userList;
 	}
 
-	@Override
-	public int updateUserInfo(String nickName, String avatarPath, String userId) {
-		String sql = "update t_user  set u_nickName ='"+nickName+"' and u_avatar ='"+avatarPath+"' where u_id='"+userId+"'";
-		int rows = jdbcTemplate.update(sql); 
-		return rows;
-	}
+
 
 	@Override
 	public int getPicCoolCount(String picId) {
@@ -1519,6 +1514,46 @@ public class DBAccessImplement implements DBAccessInterface {
 		String sql = "select count(*) from t_user where u_nickName = '"+nickName+"'"; 
 		int result = jdbcTemplate.queryForInt(sql);
 		return result;
+	}
+
+	@Override
+	public List<Tag> getPicTagsById(String picId) {
+		List<Tag> resList = new ArrayList<Tag>();
+		String sql = "select t.t_id,t.t_name,t.t_type,t.t_browseCount from t_tag t, t_category c where c.c_tag=t.t_id and c.c_picture='"+picId+"'";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Tag tag = new Tag();
+				tag.setId(map.get("t_id").toString());
+				tag.setName(map.get("t_name").toString());
+				tag.setType(map.get("t_type").toString());
+				tag.setBrowseCount(Integer.parseInt(map.get("t_browseCount").toString()));
+				resList.add(tag);
+			}
+		}
+		return resList;
+	}
+
+	@Override
+	public int updateNickname(String nickName, String userId) {
+		String sql = "update t_user  set u_nickName ='"+nickName+"' where u_id='"+userId+"'";
+		int rows = jdbcTemplate.update(sql); 
+		return rows;
+	}
+
+	@Override
+	public int updatePassword(String password, String userId) {
+		String sql = "update t_user  set u_pwd ='"+password+"' where u_id='"+userId+"'";
+		int rows = jdbcTemplate.update(sql); 
+		return rows;
+	}
+
+	@Override
+	public int updateAvatar(String avatarPath, String userId) {
+		String sql = "update t_user  set u_avatar ='"+avatarPath+"' where u_id='"+userId+"'";
+		int rows = jdbcTemplate.update(sql); 
+		return rows;
 	}
 
 
