@@ -235,7 +235,13 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 				// 送由适配器解析参数前，先检查一下是否是正常用户
 				boolean flag = examine(fileItems);
 				if (flag) {
-					apiAdaptor.createTastePic(fileItems);
+					//获取是要做什么操作，这里区分上传头像和贴图
+					String method = getMethod(fileItems);
+					if(method.equals("uploadAvatar")){
+						apiAdaptor.createAvatar(fileItems);
+					}else{
+						apiAdaptor.createTastePic(fileItems);
+					}
 				} else {
 					return;
 				}
@@ -267,6 +273,20 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			}
 		}
 		return flag;
+	}
+	
+	private String getMethod(List<FileItem> fileItems) {
+		String method = "";
+		Iterator<FileItem> iter = fileItems.iterator();
+		while (iter.hasNext()) {
+			FileItem item = iter.next();
+			if (item.isFormField()) {
+				if (item.getFieldName().equals("method")) {
+					method = item.getString();
+				}
+			}
+		}
+		return method;
 	}
 
 	@Override

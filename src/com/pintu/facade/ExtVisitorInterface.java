@@ -22,16 +22,15 @@ public interface ExtVisitorInterface {
 	//检查昵称
 	public static final String EXAMINE = "examine";
 	
-	//检查密码
+	//检查密码(当前输入的旧密码是否与库中一致)
 	public static final String CONFIRM = "confirm";
-	
-	public static final String MODIFYNICKNAME ="modifyNickname";
 	
 	public static final String MODIFYPASSWORD = "modifyPassword";
 	
-	public static final String UPLOADAVATAR= "uploadAvatar";
+	public static final String MODIFYNICKNAME ="modifyNickname";
 	
 	
+//	public static final String UPLOADAVATAR= "uploadAvatar";
 //	public static final String UPLOADPICTURE = "upload";
 	
 	
@@ -87,6 +86,7 @@ public interface ExtVisitorInterface {
 	public static final String GETAPPLICANT = "getApplicant";
 	//授理申请
 	public static final String ACCEPT = "accept";
+	
 	//发布可选礼物
 	public static final String PUBLISHGIFT = "publishGift";
 	//发布社区事件

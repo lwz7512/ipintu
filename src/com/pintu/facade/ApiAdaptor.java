@@ -509,12 +509,24 @@ public class ApiAdaptor {
 
 	public String getPicDaren() {
 		List<User> list = pintuService.getPicDaren();
-		return JSONArray.fromCollection(list).toString();
+		JSONArray jsonArray = JSONArray.fromCollection(list);
+		removeUserKey(jsonArray);
+		return jsonArray.toString();
+	}
+	
+	private void removeUserKey(JSONArray jsonArray) {
+		for (int i = 0; i < jsonArray.length(); i++) {
+			jsonArray.getJSONObject(i).remove("applyReason");
+			jsonArray.getJSONObject(i).remove("inviteCode");
+			jsonArray.getJSONObject(i).remove("pwd");
+		}
 	}
 
 	public String getCmtDaren() {
 		List<User> list = pintuService.getCmtDaren();
-		return JSONArray.fromCollection(list).toString();
+		JSONArray jsonArray = JSONArray.fromCollection(list);
+		removeUserKey(jsonArray);
+		return jsonArray.toString();
 	}
 
 	public String getPicCoolCount(String picId) {
@@ -535,6 +547,28 @@ public class ApiAdaptor {
 	public int confirmPassword(String userId, String password) {
 		int result = pintuService.confirmPassword(userId,password);
 		return result;
+	}
+
+	public void createAvatar(List<FileItem> fileItems) {
+		FileItem avatarData = null;
+		String userId = "";
+		for (int i = 0; i < fileItems.size(); i++) {
+			FileItem item = fileItems.get(i);
+			if (!item.isFormField()) {
+				//头像图片数据
+				avatarData = item;
+			}
+			
+			if (item.isFormField()) {
+				// 取传头像的人
+				if (item.getFieldName().equals("userId")) {
+					userId = item.getString();
+				}
+			}
+		}
+	
+		pintuService.createAvatarImg(avatarData,userId);
+		
 	}
 
 

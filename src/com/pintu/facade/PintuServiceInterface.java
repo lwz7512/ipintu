@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItem;
+
 import com.pintu.beans.Applicant;
 import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
@@ -228,6 +230,8 @@ public interface PintuServiceInterface {
 	public String modifyNicknameById(String userId, String nickName);
 
 	public int confirmPassword(String userId, String password);
+
+	public String createAvatarImg(FileItem avatarData, String userId);
 
 
 

@@ -20,6 +20,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
 
 import com.pintu.beans.Applicant;
@@ -41,6 +42,7 @@ import com.pintu.beans.Wealth;
 import com.pintu.dao.CacheAccessInterface;
 import com.pintu.dao.DBAccessInterface;
 import com.pintu.jobs.MidnightTask;
+import com.pintu.tools.ImageHelper;
 import com.pintu.tools.ImgDataProcessor;
 import com.pintu.utils.EmailTemplate;
 import com.pintu.utils.Encrypt;
@@ -77,7 +79,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	private String imagePath;
-
+	
 	// 设定输出的类型
 	private static final String GIF = "image/gif;charset=UTF-8";
 
@@ -563,7 +565,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	 */
 	@Override
 	public void getImageByPath(String path, HttpServletResponse res) {
-		File defaultFile = new File(imagePath + File.separator + "avatarImg"
+		File defaultAvatar = new File(imagePath + File.separator + "avatarImg"
 				+ File.separator + "defaultAvatar.png");
 		String type = path.substring(path.lastIndexOf(".") + 1);
 		File file = new File(path);
@@ -575,10 +577,10 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			} else if (type.toLowerCase().equals("gif")) {
 				writeGIFImage(file, res);
 			} else {
-				writePNGImage(defaultFile, res);
+				writePNGImage(defaultAvatar, res);
 			}
 		} else {
-			writePNGImage(defaultFile, res);
+			writePNGImage(defaultAvatar, res);
 		}
 
 	}
@@ -1216,6 +1218,31 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		int result = dbVisitor.confirmPassword(userId,md5Pwd);
 		return result;
 	}
+
+	@Override
+	public String createAvatarImg(FileItem avatarData, String userId) {
+		String type = "";
+		if(avatarData != null){
+			String fileName = avatarData.getName();
+			int dotPos = fileName.lastIndexOf(".");
+			type = fileName.substring(dotPos);
+		}
+		
+		String path = imagePath + File.separator + "avatarImg"+File.separator+userId+type;
+		try {
+			ImageHelper.handleImage(avatarData, 64, 64, path);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		int result = dbVisitor.updateAvatar(path, userId);
+		if (result > 0) {
+			return systemConfigurer.getProperty("rightPrompt").toString();
+		} else {
+			return systemConfigurer.getProperty("wrongPrompt").toString();
+		}
+	}
+	
 
 
 	// TODO, 实现其他接口方法

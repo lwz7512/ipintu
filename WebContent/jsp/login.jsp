@@ -46,7 +46,7 @@ function check(){
 		function (result) {
 			var res =result.trim();
 			var userId="";
-			if( res.indexOf('admin') > -1){//若result为管理员
+			if(res.indexOf('admin') > -1){//若result为管理员
 				//转到管理员页面admin.jsp
 				userId = res.substring(6);
 				window.location.replace("<%=request.getContextPath()%>/jsp/admin.jsp?userId="+userId);
@@ -59,7 +59,11 @@ function check(){
 				 $("#password").val("");
 			}else{
 				//转到普通用户页面normal.jsp
-				userId = res.substring(8);
+				if(res.indexOf('guest') > -1){
+					userId=res.substring(6);
+				}else{
+					userId = res.substring(8);
+				}
 				window.location.replace("<%=request.getContextPath()%>/jsp/normal.jsp?userId="+userId);
 			}
 		});
