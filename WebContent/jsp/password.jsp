@@ -89,11 +89,11 @@ function compare(){
 			<span id="prompt"><font  color="red">*</font></span>
 			
 		<label for="pwd">新密码</label>
-			<input type="password" name= "pwd1"  id="pwd1" onblur="checkLength()"/>
+			<input type="password" name= "newPwd"  id="pwd1" onblur="checkLength()"/>
 			<span><font  color="red">*</font></span>
 			
 		<label for="pwd">确认新密码</label>
-	   		 <input type="password" name= "pwd2"  id="pwd2" onblur="compare()"/>
+	   		 <input type="password" name= "rePwd"  id="pwd2" onblur="compare()"/>
 	   		<span><font  color="red">*</font></span>
 	   		 
    		 <label for="prompt" class="error">

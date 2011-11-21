@@ -908,7 +908,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 	@Override
 	public String sendApply(String account, String reason) {
-		User tempUser = this.createApplicant(account, reason);
+		Applicant tempUser = this.createApplicant(account, reason);
 		int m = dbVisitor.insertApplicant(tempUser);
 		if(m ==1){
 			return systemConfigurer.getProperty("applyProcess").toString();
@@ -916,12 +916,12 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		return systemConfigurer.getProperty("applyError").toString();
 	}
 	
-	private User createApplicant(String account, String reason) {
-		User user = new User();
-		user.setId(PintuUtils.generateUID());
-		user.setAccount(account);
-		user.setApplyReason(reason);
-		return user;
+	private Applicant createApplicant(String account, String reason) {
+		Applicant tempUser = new Applicant();
+		tempUser.setId(PintuUtils.generateUID());
+		tempUser.setAccount(account);
+		tempUser.setApplyReason(reason);
+		return tempUser;
 	}
 
 	/**
@@ -1203,16 +1203,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public String modifyNicknameById(String userId, String nickName) {
-		int i = dbVisitor.updateNickname(nickName, userId);
-		if (i > 0) {
-			return systemConfigurer.getProperty("rightPrompt").toString();
-		} else {
-			return systemConfigurer.getProperty("wrongPrompt").toString();
-		}
-	}
-
-	@Override
 	public int confirmPassword(String userId, String password) {
 		String md5Pwd = Encrypt.encrypt(password);
 		int result = dbVisitor.confirmPassword(userId,md5Pwd);
@@ -1220,7 +1210,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public String createAvatarImg(FileItem avatarData, String userId) {
+	public String createAvatarImg(FileItem avatarData, String userId, String nickName) {
 		String type = "";
 		if(avatarData != null){
 			String fileName = avatarData.getName();
@@ -1229,13 +1219,15 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		}
 		
 		String path = imagePath + File.separator + "avatarImg"+File.separator+userId+type;
+		System.out.println(path);
+
 		try {
 			ImageHelper.handleImage(avatarData, 64, 64, path);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
-		int result = dbVisitor.updateAvatar(path, userId);
+		int result = dbVisitor.updateAvatarAndNickname(path,nickName,userId);
 		if (result > 0) {
 			return systemConfigurer.getProperty("rightPrompt").toString();
 		} else {

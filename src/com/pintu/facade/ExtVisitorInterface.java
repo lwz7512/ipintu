@@ -27,8 +27,7 @@ public interface ExtVisitorInterface {
 	
 	public static final String MODIFYPASSWORD = "modifyPassword";
 	
-	public static final String MODIFYNICKNAME ="modifyNickname";
-	
+//	public static final String MODIFYNICKNAME ="modifyNickname";
 	
 //	public static final String UPLOADAVATAR= "uploadAvatar";
 //	public static final String UPLOADPICTURE = "upload";

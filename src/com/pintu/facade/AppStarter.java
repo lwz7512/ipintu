@@ -237,10 +237,10 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 				if (flag) {
 					//获取是要做什么操作，这里区分上传头像和贴图
 					String method = getMethod(fileItems);
-					if(method.equals("uploadAvatar")){
-						apiAdaptor.createAvatar(fileItems);
-					}else{
+					if(method.equals("upload")){
 						apiAdaptor.createTastePic(fileItems);
+					}else if(method.equals("uploadAvatar")){
+						apiAdaptor.createAvatar(fileItems);
 					}
 				} else {
 					return;
