@@ -65,18 +65,18 @@ public class ApiAdaptor {
 		TastePic pic = new TastePic();
 		String source = "";
 
+		//取来源source字段
 		for (int i = 0; i < fileItems.size(); i++) {
 			FileItem item = fileItems.get(i);
 			if (item.isFormField()) {
 				if (item.getFieldName().equals("source")) {
-					if (item.getString().equals("desktop")) {
-						source = item.getString();
-					}
-					System.out.println("source:" + item.getString());
+					source = item.getString();
+					System.out.println("source:" + source);
 				}
 			}
 		}
 
+		//取图片的具体内部数据
 		for (int i = 0; i < fileItems.size(); i++) {
 			FileItem item = fileItems.get(i);
 			if (!item.isFormField()) {
@@ -87,19 +87,19 @@ public class ApiAdaptor {
 			if (item.isFormField()) {
 				// 取描述
 				if (item.getFieldName().equals("description")) {
-					if (source.equals("desktop")) {
-						pic.setDescription(item.getString());
-					} else {
+					if (source.equals("android")) {
 						pic.setDescription(UTF8Formater.changeToWord(item
 								.getString()));
+					} else {
+						pic.setDescription(item.getString());
 					}
 				}
 				// 标签
 				if (item.getFieldName().equals("tags")) {
-					if (source.equals("desktop")) {
-						pic.setTags(item.getString());
-					} else {
+					if (source.equals("android")) {
 						pic.setTags(UTF8Formater.changeToWord(item.getString()));
+					} else {
+						pic.setTags(item.getString());
 					}
 				}
 				// 取用户
@@ -133,7 +133,9 @@ public class ApiAdaptor {
 		long queryTimeSpan = Long.valueOf(endTime) - Long.valueOf(startTime);
 		System.out.println(">>> query time span:" + queryTimeSpan / (60 * 1000)
 				+ " minutes;");
-
+		System.out.println("startTime:"+PintuUtils.formatLong(Long.parseLong(startTime))
+				+" endTime:"+PintuUtils.formatLong(Long.parseLong(endTime)));
+		
 		long oneDayMiliSeconds = 24 * 60 * 60 * 1000;
 		if (queryTimeSpan > oneDayMiliSeconds) {
 			// 如果跨越了1天，就只给返回一天的数据
@@ -511,6 +513,7 @@ public class ApiAdaptor {
 		List<User> list = pintuService.getPicDaren();
 		return JSONArray.fromCollection(list).toString();
 	}
+	
 
 	public String getCmtDaren() {
 		List<User> list = pintuService.getCmtDaren();
@@ -522,14 +525,41 @@ public class ApiAdaptor {
 		return String.valueOf(result);
 	}
 
-	public String modifyNicknameById(String userId, String nickName) {
-		// TODO Auto-generated method stub
-		return null;
+	public String modifyPasswordById(String userId, String newPwd) {
+		
+		return pintuService.modifyPasswordById(userId,newPwd);
 	}
 
-	public String modifyPasswordById(String userId, String newPwd) {
-		// TODO Auto-generated method stub
-		return null;
+	public int confirmPassword(String userId, String password) {
+		int result = pintuService.confirmPassword(userId,password);
+		return result;
+	}
+
+	public void createAvatar(List<FileItem> fileItems) {
+		FileItem avatarData = null;
+		String userId = "";
+		String nickName = "";
+		for (int i = 0; i < fileItems.size(); i++) {
+			FileItem item = fileItems.get(i);
+			if (!item.isFormField()) {
+				//头像图片数据
+				avatarData = item;
+			}
+			
+			if (item.isFormField()) {
+				// 取传头像的人
+				if (item.getFieldName().equals("userId")) {
+					userId = item.getString();
+				}
+				//要修改的昵称
+				if (item.getFieldName().equals("nickName")) {
+					nickName = item.getString();
+				}
+			}
+		}
+	
+		pintuService.createAvatarImg(avatarData,userId,nickName);
+		
 	}
 
 

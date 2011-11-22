@@ -37,23 +37,6 @@ public class User implements Serializable{
 	
 	private int tpicNum;
 
-	//申请理由
-	private String applyReason;
-	
-	//是否通过申请
-	private int passed=0;
-
-	//邀请码
-	private String inviteCode;
-	
-	public String getInviteCode() {
-		return inviteCode;
-	}
-
-	public void setInviteCode(String inviteCode) {
-		this.inviteCode = inviteCode;
-	}
-
 	public int getStoryNum() {
 		return storyNum;
 	}
@@ -164,26 +147,6 @@ public class User implements Serializable{
 
 	public void setExchangeScore(int exchangeScore) {
 		this.exchangeScore = exchangeScore;
-	}
-
-
-	public String getApplyReason() {
-		return applyReason;
-	}
-
-
-	public void setApplyReason(String applyReason) {
-		this.applyReason = applyReason;
-	}
-
-
-	public int getPassed() {
-		return passed;
-	}
-
-
-	public void setPassed(int passed) {
-		this.passed = passed;
 	}
 
 

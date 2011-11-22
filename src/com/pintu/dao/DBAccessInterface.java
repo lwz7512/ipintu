@@ -54,14 +54,11 @@ public interface DBAccessInterface {
 	//得到某一用户财产信息
 	public List<Wealth> getOnesWealth(String userId);
 	
-	//更新用户昵称
-	public int updateNickname(String nickName,String userId);
-	
 	//更改密码
 	public int updatePassword(String password,String userId);
 	
 	//上传头像
-	public int updateAvatar(String avatarPath,String userId);
+	public int updateAvatarAndNickname(String avatarPath, String nickName, String userId);
 	
 //	//社区事件入库
 //	public String insertOneEvent(Event event);
@@ -158,7 +155,7 @@ public interface DBAccessInterface {
 	
 	public User getExistUser(String account);
 	
-	public int insertApplicant(User tempUser);
+	public int insertApplicant(Applicant tempUser);
 	
 	public List<Applicant> getApplicant();
 	
@@ -208,6 +205,8 @@ public interface DBAccessInterface {
 	public int getExistNickname(String nickName);
 	
 	public List<Tag> getPicTagsById(String picId);
+	
+	public int confirmPassword(String userId, String md5Pwd);
 	
 	
 }

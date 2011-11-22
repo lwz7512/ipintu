@@ -982,7 +982,7 @@ public class DBAccessImplement implements DBAccessInterface {
 
 
 	@Override
-	public int insertApplicant(final User tempUser) {
+	public int insertApplicant(final Applicant tempUser) {
 		String sql = "INSERT INTO t_applicant "
 				+ "(a_id, a_account, a_applyReason,a_inviteCode,a_passed,a_memo) "
 				+ "VALUES (?, ?, ?, ?, ?, ?)";
@@ -1535,12 +1535,6 @@ public class DBAccessImplement implements DBAccessInterface {
 		return resList;
 	}
 
-	@Override
-	public int updateNickname(String nickName, String userId) {
-		String sql = "update t_user  set u_nickName ='"+nickName+"' where u_id='"+userId+"'";
-		int rows = jdbcTemplate.update(sql); 
-		return rows;
-	}
 
 	@Override
 	public int updatePassword(String password, String userId) {
@@ -1550,10 +1544,30 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public int updateAvatar(String avatarPath, String userId) {
-		String sql = "update t_user  set u_avatar ='"+avatarPath+"' where u_id='"+userId+"'";
-		int rows = jdbcTemplate.update(sql); 
-		return rows;
+	public int updateAvatarAndNickname(final String avatarPath, final String nickName, final String userId) {
+		String sql = "update t_user set u_avatar =?, u_nickName =?  where u_id =?";
+		int res =jdbcTemplate.update(sql, new PreparedStatementSetter() {
+			public void setValues(PreparedStatement ps) {
+				try {
+					ps.setString(1, avatarPath);
+					ps.setString(2, nickName);
+					ps.setString(3, userId);
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+
+			}
+		});
+
+		return res;
+	}
+
+	@Override
+	public int confirmPassword(String userId, String md5Pwd) {
+		String sql = "select count(*) from t_user where u_id='"+userId+"' and u_pwd='"+md5Pwd+"'";
+		int result = jdbcTemplate.queryForInt(sql);
+		return result;
 	}
 
 

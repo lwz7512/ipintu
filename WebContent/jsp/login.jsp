@@ -46,9 +46,10 @@ function check(){
 		function (result) {
 			var res =result.trim();
 			var userId="";
-			if( res.indexOf('admin') > -1){//若result为管理员
+			if(res.indexOf('admin') > -1){//若result为管理员
 				//转到管理员页面admin.jsp
-				userId = res.substring(6);
+				res = res.split("@");
+				userId = res[1];
 				window.location.replace("<%=request.getContextPath()%>/jsp/admin.jsp?userId="+userId);
 			}else if( res == "0" ){
 				 $('#prompt').show().html('*密码不正确');
@@ -59,7 +60,8 @@ function check(){
 				 $("#password").val("");
 			}else{
 				//转到普通用户页面normal.jsp
-				userId = res.substring(8);
+				res = res.split("@");
+				userId = res[1];
 				window.location.replace("<%=request.getContextPath()%>/jsp/normal.jsp?userId="+userId);
 			}
 		});

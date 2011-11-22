@@ -16,4 +16,8 @@ public class Encrypt {
 			return null;
 		}
 	}
+	
+	public static void main(String[] args) {
+		System.out.println(encrypt("111111"));
+	}
 }

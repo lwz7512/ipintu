@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItem;
+
 import com.pintu.beans.Applicant;
 import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
@@ -222,6 +224,12 @@ public interface PintuServiceInterface {
 	public List<User> getCmtDaren();
 
 	public int getPicCoolCount(String picId);
+
+	public String modifyPasswordById(String userId, String newPwd);
+
+	public int confirmPassword(String userId, String password);
+
+	public String createAvatarImg(FileItem avatarData, String userId, String nickName);
 
 
 
