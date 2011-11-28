@@ -231,6 +231,8 @@ public interface PintuServiceInterface {
 
 	public String createAvatarImg(FileItem avatarData, String userId, String nickName);
 
+	public List<TPicDesc> getRandGallery();
+
 
 
 

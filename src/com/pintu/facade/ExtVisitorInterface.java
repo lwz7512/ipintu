@@ -27,11 +27,8 @@ public interface ExtVisitorInterface {
 	
 	public static final String MODIFYPASSWORD = "modifyPassword";
 	
-//	public static final String MODIFYNICKNAME ="modifyNickname";
-	
 //	public static final String UPLOADAVATAR= "uploadAvatar";
 //	public static final String UPLOADPICTURE = "upload";
-	
 	
 	public static final String GETGALLERYBYTIME = "getGalleryByTime";
 	
@@ -95,7 +92,6 @@ public interface ExtVisitorInterface {
 	
 	//TODO, TO ADD MORE METHOD DEFINITION...
 	
-	
 	//统计最近被收藏的图片top12
 	public static final String COLLECTSTATISTICS = "collectStatistics";
 
@@ -128,5 +124,8 @@ public interface ExtVisitorInterface {
     
     //评论达人
     public static final String CMTDARENSTATISTICS = "commentDarenStatistics";
+    
+    //随机获取系统32个图~
+    public static final String GETRANDGALLERY = "getRandGallery";
     
 }

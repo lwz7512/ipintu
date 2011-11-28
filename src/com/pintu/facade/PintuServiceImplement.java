@@ -1234,6 +1234,14 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			return systemConfigurer.getProperty("wrongPrompt").toString();
 		}
 	}
+
+	@Override
+	public List<TPicDesc> getRandGallery() {
+		int size = Integer.parseInt(propertyConfigurer
+				.getProperty("pageSizeForWeb"));
+		List<TPicDesc> picList = dbVisitor.getRandGallery(size);
+		return  picList;
+	}
 	
 
 

@@ -208,5 +208,7 @@ public interface DBAccessInterface {
 	
 	public int confirmPassword(String userId, String md5Pwd);
 	
+	public List<TPicDesc> getRandGallery(int size);
+	
 	
 }
