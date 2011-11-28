@@ -1238,7 +1238,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	@Override
 	public List<TPicDesc> getRandGallery() {
 		int size = Integer.parseInt(propertyConfigurer
-				.getProperty("pageSizeForWeb"));
+				.getProperty("galleryImgNum"));
 		List<TPicDesc> picList = dbVisitor.getRandGallery(size);
 		return  picList;
 	}
