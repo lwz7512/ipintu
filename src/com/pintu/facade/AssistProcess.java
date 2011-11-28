@@ -393,6 +393,14 @@ public class AssistProcess {
 			System.out.println(result);
 			pw.println(result);
 			pw.close();
+		
+		}else if(action.equals(AppStarter.GETRANDGALLERY)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String result = apiAdaptor.getRandGallery();
+			System.out.println(result);
+			pw.println(result);
+			pw.close(); 
 			
 		}else{
 			

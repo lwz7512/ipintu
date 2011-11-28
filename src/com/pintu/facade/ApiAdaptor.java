@@ -29,7 +29,6 @@ import com.pintu.beans.User;
 import com.pintu.beans.UserDetail;
 import com.pintu.beans.Vote;
 import com.pintu.utils.PintuUtils;
-import com.pintu.utils.UTF8Formater;
 
 /**
  * Servlet调用服务的参数转换器，用来封装客户端参数并实现服务调用；
@@ -63,19 +62,7 @@ public class ApiAdaptor {
 	public void createTastePic(List<FileItem> fileItems) {
 		System.out.println("2 Analyse pic obj: apiadaptor createTastePic");
 		TastePic pic = new TastePic();
-		String source = "";
-
-		//取来源source字段
-		for (int i = 0; i < fileItems.size(); i++) {
-			FileItem item = fileItems.get(i);
-			if (item.isFormField()) {
-				if (item.getFieldName().equals("source")) {
-					source = item.getString();
-					System.out.println("source:" + source);
-				}
-			}
-		}
-
+		
 		//取图片的具体内部数据
 		for (int i = 0; i < fileItems.size(); i++) {
 			FileItem item = fileItems.get(i);
@@ -87,20 +74,11 @@ public class ApiAdaptor {
 			if (item.isFormField()) {
 				// 取描述
 				if (item.getFieldName().equals("description")) {
-					if (source.equals("android")) {
-						pic.setDescription(UTF8Formater.changeToWord(item
-								.getString()));
-					} else {
-						pic.setDescription(item.getString());
-					}
+					pic.setDescription(item.getString());
 				}
 				// 标签
 				if (item.getFieldName().equals("tags")) {
-					if (source.equals("android")) {
-						pic.setTags(UTF8Formater.changeToWord(item.getString()));
-					} else {
-						pic.setTags(item.getString());
-					}
+					pic.setTags(item.getString());
 				}
 				// 取用户
 				if (item.getFieldName().equals("userId")) {
@@ -202,11 +180,7 @@ public class ApiAdaptor {
 		story.setFollow(follow);
 		story.setOwner(owner);
 		story.setPublishTime(PintuUtils.getFormatNowTime());
-		if (source.equals("desktop")) {
-			story.setContent(content);
-		} else {
-			story.setContent(UTF8Formater.changeToWord(content));
-		}
+		story.setContent(content);
 		story.setClassical(0);
 		return story;
 	}
@@ -266,11 +240,7 @@ public class ApiAdaptor {
 		msg.setId(PintuUtils.generateUID());
 		msg.setSender(sender);
 		msg.setReceiver(receiver);
-		if (source.equals("desktop")) {
-			msg.setContent(content);
-		} else {
-			msg.setContent(UTF8Formater.changeToWord(content));
-		}
+		msg.setContent(content);
 		msg.setWriteTime(PintuUtils.getFormatNowTime());
 		msg.setRead(0);
 		return msg;
@@ -560,6 +530,11 @@ public class ApiAdaptor {
 	
 		pintuService.createAvatarImg(avatarData,userId,nickName);
 		
+	}
+
+	public String getRandGallery() {
+		List<TPicDesc> list = pintuService.getRandGallery();
+		return JSONArray.fromCollection(list).toString();
 	}
 
 

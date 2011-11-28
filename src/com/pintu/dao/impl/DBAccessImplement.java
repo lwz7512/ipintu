@@ -1570,5 +1570,25 @@ public class DBAccessImplement implements DBAccessInterface {
 		return result;
 	}
 
+	@Override
+	public List<TPicDesc> getRandGallery(int size) {
+		List<TPicDesc> resList = new ArrayList<TPicDesc>();
+		String sql ="select p_id,p_publishTime from t_picture order by rand() limit "+size;
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				TPicDesc thumbnail = new TPicDesc();
+				thumbnail.setTpId(map.get("p_id").toString());
+				thumbnail.setThumbnailId(map.get("p_id").toString()+TPicDesc.THUMBNIAL);
+				String creationTime =String.valueOf(PintuUtils.parseToDate( map.get("p_publishTime").toString()).getTime());
+				thumbnail.setCreationTime(creationTime);
+				thumbnail.setStatus("0");
+				resList.add(thumbnail);
+			}
+		}
+		return resList;
+	}
+
 
 }
