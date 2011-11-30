@@ -136,7 +136,7 @@ public class DBAccessImplement implements DBAccessInterface {
 	public List<TPicItem> getPictureForCache(String startTime,String endTime) {
 		List<TPicItem> resList = new ArrayList<TPicItem>();
 		String sql = "select * from t_picture where p_publishTime >='" + startTime
-				+ "' and p_publishTime <='"+endTime+"'";
+				+ "' and p_publishTime <='"+endTime+"' and p_pass=1";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -366,7 +366,7 @@ public class DBAccessImplement implements DBAccessInterface {
 	@Override
 	public TPicItem getPictureById(String tpId) {
 		TPicItem pic = new TPicItem();
-		String sql = "select * from t_picture where p_id = '"+tpId+"'";
+		String sql = "select * from t_picture where p_id = '"+tpId+"' and p_pass=1";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if(rows!=null && rows.size()>0){
 			Map<String, Object> map = (Map<String, Object>) rows.get(0);
@@ -392,8 +392,8 @@ public class DBAccessImplement implements DBAccessInterface {
 	@Override
 	public int insertMessage(final Message msg) {
 		String sql = "INSERT INTO t_message "
-				 + "(m_id,m_sender,m_receiver,m_content,m_writeTime,m_read,m_memo) "
-				 + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+				 + "(m_id,m_sender,m_receiver,m_content,m_writeTime,m_read,m_reference,m_msgType,m_memo) "
+				 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		int res =jdbcTemplate.update(sql, new PreparedStatementSetter() {
 			public void setValues(PreparedStatement ps) {
@@ -404,7 +404,9 @@ public class DBAccessImplement implements DBAccessInterface {
 					ps.setString(4, msg.getContent());
 					ps.setString(5, msg.getWriteTime());
 					ps.setInt(6, msg.getRead());
-					ps.setString(7, "");
+					ps.setString(7, msg.getReference());
+					ps.setString(8, msg.getMsgType());
+					ps.setString(9, "");
 
 				} catch (SQLException e) {
 					e.printStackTrace();
@@ -428,6 +430,8 @@ public class DBAccessImplement implements DBAccessInterface {
 				msg.setId(map.get("m_id").toString());
 				msg.setReceiver(map.get("m_receiver").toString());
 				msg.setSender(map.get("m_sender").toString());
+				msg.setReference(map.get("m_reference").toString());
+				msg.setMsgType(map.get("m_msgType").toString());
 				msg.setWriteTime(map.get("m_writeTime").toString());
 				msg.setRead(Integer.parseInt(map.get("m_read").toString()));
 				msg.setContent(map.get("m_content").toString());
@@ -589,7 +593,7 @@ public class DBAccessImplement implements DBAccessInterface {
 	@Override
 	public Map<String,Integer> getOnesPicCountByTime(String startTime, String endTime) {
 		String sql = "select p_owner,count(p_id) from t_picture where p_publishTime >='"
-				+ startTime + "' and p_publishTime <='" + endTime + "' group by p_owner";
+				+ startTime + "' and p_publishTime <='" + endTime + "' and p_pass=1 group by p_owner";
 		Map<String,Integer> resMap = new HashMap<String,Integer>();
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if(rows!=null && rows.size()>0){
@@ -771,7 +775,7 @@ public class DBAccessImplement implements DBAccessInterface {
 		int startLine = (pageNum -1)*pageSize;
 		String sql = "select p.p_id,p.p_name,p.p_owner,p.p_publishTime,p.p_description,p.p_source,p.p_isOriginal,p.p_browseCount," +
 				"p.p_mobImgId,p.p_mobImgSize,p.p_mobImgPath,p.p_rawImgId,p.p_rawImgSize,p.p_rawImgPath" +
-				" from t_picture p, t_favorite f where p.p_id = f.f_picture and f.f_owner = '"+userId+"' limit "+startLine+","+pageSize;
+				" from t_picture p, t_favorite f where p.p_id = f.f_picture and f.f_owner = '"+userId+"' and p. p_pass=1 limit "+startLine+","+pageSize;
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -824,7 +828,7 @@ public class DBAccessImplement implements DBAccessInterface {
 	public List<TPicItem> getTpicsByUser(String userId, int pageNum,int pageSize) {
 		int startLine = (pageNum -1)*pageSize;
 		List<TPicItem> resList = new ArrayList<TPicItem>();
-		String sql = "select * from t_picture where p_owner = '"+userId+"' order by p_publishTime desc limit "+startLine+","+pageSize;
+		String sql = "select * from t_picture where p_owner = '"+userId+"' and p_pass=1 order by p_publishTime desc limit "+startLine+","+pageSize;
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -945,7 +949,7 @@ public class DBAccessImplement implements DBAccessInterface {
 
 	@Override
 	public int getTPicCountByUser(String userId) {
-		String sql = "select count(p_id) from t_picture where p_owner = '"+userId+"'";
+		String sql = "select count(p_id) from t_picture where p_owner = '"+userId+"' and p_pass=1";
 		int counts = jdbcTemplate.queryForInt(sql);
 		return counts;
 	}
@@ -1075,44 +1079,13 @@ public class DBAccessImplement implements DBAccessInterface {
 		return res.length;
 	}
 
-
-	public List<TPicItem> queryByBrowseCount(int pageNum, int pageSize) {
-		List<TPicItem> resList = new ArrayList<TPicItem>();
-		int startLine = (pageNum -1)*pageSize;
-		String sql = "select * from t_picture order by p_browseCount desc limit "+startLine+","+pageSize;
-		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
-		if (rows != null && rows.size() > 0) {
-			for (int i = 0; i < rows.size(); i++) {
-				Map<String, Object> map = (Map<String, Object>) rows.get(i);
-				TPicItem tpicItem = new TPicItem();
-				tpicItem.setId(map.get("p_id").toString());
-				tpicItem.setName(map.get("p_name").toString());
-				tpicItem.setOwner(map.get("p_owner").toString());
-				tpicItem.setPublishTime(map.get("p_publishTime").toString());
-				tpicItem.setDescription(map.get("p_description").toString());
-				tpicItem.setSource(map.get("p_source").toString());
-				tpicItem.setIsOriginal(Integer.parseInt(map.get("p_isOriginal")
-						.toString()));
-				tpicItem.setMobImgId(map.get("p_mobImgId").toString());
-				tpicItem.setMobImgSize(map.get("p_mobImgSize").toString());
-				tpicItem.setMobImgPath(map.get("p_mobImgPath").toString());
-				tpicItem.setRawImgId(map.get("p_rawImgId").toString());
-				tpicItem.setRawImgSize(map.get("p_rawImgSize").toString());
-				tpicItem.setRawImgPath(map.get("p_rawImgPath").toString());
-				tpicItem.setBrowseCount(Integer.parseInt(map.get("p_browseCount").toString()));
-				resList.add(tpicItem);
-			}
-		}
-		return resList;
-	}
-
 	@Override
 	public List<TPicDetails> classicalStatistics() {
 		List<TPicDetails> resList = new ArrayList<TPicDetails>();
 		String sql = "select p.p_id,p.p_name,p.p_owner,p.p_publishTime,p.p_description,p.p_source,p.p_isOriginal,p.p_browseCount," +
 				"p.p_mobImgId,p.p_mobImgSize,p.p_mobImgPath,p.p_rawImgId,p.p_rawImgSize,p.p_rawImgPath," +
 				"u.u_nickName,u.u_avatar,u.u_score,u.u_level" +
-				" from t_picture p,t_user u where u.u_id=p.p_owner order by p.p_browseCount desc limit 12";
+				" from t_picture p,t_user u where u.u_id=p.p_owner and p.p_pass=1 order by p.p_browseCount desc limit 12";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -1149,7 +1122,7 @@ public class DBAccessImplement implements DBAccessInterface {
 		String sql = "select p.p_id,p.p_name,p.p_owner,p.p_publishTime,p.p_description,p.p_source,p.p_isOriginal,p.p_browseCount," +
 				"p.p_mobImgId,p.p_mobImgSize,p.p_mobImgPath,p.p_rawImgId,p.p_rawImgSize,p.p_rawImgPath," +
 				"u.u_nickName,u.u_avatar,u.u_score,u.u_level " +
-				"from t_picture p,t_user u,t_favorite f where u.u_id=p.p_owner and f.f_picture=p.p_id " +
+				"from t_picture p,t_user u,t_favorite f where u.u_id=p.p_owner and f.f_picture=p.p_id and p.p_pass=1 " +
 				"order by f.f_collectTime desc limit 12";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
@@ -1189,46 +1162,8 @@ public class DBAccessImplement implements DBAccessInterface {
 		String sql = "select p.p_id,p.p_name,p.p_owner,p.p_publishTime,p.p_description,p.p_source,p.p_isOriginal,p.p_browseCount," +
 				"p.p_mobImgId,p.p_mobImgSize,p.p_mobImgPath,p.p_rawImgId,p.p_rawImgSize,p.p_rawImgPath," +
 				"u.u_nickName,u.u_avatar,u.u_score,u.u_level " +
-				"from t_picture p,t_user u where u.u_id=p.p_owner " +
+				"from t_picture p,t_user u where u.u_id=p.p_owner and p.p_pass=1 " +
 				"order by p.p_publishTime desc limit "+startLine+","+pageSize;
-		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
-		if (rows != null && rows.size() > 0) {
-			for (int i = 0; i < rows.size(); i++) {
-				Map<String, Object> map = (Map<String, Object>) rows.get(i);
-				TPicDetails tpic = new TPicDetails();
-				tpic.setId(map.get("p_id").toString());
-				tpic.setName(map.get("p_name").toString());
-				tpic.setOwner(map.get("p_owner").toString());
-				tpic.setPublishTime(map.get("p_publishTime").toString());
-				tpic.setDescription(map.get("p_description").toString());
-				tpic.setSource(map.get("p_source").toString());
-				tpic.setIsOriginal(Integer.parseInt(map.get("p_isOriginal")
-						.toString()));
-				tpic.setMobImgId(map.get("p_mobImgId").toString());
-				tpic.setMobImgSize(map.get("p_mobImgSize").toString());
-				tpic.setMobImgPath(map.get("p_mobImgPath").toString());
-				tpic.setRawImgId(map.get("p_rawImgId").toString());
-				tpic.setRawImgSize(map.get("p_rawImgSize").toString());
-				tpic.setRawImgPath(map.get("p_rawImgPath").toString());
-				tpic.setBrowseCount(Integer.parseInt(map.get("p_browseCount").toString()));
-				tpic.setAuthor(map.get("u_nickName").toString());
-				tpic.setLevel(Integer.parseInt(map.get("u_level").toString()));
-				tpic.setScore(Integer.parseInt(map.get("u_score").toString()));
-				tpic.setAvatarImgPath(map.get("u_avatar").toString());
-				resList.add(tpic);
-			}
-		}
-		return resList;
-	}
-
-	@Override
-	public List<TPicDetails> searchByTagOr(String tagOr) {
-		List<TPicDetails> resList = new ArrayList<TPicDetails>();
-		String sql = "select distinct p.p_id,p.p_name,p.p_owner,p.p_publishTime,p.p_description,p.p_source,p.p_isOriginal,p.p_browseCount," +
-				"p.p_mobImgId,p.p_mobImgSize,p.p_mobImgPath,p.p_rawImgId,p.p_rawImgSize,p.p_rawImgPath," +
-				"u.u_nickName,u.u_avatar,u.u_score,u.u_level " +
-				"from t_picture p,t_user u,t_tag t,t_category c where u.u_id=p.p_owner and p.p_id=c.c_picture and c.c_tag=t.t_id "+
-				"and t.t_name in (" + tagOr + ")";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -1379,7 +1314,7 @@ public class DBAccessImplement implements DBAccessInterface {
 		List<TPicDesc> resList = new ArrayList<TPicDesc>();
 		String sql = "select p.p_id,p.p_publishTime "+
 				"from t_picture p,t_user u,t_tag t,t_category c where u.u_id=p.p_owner and p.p_id=c.c_picture and c.c_tag=t.t_id "+
-				"and t.t_id ='" + tagId + "'";
+				"and t.t_id ='" + tagId + "' and p.p_pass=1";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -1411,7 +1346,45 @@ public class DBAccessImplement implements DBAccessInterface {
 		String sql = "select p.p_id,p.p_name,p.p_owner,p.p_publishTime,p.p_description,p.p_source,p.p_isOriginal,p.p_browseCount," +
 				"p.p_mobImgId,p.p_mobImgSize,p.p_mobImgPath,p.p_rawImgId,p.p_rawImgSize,p.p_rawImgPath," +
 				"u.u_nickName,u.u_avatar,u.u_score,u.u_level " +
-				"from t_picture p left join t_user u on p.p_owner=u.u_id where "+tagAnd.toString();
+				"from t_picture p left join t_user u on p.p_owner=u.u_id where p.p_pass=1 and "+tagAnd.toString();
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				TPicDetails tpic = new TPicDetails();
+				tpic.setId(map.get("p_id").toString());
+				tpic.setName(map.get("p_name").toString());
+				tpic.setOwner(map.get("p_owner").toString());
+				tpic.setPublishTime(map.get("p_publishTime").toString());
+				tpic.setDescription(map.get("p_description").toString());
+				tpic.setSource(map.get("p_source").toString());
+				tpic.setIsOriginal(Integer.parseInt(map.get("p_isOriginal")
+						.toString()));
+				tpic.setMobImgId(map.get("p_mobImgId").toString());
+				tpic.setMobImgSize(map.get("p_mobImgSize").toString());
+				tpic.setMobImgPath(map.get("p_mobImgPath").toString());
+				tpic.setRawImgId(map.get("p_rawImgId").toString());
+				tpic.setRawImgSize(map.get("p_rawImgSize").toString());
+				tpic.setRawImgPath(map.get("p_rawImgPath").toString());
+				tpic.setBrowseCount(Integer.parseInt(map.get("p_browseCount").toString()));
+				tpic.setAuthor(map.get("u_nickName").toString());
+				tpic.setLevel(Integer.parseInt(map.get("u_level").toString()));
+				tpic.setScore(Integer.parseInt(map.get("u_score").toString()));
+				tpic.setAvatarImgPath(map.get("u_avatar").toString());
+				resList.add(tpic);
+			}
+		}
+		return resList;
+	}
+	
+	@Override
+	public List<TPicDetails> searchByTagOr(String tagOr) {
+		List<TPicDetails> resList = new ArrayList<TPicDetails>();
+		String sql = "select distinct p.p_id,p.p_name,p.p_owner,p.p_publishTime,p.p_description,p.p_source,p.p_isOriginal,p.p_browseCount," +
+				"p.p_mobImgId,p.p_mobImgSize,p.p_mobImgPath,p.p_rawImgId,p.p_rawImgSize,p.p_rawImgPath," +
+				"u.u_nickName,u.u_avatar,u.u_score,u.u_level " +
+				"from t_picture p,t_user u,t_tag t,t_category c where u.u_id=p.p_owner and p.p_id=c.c_picture and c.c_tag=t.t_id "+
+				"and t.t_name in (" + tagOr + ") and p.p_pass=1";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -1447,7 +1420,7 @@ public class DBAccessImplement implements DBAccessInterface {
 		List<User> userList = new ArrayList<User>();
 		String sql="select u.u_id,u.u_account,u.u_nickName,u.u_registerTime,u.u_role,u.u_level,u.u_score,u.u_exchangeScore,u.u_avatar," +
 				"count(distinct p.p_id) as picNum from t_user u ,t_picture p "+
-				"where u.u_id=p.p_owner group by u.u_id order by picNum desc limit 10";
+				"where u.u_id=p.p_owner and p.p_pass=1 group by u.u_id order by picNum desc limit 10";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -1573,7 +1546,7 @@ public class DBAccessImplement implements DBAccessInterface {
 	@Override
 	public List<TPicDesc> getRandGallery(int size) {
 		List<TPicDesc> resList = new ArrayList<TPicDesc>();
-		String sql ="select p_id,p_publishTime from t_picture order by rand() limit "+size;
+		String sql ="select p_id,p_publishTime from t_picture where p_pass=1 order by rand() limit "+size;
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -1588,6 +1561,13 @@ public class DBAccessImplement implements DBAccessInterface {
 			}
 		}
 		return resList;
+	}
+
+	@Override
+	public int appendUserscoreByVote(String picId, int score) {
+		String sql = "update t_user set u_score=u_score+"+score+" ,u_exchangeScore=u_exchangeScore+"+score+" where u_id = (select p_owner from t_picture where p_id='"+picId+"')";
+		int result = jdbcTemplate.update(sql);
+		return result;
 	}
 
 

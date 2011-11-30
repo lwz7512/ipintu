@@ -12,6 +12,10 @@ public class Message {
 	private String receiver;
 	private String content;
 	private String writeTime;
+	//消息类型包括vote,complain,report,system等
+	private String msgType;
+	//一般为图片id，根据type的不同而不同
+	private String reference;
 	private int read;
 	
 	private String senderName;
@@ -21,6 +25,22 @@ public class Message {
 	
 	public Message() {
 		// TODO Auto-generated constructor stub
+	}
+
+	public String getMsgType() {
+		return msgType;
+	}
+
+	public void setMsgType(String msgType) {
+		this.msgType = msgType;
+	}
+
+	public String getReference() {
+		return reference;
+	}
+
+	public void setReference(String reference) {
+		this.reference = reference;
 	}
 
 	public String getId() {
