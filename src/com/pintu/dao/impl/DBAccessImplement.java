@@ -1570,5 +1570,35 @@ public class DBAccessImplement implements DBAccessInterface {
 		return result;
 	}
 
+	@Override
+	public List<User> getActiveUserRandking(int size) {
+		List<User> userList = new ArrayList<User>();
+		String sql="select * from t_user order by u_score desc limit "+size;
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				User user = new User();
+				user.setId(map.get("u_id").toString());
+				user.setAccount(map.get("u_account").toString());
+				user.setNickName(map.get("u_nickName").toString());
+			    user.setAvatar(map.get("u_avatar").toString());
+			    user.setRegisterTime(map.get("u_registerTime").toString());
+			    user.setRole(map.get("u_role").toString());
+			    user.setLevel(Integer.parseInt(map.get("u_level").toString()));
+			    user.setScore(Integer.parseInt(map.get("u_score").toString()));
+			    user.setExchangeScore(Integer.parseInt(map.get("u_exchangeScore").toString()));
+			    userList.add(user);
+			}
+		}
+		return userList;
+	}
+
+	@Override
+	public int reviewPictureById(String picId) {
+		String sql = "update t_picture set p_pass=0 where p_id='"+picId+"'";
+		int rows = jdbcTemplate.update(sql); 
+		return rows;
+	}
 
 }

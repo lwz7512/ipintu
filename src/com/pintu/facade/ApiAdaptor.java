@@ -391,8 +391,8 @@ public class ApiAdaptor {
 		return false;
 	}
 
-	public String getLatestPic() {
-		List<TPicDesc> list = pintuService.getLatestPic();
+	public String getLatestTPicDesc() {
+		List<TPicDesc> list = pintuService.getLatestTPicDesc();
 		return JSONArray.fromCollection(list).toString();
 	}
 
@@ -535,6 +535,16 @@ public class ApiAdaptor {
 	public String getRandGallery() {
 		List<TPicDesc> list = pintuService.getRandGallery();
 		return JSONArray.fromCollection(list).toString();
+	}
+
+	public String getActiveUserRanking() {
+		List<User> activeList = pintuService.getActiveUserRandking();
+		return  JSONArray.fromCollection(activeList).toString();
+	}
+
+	public String reviewPictureById(String picId, String creationTime) {
+		String result = pintuService.reviewPictureById(picId, creationTime);
+		return result;
 	}
 
 

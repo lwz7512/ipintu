@@ -212,5 +212,9 @@ public interface DBAccessInterface {
 	
 	public int appendUserscoreByVote(String picId, int score);
 	
+	public List<User> getActiveUserRandking(int size);
+	
+	public int reviewPictureById(String picId);
+	
 	
 }
