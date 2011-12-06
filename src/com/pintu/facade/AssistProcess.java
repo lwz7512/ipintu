@@ -85,7 +85,17 @@ public class AssistProcess {
 		} else if (action.equals(AppStarter.GETLATESTPIC)) {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
-			String result = apiAdaptor.getLatestPic();
+			String result = apiAdaptor.getLatestTPicDesc();
+			System.out.println(result);
+			pw.println(result);
+			pw.close();
+
+		} else if (action.equals(AppStarter.REVIEWPICTURE)) {
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String picId = req.getParameter("picId");
+			String creationTime = req.getParameter("creationTime");
+			String result = apiAdaptor.reviewPictureById(picId, creationTime);
 			System.out.println(result);
 			pw.println(result);
 			pw.close();
@@ -398,6 +408,14 @@ public class AssistProcess {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getRandGallery();
+			System.out.println(result);
+			pw.println(result);
+			pw.close(); 
+			
+		}else if(action.equals(AppStarter.ACTIVEUSERRANKING)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String result = apiAdaptor.getActiveUserRanking();
 			System.out.println(result);
 			pw.println(result);
 			pw.close(); 

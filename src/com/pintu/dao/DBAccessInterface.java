@@ -210,5 +210,11 @@ public interface DBAccessInterface {
 	
 	public List<TPicDesc> getRandGallery(int size);
 	
+	public int appendUserscoreByVote(String picId, int score);
+	
+	public List<User> getActiveUserRandking(int size);
+	
+	public int reviewPictureById(String picId);
+	
 	
 }

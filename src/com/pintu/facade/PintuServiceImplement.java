@@ -376,6 +376,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		if (user.getId() == null) {
 			user = dbVisitor.getUserById(userId);
 		}
+		user.setPwd("");
 		// FIXME 添加发图数和发故事统计
 		user.setStoryNum(dbVisitor.getStoryCountByUser(userId));
 		user.setTpicNum(dbVisitor.getTPicCountByUser(userId));
@@ -824,7 +825,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public List<TPicDesc> getLatestPic() {
+	public List<TPicDesc> getLatestTPicDesc() {
 		List<TPicDesc> resultList = new ArrayList<TPicDesc>();
 		List<TPicDesc> thumbnailList = new ArrayList<TPicDesc>();
 		//获取最近一小时内发的品图
@@ -1241,6 +1242,28 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				.getProperty("galleryImgNum"));
 		List<TPicDesc> picList = dbVisitor.getRandGallery(size);
 		return  picList;
+	}
+
+	@Override
+	public List<User> getActiveUserRandking() {
+		int size = Integer.parseInt(propertyConfigurer
+				.getProperty("activeUserNum"));
+		List<User> list = dbVisitor.getActiveUserRandking(size);
+		return  list;
+	}
+
+	@Override
+	public String reviewPictureById(String picId, String creationTime) {
+		//删除缓存中的缩略图
+		boolean flag=cacheVisitor.removeThumbnail(creationTime, picId);
+		
+		//更新服务器
+		int i = dbVisitor.reviewPictureById(picId);
+		if (i > 0 && flag) {
+			return systemConfigurer.getProperty("rightPrompt").toString();
+		} else {
+			return systemConfigurer.getProperty("wrongPrompt").toString();
+		}
 	}
 	
 

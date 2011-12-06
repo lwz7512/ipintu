@@ -20,6 +20,8 @@ import net.sf.ehcache.search.attribute.AttributeExtractor;
 import net.sf.ehcache.search.attribute.AttributeExtractorException;
 import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
 
+import org.apache.log4j.Logger;
+
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicItem;
@@ -46,7 +48,7 @@ public class PintuCache {
 
 	private Cache thumbnailCache;
 
-	// private Logger log = Logger.getLogger(PintuCache.class);
+	private Logger log = Logger.getLogger(PintuCache.class);
 
 	public PintuCache() {
 
@@ -434,6 +436,7 @@ public class PintuCache {
 					if (thumbnailId.equals(id)) {
 						savedMap.remove(id);
 						del = true;
+						log.info(">>>Delete unpassed thumbnail  success!");
 					}
 				}
 			}

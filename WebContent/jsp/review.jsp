@@ -1,0 +1,70 @@
+<%@ page language="java" import="java.util.*"
+	contentType="text/html; charset=UTF-8"%>
+<%@ page import="com.pintu.beans.Applicant"%>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Accept page</title>
+<link rel="stylesheet" type="text/css"
+	href="<%=request.getContextPath()%>/jsp/css/style.css" />
+<link rel="stylesheet" type="text/css"
+	href="<%=request.getContextPath()%>/jsp/css/header.css" />
+<script language=javascript
+	src="<%=request.getContextPath()%>/jsp/js/jquery.js"
+	type=text/javascript></script>
+</head>
+<script type="text/javascript">
+btn.attributes.add( "onclick ", "this.style.disabled=true ");
+function loadPicture(){
+	var flag = true;
+	if(flag){
+		$.post('<%=request.getContextPath()%>/pintuapi', {
+			'method'  : 'getLatestPic',
+			'userId'	: '<%=request.getParameter("userId")%>'
+		}, 
+		//回调函数
+		function (result) {
+			if(result.length == 0){
+				$('#prompt').show().html('当前申请者的数目为0');
+				$("tr.table_header").html("");
+			}else{
+				$("tr.table_line").html("");
+				for( key in result ){
+					$("table").append("<tr class='table_line'><td colspan='2' align='center'>"+result[key].thumbnailId+"</td>"+
+					"<td><form id='form1' action='<%=request.getContextPath()%>/pintuapi?userId=<%=request.getParameter("userId")%>' method='post'>"
+					+ "<input type='hidden' name='method' value='reviewPicture' />"
+					+ "<input type='submit' value='审核不通过' onclick='loadPicture()'/>"
+					+ "<input type='hidden' name='picId' id='picId' value='"+result[key].tpId+
+				    "' /><input type='hidden' name='thumbnailId' id='thumbnailId' value='"+result[key].thumbnailId+
+					"' /><input type='hidden' name='creationTime' id='creationTime' value='"+result[key].creationTime+
+					"' /></form></td></tr>");
+				}
+			}
+		}, "json");
+	}
+}
+</script>
+
+<body onload="loadPicture()">
+	<div class="xft">
+<div class="xq" id="xit">
+<a href="../index.jsp" class="xdt" id="zh-top-link-logo"></a>
+</div>
+</div>
+
+	<table class='table' >
+		<tr class="table_title">
+			<td colspan='2' align="center">
+				待审核新图列表 <span style="display: none;" id="prompt"></span>
+			</td>
+			<td >
+				<img src="<%=request.getContextPath()%>/jsp/img/refresh.png" onclick="loadPicture()" title="点击刷新"/>
+			</td>
+		</tr>
+		<tr class="table_header">
+			<td colspan='2' align="center">图片</td>
+			<td>授理意见</td>
+		</tr>
+	</table>
+</body>
+</html>

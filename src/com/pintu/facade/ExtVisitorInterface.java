@@ -87,8 +87,11 @@ public interface ExtVisitorInterface {
 	public static final String PUBLISHGIFT = "publishGift";
 	//发布社区事件
 	public static final String PUBLISHEVENT = "publishEvent";
-	//查看最近一段时间的贴图
+	//查看最近小时内的贴图
 	public static final String GETLATESTPIC = "getLatestPic";
+	
+	//审核发图
+	public static final String REVIEWPICTURE = "reviewPicture";
 	
 	//TODO, TO ADD MORE METHOD DEFINITION...
 	
@@ -127,5 +130,8 @@ public interface ExtVisitorInterface {
     
     //随机获取系统32个图~
     public static final String GETRANDGALLERY = "getRandGallery";
+    
+    //活跃用户排行榜(根据积分排列)
+    public static final String ACTIVEUSERRANKING = "getActiveUserRanking";
     
 }

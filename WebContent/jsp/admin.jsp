@@ -24,6 +24,9 @@
 <a class="xhs" href="accept.jsp?userId=<%=userId %>">处理申请</a>
 </li>
 <li class="xis">
+<a class="xhs" href="review.jsp?userId=<%=userId %>">审核贴图</a>
+</li>
+<li class="xis">
 <a class="xhs" href="#">发布可换礼物</a>
 </li>
 <li class="xis">

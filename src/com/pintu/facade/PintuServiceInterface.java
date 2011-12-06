@@ -177,7 +177,7 @@ public interface PintuServiceInterface {
 	public String publishCommunityEvent(Event event);
 
 	// 获取最近一段时间的贴图
-	public List<TPicDesc> getLatestPic();
+	public List<TPicDesc> getLatestTPicDesc();
 
 	//验证登录的用户是否存在
 	public String getExistUser(String account, String pwd);
@@ -232,6 +232,10 @@ public interface PintuServiceInterface {
 	public String createAvatarImg(FileItem avatarData, String userId, String nickName);
 
 	public List<TPicDesc> getRandGallery();
+
+	public List<User> getActiveUserRandking();
+
+	public String reviewPictureById(String picId, String creationTime);
 
 
 
