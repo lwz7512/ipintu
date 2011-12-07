@@ -95,6 +95,6 @@ public interface CacheAccessInterface {
 
 	public boolean removeTPic(String id);
 
-	public boolean removeThumbnail(String longTime, String id);
+	public boolean removeThumbnail(long longTime, String thumbnailId);
 
 }

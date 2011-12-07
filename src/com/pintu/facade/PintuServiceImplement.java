@@ -33,6 +33,7 @@ import com.pintu.beans.StoryDetails;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TPicItem;
+import com.pintu.beans.TPicReview;
 import com.pintu.beans.Tag;
 import com.pintu.beans.TastePic;
 import com.pintu.beans.User;
@@ -825,8 +826,8 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public List<TPicDesc> getLatestTPicDesc() {
-		List<TPicDesc> resultList = new ArrayList<TPicDesc>();
+	public List<TPicReview> getLatestTPicDesc() {
+		List<TPicReview> resultList = new ArrayList<TPicReview>();
 		List<TPicDesc> thumbnailList = new ArrayList<TPicDesc>();
 		//获取最近一小时内发的品图
 		int nowMinute = getMinutes(String.valueOf(new Date().getTime()));
@@ -838,10 +839,29 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		}
 
 		if (thumbnailList != null) {
-			for (int j = thumbnailList.size() - 1; j >= 0; j--) {
-				resultList.add(thumbnailList.get(j));
+//			for (int j = thumbnailList.size() - 1; j >= 0; j--) {
+//				resultList.add(thumbnailList.get(j));
+//			}
+			for(int i = 0;i<thumbnailList.size();i++){
+				TPicDesc tpicDesc = thumbnailList.get(i);
+				String picId = tpicDesc.getTpId();
+				TPicItem tpicItem = cacheVisitor.getSpecificPic(picId);
+				TPicReview tpicReview = new TPicReview();
+				String userId = tpicItem.getOwner();
+				User user = this.getUserInfo(userId);
+				tpicReview.setAuthor(user.getNickName());
+				tpicReview.setUserId(userId);
+				tpicReview.setDescription(tpicItem.getDescription());
+				tpicReview.setTags(tpicItem.getTags());
+				tpicReview.setPublishTime(tpicItem.getPublishTime());
+				tpicReview.setThumbnailId(tpicDesc.getThumbnailId());
+				tpicReview.setTpId(picId);
+				tpicReview.setCreationTime(tpicDesc.getCreationTime());
+				resultList.add(tpicReview);
 			}
 		}
+		
+//		cacheVisitor.getSpecificPic(pid)
 
 		return resultList;
 	}
@@ -1023,11 +1043,13 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 	@Override
 	public List<TPicDetails> classicalStatistics() {
+		int classicalNum =  Integer.parseInt(propertyConfigurer
+				.getProperty("classicalBrowseCount"));
 		List<TPicDetails> picList = new ArrayList<TPicDetails>();
 		if(MidnightTask.classicalList.size() > 0){
 			picList = MidnightTask.classicalList;
 		}else{
-			picList = dbVisitor.classicalStatistics();
+			picList = dbVisitor.classicalStatistics(classicalNum);
 		}
 		return calcPicDetailCount(picList);
 	}
@@ -1255,7 +1277,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	@Override
 	public String reviewPictureById(String picId, String creationTime) {
 		//删除缓存中的缩略图
-		boolean flag=cacheVisitor.removeThumbnail(creationTime, picId);
+		boolean flag=cacheVisitor.removeThumbnail(Long.parseLong(creationTime), picId+TPicDesc.THUMBNIAL);
 		
 		//更新服务器
 		int i = dbVisitor.reviewPictureById(picId);

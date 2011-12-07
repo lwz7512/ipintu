@@ -23,6 +23,7 @@ import com.pintu.beans.StoryDetails;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TPicItem;
+import com.pintu.beans.TPicReview;
 import com.pintu.beans.Tag;
 import com.pintu.beans.TastePic;
 import com.pintu.beans.User;
@@ -392,7 +393,7 @@ public class ApiAdaptor {
 	}
 
 	public String getLatestTPicDesc() {
-		List<TPicDesc> list = pintuService.getLatestTPicDesc();
+		List<TPicReview> list = pintuService.getLatestTPicDesc();
 		return JSONArray.fromCollection(list).toString();
 	}
 

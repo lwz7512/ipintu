@@ -167,7 +167,7 @@ public interface DBAccessInterface {
 	
 	public int updatePicBrowseCount(List<Map<String, Integer>> browseCountList);
 	
-	public List<TPicDetails> classicalStatistics();
+	public List<TPicDetails> classicalStatistics(int classicalNum);
 	
 	public List<TPicDetails> collectStatistics();
 	

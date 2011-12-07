@@ -6,6 +6,7 @@ package com.pintu.jobs;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
@@ -19,6 +20,7 @@ public class MidnightTask extends TimerTask {
 
 	private DBAccessInterface dbAccess;
 	private CacheAccessInterface cacheAccess;
+	private Properties propertyConfigurer;
 	
 	// 新更新classical的故事id（'','',''）
 	public static StringBuffer newClassicalStoryIds = new StringBuffer();
@@ -39,7 +41,7 @@ public class MidnightTask extends TimerTask {
 	private Logger log = Logger.getLogger(MidnightTask.class);
 
 	public MidnightTask(DBAccessInterface dbVisitor,
-			CacheAccessInterface cacheVisitor) {
+			CacheAccessInterface cacheVisitor, Properties propertyConfigurer) {
 		this.dbAccess = dbVisitor;
 		this.cacheAccess = cacheVisitor;
 	}
@@ -71,8 +73,10 @@ public class MidnightTask extends TimerTask {
 	}
 
 	private void calculateClassicalAndCollectTop() {
+		int classicalNum =  Integer.parseInt(propertyConfigurer
+				.getProperty("classicalBrowseCount"));
 		classicalList.clear();
-		classicalList=this.dbAccess.classicalStatistics();
+		classicalList=this.dbAccess.classicalStatistics(classicalNum);
 		collectList.clear();
 		collectList=this.dbAccess.collectStatistics();
 	}
