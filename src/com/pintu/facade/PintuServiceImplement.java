@@ -473,7 +473,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 	@Override
 	public void getImageFile(String picId, HttpServletResponse res) {
-		File file = new File(imagePath + File.separator + "defaultImage.jpg");
+		File file = new File(imagePath + File.separator + "defaultImage.png");
 		File jpgFile = new File(imagePath + File.separator + picId + ".jpg");
 		File pngFile = new File(imagePath + File.separator + picId + ".png");
 		File gifFile = new File(imagePath + File.separator + picId + ".gif");
