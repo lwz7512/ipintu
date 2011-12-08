@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 
 import com.pintu.beans.Message;
 import com.pintu.beans.Story;
+import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicItem;
 import com.pintu.beans.Tag;
 import com.pintu.beans.Vote;
@@ -192,7 +193,7 @@ public class SyncExecute implements Runnable {
 					log.warn(">>>Question picture detail:"+ tpic.toString());
 					
 					//删除缓存中的缩略图
-					boolean flag = cacheVisitor.removeThumbnail(tpic.getPublishTime(),id);
+					boolean flag = cacheVisitor.removeThumbnail(PintuUtils.parseToDate(tpic.getPublishTime()).getTime(),id+TPicDesc.THUMBNIAL);
 					if(flag){
 						log.info(">>>Deleted question thumbnial");
 					}

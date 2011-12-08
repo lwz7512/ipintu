@@ -23,6 +23,7 @@ import com.pintu.beans.StoryDetails;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TPicItem;
+import com.pintu.beans.TPicReview;
 import com.pintu.beans.Tag;
 import com.pintu.beans.TastePic;
 import com.pintu.beans.User;
@@ -392,7 +393,7 @@ public class ApiAdaptor {
 	}
 
 	public String getLatestTPicDesc() {
-		List<TPicDesc> list = pintuService.getLatestTPicDesc();
+		List<TPicReview> list = pintuService.getLatestTPicDesc();
 		return JSONArray.fromCollection(list).toString();
 	}
 
@@ -448,7 +449,9 @@ public class ApiAdaptor {
 
 	public String getGalleryForWeb(int pageNum) {
 		List<TPicDetails> list = pintuService.getGalleryForWeb(pageNum);
-		return JSONArray.fromCollection(list).toString();
+		JSONArray jsonArray = JSONArray.fromCollection(list);
+		removeJsonKey(jsonArray);
+		return jsonArray.toString();
 	}
 
 	public String searchByTag(String tags) {

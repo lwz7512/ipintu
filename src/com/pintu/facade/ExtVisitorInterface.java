@@ -72,24 +72,23 @@ public interface ExtVisitorInterface {
 	
 //	public static final String GETSTORIESBYUSER  = "getStoriesByUser";
 	
+	//----------后台管理员角色
+	//发布可选礼物
+	public static final String PUBLISHGIFT = "publishGift";
+	//发布社区事件
+	public static final String PUBLISHEVENT = "publishEvent";
 	
 	public static final String GETGIFTS ="getExchangeableGifts";
 	
 	public static final String GETEVENTS = "getCommunityEvents";
-	
-	//----------后台管理员角色
+
 	//查看用户申请列表
 	public static final String GETAPPLICANT = "getApplicant";
 	//授理申请
 	public static final String ACCEPT = "accept";
 	
-	//发布可选礼物
-	public static final String PUBLISHGIFT = "publishGift";
-	//发布社区事件
-	public static final String PUBLISHEVENT = "publishEvent";
 	//查看最近小时内的贴图
 	public static final String GETLATESTPIC = "getLatestPic";
-	
 	//审核发图
 	public static final String REVIEWPICTURE = "reviewPicture";
 	

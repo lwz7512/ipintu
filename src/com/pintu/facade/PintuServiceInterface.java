@@ -17,6 +17,7 @@ import com.pintu.beans.StoryDetails;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TPicItem;
+import com.pintu.beans.TPicReview;
 import com.pintu.beans.Tag;
 import com.pintu.beans.TastePic;
 import com.pintu.beans.User;
@@ -177,7 +178,7 @@ public interface PintuServiceInterface {
 	public String publishCommunityEvent(Event event);
 
 	// 获取最近一段时间的贴图
-	public List<TPicDesc> getLatestTPicDesc();
+	public List<TPicReview> getLatestTPicDesc();
 
 	//验证登录的用户是否存在
 	public String getExistUser(String account, String pwd);
