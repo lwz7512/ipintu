@@ -439,22 +439,30 @@ public class ApiAdaptor {
 
 	public String collectStatistics() {
 		List<TPicDetails> list = pintuService.collectStatistics();
-		return JSONArray.fromCollection(list).toString();
+		JSONArray jsonArray = JSONArray.fromCollection(list);
+		removeJsonKey(jsonArray);
+		return jsonArray.toString();
 	}
 
 	public String classicalStatistics() {
 		List<TPicDetails> list = pintuService.classicalStatistics();
-		return JSONArray.fromCollection(list).toString();
+		JSONArray jsonArray = JSONArray.fromCollection(list);
+		removeJsonKey(jsonArray);
+		return jsonArray.toString();
 	}
 
 	public String getGalleryForWeb(int pageNum) {
 		List<TPicDetails> list = pintuService.getGalleryForWeb(pageNum);
-		return JSONArray.fromCollection(list).toString();
+		JSONArray jsonArray = JSONArray.fromCollection(list);
+		removeJsonKey(jsonArray);
+		return jsonArray.toString();
 	}
 
 	public String searchByTag(String tags) {
 		List<TPicDetails> list = pintuService.searchByTag(tags);
-		return JSONArray.fromCollection(list).toString();
+		JSONArray jsonArray = JSONArray.fromCollection(list);
+		removeJsonKey(jsonArray);
+		return jsonArray.toString();
 	}
 
 	public String getHotTags() {
