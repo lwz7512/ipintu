@@ -118,13 +118,13 @@ FORM CORE
 #contact-form{
 	min-height:100%; 
     position:relative;
-    padding-bottom:60px;    /* 等于footer的高度 */
-	height:380px; 
+    padding-bottom:60px;    /*等于footer的高度*/
+	height:370px; 
 }
 
 form#contact fieldset {
 	padding: 0 auto;
-	margin: 80px auto;
+	margin: 60px auto;
 	border: 0;
 	background-color: #fff;
 	width: 320px;
