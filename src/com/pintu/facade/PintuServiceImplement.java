@@ -1054,16 +1054,30 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		return calcPicDetailCount(picList);
 	}
 	
-	//用于处理所有查询图片的处理实时点击量问题
+	//用于处理所有查询图片的浏览量，评论数，被赞数
 	private List<TPicDetails> calcPicDetailCount(List<TPicDetails> picList){
 		List<TPicDetails> resultList = new ArrayList<TPicDetails>();
 		if(picList != null && picList.size()>0){
 			for (int i = 0; i < picList.size(); i++) {
 				TPicDetails pic = picList.get(i);
-				if(CacheAccessInterface.hotPicCacheIds.containsKey(pic.getId())){
+				String picId = pic.getId();
+				//处理实时点击
+				if(CacheAccessInterface.hotPicCacheIds.containsKey(picId)){
 					int newCount = pic.getBrowseCount() + CacheAccessInterface.hotPicCacheIds.get(pic.getId());
 					pic.setBrowseCount(newCount);
 				}
+				
+				//处理图片评论数
+				int storyNum = cacheVisitor.getStoriesOfPic(picId).size();
+				if (storyNum == 0) {
+					storyNum = dbVisitor.getStoriesOfPic(picId).size();
+				}
+				pic.setStoriesNum(storyNum);
+				
+				//处理喜欢数
+				int coolCount = this.getPicCoolCount(picId);
+				pic.setCoolCount(coolCount);
+				
 				resultList.add(pic);
 			}
 		}
