@@ -84,7 +84,7 @@ p.twoBtn{
 	clear: both;
     background: #b3d563;
     background: -webkit-gradient(linear, left top, left bottom,  from(#00BC12), to(#0C8918));
-    background: -moz-linear-gradient(top,  #1a85cb,  #105e99);
+    background: -moz-linear-gradient(top,  #00BC12,  #0C8918);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00BC12', endColorstr='#0C8918');
     -moz-box-shadow: 0 0 1px #eee inset;
     -webkit-box-shadow: 0 0 1px #eee inset;
@@ -139,8 +139,8 @@ form#contact fieldset {
 
 form#contact input[type="text"], input[type="url"], 
 input[type="email"], input[type="password"], textarea {
-	margin: 0px 0px 0px 15px;
-	padding: 5px; 
+	margin: 5px 0px 5px 20px;
+	padding: 6px; 
 	width: 270px; 
 	font-family: arial, sans-serif; 
 	font-size: 12px; 
@@ -159,15 +159,14 @@ form#contact label {
 	font-size: 13px;
 	color: #666;
 	font-weight: bold;
-	padding: 2px 0px 0px 15px; 
-	margin:8px 0px 4px 0px;
+	padding: 5px 0px 0px 20px; 
 }
 
 form#contact label.header {
 	clear: both;
     background: #b3d563;
     background: -webkit-gradient(linear, left top, left bottom,  from(#00BC12), to(#0C8918));
-    background: -moz-linear-gradient(top,  #1a85cb,  #105e99);
+    background: -moz-linear-gradient(top,  #00BC12,  #0C8918);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00BC12', endColorstr='#0C8918');
     -moz-box-shadow: 0 0 1px #eee inset;
     -webkit-box-shadow: 0 0 1px #eee inset;
