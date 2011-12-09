@@ -485,7 +485,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		} else if (gifFile.exists()) {
 			writeGIFImage(gifFile, res);
 		} else {
-			writeJPGImage(file, res);
+			writePNGImage(file, res);
 		}
 	}
 
