@@ -148,10 +148,8 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			// 2. 放入缓存
 			cacheVisitor.cachePicture(tpicItem);
 			
-			//FIXME 更新用户的最后操作时间
-			Long updateTime = System.currentTimeMillis();
-			cacheVisitor.updateCachedUser(tpicItem.getOwner(), updateTime);
-			
+			//更新用户的最后操作时间
+			updateCacheUser(tpicItem.getOwner());
 			
 			// 3. 提交imgProcessor生成文件
 			imgProcessor.createImageFile(pic.getRawImageData(), tpicItem);
@@ -163,14 +161,25 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		}
 
 	}
+	
+	//FIXME 在更新最后更新时间之前检查缓存里是否有用户存在
+	private void updateCacheUser(String userId){
+		User user = cacheVisitor.getUserById(userId);
+		if (user.getId() == null) {
+			user = dbVisitor.getUserById(userId);
+			cacheVisitor.cacheUser(user);
+			log.info("Check the user cache before update user lastUpdateTime...");
+		}
+		Long updateTime = System.currentTimeMillis();
+		cacheVisitor.updateCachedUser(userId, updateTime);
+		
+	}
 
 	@Override
 	public void addStoryToPintu(Story story) {
 		cacheVisitor.cacheStory(story);
-		
 		// 更新用户的最后操作时间
-		Long updateTime = System.currentTimeMillis();
-		cacheVisitor.updateCachedUser(story.getOwner(), updateTime);
+		updateCacheUser(story.getOwner());
 	}
 
 	@Override
