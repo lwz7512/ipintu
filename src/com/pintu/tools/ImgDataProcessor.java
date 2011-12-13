@@ -35,33 +35,14 @@ public class ImgDataProcessor {
 
 	// 只管往里扔数据就行了，任务队列自动会排队执行
 	public void createImageFile(FileItem file, TPicItem picObj){
-		System.out.println("5 create Image File（原图和手机图入库，缩略图放缓存）");
+		System.out.println("5 create Image File（rawImage and mobileImage to DB，thumbnailImage to cache）");
 		
-		
-		ImageFileCreationTask thumbnailTask = new ImageFileCreationTask();
-		thumbnailTask.setFile(file);
-		thumbnailTask.setPath(filePath);
-		thumbnailTask.setImgType("thumbnail");
-		thumbnailTask.setPicObj(picObj);
-		//存到缓存中
-		thumbnailTask.setCacheAccess(cacheAccess);
-		pool.execute(thumbnailTask);
-		
-		//创建手机访问图片
-		ImageFileCreationTask mobileTask = new ImageFileCreationTask();
-		mobileTask.setFile(file);
-		mobileTask.setPath(filePath);
-		mobileTask.setImgType("mobile");
-		mobileTask.setPicObj(picObj);
-		pool.execute(mobileTask);
-
-		//创建原始大图片
-		ImageFileCreationTask rawTask = new ImageFileCreationTask();
-		rawTask.setFile(file);
-		rawTask.setPath(filePath);
-		rawTask.setImgType("raw");
-		rawTask.setPicObj(picObj);
-		pool.execute(rawTask);
+		ImageFileCreationTask imgTask = new ImageFileCreationTask();
+		imgTask.setFile(file);
+		imgTask.setPath(filePath);
+		imgTask.setPicObj(picObj);
+		imgTask.setCacheAccess(cacheAccess);
+		pool.execute(imgTask);
 		
 	}
 

@@ -14,8 +14,8 @@ public class ImageFileCreationTask implements Runnable {
 	
 		private CacheAccessInterface cacAccess;
 	
-		// 生成缩略图thumbnail，还是手机浏览图mobile，还是原始大图raw
-		private String imgType;
+//		// 生成缩略图thumbnail，还是手机浏览图mobile，还是原始大图raw
+//		private String imgType;
 
 		private FileItem fileItem;
 
@@ -27,66 +27,76 @@ public class ImageFileCreationTask implements Runnable {
 
 		@Override
 		public void run() {
+			//生成原图
+			createRawImage();
+			//生成手机图
+			createMobileImage();
+			//生成缩略图
+			createThumbnailImage();
+		}
+
+		private void createRawImage() {
 			//生成图片文件，并将路径存在picObj中
 			//route值：ipintu/WebContent/WEB-INF/uploadFile/
 			String route =path + File.separator ;
-//			File uploadFile = new File(route+picObj.getName());
 			picObj.setRawImgId(picObj.getId()+"_Raw");
 			File uploadFile = new File(route+picObj.getRawImgId()+getFileType());
-			if(imgType.equals("raw")){
-				// 文件写入到系统中
-				try {
-					fileItem.write(uploadFile);
-//					picObj.setRawImgId(picObj.getId()+"_Raw");
-					picObj.setRawImgSize(String.valueOf(fileItem.getSize()/1024));
-					picObj.setRawImgPath(route+picObj.getRawImgId()+getFileType());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}else if(imgType.equals("mobile")){
-				picObj.setMobImgId(picObj.getId()+"_Mob");
-				picObj.setMobImgPath(route+picObj.getMobImgId()+getFileType());
-				try {
-					 ImageHelper.handleImage(fileItem, 440, 440, picObj.getMobImgPath());
-//					先生成小图片后写文件再给size赋值
-					 File file= new File(picObj.getMobImgPath());
-					 if(file.length() > 0){
-						 picObj.setMobImgSize(String.valueOf(file.length()/1024));
-					 }else{
-						 picObj.setMobImgSize("00");
-					 }
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				
-			}else if(imgType.equals("thumbnail")){
-				//因缩略图不用入库，所以id可以不遵循数据库中设计的长度
-				String thumbnailId=picObj.getId()+TPicDesc.THUMBNIAL;
-				//函数设计传参需要，因不写文件，帮用不到
-				String thumbnailPath=route+thumbnailId+getFileType();
-				try {
-					ImageHelper.handleImage(fileItem, 100, 100, thumbnailPath);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				//构造出缩略图对象，用于放到缓存中
-				TPicDesc tpicDesc = new TPicDesc();
-				//缩略图对象中存放贴图对象ID，方便对应
-				tpicDesc.setTpId(picObj.getId());
-				tpicDesc.setThumbnailId(thumbnailId);
-				tpicDesc.setCreationTime(String.valueOf(new Date().getTime()));
-				tpicDesc.setStatus("0");
-				
-				//将缩略图放到缓存中
-				cacAccess.cacheThumbnail(tpicDesc);
-				
+			// 图片原文件写入到系统中
+			try {
+				fileItem.write(uploadFile);
+				picObj.setRawImgSize(String.valueOf(fileItem.getSize()/1024));
+				picObj.setRawImgPath(route+picObj.getRawImgId()+getFileType());
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-			
 		}
 
-		public void setImgType(String imgType) {
-			this.imgType = imgType;
+		private void createMobileImage() {
+			String route =path + File.separator ;
+			picObj.setMobImgId(picObj.getId()+"_Mob");
+			picObj.setMobImgPath(route+picObj.getMobImgId()+getFileType());
+			try {
+				 ImageHelper.handleImage(fileItem, 440, 440, picObj.getMobImgPath());
+				//先生成手机图片后写文件再给size赋值
+				 File file= new File(picObj.getMobImgPath());
+				 if(file.length() > 0){
+					 picObj.setMobImgSize(String.valueOf(file.length()/1024));
+				 }else{
+					 picObj.setMobImgSize("00");
+				 }
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
+		
+		private void createThumbnailImage() {
+			String route =path + File.separator ;
+			//因缩略图不用入库，所以id可以不遵循数据库中设计的长度
+			String thumbnailId=picObj.getId()+TPicDesc.THUMBNIAL;
+			//函数设计传参需要，因不写文件，一般用不到
+			String thumbnailPath=route+thumbnailId+getFileType();
+			try {
+				ImageHelper.handleImage(fileItem, 100, 100, thumbnailPath);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			//构造出缩略图对象，用于放到缓存中
+			TPicDesc tpicDesc = new TPicDesc();
+			//缩略图对象中存放贴图对象ID，方便对应
+			tpicDesc.setTpId(picObj.getId());
+			tpicDesc.setThumbnailId(thumbnailId);
+			tpicDesc.setCreationTime(String.valueOf(new Date().getTime()));
+			tpicDesc.setStatus("0");
+			
+			//将缩略图放到缓存中
+			cacAccess.cacheThumbnail(tpicDesc);
+		}
+
+		
+//		public void setImgType(String imgType) {
+//			this.imgType = imgType;
+//		}
 
 		public void setFile(FileItem fileItem) {
 			this.fileItem = fileItem;
@@ -104,7 +114,7 @@ public class ImageFileCreationTask implements Runnable {
 			this.cacAccess = cacAccess;
 		}
 		
-		public String getFileType( ){
+		private String getFileType( ){
 			String fileType = "";
 			if(fileItem != null){
 				String fileName = fileItem.getName();
