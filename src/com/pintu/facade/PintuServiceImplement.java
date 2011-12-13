@@ -385,6 +385,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		User user = cacheVisitor.getUserById(userId);
 		if (user.getId() == null) {
 			user = dbVisitor.getUserById(userId);
+			cacheVisitor.cacheUser(user);
 		}
 		user.setPwd("");
 		// FIXME 添加发图数和发故事统计
@@ -396,19 +397,15 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	@Override
 	public UserDetail getUserEstate(String userId) {
 		UserDetail uDetail = new UserDetail();
-		User user = cacheVisitor.getSpecificUser(userId);
-		if (user.getId() == null) {
-			user = dbVisitor.getUserById(userId);
-		}
+		User user = this.getUserInfo(userId);
 		uDetail.setId(userId);
 		uDetail.setAccount(user.getAccount());
 		uDetail.setAvatar(user.getAvatar());
 		uDetail.setLevel(user.getLevel());
 		uDetail.setScore(user.getScore());
 		uDetail.setExchangeScore(user.getExchangeScore());
-		// FIXME 这里给用户资产添加发图数和发故事统计
-		uDetail.setStoryNum(dbVisitor.getStoryCountByUser(userId));
-		uDetail.setTpicNum(dbVisitor.getTPicCountByUser(userId));
+		uDetail.setStoryNum(user.getStoryNum());
+		uDetail.setTpicNum(user.getTpicNum());
 
 		List<Wealth> wealthList = this.getWealthDetails(userId);
 		if (wealthList.size() > 0) {
