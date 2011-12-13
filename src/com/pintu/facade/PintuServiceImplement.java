@@ -168,9 +168,11 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		if (user.getId() == null) {
 			user = dbVisitor.getUserById(userId);
 			cacheVisitor.cacheUser(user);
+			log.info("Check the user cache before update user lastUpdateTime...");
 		}
 		Long updateTime = System.currentTimeMillis();
 		cacheVisitor.updateCachedUser(userId, updateTime);
+		
 	}
 
 	@Override
