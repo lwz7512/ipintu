@@ -136,6 +136,7 @@ public class PintuCache {
 			if (ele != null) {
 				User user = (User) ele.getObjectValue();
 				user.setLastUpdateTime(updateTime);
+				log.info("PintuCache:update cachedUser's lastUpdateTime!");
 			}
 		}
 	}
