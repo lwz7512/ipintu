@@ -200,6 +200,7 @@ public interface PintuServiceInterface {
 
 	public List<Applicant> getApplicant();
 
+	//用户id参数，判断是否为系统正常用户
 	public boolean examineUser(String userId);
 
 	public List<TPicDetails> collectStatistics();
