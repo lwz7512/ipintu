@@ -340,9 +340,13 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 		}
 
 		if(GlobalController.isDebug){
+			log.info("*********************************************");
 			log.info(">>>Pintu app running in debug mode!!!");
+			log.info("*********************************************");
 		}else{
-			log.info(">>>pintu app running in release mode!!!");
+			log.info("*********************************************");
+			log.info(">>>Pintu app running in release mode!!!");
+			log.info("*********************************************");
 		}
 		
 	} // end of onApplicationEvent
