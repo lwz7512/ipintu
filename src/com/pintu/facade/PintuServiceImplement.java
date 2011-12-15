@@ -1084,6 +1084,10 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				int coolCount = this.getPicCoolCount(picId);
 				pic.setCoolCount(coolCount);
 				
+				//加上tag图片标签
+				String tags = this.getTagsById(picId);
+				pic.setTags(tags);
+				
 				resultList.add(pic);
 			}
 		}

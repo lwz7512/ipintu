@@ -23,6 +23,7 @@ import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 import com.pintu.jobs.TaskStarter;
+import com.pintu.socket.ServerFlex;
 import com.pintu.sync.CacheToDB;
 import com.pintu.sync.DBToCache;
 
@@ -329,6 +330,10 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 				System.out.println(">>> dailySync is ready to start...");
 				dailySync.start();
 			}
+			
+			//为flash增加843的socket端口
+			ServerFlex serverFlex = new ServerFlex();
+			serverFlex.runServerFlex();
 
 		}
 
