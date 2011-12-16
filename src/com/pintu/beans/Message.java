@@ -12,8 +12,9 @@ public class Message {
 	private String receiver;
 	private String content;
 	private String writeTime;
-	//消息类型包括vote,complain,report,system等
-	private String msgType;
+	//消息类型包括vote,complain,report,help等
+	//help为普通消息类型
+	private String msgType="help";
 	//一般为图片id，根据type的不同而不同
 	private String reference;
 	private int read;
