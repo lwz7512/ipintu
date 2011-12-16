@@ -12,6 +12,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.log4j.Logger;
 
 import com.pintu.beans.Applicant;
 import com.pintu.beans.Event;
@@ -43,6 +44,8 @@ public class ApiAdaptor {
 	// 由Spring注入
 	private PintuServiceInterface pintuService;
 
+	private Logger log = Logger.getLogger(ApiAdaptor.class);
+	
 	public ApiAdaptor() {
 
 	}
@@ -61,7 +64,7 @@ public class ApiAdaptor {
 	}
 
 	public void createTastePic(List<FileItem> fileItems) {
-		System.out.println("2 Analyse pic obj: apiadaptor createTastePic");
+		log.debug("2 Analyse pic obj: apiadaptor createTastePic");
 		TastePic pic = new TastePic();
 		
 		//取图片的具体内部数据
@@ -110,9 +113,9 @@ public class ApiAdaptor {
 	 */
 	public String getGalleryByTime(String startTime, String endTime) {
 		long queryTimeSpan = Long.valueOf(endTime) - Long.valueOf(startTime);
-		System.out.println(">>> query time span:" + queryTimeSpan / (60 * 1000)
+		log.debug(">>> query time span:" + queryTimeSpan / (60 * 1000)
 				+ " minutes;");
-		System.out.println("startTime:"+PintuUtils.formatLong(Long.parseLong(startTime))
+		log.debug("startTime:"+PintuUtils.formatLong(Long.parseLong(startTime))
 				+" endTime:"+PintuUtils.formatLong(Long.parseLong(endTime)));
 		
 		long oneDayMiliSeconds = 24 * 60 * 60 * 1000;

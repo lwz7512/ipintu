@@ -121,8 +121,8 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 	@Override
 	public void createTastePic(TastePic pic, String user) {
-		System.out.println("3 Construct obj: pintuservice createTastePic");
-		System.out.println("TastePic:" + pic.getFileType() + "   user:" + user);
+		log.debug("3 Construct obj: pintuservice createTastePic");
+		log.debug("TastePic:" + pic.getFileType() + "   user:" + user);
 		if (pic != null && user != null) {
 			// 1. 构造TPicItem对象
 			TPicItem tpicItem = new TPicItem();
@@ -133,7 +133,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			tpicItem.setOwner(user);
 			tpicItem.setTags(pic.getTags());
 			tpicItem.setPublishTime(PintuUtils.getFormatNowTime());
-			System.out.println("publishTime:" + tpicItem.getPublishTime());
+			log.debug("publishTime:" + tpicItem.getPublishTime());
 
 			tpicItem.setDescription(pic.getDescription());
 			tpicItem.setSource(pic.getSource());
@@ -224,7 +224,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			}
 		}
 
-		System.out.println("get cache thumbnial size:" + thumbnailList.size());
+		log.debug("get cache thumbnial size:" + thumbnailList.size());
 
 		if (thumbnailList != null) {
 			for (int j = thumbnailList.size() - 1; j >= 0; j--) {
@@ -1266,7 +1266,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		}
 		
 		String path = imagePath + File.separator + "avatarImg"+File.separator+userId+type;
-		System.out.println(path);
+		log.debug(path);
 
 		try {
 			ImageHelper.handleImage(avatarData, 64, 64, path);

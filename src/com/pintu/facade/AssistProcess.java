@@ -7,11 +7,16 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 public class AssistProcess {
 	
 	// 由Spring注入
 	private ApiAdaptor apiAdaptor;
 
+
+	private Logger log = Logger.getLogger(ApiAdaptor.class);
+	
 	/**
 	 * 处理正常用户登录post的请求
 	 * 
@@ -36,7 +41,7 @@ public class AssistProcess {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String result= apiAdaptor.getApplicant();
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 
 		} else if (action.equals(AppStarter.ACCEPT)) {
@@ -61,7 +66,7 @@ public class AssistProcess {
 			}
 
 			String result = apiAdaptor.acceptApply(id, account, url, opt);
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close();
 
@@ -86,7 +91,7 @@ public class AssistProcess {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getLatestTPicDesc();
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close();
 
@@ -96,7 +101,7 @@ public class AssistProcess {
 			String picId = req.getParameter("picId");
 			String creationTime = req.getParameter("creationTime");
 			String result = apiAdaptor.reviewPictureById(picId, creationTime);
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close();
 
@@ -107,7 +112,7 @@ public class AssistProcess {
 			String endTime = req.getParameter("endTime");
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getGalleryByTime(startTime, endTime);
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close();
 
@@ -117,7 +122,7 @@ public class AssistProcess {
 			String tpId = req.getParameter("tpId");
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getTPicDetailsById(tpId);
-			System.out.println(result);
+			log.debug(result);
 			pw.write(result);
 			pw.close();
 
@@ -137,7 +142,7 @@ public class AssistProcess {
 			PrintWriter pw = res.getWriter();
 			String tpId = req.getParameter("tpId");
 			String result = apiAdaptor.getStoryDetailsOfPic(tpId);
-			System.out.println(result);
+			log.debug(result);
 			pw.write(result);
 			pw.close();
 
@@ -156,7 +161,7 @@ public class AssistProcess {
 			PrintWriter pw = res.getWriter();
 			String userId = req.getParameter("userId");
 			String result = apiAdaptor.getUserDetail(userId);
-			System.out.println(result);
+			log.debug(result);
 			pw.write(result);
 			pw.close();
 
@@ -170,7 +175,7 @@ public class AssistProcess {
 			String source = req.getParameter("source");
 
 			String result = apiAdaptor.sendMessage(sender, receiver, content,source);
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close();
 
@@ -181,7 +186,7 @@ public class AssistProcess {
 
 			String userId = req.getParameter("userId");
 			String result = apiAdaptor.getUserMsg(userId);
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close();
 
@@ -195,7 +200,7 @@ public class AssistProcess {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getHotPicture();
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close();
 
@@ -205,7 +210,7 @@ public class AssistProcess {
 			PrintWriter pw = res.getWriter();
 			String userId = req.getParameter("userId");
 			String result = apiAdaptor.getUserEstate(userId);
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close();
 
@@ -238,7 +243,7 @@ public class AssistProcess {
 				pageNum = 1;
 			}
 			String result = apiAdaptor.getFavorTpics(userId, pageNum);
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close();
 
@@ -252,7 +257,7 @@ public class AssistProcess {
 				pageNum = 1;
 			}
 			String result = apiAdaptor.getTpicsByUser(userId, pageNum);
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close();
 
@@ -261,7 +266,7 @@ public class AssistProcess {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getExchangeableGifts();
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close();
 
@@ -270,7 +275,7 @@ public class AssistProcess {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getCommunityEvents();
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close();
 
@@ -278,7 +283,7 @@ public class AssistProcess {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.collectStatistics();
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close();
 
@@ -286,7 +291,7 @@ public class AssistProcess {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.classicalStatistics();
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close();
 
@@ -298,7 +303,7 @@ public class AssistProcess {
 				pageNum = 1;
 			}
 			String result = apiAdaptor.getGalleryForWeb(pageNum);
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close();
 			
@@ -307,7 +312,7 @@ public class AssistProcess {
 			PrintWriter pw = res.getWriter();
 			String tags = req.getParameter("tags");
 			String result = apiAdaptor.searchByTag(tags);
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close();
 			
@@ -316,7 +321,7 @@ public class AssistProcess {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getHotTags();
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close();
 			
@@ -324,7 +329,7 @@ public class AssistProcess {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.geSystemTags();
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close();
 			
@@ -355,7 +360,7 @@ public class AssistProcess {
 				pageNum = 1;
 			}
 			String result = apiAdaptor.getThumbnailsByTag(tagId,pageNum);
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close();
 		
@@ -363,7 +368,7 @@ public class AssistProcess {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getPicDaren();
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close();
 			
@@ -371,7 +376,7 @@ public class AssistProcess {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getCmtDaren();
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close();
 		}else if(action.equals(AppStarter.GETPICCOOLCOUNT)){
@@ -379,7 +384,7 @@ public class AssistProcess {
 			PrintWriter pw = res.getWriter();
 			String picId = req.getParameter("pId");
 			String result = apiAdaptor.getPicCoolCount(picId);
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close();
 			
@@ -389,7 +394,7 @@ public class AssistProcess {
 		    String userId = req.getParameter("userId");
 			String password = req.getParameter("password");
 			int result = apiAdaptor.confirmPassword(userId,password);
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close();
 			
@@ -400,7 +405,7 @@ public class AssistProcess {
 		    String userId = req.getParameter("userId");
 			String newPwd = req.getParameter("newPwd");
 			String result = apiAdaptor.modifyPasswordById(userId,newPwd);
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close();
 		
@@ -408,7 +413,7 @@ public class AssistProcess {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getRandGallery();
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close(); 
 			
@@ -416,7 +421,7 @@ public class AssistProcess {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getActiveUserRanking();
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close(); 
 			

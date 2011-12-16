@@ -5,11 +5,15 @@ import java.io.File;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.apache.log4j.Logger;
+
 public class ServerListener implements ServletContextListener {
 
 	//文件上传路径
 	private String filePath;
 	private String tempPath;
+	
+	private Logger log = Logger.getLogger(ServerListener.class);
 	
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
@@ -23,10 +27,10 @@ public class ServerListener implements ServletContextListener {
 		
 		//并保持在环境变量中
 		System.setProperty("filePath", filePath);
-		System.out.println(">>> Environment variable, filePath: "+filePath);
+		log.debug(">>> Environment variable, filePath: "+filePath);
 		//并保持在环境变量中
 		System.setProperty("tempPath", tempPath);		
-		System.out.println(">>> Environment variable, tempPath: "+tempPath);
+		log.debug(">>> Environment variable, tempPath: "+tempPath);
 		
 		//初始化上传文件保存路径
 		File fp = new File(filePath);
@@ -37,14 +41,14 @@ public class ServerListener implements ServletContextListener {
 		if (!tp.exists())
 			tp.mkdir();
 
-		System.out.println("文件存放目录、临时文件目录准备完毕 ...");
+		log.debug("filePath and tempPath complete");
 
 	}
 	
 	
 	@Override
 	public void contextDestroyed(ServletContextEvent event) {
-		System.out.println(">>>>>> SERVER IS DOWN <<<<<<");		
+		log.debug(">>>>>> SERVER IS DOWN <<<<<<");		
 	}
 
 

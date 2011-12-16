@@ -47,7 +47,7 @@ public class CalculateTask extends TimerTask {
 		Long start = System.currentTimeMillis() - 60 * 60 * 1000;
 		Long end = System.currentTimeMillis();
 		
-		System.out.println(">>> calculate task executed...timespan:"+PintuUtils.formatLong(start)+"--"+PintuUtils.formatLong(end));
+		log.debug(">>> calculate task executed...timespan:"+PintuUtils.formatLong(start)+"--"+PintuUtils.formatLong(end));
 
 		// 取得活跃用户或缺省用户的信息
 		List<User> userList = getLiveOrDefaultUser(start, end);
@@ -86,7 +86,7 @@ public class CalculateTask extends TimerTask {
 		List<User> liveList = new ArrayList<User>();
 
 		liveList = this.cacheAccess.getActiveUser(start, end);
-		System.out.println("Active user size is "+liveList.size());
+		log.debug("Active user size is "+liveList.size());
 		if (liveList.size() > 0) {
 			for (int j = 0; j < liveList.size(); j++) {
 				User user = liveList.get(j);

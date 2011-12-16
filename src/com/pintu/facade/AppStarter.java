@@ -86,14 +86,14 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 	public void service(HttpServletRequest req, HttpServletResponse res)
 			throws ServletException, IOException {
 
-		System.out.println(">>> appstater start to analyze form...");
+		log.debug(">>> appstater start to analyze form...");
 
 		// 这里将客户端参数解析出来传给apiAdaptor,由apiAdaptor组装参数给服务
 		String action = req.getParameter("method");
-		System.out.println("method:" + action);
+		log.debug("method:" + action);
 
 		boolean isMultipart = ServletFileUpload.isMultipartContent(req);
-		System.out.println("isMultipart value is:" + isMultipart);
+		log.debug("isMultipart value is:" + isMultipart);
 
 		if (action == null && isMultipart == false) {
 			res.setContentType("text/plain;charset=UTF-8");
@@ -151,7 +151,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			String pwd = req.getParameter("password");
 			// 登录成功后，返回一个用户的id，否则返回错误信息
 			String result = apiAdaptor.getExistUser(account, pwd);
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close();
 
@@ -164,7 +164,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			String code = req.getParameter("inviteCode");
 			String nick = req.getParameter("nickName");
 			String result = apiAdaptor.registerUser(account, pwd, code,nick);
-			System.out.println(result);
+			log.debug(result);
 			pw.write(result);
 			pw.close();
 
@@ -175,7 +175,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			String account = req.getParameter("account");
 			String reason = req.getParameter("reason");
 			String result = apiAdaptor.sendApply(account, reason);
-			System.out.println(result);
+			log.debug(result);
 			pw.write(result);
 			pw.close();
 
@@ -185,7 +185,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			PrintWriter pw = res.getWriter();
 			String account = req.getParameter("account");
 			int result = apiAdaptor.validateAccount(account);
-			System.out.println(result);
+			log.debug(result);
 			pw.println(result);
 			pw.close();
 		} else if (action.equals(AppStarter.EXAMINE)) {
@@ -194,7 +194,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 				PrintWriter pw = res.getWriter();
 				String nickName = req.getParameter("nickName");
 				int result = apiAdaptor.examineNickname(nickName);
-				System.out.println(result);
+				log.debug(result);
 				pw.println(result);
 				pw.close();
 			}
@@ -250,7 +250,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			
 		} catch (SizeLimitExceededException e) {
 
-			System.out.println(">>> File size exceeds the limit, can not upload!");
+			log.debug(">>> File size exceeds the limit, can not upload!");
 			pw.println(">>> File size exceeds the limit, can not upload!");
 			return;
 
@@ -296,21 +296,21 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 		// ApplicationContext 已经准备好，Spring配置初始化完成，可以启动任务了
 		if (event instanceof ContextRefreshedEvent) {
 
-			System.out.println(">>>>>>>> Server startup complete, automatic task started <<<<<<<");
+			log.debug(">>>>>>>> Server startup complete, automatic task started <<<<<<<");
 
 			// 上传文件保存路径
 			String filePath = System.getProperty("filePath");
 			// 初始化文件上传组件参数
 			String tempPath = System.getProperty("tempPath");
 			if (tempPath != null) {
-				System.out.println(">>>>> init file upload component...");
+				log.debug(">>>>> init file upload component...");
 				initUploadComponent(tempPath);
 			} else {
 				log.warn(">>>>> !!! File upload path tempPath environment variable is null, can not initialize the upload component!");
 			}
 
 			if (apiAdaptor != null) {
-				System.out.println(">>> apiAdaptor is ready to use...");
+				log.debug(">>> apiAdaptor is ready to use...");
 				// 将磁盘文件保存路径传进来
 				if (filePath != null) {
 					apiAdaptor.setImagePath(filePath);
@@ -319,15 +319,15 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 				}
 			}
 			if (taskStarter != null) {
-				System.out.println(">>> taskStarter is ready to start...");
+				log.debug(">>> taskStarter is ready to start...");
 				taskStarter.runAutoTasks();
 			}
 			if (synchProcess != null) {
-				System.out.println(">>> synchProcess is ready to start...");
+				log.debug(">>> synchProcess is ready to start...");
 				synchProcess.start();
 			}
 			if (dailySync != null) {
-				System.out.println(">>> dailySync is ready to start...");
+				log.debug(">>> dailySync is ready to start...");
 				dailySync.start();
 			}
 			
