@@ -15,7 +15,7 @@ public class AssistProcess {
 	private ApiAdaptor apiAdaptor;
 
 
-	private Logger log = Logger.getLogger(ApiAdaptor.class);
+	private Logger log = Logger.getLogger(AssistProcess.class);
 	
 	/**
 	 * 处理正常用户登录post的请求
