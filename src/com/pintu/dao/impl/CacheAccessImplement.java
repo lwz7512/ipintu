@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicItem;
@@ -18,6 +20,9 @@ public class CacheAccessImplement implements CacheAccessInterface {
 
 	// Inject by Spring
 	private PintuCache pintuCache;
+	
+
+	private Logger log = Logger.getLogger(CacheAccessImplement.class);
 
 	public CacheAccessImplement() {
 		// 初始化要缓存对象ID的类型及容器，单个缓存，批量入库，批量删除
@@ -39,7 +44,7 @@ public class CacheAccessImplement implements CacheAccessInterface {
 
 	@Override
 	public void cachePicture(TPicItem pic) {
-		System.out.println("4 Add TPicItem info to cache");
+		log.debug("4 Add TPicItem info to cache");
 		// 1. 把对象放到pintuCache中
 		// 2. 把ID放到toSavedCacheIds中的LinkedList中
 		pintuCache.cachePicture( pic.getId(), pic);

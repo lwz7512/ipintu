@@ -79,21 +79,21 @@ public class PintuCache {
 	}
 
 	public void traceAll() {
-		System.out.println("--------------- trace begin: -----------------");
-		System.out.println(">>> storyCache status: " + storyCache.getStatus()
+		log.debug("--------------- trace begin: -----------------");
+		log.debug(">>> storyCache status: " + storyCache.getStatus()
 				+ " pictureCache size: "
 				+ storyCache.getKeysNoDuplicateCheck().size());
-		System.out.println(">>> voteCache status: " + pictureCache.getStatus()
+		log.debug(">>> voteCache status: " + pictureCache.getStatus()
 				+ " voteCache size: "
 				+ voteCache.getKeysNoDuplicateCheck().size());
-		System.out.println(">>> thumbnailCache status: "
+		log.debug(">>> thumbnailCache status: "
 				+ thumbnailCache.getStatus() + " thumbnailCache size: "
 				+ thumbnailCache.getKeysNoDuplicateCheck().size());
-		System.out.println(">>> pictureCache status: "
+		log.debug(">>> pictureCache status: "
 				+ pictureCache.getStatus() + " pictureCache size: "
 				+ pictureCache.getKeysNoDuplicateCheck().size());
 		// printCacheKeys();
-		System.out.println("--------------- trace end --------------------");
+		log.debug("--------------- trace end --------------------");
 	}
 
 	@SuppressWarnings({ "unchecked", "unused" })
@@ -118,7 +118,7 @@ public class PintuCache {
 		}
 		sb.append("\n");
 
-		System.out.println(sb.toString());
+		log.debug(sb.toString());
 	}
 
 	// 缓存用户信息

@@ -9,6 +9,8 @@ import org.apache.commons.fileupload.servlet.*;
 import org.apache.commons.fileupload.FileUploadBase.SizeLimitExceededException;
 import org.apache.commons.fileupload.disk.*;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
+
 
 /**
  * Servlet implementation class ImageUploader 似乎不能用这个上传类，而应该统一到一个外部访问接口中
@@ -22,6 +24,9 @@ public class ImageUploader extends HttpServlet {
 	
 	// 最大文件上传尺寸设置
 	private int fileMaxSize = 4 * 1024 * 1024;
+
+	
+	private Logger log = Logger.getLogger(ImageUploader.class);
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -50,9 +55,9 @@ public class ImageUploader extends HttpServlet {
 		if (!tp.exists())
 			tp.mkdir();
 
-		System.out.println("File storage directory, the temporary file directory is ready ...");
-		System.out.println("filePah: " + filePath);
-		System.out.println("tempPah: " + tempPath);
+		log.debug("File storage directory, the temporary file directory is ready ...");
+		log.debug("filePah: " + filePath);
+		log.debug("tempPah: " + tempPath);
 	}
 
 	protected void doGet(HttpServletRequest request,
@@ -71,7 +76,7 @@ public class ImageUploader extends HttpServlet {
 		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 		// 不是文件上传请求
 		if (!isMultipart) {
-			System.out.println(">>>Invalid request, not to deal with! ! !");
+			log.debug(">>>Invalid request, not to deal with! ! !");
 			pw.write(">>> Invalid request, not to deal with! ! !");
 			pw.close();
 			return;
@@ -96,10 +101,10 @@ public class ImageUploader extends HttpServlet {
 			while (iter.hasNext()) {
 				FileItem item = iter.next();
 				if (item.isFormField()) {
-					System.out.println("Processing the contents of the form...");
+					log.debug("Processing the contents of the form...");
 					processFormField(item, pw);
 				} else {
-					System.out.println("Upload file handling...");
+					log.debug("Upload file handling...");
 					processUploadFile(item, pw);
 				}
 			}// end while()
@@ -109,12 +114,12 @@ public class ImageUploader extends HttpServlet {
 
 		} catch (SizeLimitExceededException e) {
 			
-			System.out.println(">>>File size exceeds the limit, can not upload!");
+			log.debug(">>>File size exceeds the limit, can not upload!");
 			pw.println(">>> File size exceeds the limit, can not upload!");
 			return;
 			
 		} catch (Exception e) {
-			System.out.println("Exception occurs when using fileupload package...");
+			log.debug("Exception occurs when using fileupload package...");
 			e.printStackTrace();
 		}// end try ... catch ...
 
@@ -125,7 +130,7 @@ public class ImageUploader extends HttpServlet {
 			throws Exception {
 		String name = item.getFieldName();
 		String value = item.getString();
-		System.out.println(name + " : " + value + "\r\n");
+		log.debug(name + " : " + value + "\r\n");
 		pw.println(name + " : " + value + "\r\n");
 	}
 
@@ -138,7 +143,7 @@ public class ImageUploader extends HttpServlet {
 		String fileType = fileName.substring(dotPos+1);
 		
 		if(fileType.equals("png") || fileType.equals("jpg") || fileType.equals("gif")){
-			System.out.println(">>>The current file type is:"+fileType);
+			log.debug(">>>The current file type is:"+fileType);
 		}else{
 			pw.println(">>> The current file is not a picture file, not to generate!");
 			return;			
@@ -153,7 +158,7 @@ public class ImageUploader extends HttpServlet {
 		String sizeInK = (int) fileSize / 1024 + "K";
 
 		if ("".equals(fileName) && fileSize == 0) {
-			System.out.println("fileName is null ...");
+			log.debug("fileName is null ...");
 			return;
 		}
 
@@ -162,7 +167,7 @@ public class ImageUploader extends HttpServlet {
 		item.write(uploadFile);
 	
 		
-		System.out.println(fileName + " File is complete ...");
+		log.debug(fileName + " File is complete ...");
 		
 		// 返回客户端信息
 		pw.println(fileName + " File is complete ...");

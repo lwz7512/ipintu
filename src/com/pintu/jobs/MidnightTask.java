@@ -48,7 +48,7 @@ public class MidnightTask extends TimerTask {
 
 	@Override
 	public void run() {
-		System.out.println(">>> midnight task executed...");
+		log.debug(">>> midnight task executed...");
 		
 		//之前用投票数更新经典
 //		findAndSetClassical();
@@ -134,11 +134,11 @@ public class MidnightTask extends TimerTask {
 
 	private void updatePicBrowseCount() {
 		Map<String,Integer> hotPicMap = CacheAccessInterface.hotPicCacheIds;
-		System.out.println("HotPicMap size is:"+hotPicMap.size());
+		log.debug("HotPicMap size is:"+hotPicMap.size());
 		if(hotPicMap.size() > 0){
 			List<Map<String,Integer>> browseCountList = new ArrayList<Map<String,Integer>>();
 			browseCountList.add(hotPicMap);
-			System.out.println("Need to update the broseCount picturesize is:"+browseCountList.size());
+			log.debug("Need to update the broseCount picturesize is:"+browseCountList.size());
 			if(browseCountList != null && browseCountList.size() > 0){
 				int res = this.dbAccess.updatePicBrowseCount(browseCountList);
 				if(res == hotPicMap.size()){

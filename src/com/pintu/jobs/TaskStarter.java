@@ -2,8 +2,11 @@ package com.pintu.jobs;
 
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 import com.pintu.dao.CacheAccessInterface;
 import com.pintu.dao.DBAccessInterface;
+import com.pintu.facade.AppStarter;
 
 
 
@@ -26,6 +29,8 @@ public class TaskStarter  {
 	private CacheAccessInterface cacheVisitor;
 
 	private Properties propertyConfigurer;
+	
+	private Logger log = Logger.getLogger(TaskStarter.class);
 
 	public void setPropertyConfigurer(Properties propertyConfigurer) {
 		this.propertyConfigurer = propertyConfigurer;
@@ -57,7 +62,7 @@ public class TaskStarter  {
     public void runAutoTasks() {
     	
     	String status = "AppStarer listener running...";
-    	System.out.println(status);
+    	log.debug(status);
     	
     	generalTimer = new TaskTimer();
     	generalTimer.setMin(calculateInterval);
@@ -80,7 +85,7 @@ public class TaskStarter  {
     public void stopTask() {
     	
     	String status = "AppStarer listener stopped!";
-    	System.out.println(status);
+    	log.debug(status);
     	
     	generalTimer.stop();
     	fixRunTimer.stop();
