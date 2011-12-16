@@ -245,8 +245,7 @@ public class ApiAdaptor {
 		msg.setSender(sender);
 		msg.setReceiver(receiver);
 		msg.setContent(content);
-//		//给客服发消息时调用这个接口，type指定help
-//		msg.setMsgType("help");
+		msg.setReference("");
 		msg.setWriteTime(PintuUtils.getFormatNowTime());
 		msg.setRead(0);
 		return msg;
