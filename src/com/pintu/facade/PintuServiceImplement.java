@@ -402,6 +402,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		uDetail.setAccount(user.getAccount());
 		uDetail.setAvatar(user.getAvatar());
 		uDetail.setLevel(user.getLevel());
+		uDetail.setNickName(user.getNickName());
 		uDetail.setScore(user.getScore());
 		uDetail.setExchangeScore(user.getExchangeScore());
 		uDetail.setStoryNum(user.getStoryNum());

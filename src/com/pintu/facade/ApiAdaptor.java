@@ -3,6 +3,7 @@
  */
 package com.pintu.facade;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,11 +79,19 @@ public class ApiAdaptor {
 			if (item.isFormField()) {
 				// 取描述
 				if (item.getFieldName().equals("description")) {
-					pic.setDescription(item.getString());
+					try {
+						pic.setDescription(item.getString("UTF-8"));
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
 				}
 				// 标签
 				if (item.getFieldName().equals("tags")) {
-					pic.setTags(item.getString());
+					try {
+						pic.setTags(item.getString("UTF-8"));
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
 				}
 				// 取用户
 				if (item.getFieldName().equals("userId")) {
@@ -536,7 +545,11 @@ public class ApiAdaptor {
 				}
 				//要修改的昵称
 				if (item.getFieldName().equals("nickName")) {
-					nickName = item.getString();
+					try {
+						nickName = item.getString("UTF-8");
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}

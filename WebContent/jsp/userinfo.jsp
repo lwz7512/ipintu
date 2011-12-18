@@ -79,6 +79,7 @@
 		if(flag){
 			$('#prompt').show().html('<img src="<%=request.getContextPath()%>/jsp/img/loading.gif">');
 			var nickName = $("#nickName").attr("value");
+			alert(nickName);
 			$.post('<%=request.getContextPath()%>/pintuapi', {
 				'method'  : 'examine',
 				'nickName'	: nickName
