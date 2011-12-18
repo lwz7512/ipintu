@@ -194,6 +194,11 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	}
 	
 	@Override
+	public void updateUserInfo(String userId, String avatarPath, String nickName) {
+		pintuCache.updateUserInfo(userId,avatarPath,nickName);
+	}
+	
+	@Override
 	public List<Story> getStoriesOfPic(String tpId) {
 		return pintuCache.getCachedStoryByPid(tpId);
 	}

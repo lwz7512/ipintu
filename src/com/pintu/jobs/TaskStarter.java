@@ -6,7 +6,6 @@ import org.apache.log4j.Logger;
 
 import com.pintu.dao.CacheAccessInterface;
 import com.pintu.dao.DBAccessInterface;
-import com.pintu.facade.AppStarter;
 
 
 
