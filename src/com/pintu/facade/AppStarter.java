@@ -231,7 +231,12 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			log.debug("<<< Uploading complete!");
 			
 			if(GlobalController.isDebug){
-				apiAdaptor.createTastePic(fileItems);
+				String method = getMethod(fileItems);
+				if(method.equals("upload")){
+					apiAdaptor.createTastePic(fileItems);
+				}else if(method.equals("uploadAvatar")){
+					apiAdaptor.createAvatar(fileItems);
+				}
 			}else{
 				// 送由适配器解析参数前，先检查一下是否是正常用户
 				boolean flag = examine(fileItems);
