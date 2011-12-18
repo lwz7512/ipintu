@@ -1274,6 +1274,9 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			e.printStackTrace();
 		}
 		
+		
+		//修改用户资料（修改头像，昵称），改库的同时更新一下缓存 
+		cacheVisitor.updateUserInfo(userId, path, nickName);
 		int result = dbVisitor.updateAvatarAndNickname(path,nickName,userId);
 		if (result > 0) {
 			return systemConfigurer.getProperty("rightPrompt").toString();

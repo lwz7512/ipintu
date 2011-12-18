@@ -128,6 +128,20 @@ public class PintuCache {
 			userCache.put(elmt);
 		}
 	}
+	
+	//更新缓存中的用户昵称和头像
+	public void updateUserInfo(String userId, String avatarPath, String nickName) {
+		synchronized (userCache) {
+			Element ele = userCache.get(userId);
+			if (ele != null) {
+				User user = (User) ele.getObjectValue();
+				user.setAvatar(avatarPath);
+				user.setNickName(nickName);
+				log.info("PintuCache:update cachedUser's avatar and nickName!");
+			}
+		}
+		
+	}
 
 	// 更新缓存中用户的最后更新时间
 	public void updateCachedUser(String userId, Long updateTime) {
@@ -445,5 +459,6 @@ public class PintuCache {
 
 		return del;
 	}
+
 
 }
