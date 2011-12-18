@@ -75,8 +75,8 @@
 			<input type="hidden" name="method" value="upload" /><br />
 			<input type="hidden" name="userId" value="<%= request.getParameter("userId")%>" />
 			<input type="hidden" name="source" value="desktop" />
-			<input type="hidden" name="description" value="1" />
-			<input type="hidden" name="tags" value="2" />
+			<input type="hidden" name="description" value="测试发图test" />
+			<input type="hidden" name="tags" value="风景" />
 			<input type="hidden" name="isOriginal" value="0" />
 			<input type="file" name="file1" id="file1" size="20" onchange="CheckFileType();" />
 			<p class="twoBtn">
