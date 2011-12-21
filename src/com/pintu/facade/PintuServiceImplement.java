@@ -531,6 +531,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+		log.debug(">>>getImageFile From fileSystem");
 	}
 
 	private void writeImageFromCache(Image img, String fileType,
@@ -551,6 +552,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			e.printStackTrace();
 		}
 
+		log.debug(">>>getImageFile From imageCache");
 	}
 
 	private void writeJPGImage(InputStream imageIn, HttpServletResponse res) {
