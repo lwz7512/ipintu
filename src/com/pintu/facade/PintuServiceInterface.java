@@ -96,12 +96,12 @@ public interface PintuServiceInterface {
 	public void getImageByPath(String path, HttpServletResponse res);
 
 	/**
-	 * 根据缩略图的名字找到相应的缩略图文件
+	 * 根据图片的名字找到相应的缩略图或者手机图文件
 	 * 
-	 * @param thumbnailName
+	 * @param imgName
 	 * @return
 	 */
-	public File getThumbnail(String thumbnailName);
+	public File getThumbnailOrMobImage(String imgName);
 
 	// 浏览一个品图详情
 	public TPicDetails getTPicDetailsById(String tpId);

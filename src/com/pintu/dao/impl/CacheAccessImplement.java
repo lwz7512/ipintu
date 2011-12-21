@@ -1,6 +1,5 @@
 package com.pintu.dao.impl;
 
-import java.awt.Image;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -9,6 +8,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.pintu.beans.ImageDesc;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicItem;
@@ -44,8 +44,8 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	}
 	
 	@Override
-	public void cacheImage(String picId, Image img) {
-		pintuCache.cacheImage(picId, img);
+	public void cacheImage(String picId, ImageDesc imgDesc) {
+		pintuCache.cacheImage(picId, imgDesc);
 	}
 
 	@Override
@@ -225,7 +225,7 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	}
 
 	@Override
-	public Image getCachedImage(String id) {
+	public ImageDesc getCachedImage(String id) {
 		return pintuCache.getCacheImageById(id);
 	}
 

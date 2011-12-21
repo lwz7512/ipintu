@@ -32,6 +32,7 @@ import com.pintu.beans.Applicant;
 import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
 import com.pintu.beans.Gift;
+import com.pintu.beans.ImageDesc;
 import com.pintu.beans.Message;
 import com.pintu.beans.Story;
 import com.pintu.beans.StoryDetails;
@@ -486,37 +487,35 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	@Override
 	public void getImageFile(String picId, HttpServletResponse res) {
 
-		File defaultFile = new File(imagePath + File.separator
-				+ "defaultImage.png");
-		File pngFile = new File(imagePath + File.separator + picId + ".png");
-		File jpgFile = new File(imagePath + File.separator + picId + ".jpg");
-		File gifFile = new File(imagePath + File.separator + picId + ".gif");
-
-		String fileType = "png";
-		File imgFile = defaultFile;
-
-		//确定文件类型和文件
-		if (jpgFile.exists()) {
-			fileType = "jpg";
-			imgFile = jpgFile;
-		} else if (gifFile.exists()) {
-			fileType = "gif";
-			imgFile = gifFile;
-		} else if (pngFile.exists()) {
-			fileType = "png";
-			imgFile = pngFile;
-		}
-
-		Image img = cacheVisitor.getCachedImage(picId);
-		if (img != null) {
+		ImageDesc imgDesc = cacheVisitor.getCachedImage(picId);
+		if (imgDesc != null) {
 			// 从缓存里写图片
-			writeImageFromCache(img, fileType, res);
+			writeImageFromCache(imgDesc.getImage(), imgDesc.getType(), res);
 		} else {
 			// 从文件系统中返回
+			File defaultFile = new File(imagePath + File.separator
+					+ "defaultImage.png");
+			File pngFile = new File(imagePath + File.separator + picId + ".png");
+			File jpgFile = new File(imagePath + File.separator + picId + ".jpg");
+			File gifFile = new File(imagePath + File.separator + picId + ".gif");
+			File imgFile = defaultFile;
+			String fileType = "png";
+			if (jpgFile.exists()) {
+				imgFile = jpgFile;
+				fileType="jpg";
+			} else if (gifFile.exists()) {
+				imgFile = gifFile;
+				fileType="gif";
+			} else if (pngFile.exists()) {
+				fileType="png";
+				imgFile = pngFile;
+			}
+			
 			writeImageFromSystem(imgFile, fileType, res);
 		}
 	}
 
+	// 从文件系统中返回
 	private void writeImageFromSystem(File imgFile, String fileType,
 			HttpServletResponse res) {
 		try {
@@ -534,6 +533,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		log.debug(">>>getImageFile From fileSystem");
 	}
 
+	// 从缓存里写图片
 	private void writeImageFromCache(Image img, String fileType,
 			HttpServletResponse res) {
 		try {
@@ -551,7 +551,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		log.debug(">>>getImageFile From imageCache");
 	}
 
@@ -617,12 +616,12 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	/**
-	 * 根据综略图的文件名得到系统路径下的文件信息
+	 * 根据图片的文件名得到系统路径下的文件信息
 	 */
 	@Override
-	public File getThumbnail(String thumbnailName) {
-		String thumbnail = imagePath + File.separator + thumbnailName;
-		File file = new File(thumbnail);
+	public File getThumbnailOrMobImage(String imgName) {
+		String imgPath = imagePath + File.separator + imgName;
+		File file = new File(imgPath);
 		return file;
 	}
 

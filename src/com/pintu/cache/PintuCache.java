@@ -1,6 +1,5 @@
 package com.pintu.cache;
 
-import java.awt.Image;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -23,6 +22,7 @@ import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
 
 import org.apache.log4j.Logger;
 
+import com.pintu.beans.ImageDesc;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicItem;
@@ -467,23 +467,23 @@ public class PintuCache {
 	
 
 	//缓存生成图片需要的Image对象，picId为键
-	public void cacheImage(String picId,Image image){
-		Element ele = new Element(picId, image);
+	public void cacheImage(String picId,ImageDesc imgDesc){
+		Element ele = new Element(picId, imgDesc);
 		synchronized (imageCache) {
 			imageCache.put(ele);
 		}
 	}
 
 	// 根据id从缓存里取图片
-	public Image getCacheImageById(String id) {
-		Image img = null;
+	public ImageDesc getCacheImageById(String id) {
+		ImageDesc imgDesc = null;
 		synchronized (imageCache) {
 			Element ele = imageCache.get(id);
 			if (ele != null) {
-				img = (Image) ele.getObjectValue();
+				imgDesc = (ImageDesc) ele.getObjectValue();
 			}
 		}
-		return img;
+		return imgDesc;
 	}
 
 

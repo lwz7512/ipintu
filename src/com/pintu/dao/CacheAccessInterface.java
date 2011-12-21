@@ -1,11 +1,11 @@
 package com.pintu.dao;
 
-import java.awt.Image;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.pintu.beans.ImageDesc;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicItem;
@@ -43,10 +43,10 @@ public interface CacheAccessInterface {
 	public void traceCache();
 	
 	//缓存图片对象
-	public void cacheImage(String picId, Image image);
+	public void cacheImage(String picId, ImageDesc imgDesc);
 	
 	//获取特定的图片
-	public Image getCachedImage(String id);
+	public ImageDesc getCachedImage(String id);
 
 	// 缓存图片信息
 	//顺便把id存到toSavedUserPicIds,picture中

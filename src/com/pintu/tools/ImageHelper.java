@@ -25,8 +25,6 @@ public class ImageHelper {
 	public static BufferedImage handleImage(FileItem fileItem, int defWidth,
 			int defHeight, String filePath) throws IOException {
 		
-		BufferedImage newImage;
-		
 		Image image = ImageIO.read(fileItem.getInputStream());
 		int srcWidth = image.getWidth(null);
 		int srcHeight = image.getHeight(null);
@@ -54,6 +52,7 @@ public class ImageHelper {
 
 		String fileType = filePath.substring(filePath.lastIndexOf(".") + 1);
 
+		BufferedImage newImage;
 		// 写图片
 		if (fileType.toLowerCase().equals("png")) {
 			newImage = writePngImage(image, newWidth, newHeight, filePath);
