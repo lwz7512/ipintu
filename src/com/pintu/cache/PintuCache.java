@@ -1,5 +1,6 @@
 package com.pintu.cache;
 
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -38,6 +39,9 @@ public class PintuCache {
 
 	private CacheManager cacheManager;
 
+	//图片对象缓存，放六小时
+	private Cache imageCache;
+	
 	private Cache pictureCache;
 
 	private Cache storyCache;
@@ -56,6 +60,7 @@ public class PintuCache {
 
 		initUserCache();
 
+		imageCache = cacheManager.getCache("imagecache");
 		pictureCache = cacheManager.getCache("picturecache");
 		storyCache = cacheManager.getCache("storycache");
 		voteCache = cacheManager.getCache("votecache");
@@ -458,6 +463,27 @@ public class PintuCache {
 		}
 
 		return del;
+	}
+	
+
+	//缓存生成图片需要的Image对象，picId为键
+	public void cacheImage(String picId,Image image){
+		Element ele = new Element(picId, image);
+		synchronized (imageCache) {
+			imageCache.put(ele);
+		}
+	}
+
+	// 根据id从缓存里取图片
+	public Image getCacheImageById(String id) {
+		Image img = null;
+		synchronized (imageCache) {
+			Element ele = imageCache.get(id);
+			if (ele != null) {
+				img = (Image) ele.getObjectValue();
+			}
+		}
+		return img;
 	}
 
 

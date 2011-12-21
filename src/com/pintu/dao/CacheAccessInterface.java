@@ -1,5 +1,6 @@
 package com.pintu.dao;
 
+import java.awt.Image;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,6 +41,12 @@ public interface CacheAccessInterface {
 	
 	// 查看缓存中的对象数目
 	public void traceCache();
+	
+	//缓存图片对象
+	public void cacheImage(String picId, Image image);
+	
+	//获取特定的图片
+	public Image getCachedImage(String id);
 
 	// 缓存图片信息
 	//顺便把id存到toSavedUserPicIds,picture中

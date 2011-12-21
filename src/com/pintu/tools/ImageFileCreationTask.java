@@ -1,5 +1,6 @@
 package com.pintu.tools;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -18,7 +19,7 @@ public class ImageFileCreationTask implements Runnable {
 //		private String imgType;
 
 		private FileItem fileItem;
-
+		
 		// 缓存的贴图对象，这时图片路径和大小还未知
 		// 需要生成文件后后补充属性，然后才能由另外的线程入库
 		private TPicItem picObj;
@@ -55,8 +56,9 @@ public class ImageFileCreationTask implements Runnable {
 			String route =path + File.separator ;
 			picObj.setMobImgId(picObj.getId()+"_Mob");
 			picObj.setMobImgPath(route+picObj.getMobImgId()+getFileType());
+			BufferedImage image = null;
 			try {
-				 ImageHelper.handleImage(fileItem, 440, 440, picObj.getMobImgPath());
+				image =  ImageHelper.handleImage(fileItem, 440, 440, picObj.getMobImgPath());
 				//先生成手机图片后写文件再给size赋值
 				 File file= new File(picObj.getMobImgPath());
 				 if(file.length() > 0){
@@ -67,6 +69,9 @@ public class ImageFileCreationTask implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			
+			//将生成的缩略图放入图片缓存
+			cacAccess.cacheImage(picObj.getMobImgId(), image);
 		}
 		
 		private void createThumbnailImage() {
@@ -75,11 +80,15 @@ public class ImageFileCreationTask implements Runnable {
 			String thumbnailId=picObj.getId()+TPicDesc.THUMBNIAL;
 			//函数设计传参需要，因不写文件，一般用不到
 			String thumbnailPath=route+thumbnailId+getFileType();
+			BufferedImage image = null;
 			try {
-				ImageHelper.handleImage(fileItem, 100, 100, thumbnailPath);
+				image = ImageHelper.handleImage(fileItem, 100, 100, thumbnailPath);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			
+			//将生成的缩略图放入图片缓存
+			cacAccess.cacheImage(thumbnailId, image);
 			
 			//构造出缩略图对象，用于放到缓存中
 			TPicDesc tpicDesc = new TPicDesc();

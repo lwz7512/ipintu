@@ -1259,7 +1259,7 @@ public class DBAccessImplement implements DBAccessInterface {
 	@Override
 	public List<Tag> getHotTags(int topNum) {
 		List<Tag> resList = new ArrayList<Tag>();
-		String sql = "select * from t_tag order by t_browseCount desc  limit "+topNum;
+		String sql = "select * from t_tag where t_browseCount<>0 order by t_browseCount desc  limit "+topNum;
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {

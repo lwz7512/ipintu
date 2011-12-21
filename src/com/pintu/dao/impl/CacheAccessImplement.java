@@ -1,5 +1,6 @@
 package com.pintu.dao.impl;
 
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -40,6 +41,11 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	@Override
 	public void clearHotPicCacheIds() {
 		CacheAccessInterface.hotPicCacheIds.clear();
+	}
+	
+	@Override
+	public void cacheImage(String picId, Image img) {
+		pintuCache.cacheImage(picId, img);
 	}
 
 	@Override
@@ -216,6 +222,11 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	@Override
 	public boolean removeThumbnail(long longTime,String thumbnailId) {
 		return pintuCache.removeThumbnailById(longTime,thumbnailId);
+	}
+
+	@Override
+	public Image getCachedImage(String id) {
+		return pintuCache.getCacheImageById(id);
 	}
 
 

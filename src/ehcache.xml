@@ -17,13 +17,20 @@
 		diskPersistent="false" diskExpiryThreadIntervalSeconds="120"
 		memoryStoreEvictionPolicy="LRU" statistics="false"/>
 
+	<cache name="imagecache" maxElementsInMemory="1000"
+		maxElementsOnDisk="10000" eternal="false" overflowToDisk="false"
+		diskPersistent="false" diskSpoolBufferSizeMB="20" timeToIdleSeconds="3600"
+		timeToLiveSeconds="21600" diskExpiryThreadIntervalSeconds="120"
+		memoryStoreEvictionPolicy="LFU">
+	</cache>
+
 	<cache name="picturecache" maxElementsInMemory="1000"
 		maxElementsOnDisk="10000" eternal="false" overflowToDisk="false"
 		diskPersistent="false" diskSpoolBufferSizeMB="20" timeToIdleSeconds="3600"
 		timeToLiveSeconds="7200" diskExpiryThreadIntervalSeconds="120"
 		memoryStoreEvictionPolicy="LFU">
 	</cache>
-
+	
 	<cache name="storycache" maxElementsInMemory="10000"
 		maxElementsOnDisk="100000" diskPersistent="false" eternal="false"
 		timeToIdleSeconds="3600" timeToLiveSeconds="7200" overflowToDisk="false"

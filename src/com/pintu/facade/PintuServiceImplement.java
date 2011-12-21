@@ -1,8 +1,11 @@
 package com.pintu.facade;
 
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -18,6 +21,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 
+import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
@@ -56,7 +61,7 @@ import com.sun.image.codec.jpeg.JPEGImageDecoder;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 public class PintuServiceImplement implements PintuServiceInterface {
-	
+
 	private Logger log = Logger.getLogger(PintuServiceImplement.class);
 
 	// 由Spring注入
@@ -68,7 +73,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	private ImgDataProcessor imgProcessor;
 
 	private Properties propertyConfigurer;
-	
+
 	private Properties systemConfigurer;
 
 	public void setSystemConfigurer(Properties systemConfigurer) {
@@ -80,7 +85,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	private String imagePath;
-	
+
 	// 设定输出的类型
 	private static final String GIF = "image/gif;charset=UTF-8";
 
@@ -147,10 +152,10 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 			// 2. 放入缓存
 			cacheVisitor.cachePicture(tpicItem);
-			
-			//更新用户的最后操作时间
+
+			// 更新用户的最后操作时间
 			updateCacheUser(tpicItem.getOwner());
-			
+
 			// 3. 提交imgProcessor生成文件
 			imgProcessor.createImageFile(pic.getRawImageData(), tpicItem);
 
@@ -161,9 +166,9 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		}
 
 	}
-	
-	//FIXME 在更新最后更新时间之前检查缓存里是否有用户存在
-	private void updateCacheUser(String userId){
+
+	// FIXME 在更新最后更新时间之前检查缓存里是否有用户存在
+	private void updateCacheUser(String userId) {
 		User user = cacheVisitor.getUserById(userId);
 		if (user.getId() == null) {
 			user = dbVisitor.getUserById(userId);
@@ -172,7 +177,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		}
 		Long updateTime = System.currentTimeMillis();
 		cacheVisitor.updateCachedUser(userId, updateTime);
-		
+
 	}
 
 	@Override
@@ -217,9 +222,9 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			List<TPicDesc> cacheList = cacheVisitor.getCachedThumbnail(String
 					.valueOf(i));
 			thumbnailList.addAll(cacheList);
-			//控制画廊图片数量，超过32就不查了~
-			if(thumbnailList.size() > Integer.parseInt(propertyConfigurer
-					.getProperty("galleryImgNum"))){
+			// 控制画廊图片数量，超过32就不查了~
+			if (thumbnailList.size() > Integer.parseInt(propertyConfigurer
+					.getProperty("galleryImgNum"))) {
 				break;
 			}
 		}
@@ -246,7 +251,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		// 根据图片id到缓存中取图片的基本信息
 		TPicItem item = cacheVisitor.getSpecificPic(tpId);
 		// 若缓存里不存在该图片的信息则转向查数据库
-		if ( item.getId() == null) {
+		if (item.getId() == null) {
 			item = dbVisitor.getPictureById(tpId);
 		}
 
@@ -265,18 +270,18 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			details.setLevel(user.getLevel());
 			details.setAvatarImgPath(user.getAvatar());
 		}
-		
-		//根据图片id要查出标签和被赞个数
+
+		// 根据图片id要查出标签和被赞个数
 		String picId = item.getId();
-		
-		//查图片标签
+
+		// 查图片标签
 		String tags = this.getTagsById(picId);
 		details.setTags(tags);
-		
-		//查图片被赞次数
+
+		// 查图片被赞次数
 		int coolCount = this.getPicCoolCount(picId);
 		details.setCoolCount(coolCount);
-		
+
 		details.setId(picId);
 		details.setName(item.getName());
 		details.setOwner(userId);
@@ -286,7 +291,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		details.setDescription(item.getDescription());
 		details.setSource(item.getSource());
 		details.setIsOriginal(item.getIsOriginal());
-//		details.setBrowseCount(item.getBrowseCount());
+		// details.setBrowseCount(item.getBrowseCount());
 		// 取一个图片详情时，我们认为这张图获得了一个点击量
 		int counter = 1;
 
@@ -301,20 +306,20 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		}
 
 		details.setCounter(CacheAccessInterface.hotPicCacheIds.get(item.getId()));
-		
-		//要根据当天的点击量来累加从库里取出来的浏览次数~即得到最新的浏览次数
-		details.setBrowseCount(item.getBrowseCount()+details.getCounter());
-		
+
+		// 要根据当天的点击量来累加从库里取出来的浏览次数~即得到最新的浏览次数
+		details.setBrowseCount(item.getBrowseCount() + details.getCounter());
+
 		return details;
 	}
 
 	private String getTagsById(String picId) {
 		StringBuffer tags = new StringBuffer();
 		List<Tag> tagList = dbVisitor.getPicTagsById(picId);
-		if(tagList.size()>0){
-			for(int i=0;i<tagList.size();i++){
+		if (tagList.size() > 0) {
+			for (int i = 0; i < tagList.size(); i++) {
 				Tag tag = tagList.get(i);
-				if(tags.length()>0){
+				if (tags.length() > 0) {
 					tags.append(" ");
 				}
 				tags.append(tag.getName());
@@ -346,33 +351,32 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				if (user != null) {
 					storyDetail.setAuthor(user.getAccount());
 				}
-				
-//				List<Vote> voteList = this.getVotesOfPic(picId);
-//				if (voteList != null && voteList.size() > 0) {
-//					for (int j = 0; j < voteList.size(); j++) {
-//						Vote vote = voteList.get(j);
-//						if (vote.getType().equals(Vote.FLOWER_TYPE)) {
-//							storyDetail.setFlower(vote.getAmount());
-//						} else if (vote.getType().equals(Vote.EGG_TYPE)) {
-//							storyDetail.setEgg(vote.getAmount());
-//						} else if (vote.getType().equals(Vote.HEART_TYPE)) {
-//							storyDetail.setHeart(vote.getAmount());
-//						} else if (vote.getType().equals(Vote.STAR_TYPE)) {
-//							storyDetail.setStar(vote.getAmount());
-//						}
-//					}
-//				} else {
-//					storyDetail.setFlower(0);
-//					storyDetail.setEgg(0);
-//					storyDetail.setHeart(0);
-//					storyDetail.setStar(0);
-//				}
+
+				// List<Vote> voteList = this.getVotesOfPic(picId);
+				// if (voteList != null && voteList.size() > 0) {
+				// for (int j = 0; j < voteList.size(); j++) {
+				// Vote vote = voteList.get(j);
+				// if (vote.getType().equals(Vote.FLOWER_TYPE)) {
+				// storyDetail.setFlower(vote.getAmount());
+				// } else if (vote.getType().equals(Vote.EGG_TYPE)) {
+				// storyDetail.setEgg(vote.getAmount());
+				// } else if (vote.getType().equals(Vote.HEART_TYPE)) {
+				// storyDetail.setHeart(vote.getAmount());
+				// } else if (vote.getType().equals(Vote.STAR_TYPE)) {
+				// storyDetail.setStar(vote.getAmount());
+				// }
+				// }
+				// } else {
+				// storyDetail.setFlower(0);
+				// storyDetail.setEgg(0);
+				// storyDetail.setHeart(0);
+				// storyDetail.setStar(0);
+				// }
 				storyDeatilList.add(storyDetail);
 			}
 		}
 		return storyDeatilList;
 	}
-
 
 	@Override
 	public List<Vote> getVotesOfPic(String picId) {
@@ -431,16 +435,16 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	public List<Message> getUserMessages(String userId) {
 		List<Message> resList = new ArrayList<Message>();
 		List<Message> msgList = dbVisitor.getUserMessages(userId);
-		for(int i = 0;i<msgList.size();i ++){
+		for (int i = 0; i < msgList.size(); i++) {
 			Message msg = msgList.get(i);
-			//为消息的接收者添加名字和肖像
+			// 为消息的接收者添加名字和肖像
 			String receiverId = msg.getReceiver();
 			User receiveUser = this.getUserInfo(receiverId);
 			String receiverName = receiveUser.getAccount();
 			String receiverAvatar = receiveUser.getAvatar();
 			msg.setReceiverName(receiverName);
 			msg.setReceiverAvatar(receiverAvatar);
-			//为消息发送者添加名字和肖像
+			// 为消息发送者添加名字和肖像
 			String senderId = msg.getSender();
 			User sendUser = this.getUserInfo(senderId);
 			String senderName = sendUser.getAccount();
@@ -478,33 +482,85 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		imagePath = filePath;
 	}
 
+	// FIXME TODO 先存缓存里取image对象，若没有再从文件系统里拿
 	@Override
 	public void getImageFile(String picId, HttpServletResponse res) {
-		File file = new File(imagePath + File.separator + "defaultImage.png");
-		File jpgFile = new File(imagePath + File.separator + picId + ".jpg");
+
+		File defaultFile = new File(imagePath + File.separator
+				+ "defaultImage.png");
 		File pngFile = new File(imagePath + File.separator + picId + ".png");
+		File jpgFile = new File(imagePath + File.separator + picId + ".jpg");
 		File gifFile = new File(imagePath + File.separator + picId + ".gif");
 
+		String fileType = "png";
+		File imgFile = defaultFile;
+
+		//确定文件类型和文件
 		if (jpgFile.exists()) {
-			writeJPGImage(jpgFile, res);
-		} else if (pngFile.exists()) {
-			writePNGImage(pngFile, res);
+			fileType = "jpg";
+			imgFile = jpgFile;
 		} else if (gifFile.exists()) {
-			writeGIFImage(gifFile, res);
+			fileType = "gif";
+			imgFile = gifFile;
+		} else if (pngFile.exists()) {
+			fileType = "png";
+			imgFile = pngFile;
+		}
+
+		Image img = cacheVisitor.getCachedImage(picId);
+		if (img != null) {
+			// 从缓存里写图片
+			writeImageFromCache(img, fileType, res);
 		} else {
-			writePNGImage(file, res);
+			// 从文件系统中返回
+			writeImageFromSystem(imgFile, fileType, res);
 		}
 	}
 
-	private void writeJPGImage(File file, HttpServletResponse res) {
+	private void writeImageFromSystem(File imgFile, String fileType,
+			HttpServletResponse res) {
+		try {
+			InputStream imageIn = new FileInputStream(imgFile);
+			if (fileType.equals("jpg")) {
+				writeJPGImage(imageIn, res);
+			} else if (fileType.equals("png")) {
+				writePNGImage(imageIn, res);
+			} else if (fileType.equals("gif")) {
+				writeGIFImage(imageIn, res);
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void writeImageFromCache(Image img, String fileType,
+			HttpServletResponse res) {
+		try {
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			ImageOutputStream imOut = ImageIO.createImageOutputStream(bos);
+			ImageIO.write((BufferedImage) img, fileType, imOut);
+			InputStream imageIn = new ByteArrayInputStream(bos.toByteArray());
+			if (fileType.equals("jpg")) {
+				writeJPGImage(imageIn, res);
+			} else if (fileType.equals("png")) {
+				writePNGImage(imageIn, res);
+			} else if (fileType.equals("gif")) {
+				writeGIFImage(imageIn, res);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private void writeJPGImage(InputStream imageIn, HttpServletResponse res) {
 		try {
 			res.setContentType(JPG);
-			OutputStream out = res.getOutputStream();
-			InputStream imageIn = new FileInputStream(file);
 			JPEGImageDecoder decoder = JPEGCodec.createJPEGDecoder(imageIn);
 			// 得到编码后的图片对象
 			BufferedImage image = decoder.decodeAsBufferedImage();
 			// 得到输出的编码器
+			OutputStream out = res.getOutputStream();
 			JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
 			encoder.encode(image);
 			// 对图片进行输出编码
@@ -520,20 +576,19 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		}
 	}
 
-	private void writePNGImage(File file, HttpServletResponse res) {
+	private void writePNGImage(InputStream imageIn, HttpServletResponse res) {
 		res.setContentType(PNG);
-		getOutInfo(file, res);
+		getOutInfo(imageIn, res);
 	}
 
-	private void writeGIFImage(File file, HttpServletResponse res) {
+	private void writeGIFImage(InputStream imageIn, HttpServletResponse res) {
 		res.setContentType(GIF);
-		getOutInfo(file, res);
+		getOutInfo(imageIn, res);
 	}
 
-	private void getOutInfo(File file, HttpServletResponse res) {
+	private void getOutInfo(InputStream imageIn, HttpServletResponse res) {
 		try {
 			OutputStream out = res.getOutputStream();
-			InputStream imageIn = new FileInputStream(file);
 			BufferedInputStream bis = new BufferedInputStream(imageIn);
 			// 输入缓冲流
 			BufferedOutputStream bos = new BufferedOutputStream(out);
@@ -574,22 +629,30 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	 */
 	@Override
 	public void getImageByPath(String path, HttpServletResponse res) {
-		File defaultAvatar = new File(imagePath + File.separator + "avatarImg"
-				+ File.separator + "defaultAvatar.png");
-		String type = path.substring(path.lastIndexOf(".") + 1);
-		File file = new File(path);
-		if (file.exists()) {
-			if (type.toLowerCase().equals("jpg")) {
-				writeJPGImage(file, res);
-			} else if (type.toLowerCase().equals("png")) {
-				writePNGImage(file, res);
-			} else if (type.toLowerCase().equals("gif")) {
-				writeGIFImage(file, res);
+		try {
+			//默认头像
+			File defaultAvatar = new File(imagePath + File.separator
+					+ "avatarImg" + File.separator + "defaultAvatar.png");
+			InputStream defaultIn = new FileInputStream(defaultAvatar);
+			
+			String type = path.substring(path.lastIndexOf(".") + 1);
+			File file = new File(path);
+			if (file.exists()) {
+				InputStream imageIn = new FileInputStream(file);
+				if (type.toLowerCase().equals("jpg")) {
+					writeJPGImage(imageIn, res);
+				} else if (type.toLowerCase().equals("png")) {
+					writePNGImage(imageIn, res);
+				} else if (type.toLowerCase().equals("gif")) {
+					writeGIFImage(imageIn, res);
+				} else {
+					writePNGImage(defaultIn, res);
+				}
 			} else {
-				writePNGImage(defaultAvatar, res);
+				writePNGImage(defaultIn, res);
 			}
-		} else {
-			writePNGImage(defaultAvatar, res);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
 		}
 
 	}
@@ -675,8 +738,8 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		// List<Story> list = dbVisitor.getClassicalPintu();
 		// 取得前一天更新的经典story
 		StringBuffer strBuffer = MidnightTask.newClassicalStoryIds;
-		//判断如果有经典的就去数据库中取，没有不取
-		if(strBuffer.length() >0){
+		// 判断如果有经典的就去数据库中取，没有不取
+		if (strBuffer.length() > 0) {
 			List<Story> list = dbVisitor
 					.getClassicalPintuByIds(MidnightTask.newClassicalStoryIds
 							.toString());
@@ -737,7 +800,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				.getProperty("pageSize"));
 		List<TPicItem> picList = dbVisitor.getFavoriteTpics(userId, pageNum,
 				pageSize);
-		return  calcPicItemCount(picList);
+		return calcPicItemCount(picList);
 	}
 
 	@Override
@@ -746,7 +809,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				.getProperty("pageSize"));
 		List<TPicItem> list = dbVisitor.getTpicsByUser(userId, pageNum,
 				pageSize);
-		return  calcPicItemCount(list);
+		return calcPicItemCount(list);
 	}
 
 	@Override
@@ -770,29 +833,29 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			if (user != null) {
 				details.setAuthor(user.getAccount());
 			}
-//			List<Vote> voteList = this.getVotesOfPic(picId);
-//			if (voteList != null && voteList.size() > 0) {
-//				for (int j = 0; j < voteList.size(); j++) {
-//					Vote vote = voteList.get(j);
-//					if (vote.getType().equals(Vote.COOL_TYPE)) {
-//						details.setCool(vote.getAmount());
-//					}
-//					if (vote.getType().equals(Vote.FLOWER_TYPE)) {
-//						details.setFlower(vote.getAmount());
-//					} else if (vote.getType().equals(Vote.EGG_TYPE)) {
-//						details.setEgg(vote.getAmount());
-//					} else if (vote.getType().equals(Vote.HEART_TYPE)) {
-//						details.setHeart(vote.getAmount());
-//					} else if (vote.getType().equals(Vote.STAR_TYPE)) {
-//						details.setStar(vote.getAmount());
-//					}
-//				}
-//			} else {
-//				details.setFlower(0);
-//				details.setEgg(0);
-//				details.setHeart(0);
-//				details.setStar(0);
-//			}
+			// List<Vote> voteList = this.getVotesOfPic(picId);
+			// if (voteList != null && voteList.size() > 0) {
+			// for (int j = 0; j < voteList.size(); j++) {
+			// Vote vote = voteList.get(j);
+			// if (vote.getType().equals(Vote.COOL_TYPE)) {
+			// details.setCool(vote.getAmount());
+			// }
+			// if (vote.getType().equals(Vote.FLOWER_TYPE)) {
+			// details.setFlower(vote.getAmount());
+			// } else if (vote.getType().equals(Vote.EGG_TYPE)) {
+			// details.setEgg(vote.getAmount());
+			// } else if (vote.getType().equals(Vote.HEART_TYPE)) {
+			// details.setHeart(vote.getAmount());
+			// } else if (vote.getType().equals(Vote.STAR_TYPE)) {
+			// details.setStar(vote.getAmount());
+			// }
+			// }
+			// } else {
+			// details.setFlower(0);
+			// details.setEgg(0);
+			// details.setHeart(0);
+			// details.setStar(0);
+			// }
 			resList.add(details);
 		}
 
@@ -836,20 +899,22 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	public List<TPicReview> getLatestTPicDesc() {
 		List<TPicReview> resultList = new ArrayList<TPicReview>();
 		List<TPicDesc> thumbnailList = new ArrayList<TPicDesc>();
-		//获取最近一小时内发的品图
+		// 获取最近一小时内发的品图
 		int nowMinute = getMinutes(String.valueOf(new Date().getTime()));
-		int hourBefore = nowMinute - Integer.parseInt(propertyConfigurer.getProperty("latestTimeSpan"));
-		for (int i = nowMinute; i > hourBefore ; i--) {
+		int hourBefore = nowMinute
+				- Integer.parseInt(propertyConfigurer
+						.getProperty("latestTimeSpan"));
+		for (int i = nowMinute; i > hourBefore; i--) {
 			List<TPicDesc> cacheList = cacheVisitor.getCachedThumbnail(String
 					.valueOf(i));
 			thumbnailList.addAll(cacheList);
 		}
 
 		if (thumbnailList != null) {
-//			for (int j = thumbnailList.size() - 1; j >= 0; j--) {
-//				resultList.add(thumbnailList.get(j));
-//			}
-			for(int i = 0;i<thumbnailList.size();i++){
+			// for (int j = thumbnailList.size() - 1; j >= 0; j--) {
+			// resultList.add(thumbnailList.get(j));
+			// }
+			for (int i = 0; i < thumbnailList.size(); i++) {
 				TPicDesc tpicDesc = thumbnailList.get(i);
 				String picId = tpicDesc.getTpId();
 				TPicItem tpicItem = cacheVisitor.getSpecificPic(picId);
@@ -867,8 +932,8 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				resultList.add(tpicReview);
 			}
 		}
-		
-//		cacheVisitor.getSpecificPic(pid)
+
+		// cacheVisitor.getSpecificPic(pid)
 
 		return resultList;
 	}
@@ -877,29 +942,30 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	public String getExistUser(String account, String pwd) {
 		String md5Pwd = Encrypt.encrypt(pwd);
 		User user = dbVisitor.getExistUser(account);
-		if(user != null && user.getId() != null){
-			if(user.getPwd().equals(md5Pwd)){
-				//用户登录成功后将用户信息放缓存
+		if (user != null && user.getId() != null) {
+			if (user.getPwd().equals(md5Pwd)) {
+				// 用户登录成功后将用户信息放缓存
 				user.setLastUpdateTime(System.currentTimeMillis());
 				cacheVisitor.cacheUser(user);
-				return user.getRole()+"@"+user.getId();
-			}else{
+				return user.getRole() + "@" + user.getId();
+			} else {
 				return systemConfigurer.getProperty("pwdError").toString();
 			}
-		}	
+		}
 		return systemConfigurer.getProperty("userNotExist").toString();
 	}
-	
+
 	@Override
 	public int validateAccount(String account) {
 		User user = dbVisitor.getExistUser(account);
-		if(user != null && user.getId() != null){
+		if (user != null && user.getId() != null) {
 			return 1;
 		}
 		return 0;
 	}
-	
-	private User createUser(String userId, String account, String pwd, String nick) {
+
+	private User createUser(String userId, String account, String pwd,
+			String nick) {
 		User user = new User();
 		user.setId(userId);
 		user.setAccount(account);
@@ -910,40 +976,41 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public String registerUser(String account, String pwd, String code, String nick) {
+	public String registerUser(String account, String pwd, String code,
+			String nick) {
 		String userId = dbVisitor.getExistApplicant(account, code);
-    	if(!"".equals(userId)){
-	    		User user = createUser(userId,account,pwd,nick);
-	    		int i = dbVisitor.insertUser(user);
-	        	if(i == 1){
-	        		//注册成功用户放缓存
-	        		user.setLastUpdateTime(System.currentTimeMillis());
-	        		cacheVisitor.cacheUser(user);
-	        		//删除临时
-	        		int j = dbVisitor.deleteTempUser(userId);
-	        		if(j ==1){
-	        			log.info(" >>>Delete rgistered user."+userId);
-	        		}
-	        		return  systemConfigurer.getProperty("registerSuccess").toString();
-	        	}else{
-	        		return  systemConfigurer.getProperty("registerError").toString();
-	        	}
-	    }else{
-	    	return systemConfigurer.getProperty("applyPrompt").toString();
-	    }
+		if (!"".equals(userId)) {
+			User user = createUser(userId, account, pwd, nick);
+			int i = dbVisitor.insertUser(user);
+			if (i == 1) {
+				// 注册成功用户放缓存
+				user.setLastUpdateTime(System.currentTimeMillis());
+				cacheVisitor.cacheUser(user);
+				// 删除临时
+				int j = dbVisitor.deleteTempUser(userId);
+				if (j == 1) {
+					log.info(" >>>Delete rgistered user." + userId);
+				}
+				return systemConfigurer.getProperty("registerSuccess")
+						.toString();
+			} else {
+				return systemConfigurer.getProperty("registerError").toString();
+			}
+		} else {
+			return systemConfigurer.getProperty("applyPrompt").toString();
+		}
 	}
-	
 
 	@Override
 	public String sendApply(String account, String reason) {
 		Applicant tempUser = this.createApplicant(account, reason);
 		int m = dbVisitor.insertApplicant(tempUser);
-		if(m ==1){
+		if (m == 1) {
 			return systemConfigurer.getProperty("applyProcess").toString();
 		}
 		return systemConfigurer.getProperty("applyError").toString();
 	}
-	
+
 	private Applicant createApplicant(String account, String reason) {
 		Applicant tempUser = new Applicant();
 		tempUser.setId(PintuUtils.generateUID());
@@ -954,62 +1021,70 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 	/**
 	 * 发邮件
+	 * 
 	 * @param receiverMail
 	 * @param content
 	 */
-	private void sendMail(String toAddress,String content){
+	private void sendMail(String toAddress, String content) {
 		MailSenderInfo mailInfo = new MailSenderInfo();
-//		mailInfo.setMailServerPort("25");
-//		mailInfo.setValidate(true);
-		String host = propertyConfigurer.getProperty("mailServiceHost").toString();
-		String username = propertyConfigurer.getProperty("serviceMailUsername").toString();
-		String password = propertyConfigurer.getProperty("serviceMailPassword").toString(); 
-		String address = propertyConfigurer.getProperty("serviceMailAddress").toString(); 
+		// mailInfo.setMailServerPort("25");
+		// mailInfo.setValidate(true);
+		String host = propertyConfigurer.getProperty("mailServiceHost")
+				.toString();
+		String username = propertyConfigurer.getProperty("serviceMailUsername")
+				.toString();
+		String password = propertyConfigurer.getProperty("serviceMailPassword")
+				.toString();
+		String address = propertyConfigurer.getProperty("serviceMailAddress")
+				.toString();
 		mailInfo.setMailServerHost(host);
 		mailInfo.setUserName(username);
 		mailInfo.setPassword(password);// 邮箱密码
 		mailInfo.setFromAddress(address);
 		mailInfo.setToAddress(toAddress);
 		mailInfo.setSubject("申请注册爱品图通知");
-		//邮件内容
+		// 邮件内容
 		mailInfo.setContent(content);
 		// 发送html格式
 		SimpleMailSender.sendHtmlMail(mailInfo);
 	}
 
 	@Override
-	public String acceptApply(String id, String account,String url,String opt) {
-		//发邮件啊发邮件java实现发邮件
-		String inviteCode = PintuUtils.generateInviteCode(); 
-		if(opt.equals("refuse")){
-			String content = propertyConfigurer.getProperty("templateNo").toString();
-			sendMail(account,content);
-			//拒绝加入系统将其从临时用户表中删除
+	public String acceptApply(String id, String account, String url, String opt) {
+		// 发邮件啊发邮件java实现发邮件
+		String inviteCode = PintuUtils.generateInviteCode();
+		if (opt.equals("refuse")) {
+			String content = propertyConfigurer.getProperty("templateNo")
+					.toString();
+			sendMail(account, content);
+			// 拒绝加入系统将其从临时用户表中删除
 			int j = dbVisitor.deleteTempUser(id);
-    		if(j ==1){
-    			log.info(">>>Delete refused temp user."+id);
-    		}
-			
-		}else if(opt.equals("approve")){
-			String content = propertyConfigurer.getProperty("templateYes").toString();
-			String resContent = editTemplate(url,account,inviteCode,content);
-			int i = dbVisitor.updateApplicant(inviteCode,id);
-			if(i==1){
-				//数据库用户临时表更新成功发邮件
-				sendMail(account,resContent);
-				return systemConfigurer.getProperty("applyEmailPrompt").toString();
-				
+			if (j == 1) {
+				log.info(">>>Delete refused temp user." + id);
+			}
+
+		} else if (opt.equals("approve")) {
+			String content = propertyConfigurer.getProperty("templateYes")
+					.toString();
+			String resContent = editTemplate(url, account, inviteCode, content);
+			int i = dbVisitor.updateApplicant(inviteCode, id);
+			if (i == 1) {
+				// 数据库用户临时表更新成功发邮件
+				sendMail(account, resContent);
+				return systemConfigurer.getProperty("applyEmailPrompt")
+						.toString();
+
 			}
 		}
-		
+
 		return systemConfigurer.getProperty("contactServicePrompt").toString();
-	
+
 	}
 
-	//从porerties文件中取出邮件模板，并修改相应内容
+	// 从porerties文件中取出邮件模板，并修改相应内容
 	private String editTemplate(String url, String account, String inviteCode,
 			String content) {
-		Map<String,String> map = new HashMap<String,String>();
+		Map<String, String> map = new HashMap<String, String>();
 		map.put("url", url);
 		map.put("account", account);
 		map.put("inviteCode", inviteCode);
@@ -1026,11 +1101,11 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	@Override
 	public boolean examineUser(String userId) {
 		User cacheUser = cacheVisitor.getUserById(userId);
-		if(cacheUser.getId()!=null){
+		if (cacheUser.getId() != null) {
 			return true;
-		}else{
+		} else {
 			User dbUser = dbVisitor.getUserById(userId);
-			if(dbUser.getId()!=null){
+			if (dbUser.getId() != null) {
 				return true;
 			}
 		}
@@ -1040,69 +1115,74 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	@Override
 	public List<TPicDetails> collectStatistics() {
 		List<TPicDetails> picList = new ArrayList<TPicDetails>();
-		if(MidnightTask.collectList.size() > 0){
+		if (MidnightTask.collectList.size() > 0) {
 			picList = MidnightTask.collectList;
-		}else{
-		   picList = dbVisitor.collectStatistics();
+		} else {
+			picList = dbVisitor.collectStatistics();
 		}
 		return calcPicDetailCount(picList);
 	}
 
 	@Override
 	public List<TPicDetails> classicalStatistics() {
-		int classicalNum =  Integer.parseInt(propertyConfigurer
+		int classicalNum = Integer.parseInt(propertyConfigurer
 				.getProperty("classicalBrowseCount"));
 		List<TPicDetails> picList = new ArrayList<TPicDetails>();
-		if(MidnightTask.classicalList.size() > 0){
+		if (MidnightTask.classicalList.size() > 0) {
 			picList = MidnightTask.classicalList;
-		}else{
+		} else {
 			picList = dbVisitor.classicalStatistics(classicalNum);
 		}
 		return calcPicDetailCount(picList);
 	}
-	
-	//用于处理所有查询图片的浏览量，评论数，被赞数
-	private List<TPicDetails> calcPicDetailCount(List<TPicDetails> picList){
+
+	// 用于处理所有查询图片的浏览量，评论数，被赞数
+	private List<TPicDetails> calcPicDetailCount(List<TPicDetails> picList) {
 		List<TPicDetails> resultList = new ArrayList<TPicDetails>();
-		if(picList != null && picList.size()>0){
+		if (picList != null && picList.size() > 0) {
 			for (int i = 0; i < picList.size(); i++) {
 				TPicDetails pic = picList.get(i);
 				String picId = pic.getId();
-				//处理实时点击
-				if(CacheAccessInterface.hotPicCacheIds.containsKey(picId)){
-					int newCount = pic.getBrowseCount() + CacheAccessInterface.hotPicCacheIds.get(pic.getId());
+				// 处理实时点击
+				if (CacheAccessInterface.hotPicCacheIds.containsKey(picId)) {
+					int newCount = pic.getBrowseCount()
+							+ CacheAccessInterface.hotPicCacheIds.get(pic
+									.getId());
 					pic.setBrowseCount(newCount);
 				}
-				
-				//处理图片评论数
+
+				// 处理图片评论数
 				int storyNum = cacheVisitor.getStoriesOfPic(picId).size();
 				if (storyNum == 0) {
 					storyNum = dbVisitor.getStoriesOfPic(picId).size();
 				}
 				pic.setStoriesNum(storyNum);
-				
-				//处理喜欢数
+
+				// 处理喜欢数
 				int coolCount = this.getPicCoolCount(picId);
 				pic.setCoolCount(coolCount);
-				
-				//加上tag图片标签
+
+				// 加上tag图片标签
 				String tags = this.getTagsById(picId);
 				pic.setTags(tags);
-				
+
 				resultList.add(pic);
 			}
 		}
 		return resultList;
 	}
 
-	//用于处理所有查询图片的处理实时点击量问题
-	private List<TPicItem> calcPicItemCount(List<TPicItem> picList){
+	// 用于处理所有查询图片的处理实时点击量问题
+	private List<TPicItem> calcPicItemCount(List<TPicItem> picList) {
 		List<TPicItem> resultList = new ArrayList<TPicItem>();
-		if(picList != null && picList.size()>0){
+		if (picList != null && picList.size() > 0) {
 			for (int i = 0; i < picList.size(); i++) {
 				TPicItem pic = picList.get(i);
-				if(CacheAccessInterface.hotPicCacheIds.containsKey(pic.getId())){
-					int newCount = pic.getBrowseCount() + CacheAccessInterface.hotPicCacheIds.get(pic.getId());
+				if (CacheAccessInterface.hotPicCacheIds
+						.containsKey(pic.getId())) {
+					int newCount = pic.getBrowseCount()
+							+ CacheAccessInterface.hotPicCacheIds.get(pic
+									.getId());
 					pic.setBrowseCount(newCount);
 				}
 				resultList.add(pic);
@@ -1115,22 +1195,23 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	public List<TPicDetails> getGalleryForWeb(int pageNum) {
 		int pageSize = Integer.parseInt(propertyConfigurer
 				.getProperty("pageSizeForWeb"));
-		List<TPicDetails> picList = dbVisitor.getGalleryForWeb(pageNum,pageSize);
-		return  calcPicDetailCount(picList);
+		List<TPicDetails> picList = dbVisitor.getGalleryForWeb(pageNum,
+				pageSize);
+		return calcPicDetailCount(picList);
 	}
 
 	@Override
 	public List<TPicDetails> searchByTag(String tags) {
-		List<TPicDetails> resList = new  ArrayList<TPicDetails>();
-		List<TPicDetails> andList = new  ArrayList<TPicDetails>();
-		List<TPicDetails> orList = new  ArrayList<TPicDetails>();
+		List<TPicDetails> resList = new ArrayList<TPicDetails>();
+		List<TPicDetails> andList = new ArrayList<TPicDetails>();
+		List<TPicDetails> orList = new ArrayList<TPicDetails>();
 		StringBuffer tagOr = new StringBuffer();
-		//在这里将用空格分隔的tags转变成sql可识别的'',''
+		// 在这里将用空格分隔的tags转变成sql可识别的'',''
 		String[] tagArr = tags.split(" ");
-		if(tagArr.length>0){
-			for(int i=0;i<tagArr.length;i++){
-				if(!"".equals(tagArr[i].trim())){
-					if(tagOr.length()>0){
+		if (tagArr.length > 0) {
+			for (int i = 0; i < tagArr.length; i++) {
+				if (!"".equals(tagArr[i].trim())) {
+					if (tagOr.length() > 0) {
 						tagOr.append(",");
 					}
 					tagOr.append("'");
@@ -1141,25 +1222,25 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			andList = dbVisitor.searchByTagAnd(tagArr);
 			orList = dbVisitor.searchByTagOr(tagOr.toString());
 		}
-		
-		resList = combineResult(andList,orList);
-		
-		return  calcPicDetailCount(resList);
+
+		resList = combineResult(andList, orList);
+
+		return calcPicDetailCount(resList);
 	}
 
-	//将and的结果与or的结果合并
+	// 将and的结果与or的结果合并
 	private List<TPicDetails> combineResult(List<TPicDetails> andList,
 			List<TPicDetails> orList) {
-		for(int m=0;m<andList.size();m++){
+		for (int m = 0; m < andList.size(); m++) {
 			TPicDetails tPic = andList.get(m);
-			String id=tPic.getId();
-			for(int n=0;n<orList.size();n++){
-				TPicDetails pic=orList.get(n);
-				if(id.equals(pic.getId())){
+			String id = tPic.getId();
+			for (int n = 0; n < orList.size(); n++) {
+				TPicDetails pic = orList.get(n);
+				if (id.equals(pic.getId())) {
 					orList.remove(n);
 				}
 			}
-		}	
+		}
 		andList.addAll(orList);
 		return andList;
 	}
@@ -1168,16 +1249,16 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	public List<Tag> getHotTags() {
 		int topNum = Integer.parseInt(propertyConfigurer
 				.getProperty("pageSizeForWeb"));
-		List<Tag> list=dbVisitor.getHotTags(topNum);
+		List<Tag> list = dbVisitor.getHotTags(topNum);
 		return list;
 	}
 
 	@Override
 	public List<Tag> geSystemTags() {
-		List<Tag> list=dbVisitor.geSystemTags();
+		List<Tag> list = dbVisitor.geSystemTags();
 		return list;
 	}
-	
+
 	@Override
 	public String deleteOneComment(String sId) {
 		int i = dbVisitor.deleteCmtById(sId);
@@ -1202,15 +1283,16 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	public List<TPicDesc> getThumbnailsByTag(String tagId, int pageNum) {
 		int pageSize = Integer.parseInt(propertyConfigurer
 				.getProperty("pageSizeForWeb"));
-		List<TPicDesc> list = dbVisitor.getThumbnailByTag(tagId,pageNum,pageSize);
+		List<TPicDesc> list = dbVisitor.getThumbnailByTag(tagId, pageNum,
+				pageSize);
 		return list;
 	}
 
 	@Override
 	public List<User> getPicDaren() {
-		if(MidnightTask.picDarenList.size() > 0){
+		if (MidnightTask.picDarenList.size() > 0) {
 			return MidnightTask.picDarenList;
-		}else{
+		} else {
 			List<User> list = dbVisitor.getPicDaren();
 			return list;
 		}
@@ -1218,13 +1300,13 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 	@Override
 	public List<User> getCmtDaren() {
-		if(MidnightTask.cmtDarenList.size() > 0){
+		if (MidnightTask.cmtDarenList.size() > 0) {
 			return MidnightTask.cmtDarenList;
-		}else{
+		} else {
 			List<User> list = dbVisitor.getCmtDaren();
 			return list;
 		}
-	
+
 	}
 
 	@Override
@@ -1253,20 +1335,22 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	@Override
 	public int confirmPassword(String userId, String password) {
 		String md5Pwd = Encrypt.encrypt(password);
-		int result = dbVisitor.confirmPassword(userId,md5Pwd);
+		int result = dbVisitor.confirmPassword(userId, md5Pwd);
 		return result;
 	}
 
 	@Override
-	public String createAvatarImg(FileItem avatarData, String userId, String nickName) {
+	public String createAvatarImg(FileItem avatarData, String userId,
+			String nickName) {
 		String type = "";
-		if(avatarData != null){
+		if (avatarData != null) {
 			String fileName = avatarData.getName();
 			int dotPos = fileName.lastIndexOf(".");
 			type = fileName.substring(dotPos);
 		}
-		
-		String path = imagePath + File.separator + "avatarImg"+File.separator+userId+type;
+
+		String path = imagePath + File.separator + "avatarImg" + File.separator
+				+ userId + type;
 		log.debug(path);
 
 		try {
@@ -1274,12 +1358,12 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		//修改用户资料（修改头像，昵称），改库的同时更新一下缓存 
+
+		// 修改用户资料（修改头像，昵称），改库的同时更新一下缓存
 		cacheVisitor.updateUserInfo(userId, path, nickName);
-		
-		//更新库
-		int result = dbVisitor.updateAvatarAndNickname(path,nickName,userId);
+
+		// 更新库
+		int result = dbVisitor.updateAvatarAndNickname(path, nickName, userId);
 		if (result > 0) {
 			return systemConfigurer.getProperty("rightPrompt").toString();
 		} else {
@@ -1292,7 +1376,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		int size = Integer.parseInt(propertyConfigurer
 				.getProperty("galleryImgNum"));
 		List<TPicDesc> picList = dbVisitor.getRandGallery(size);
-		return  picList;
+		return picList;
 	}
 
 	@Override
@@ -1300,15 +1384,16 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		int size = Integer.parseInt(propertyConfigurer
 				.getProperty("activeUserNum"));
 		List<User> list = dbVisitor.getActiveUserRandking(size);
-		return  list;
+		return list;
 	}
 
 	@Override
 	public String reviewPictureById(String picId, String creationTime) {
-		//删除缓存中的缩略图
-		boolean flag=cacheVisitor.removeThumbnail(Long.parseLong(creationTime), picId+TPicDesc.THUMBNIAL);
-		
-		//更新服务器
+		// 删除缓存中的缩略图
+		boolean flag = cacheVisitor.removeThumbnail(
+				Long.parseLong(creationTime), picId + TPicDesc.THUMBNIAL);
+
+		// 更新服务器
 		int i = dbVisitor.reviewPictureById(picId);
 		if (i > 0 && flag) {
 			return systemConfigurer.getProperty("rightPrompt").toString();
@@ -1316,10 +1401,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			return systemConfigurer.getProperty("wrongPrompt").toString();
 		}
 	}
-	
-
 
 	// TODO, 实现其他接口方法
-	
 
 }
