@@ -22,11 +22,9 @@ import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 public class ImageHelper {
 
-	public static void handleImage(FileItem fileItem, int defWidth,
+	public static BufferedImage handleImage(FileItem fileItem, int defWidth,
 			int defHeight, String filePath) throws IOException {
-		if (fileItem == null)
-			return;
-
+		
 		Image image = ImageIO.read(fileItem.getInputStream());
 		int srcWidth = image.getWidth(null);
 		int srcHeight = image.getHeight(null);
@@ -54,17 +52,19 @@ public class ImageHelper {
 
 		String fileType = filePath.substring(filePath.lastIndexOf(".") + 1);
 
+		BufferedImage newImage;
 		// 写图片
 		if (fileType.toLowerCase().equals("png")) {
-			writePngImage(image, newWidth, newHeight, filePath);
+			newImage = writePngImage(image, newWidth, newHeight, filePath);
 		} else {
-			writeOtherImage(image, newWidth, newHeight, filePath);
+			newImage = writeOtherImage(image, newWidth, newHeight, filePath);
 		}
 
+		return newImage;
 	}
 
 	// 写png图片
-	private static void writePngImage(Image image, int newWidth, int newHeight,
+	private static BufferedImage writePngImage(Image image, int newWidth, int newHeight,
 			String filePath) {
 		BufferedImage newImage = new BufferedImage(newWidth, newHeight,
 				BufferedImage.TRANSLUCENT);
@@ -80,10 +80,11 @@ public class ImageHelper {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		return newImage;
 	}
 
 	// 写jpg等图片
-	private static void writeOtherImage(Image image, int newWidth,
+	private static BufferedImage writeOtherImage(Image image, int newWidth,
 			int newHeight, String filePath) {
 
 		BufferedImage newImage = new BufferedImage(newWidth, newHeight,
@@ -100,6 +101,7 @@ public class ImageHelper {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return newImage;
 	}
 	
 }

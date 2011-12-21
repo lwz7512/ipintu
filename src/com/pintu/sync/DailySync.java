@@ -1,10 +1,15 @@
 package com.pintu.sync;
 /**
- * 在每次系统启动时,将当天从0点开始的内容同步的缓存中
+ * 在每次系统启动时,将库中内容同步的缓存中
  * @author liumingli
  *
  */
+import java.awt.Image;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,8 +17,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.imageio.ImageIO;
+
 import org.apache.log4j.Logger;
 
+import com.pintu.beans.ImageDesc;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicItem;
@@ -93,24 +101,83 @@ public class DailySync implements Runnable{
 			if(picNames != null && picNames.size() > 0){
 				for(int i=0;i<picNames.size();i++){
 					String picId = picNames.get(i).substring(0,picNames.get(i).lastIndexOf("."));
-					String suffix = picNames.get(i).substring(picNames.get(i).lastIndexOf("."));
-					String thumbnailName = picId+TPicDesc.THUMBNIAL+suffix;
-					File file = pintuService.getThumbnail(thumbnailName);
-					if(file.exists()){
-						Long creationTime = file.lastModified();
-						TPicDesc thumbnail = new TPicDesc();
-						thumbnail.setThumbnailId( picId+TPicDesc.THUMBNIAL);
-						thumbnail.setTpId(picId);
-						thumbnail.setCreationTime(String.valueOf(creationTime));
-						thumbnail.setStatus("0");
-						cacheVisitor.cacheThumbnail(thumbnail);
-						thumbnialCount++;
-					} else{
-						log.info(">>>Thumbnail is missing!");
-					}
+					String type = picNames.get(i).substring(picNames.get(i).lastIndexOf(".")+1);
+					
+					//按创建时间缓存的缩略图信息
+					thumbnialCount += cacheTPicDesc(picId,type);
+					
+					//按picId,图片对象缓存的图片信息
+					cacheThumbnailImg(picId,type);
+					cacheMogImg(picId,type);
 				}
 			}
 			log.info(">>>Synchronous thumbnail to cache is over, thumbnialSize:"+thumbnialCount);
+		}
+
+
+		private int cacheTPicDesc(String picId, String type) {
+			int thumbnialCount = 0;
+			String thumbnailName = picId+TPicDesc.THUMBNIAL+"."+type;
+			File file = pintuService.getThumbnailOrMobImage(thumbnailName);
+			if(file.exists()){
+				Long creationTime = file.lastModified();
+				TPicDesc thumbnail = new TPicDesc();
+				thumbnail.setThumbnailId( picId+TPicDesc.THUMBNIAL);
+				thumbnail.setTpId(picId);
+				thumbnail.setCreationTime(String.valueOf(creationTime));
+				thumbnail.setStatus("0");
+				cacheVisitor.cacheThumbnail(thumbnail);
+				thumbnialCount++;
+			} else{
+				log.info(">>>Thumbnail(TPicDesc) is missing! The id is : "+picId);
+			}
+			return thumbnialCount;
+		}
+		
+		private void cacheThumbnailImg(String picId, String type) {
+			String thumbnailName = picId+TPicDesc.THUMBNIAL+"."+type;
+			File thumbnailFile = pintuService.getThumbnailOrMobImage(thumbnailName);
+			if(thumbnailFile.exists()){
+				try {
+					InputStream is = new FileInputStream(thumbnailFile);
+					Image image=ImageIO.read(is);
+					ImageDesc imgDesc = new ImageDesc();
+					imgDesc.setId(picId+TPicDesc.THUMBNIAL);
+					imgDesc.setType(type);
+					imgDesc.setImage(image);
+					cacheVisitor.cacheImage(imgDesc.getId(), imgDesc);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+			} else{
+				log.info(">>>Thumbnail is missing!");
+			}
+		}
+
+		private void cacheMogImg(String picId, String type) {
+			String mobImgName=picId+"_Mob"+"."+type;
+			File mobImgFile = pintuService.getThumbnailOrMobImage(mobImgName);
+			if(mobImgFile.exists()){
+				try {
+					InputStream is = new FileInputStream(mobImgFile);
+					Image image=ImageIO.read(is);
+					ImageDesc imgDesc = new ImageDesc();
+					imgDesc.setId(picId+"_Mob");
+					imgDesc.setType(type);
+					imgDesc.setImage(image);
+					cacheVisitor.cacheImage(imgDesc.getId(), imgDesc);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+			} else{
+				log.info(">>>MobImg  is missing!");
+			}
 		}
 
 
@@ -150,7 +217,7 @@ public class DailySync implements Runnable{
 			return storyIds.toString();
 		}
 
-
+//TODO 修改
 		private Map<String,String> syncPictureTask(String startTime,String endTime){
 			log.info(">>>Synchronous picture to cache is begin...");
 			Map<String,String> resMap = new HashMap<String,String>();

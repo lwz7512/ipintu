@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.pintu.beans.ImageDesc;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicItem;
@@ -40,6 +41,11 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	@Override
 	public void clearHotPicCacheIds() {
 		CacheAccessInterface.hotPicCacheIds.clear();
+	}
+	
+	@Override
+	public void cacheImage(String picId, ImageDesc imgDesc) {
+		pintuCache.cacheImage(picId, imgDesc);
 	}
 
 	@Override
@@ -216,6 +222,11 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	@Override
 	public boolean removeThumbnail(long longTime,String thumbnailId) {
 		return pintuCache.removeThumbnailById(longTime,thumbnailId);
+	}
+
+	@Override
+	public ImageDesc getCachedImage(String id) {
+		return pintuCache.getCacheImageById(id);
 	}
 
 
