@@ -1573,7 +1573,7 @@ public class DBAccessImplement implements DBAccessInterface {
 	@Override
 	public List<User> getActiveUserRandking(int size) {
 		List<User> userList = new ArrayList<User>();
-		String sql="select * from t_user order by u_score desc limit "+size;
+		String sql="select * from t_user where u_score <> 0 order by u_score desc limit "+size;
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
