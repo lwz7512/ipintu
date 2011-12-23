@@ -1282,7 +1282,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	@Override
 	public List<TPicDesc> getThumbnailsByTag(String tagId, int pageNum) {
 		int pageSize = Integer.parseInt(propertyConfigurer
-				.getProperty("pageSizeForWeb"));
+				.getProperty("galleryImgNum"));
 		List<TPicDesc> list = dbVisitor.getThumbnailByTag(tagId, pageNum,
 				pageSize);
 		return list;
