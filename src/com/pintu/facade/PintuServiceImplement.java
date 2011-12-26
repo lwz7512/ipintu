@@ -441,7 +441,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			// 为消息的接收者添加名字和肖像
 			String receiverId = msg.getReceiver();
 			User receiveUser = this.getUserInfo(receiverId);
-			String receiverName = receiveUser.getAccount();
+			String receiverName = receiveUser.getNickName();
 			String receiverAvatar = receiveUser.getAvatar();
 			msg.setReceiverName(receiverName);
 			msg.setReceiverAvatar(receiverAvatar);

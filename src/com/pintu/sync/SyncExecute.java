@@ -124,6 +124,9 @@ public class SyncExecute implements Runnable {
 		if (arr.length > 0) {
 			String tagId = "";
 			for (int i = 0; i < arr.length; i++) {
+				if("".equals(arr[i].trim())){
+					continue;
+				}
 				// 去数据库tag表里比较，是否当前这个tag已存在表中，
 				// 如果存在更新broseCount，不存在新建一个tag记录最后插category表
 				tagId = dbVisitor.searchTags(arr[i]);
