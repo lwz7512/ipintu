@@ -44,6 +44,7 @@ public class MidnightTask extends TimerTask {
 			CacheAccessInterface cacheVisitor, Properties propertyConfigurer) {
 		this.dbAccess = dbVisitor;
 		this.cacheAccess = cacheVisitor;
+		this.propertyConfigurer = propertyConfigurer;
 	}
 
 	@Override
