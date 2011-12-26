@@ -159,9 +159,11 @@ public interface DBAccessInterface {
 	
 	public List<Applicant> getApplicant();
 	
-	public int deleteTempUser(String userId);
+	public int deleteTempUser(String account);
 	
-	public int updateApplicant(String inviteCode,String id);
+	public int deleteUsedCode(String inviteCode);
+	
+	public int updateApplicant(String inviteCode,String account);
 	
 	public String getExistApplicant(String account, String inviteCode);
 	
@@ -215,6 +217,5 @@ public interface DBAccessInterface {
 	public List<User> getActiveUserRandking(int size);
 	
 	public int reviewPictureById(String picId);
-	
 	
 }

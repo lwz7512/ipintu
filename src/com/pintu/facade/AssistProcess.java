@@ -50,7 +50,6 @@ public class AssistProcess {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			// 申请人，即消息的发送者
-			String id = req.getParameter("id");
 			String account = req.getParameter("account");
 			String opt = req.getParameter("opt");
 
@@ -65,7 +64,7 @@ public class AssistProcess {
 				url = "ipintu.com/ipintu";
 			}
 
-			String result = apiAdaptor.acceptApply(id, account, url, opt);
+			String result = apiAdaptor.acceptApply(account, url, opt);
 			log.debug(result);
 			pw.println(result);
 			pw.close();

@@ -435,8 +435,8 @@ public class ApiAdaptor {
 		return prompt;
 	}
 
-	public String acceptApply(String id, String account, String url, String opt) {
-		String prompt = pintuService.acceptApply(id, account, url, opt);
+	public String acceptApply( String account, String url, String opt) {
+		String prompt = pintuService.acceptApply(account, url, opt);
 		return prompt;
 	}
 

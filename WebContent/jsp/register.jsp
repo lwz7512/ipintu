@@ -16,8 +16,8 @@
 function checkNull(){
 	var account = $("#account").attr("value");
 	var password =  $("#password").attr("value");
-	var inviteCode = $("inviteCode").attr("value");
-	var nickName = $("nickName").attr("value");
+	var inviteCode = $("#inviteCode").attr("value");
+	var nickName = $("#nickName").attr("value");
 	if(account == null || password == null || inviteCode==null ||nickName == null ||
 			nickName ==""|| account == "" || password == "" || inviteCode=="" ){
 		return false;
@@ -30,11 +30,34 @@ function checkEmail(){
 	var emailPat = new RegExp(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/g);
 	if (!emailPat.test(emailStr)) {
 		 $('#prompt1').show().html('*邮箱格式不正确');
-		 $("account").val("");
+		 $("#account").val("");
 	}else{
 		$('#prompt1').hide();
 	}
 	return true;
+}
+
+function checkReg(){
+	var flag = checkEmail();
+	if(flag){
+		$('#prompt').show().html('<img src="<%=request.getContextPath()%>/jsp/img/loading.gif">');
+		var account = $("#account").attr("value");
+		$.post('<%=request.getContextPath()%>/pintuapi', {
+			'method'  : 'validate',
+			'account'	: account
+		}, 
+		//回调函数
+		function (result) {
+			if(result == 1){//result为1，用户已存在
+			    $('#prpt').html('<img src="<%=request.getContextPath()%>/jsp/img/no.png">');
+			    $("#account").val("");
+			}else{
+				 $('#prpt').html('<img src="<%=request.getContextPath()%>/jsp/img/ok.png">');
+			}
+		});
+	}else{
+		$('#prpt').html('<font  color="red">*</font>');
+	}
 }
 
 function checkLength(){
@@ -48,7 +71,7 @@ function checkLength(){
 }
 
 function checkNickname(){
-	var nick = $("#nickname").attr("value");
+	var nick = $("#nickName").attr("value");
 	if(nick==null || nick==""){
 		return false;
 	}
@@ -59,7 +82,7 @@ function check(){
 	var flag = checkNickname();
 	if(flag){
 		$('#prompt').show().html('<img src="<%=request.getContextPath()%>/jsp/img/loading.gif">');
-		var nickName = $("#nickname").attr("value");
+		var nickName = $("#nickName").attr("value");
 		$.post('<%=request.getContextPath()%>/pintuapi', {
 			'method'  : 'examine',
 			'nickName'	: nickName
@@ -83,12 +106,8 @@ function check(){
 <body>
 	<div id="contact-form"> 
 	<%
-		String id = request.getParameter("id");
 		String account = request.getParameter("account");
 		String inviteCode = request.getParameter("inviteCode");
-		if(id==null || id.equals("null")){
-			id="";
-		}
 		if(account==null || account.equals("null")){
 			account="";
 		}
@@ -103,14 +122,13 @@ function check(){
 		<label for="header" class="header">我要注册</label>
 
 		<input type="hidden" name="method" value="register" />
-		<input type="hidden" name="id" value="<%=id%>" /> 
 
 		<label for="email">账户</label>
-			<input type="text" name="account"  id="account" value ="<%=account %>"  onblur="checkEmail()"/>
-			<span><font  color="red">*</font></span>
+			<input type="text" name="account"  id="account" value ="<%=account %>"  onblur="checkReg()"/>
+			<span id="prpt"><font  color="red">*</font></span>
 			
 		<label for="pwd">昵称</label>
-			<input type="text" name= "nickname"  id="nickname" oninput="check()"/>
+			<input type="text" name= "nickName"  id="nickName" oninput="check()"/>
 			<span id="prompt"><font  color="red">*</font></span>
 			
 		<label for="pwd">密码</label>
