@@ -1,0 +1,47 @@
+[INFO] 2011-12-26 16:58:13,259 org.springframework.context.support.FileSystemXmlApplicationContext - Refreshing org.springframework.context.support.FileSystemXmlApplicationContext@b6e39f: startup date [Mon Dec 26 16:58:13 CST 2011]; root of context hierarchy
+[INFO] 2011-12-26 16:58:13,321 org.springframework.beans.factory.xml.XmlBeanDefinitionReader - Loading XML bean definitions from file [D:\workspace\ipintu\WebContent\WEB-INF\app-config.xml]
+[INFO] 2011-12-26 16:58:13,602 org.springframework.beans.factory.support.DefaultListableBeanFactory - Pre-instantiating singletons in org.springframework.beans.factory.support.DefaultListableBeanFactory@6a6779e6: defining beans [propertyConfigurer,systemConfigurer,dataSource,appStarter,apiAdaptor,assistProcess,taskStarter,pintuService,executor,synchProcess,worker,dailySync,dbAcess,cacheAccess,imgProcessor,pintuCache]; root of factory hierarchy
+[INFO] 2011-12-26 16:58:13,697 org.springframework.beans.factory.config.PropertiesFactoryBean - Loading properties file from class path resource [ipintu.properties]
+[INFO] 2011-12-26 16:58:13,697 org.springframework.beans.factory.config.PropertiesFactoryBean - Loading properties file from class path resource [syscfg.properties]
+[WARN] 2011-12-26 16:58:14,024 com.pintu.facade.AppStarter - >>>>> !!! File upload path tempPath environment variable is null, can not initialize the upload component!
+[WARN] 2011-12-26 16:58:14,024 com.pintu.facade.AppStarter - >>>>> !!! File upload path filePath environment variable is null, can not initialize the upload component!
+[INFO] 2011-12-26 16:58:14,024 com.pintu.sync.DailySync - >>>Synchronous picture to cache is begin...
+[INFO] 2011-12-26 16:58:14,024 com.pintu.facade.AppStarter - *********************************************
+[INFO] 2011-12-26 16:58:14,024 com.pintu.facade.AppStarter - >>>Pintu app running in debug mode!!!
+[INFO] 2011-12-26 16:58:14,024 com.pintu.facade.AppStarter - *********************************************
+[INFO] 2011-12-26 16:58:14,306 com.pintu.sync.DailySync - >>>Synchronous picture to cache is over,pictureSize:2
+[INFO] 2011-12-26 16:58:14,306 com.pintu.sync.DailySync - >>>Will save file path of the thumbnail synchronization to cache is begin...
+[INFO] 2011-12-26 16:58:14,306 com.pintu.sync.DailySync - >>>Thumbnail(TPicDesc) is missing! The id is : 89661da65bc8deb7
+[INFO] 2011-12-26 16:58:14,306 com.pintu.sync.DailySync - >>>Thumbnail is missing!
+[INFO] 2011-12-26 16:58:14,306 com.pintu.sync.DailySync - >>>MobImg  is missing!
+[INFO] 2011-12-26 16:58:14,306 com.pintu.sync.DailySync - >>>Thumbnail(TPicDesc) is missing! The id is : ac53e42c052e2f27
+[INFO] 2011-12-26 16:58:14,306 com.pintu.sync.DailySync - >>>Thumbnail is missing!
+[INFO] 2011-12-26 16:58:14,306 com.pintu.sync.DailySync - >>>MobImg  is missing!
+[INFO] 2011-12-26 16:58:14,306 com.pintu.sync.DailySync - >>>Synchronous thumbnail to cache is over, thumbnialSize:0
+[INFO] 2011-12-26 16:58:14,306 com.pintu.sync.DailySync - >>>Synchronous stroy to cache is begin..
+[INFO] 2011-12-26 16:58:14,306 com.pintu.sync.DailySync - >>>Synchronous story to cache is over,storySize:0  storyIds:
+[INFO] 2011-12-26 16:58:14,306 com.pintu.sync.DailySync - >>>Synchronous vote to cache is begin...
+[INFO] 2011-12-26 17:38:16,743 org.springframework.context.support.FileSystemXmlApplicationContext - Refreshing org.springframework.context.support.FileSystemXmlApplicationContext@b6e39f: startup date [Mon Dec 26 17:38:16 CST 2011]; root of context hierarchy
+[INFO] 2011-12-26 17:38:16,815 org.springframework.beans.factory.xml.XmlBeanDefinitionReader - Loading XML bean definitions from file [D:\workspace\ipintu\WebContent\WEB-INF\app-config.xml]
+[INFO] 2011-12-26 17:38:17,107 org.springframework.beans.factory.support.DefaultListableBeanFactory - Pre-instantiating singletons in org.springframework.beans.factory.support.DefaultListableBeanFactory@57ac3379: defining beans [propertyConfigurer,systemConfigurer,dataSource,appStarter,apiAdaptor,assistProcess,taskStarter,pintuService,executor,synchProcess,worker,dailySync,dbAcess,cacheAccess,imgProcessor,pintuCache]; root of factory hierarchy
+[INFO] 2011-12-26 17:38:17,170 org.springframework.beans.factory.config.PropertiesFactoryBean - Loading properties file from class path resource [ipintu.properties]
+[INFO] 2011-12-26 17:38:17,170 org.springframework.beans.factory.config.PropertiesFactoryBean - Loading properties file from class path resource [syscfg.properties]
+[WARN] 2011-12-26 17:38:17,518 com.pintu.facade.AppStarter - >>>>> !!! File upload path tempPath environment variable is null, can not initialize the upload component!
+[WARN] 2011-12-26 17:38:17,518 com.pintu.facade.AppStarter - >>>>> !!! File upload path filePath environment variable is null, can not initialize the upload component!
+[INFO] 2011-12-26 17:38:17,529 com.pintu.sync.DailySync - >>>Synchronous picture to cache is begin...
+[INFO] 2011-12-26 17:38:17,532 com.pintu.facade.AppStarter - *********************************************
+[INFO] 2011-12-26 17:38:17,532 com.pintu.facade.AppStarter - >>>Pintu app running in debug mode!!!
+[INFO] 2011-12-26 17:38:17,532 com.pintu.facade.AppStarter - *********************************************
+[INFO] 2011-12-26 17:38:17,866 com.pintu.sync.DailySync - >>>Synchronous picture to cache is over,pictureSize:2
+[INFO] 2011-12-26 17:38:17,867 com.pintu.sync.DailySync - >>>Will save file path of the thumbnail synchronization to cache is begin...
+[INFO] 2011-12-26 17:38:17,867 com.pintu.sync.DailySync - >>>Thumbnail(TPicDesc) is missing! The id is : 89661da65bc8deb7
+[INFO] 2011-12-26 17:38:17,867 com.pintu.sync.DailySync - >>>Thumbnail is missing!
+[INFO] 2011-12-26 17:38:17,867 com.pintu.sync.DailySync - >>>MobImg  is missing!
+[INFO] 2011-12-26 17:38:17,867 com.pintu.sync.DailySync - >>>Thumbnail(TPicDesc) is missing! The id is : ac53e42c052e2f27
+[INFO] 2011-12-26 17:38:17,867 com.pintu.sync.DailySync - >>>Thumbnail is missing!
+[INFO] 2011-12-26 17:38:17,867 com.pintu.sync.DailySync - >>>MobImg  is missing!
+[INFO] 2011-12-26 17:38:17,867 com.pintu.sync.DailySync - >>>Synchronous thumbnail to cache is over, thumbnialSize:0
+[INFO] 2011-12-26 17:38:17,867 com.pintu.sync.DailySync - >>>Synchronous stroy to cache is begin..
+[INFO] 2011-12-26 17:38:17,880 com.pintu.sync.DailySync - >>>Synchronous story to cache is over,storySize:0  storyIds:
+[INFO] 2011-12-26 17:38:17,880 com.pintu.sync.DailySync - >>>Synchronous vote to cache is begin...
+[INFO] 2011-12-26 17:38:17,883 com.pintu.sync.DailySync - >>>Synchronous vote to cache is over, voteSize:0

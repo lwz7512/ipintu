@@ -196,7 +196,7 @@ public interface PintuServiceInterface {
 	public String sendApply(String account, String reason);
 
 	//这里由管理员授理请求，并发带注册码的链接邮件给申请者邮箱
-	public String  acceptApply(String id, String account,String url,String opt);
+	public String  acceptApply(String account,String url,String opt);
 
 	public List<Applicant> getApplicant();
 

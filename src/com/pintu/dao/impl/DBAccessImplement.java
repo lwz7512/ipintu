@@ -1030,22 +1030,29 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public int deleteTempUser(String userId) {
-		String sql = "delete from t_applicant where a_id ='"+userId+"'"; 
+	public int deleteTempUser(String account) {
+		String sql = "delete from t_applicant where a_account ='"+account+"'"; 
+		int rows = jdbcTemplate.update(sql);
+		return rows;
+	}
+	
+	@Override
+	public int deleteUsedCode(String inviteCode) {
+		String sql = "delete from t_applicant where a_inviteCode ='"+inviteCode+"'"; 
 		int rows = jdbcTemplate.update(sql);
 		return rows;
 	}
 
 	@Override
-	public int updateApplicant(final String inviteCode,final String id) {
-		String sql = "update t_applicant  set a_inviteCode ='"+inviteCode +"' , a_passed=1 where a_id ='"+id+"'";
+	public int updateApplicant(final String inviteCode,final String account) {
+		String sql = "update t_applicant  set a_inviteCode ='"+inviteCode +"' , a_passed=1 where a_account ='"+account+"'";
 		int rows = jdbcTemplate.update(sql);
 		return rows;
 	}
 	
 	@Override
 	public String getExistApplicant(String account,String inviteCode) {
-		String sql = "select a_id from t_applicant where a_account = '"+account+"' and a_inviteCode ='"+inviteCode+"' and a_passed=1"; 
+		String sql = "select * from t_applicant where a_account = '"+account+"' and a_inviteCode ='"+inviteCode+"' and a_passed=1"; 
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		String id="";
 		if (rows != null && rows.size() > 0) {

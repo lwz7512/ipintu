@@ -980,6 +980,9 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	public String registerUser(String account, String pwd, String code,
 			String nick) {
 		String userId = dbVisitor.getExistApplicant(account, code);
+		if("".equals(userId)){
+			userId = dbVisitor.getExistApplicant("", code);
+		}
 		if (!"".equals(userId)) {
 			User user = createUser(userId, account, pwd, nick);
 			int i = dbVisitor.insertUser(user);
@@ -987,8 +990,8 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				// 注册成功用户放缓存
 				user.setLastUpdateTime(System.currentTimeMillis());
 				cacheVisitor.cacheUser(user);
-				// 删除临时
-				int j = dbVisitor.deleteTempUser(userId);
+				// 删除已用邀请码
+				int j = dbVisitor.deleteUsedCode(code);
 				if (j == 1) {
 					log.info(" >>>Delete rgistered user." + userId);
 				}
@@ -1051,7 +1054,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	@Override
-	public String acceptApply(String id, String account, String url, String opt) {
+	public String acceptApply(String account, String url, String opt) {
 		// 发邮件啊发邮件java实现发邮件
 		String inviteCode = PintuUtils.generateInviteCode();
 		if (opt.equals("refuse")) {
@@ -1059,16 +1062,16 @@ public class PintuServiceImplement implements PintuServiceInterface {
 					.toString();
 			sendMail(account, content);
 			// 拒绝加入系统将其从临时用户表中删除
-			int j = dbVisitor.deleteTempUser(id);
+			int j = dbVisitor.deleteTempUser(account);
 			if (j == 1) {
-				log.info(">>>Delete refused temp user." + id);
+				log.info(">>>Delete refused temp user." + account);
 			}
 
 		} else if (opt.equals("approve")) {
 			String content = propertyConfigurer.getProperty("templateYes")
 					.toString();
 			String resContent = editTemplate(url, account, inviteCode, content);
-			int i = dbVisitor.updateApplicant(inviteCode, id);
+			int i = dbVisitor.updateApplicant(inviteCode,account);
 			if (i == 1) {
 				// 数据库用户临时表更新成功发邮件
 				sendMail(account, resContent);

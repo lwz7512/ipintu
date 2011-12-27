@@ -32,15 +32,13 @@ function loadApplicant(){
 					+"<input type='hidden' name='method' value='accept' />"
 					+"<input type='hidden' name='opt' value='approve' />"
 					+"<input type='submit' value='同意'/>"
-					+"<input type='hidden' name='id' id='tempId' value='"+result[key].id+
-					"' /><input type='hidden' name='account' id='account' value='"+result[key].account+
+					+"<input type='hidden' name='account' id='account' value='"+result[key].account+
 					"' /></form></td>"+
 					"<td><form action='<%=request.getContextPath()%>/pintuapi?userId=<%=request.getParameter("userId")%>' method='post'>"
 					+ "<input type='hidden' name='method' value='accept' />"
 					+ "<input type='hidden' name='opt' value='refuse' />"
 					+ "<input type='submit' value='拒绝'/>"
-					+ "<input type='hidden' name='id' id='tempId' value='"+result[key].id+
-					"' /><input type='hidden' name='account' id='account' value='"+result[key].account+
+					+ "<input type='hidden' name='account' id='account' value='"+result[key].account+
 					"' /></form></td></tr>");
 				}
 			}
