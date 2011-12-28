@@ -4,6 +4,7 @@
 <html>
 <head>
 <title>获取社区长廊</title>
+<link rel="icon" type="image/png" href="http://ipintu.com/favicon.png">
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/jsp/css/style.css" />
 <link rel="stylesheet" type="text/css"

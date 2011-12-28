@@ -4,6 +4,7 @@
 <html>
 <head>
 <title>普通用户操作页面</title>
+<link rel="icon" type="image/png" href="http://ipintu.com/favicon.png">
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/jsp/css/header.css" />
 <link rel="stylesheet" type="text/css"

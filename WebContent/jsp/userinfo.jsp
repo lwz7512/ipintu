@@ -4,6 +4,7 @@
 <html>
 <head>
 <title>上传图片页面</title>
+<link rel="icon" type="image/png" href="http://ipintu.com/favicon.png">
 <script language=javascript
 	src="<%=request.getContextPath()%>/jsp/js/jquery.js"
 	type=text/javascript></script>
