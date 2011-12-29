@@ -92,6 +92,8 @@ public interface ExtVisitorInterface {
 	//审核发图
 	public static final String REVIEWPICTURE = "reviewPicture";
 	
+	public static final String CREATEINVITECODE="createInviteCode";
+	
 	//TODO, TO ADD MORE METHOD DEFINITION...
 	
 	//统计最近被收藏的图片top12

@@ -28,6 +28,9 @@
 <a class="xhs" href="review.jsp?userId=<%=userId %>">审核贴图</a>
 </li>
 <li class="xis">
+<a class="xhs" href="invitecode.jsp?userId=<%=userId %>">批量生成邀请码</a>
+</li>
+<li class="xis">
 <a class="xhs" href="#">发布可换礼物</a>
 </li>
 <li class="xis">

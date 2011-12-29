@@ -8,6 +8,6 @@
 	href="<%=request.getContextPath()%>/jsp/css/style.css" />
 </head>
 <body>
-	<% response.sendRedirect("jsp/login.jsp"); %>
+	<% response.sendRedirect("http://ipintu.com"); %>
 </body>
 </html>

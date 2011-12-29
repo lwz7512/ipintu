@@ -10,15 +10,7 @@
 <body>
 <div id="xd" class="xcn">
 <div class="xq xbn">
-<a href="#" class="xcw">新手入门</a>
-<span class="xaw">•</span>
-<a href="#" class="xcw">品图指南</a>
-<span class="xaw">•</span>
-<a href="#" class="xcw">建议反馈</a>
-<span class="xaw">•</span>
-<a href="#" class="xcw">品图协议</a>
-<span class="xaw">•</span>
-<span class="xcw">© 2011 爱品图</span>
+<a href="#" class="xcw">Copyright © 2011 北京远博畅享科技有限公司 保留所有权利</a>
 </div>
 </div>
 </html>
