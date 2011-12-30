@@ -1,0 +1,23 @@
+* { 
+    margin: 0; 
+    padding: 0; 
+}
+#xd {
+	margin: 0 auto;
+	overflow: hidden;
+	position: relative;
+}
+.xbn {
+	border-top: 1px solid #CCC;
+	padding: 20px 15px 20px 0;
+}
+.xq {
+	width: 960px;
+	margin: 0 auto;
+}
+.xaw {
+	padding: 0 4px;
+}
+.xcw, .xbw, .xdw, .xaw{
+	color: #999!important;
+}

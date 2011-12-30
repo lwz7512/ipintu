@@ -20,7 +20,7 @@
  <div id="zg-top-nav" class="xls">
 <ul class="xjs">
 <li class="xis" id="zh-top-home-link">
-<a class="xhs" href="../index.jsp">首页</a>
+<a class="xhs" href="login.jsp">首页</a>
 </li>
 <li class="xis">
 <a class="xhs" href="upload.jsp?userId=<%=userId %>">图片上传</a>

@@ -32,10 +32,12 @@ function checkEmail(){
 	if (!emailPat.test(emailStr)) {
 		 $('#prompt1').show().html('*邮箱格式不正确');
 		 $("#account").val("");
+		 return false;
 	}else{
 		$('#prompt1').hide();
+		return true;
 	}
-	return true;
+	
 }
 
 function checkReg(){
