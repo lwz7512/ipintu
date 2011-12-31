@@ -43,7 +43,7 @@ function checkEmail(){
 function checkReg(){
 	var flag = checkEmail();
 	if(flag){
-		$('#prompt').show().html('<img src="<%=request.getContextPath()%>/jsp/img/loading.gif">');
+		$('#prpt').show().html('<img src="<%=request.getContextPath()%>/jsp/img/loading.gif">');
 		var account = $("#account").attr("value");
 		$.post('<%=request.getContextPath()%>/pintuapi', {
 			'method'  : 'validate',

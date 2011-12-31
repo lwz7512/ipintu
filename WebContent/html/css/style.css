@@ -62,7 +62,7 @@ p.loginBtn{
 	margin: 0  20px 0px  210px;
 }
 p.applyBtn{ 
-	margin: 0  20px 0px  190px;
+	margin: 0  20px 0px  165px;
 }
 
 p.twoBtn{ 
@@ -77,7 +77,7 @@ FORM CORE
 #contact-form{
 /* 	min-height:100%;  */
     position:relative;
-    padding-bottom:60px;
+    padding-bottom:80px;
 	height:350px; 
 }
 
@@ -96,8 +96,19 @@ form#contact fieldset {
 	box-shadow: 0px 0px 10px #d3d3d3; 
 }
 
-form#contact input[type="text"], input[type="url"], 
-input[type="email"], input[type="password"], textarea {
+/* form#contact input[type="text"], input[type="url"],  */
+/* input[type="email"], input[type="password"], textarea{ */
+/* 	margin: 5px 0px 5px 20px; */
+/* 	padding: 6px;  */
+/* 	width: 280px;  */
+/* 	font-family: arial, sans-serif;  */
+/* 	font-size: 12px;  */
+/* 	border: 1px solid #ccc; */
+/*     background: -webkit-gradient(linear, left top, left 15, from(#FFFFFF), color-stop(4%, #f4f4f4), to(#FFFFFF)); */
+/*     background: -moz-linear-gradient(top, #FFFFFF, #f4f4f4 1px, #FFFFFF 15px); */
+/* } */
+
+.input{
 	margin: 5px 0px 5px 20px;
 	padding: 6px; 
 	width: 280px; 
@@ -108,9 +119,27 @@ input[type="email"], input[type="password"], textarea {
     background: -moz-linear-gradient(top, #FFFFFF, #f4f4f4 1px, #FFFFFF 15px);
 }
 
-form#contact textarea {
+.inputError{
+	margin: 5px 0px 5px 20px;
+	padding: 6px; 
 	width: 280px; 
-	height: 150px;
+	font-family: arial, sans-serif; 
+	font-size: 12px; 
+	border: 1px solid #ff3300;
+    background: -webkit-gradient(linear, left top, left 15, from(#FFFFFF), color-stop(6%, #f4f4f4), to(#FFFFFF));
+    background: -moz-linear-gradient(top, #FFFFFF, #f4f4f4 1px, #FFFFFF 15px);
+}
+
+form#contact textarea {
+	margin: 5px 0px 5px 20px;
+	padding: 6px; 
+	width: 280px; 
+	font-family: arial, sans-serif; 
+	font-size: 12px; 
+	border: 1px solid #ccc;
+    background: -webkit-gradient(linear, left top, left 15, from(#FFFFFF), color-stop(4%, #f4f4f4), to(#FFFFFF));
+    background: -moz-linear-gradient(top, #FFFFFF, #f4f4f4 1px, #FFFFFF 15px);
+    height: 150px;
 }
 
 form#contact label {
@@ -149,7 +178,7 @@ form#contact label.header {
 form#contact label.error { 
 	margin: 10px 0px 0px 15px;
 	padding: 5px; 
-	width: 240px;
+	width: 280px;
 	display: block;
 	color: #cf0101;                              
 	font-size: 11px; 
@@ -167,6 +196,17 @@ form#contact .button {
 	-webkit-border-radius: 15px;
 	border-radius: 5px;
 }
+.btn {
+	display: inline-block;
+	margin: 25px;
+	padding: 5px 15px 5px 15px;
+	background-color: #cccccc;
+	border: none;
+	color: #fff;
+	-moz-border-radius: 15px;
+	-webkit-border-radius: 15px;
+	border-radius: 5px;
+}
 
 form#contact .button:hover {
 	background-color: #0C8918;
@@ -174,7 +214,11 @@ form#contact .button:hover {
 }
 
 form#contact .button:active {
-/* 	margin-top: 6px; */
 	background-color: #41555D;
+	cursor: pointer;
+}
+
+form#contact .button:disabled {
+	background-color: #758a99;
 	cursor: pointer;
 }

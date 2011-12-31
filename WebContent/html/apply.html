@@ -25,14 +25,14 @@
 
  <div id="zg-top-nav" class="xls">
 <ul class="xjs">
-<li class="xis" id="zh-top-home-link">
-<a class="xhs" href="http://ipintu.com/ipintu/flash/index.html">首页</a>
-</li>
 <li class="xis">
 <a class="xhs" href="apply.html">申请</a>
 </li>
 <li class="xis">
 <a class="xhs" href="register.html">注册</a>
+</li>
+<li class="xis">
+<a class="xhs" href="http://ipintu.com/ipintu/flash/index.html">进入社区</a>
 </li>
 </ul>
 </div>
@@ -42,10 +42,10 @@
 <div id="contact-form"> 
 	<form id="contact" >
 	    <fieldset>
-			<label for="header" class="header">申请</label>
+			<label for="header" class="header">我要申请</label>
 				
 			<label for="email">注册邮箱</label>
-					<input type="text" name="account" id="account" onblur="validate()" />
+					<input type="text" name="account" id="account" onblur="validate()" class="input"/>
 					<span id="prompt"><font  color="red">*</font></span>
 					
 			<label for="message">申请理由</label>
@@ -57,8 +57,9 @@
 			</label>
 				
 			<p class="applyBtn">
-				<input type="button"  name="submit"  class="button"  id="submit"  value="我要申请" 
+				<input type="button"  name="submit"  class="button"  id="submit"  value="申请" 
 							onclick="apply()"/>
+				<span id="subm" style="display: none;"></span>
 			</p>			
 		</fieldset>
 	</form>
