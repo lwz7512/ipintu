@@ -39,15 +39,12 @@ public class TastePic implements Serializable{
 			int dotPos = fileName.lastIndexOf(".");
 			fileType = fileName.substring(dotPos+1);
 		}
-		return fileType;
+		return fileType.toLowerCase();
 	}
 
 	public String getUser() {
 		return user;
 	}
-
-
-	
 
 	public void setUser(String user) {
 		this.user = user;

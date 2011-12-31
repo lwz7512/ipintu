@@ -4,6 +4,7 @@
 <html>
 <head>
 <title>普通用户操作页面</title>
+<link rel="icon" type="image/png" href="http://ipintu.com/favicon.png">
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/jsp/css/header.css" />
 <link rel="stylesheet" type="text/css"
@@ -18,13 +19,16 @@
  <div id="zg-top-nav" class="xls">
 <ul class="xjs">
 <li class="xis" id="zh-top-home-link">
-<a class="xhs" href="../index.jsp">首页</a>
+<a class="xhs" href="login.jsp">首页</a>
 </li>
 <li class="xis">
 <a class="xhs" href="accept.jsp?userId=<%=userId %>">处理申请</a>
 </li>
 <li class="xis">
 <a class="xhs" href="review.jsp?userId=<%=userId %>">审核贴图</a>
+</li>
+<li class="xis">
+<a class="xhs" href="invitecode.jsp?userId=<%=userId %>">批量生成邀请码</a>
 </li>
 <li class="xis">
 <a class="xhs" href="#">发布可换礼物</a>

@@ -4,6 +4,7 @@
 <html>
 <head>
 <title>普通用户操作页面</title>
+<link rel="icon" type="image/png" href="http://ipintu.com/favicon.png">
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/jsp/css/header.css" />
 	<link rel="stylesheet" type="text/css"
@@ -19,7 +20,7 @@
  <div id="zg-top-nav" class="xls">
 <ul class="xjs">
 <li class="xis" id="zh-top-home-link">
-<a class="xhs" href="../index.jsp">首页</a>
+<a class="xhs" href="login.jsp">首页</a>
 </li>
 <li class="xis">
 <a class="xhs" href="upload.jsp?userId=<%=userId %>">图片上传</a>

@@ -239,6 +239,8 @@ public interface PintuServiceInterface {
 
 	public String reviewPictureById(String picId, String creationTime);
 
+	public String createInviteCode();
+
 
 
 

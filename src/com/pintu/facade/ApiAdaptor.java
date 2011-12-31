@@ -573,5 +573,10 @@ public class ApiAdaptor {
 		return result;
 	}
 
+	public String createInviteCode() {
+		String result = pintuService.createInviteCode();
+		return result;
+	}
+
 
 } // end of class

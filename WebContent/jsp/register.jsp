@@ -5,6 +5,7 @@
 <html>
 <head>
 <title>Register page</title>
+<link rel="icon" type="image/png" href="http://ipintu.com/favicon.png">
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/jsp/css/style.css" />
 <script language=javascript
@@ -31,10 +32,12 @@ function checkEmail(){
 	if (!emailPat.test(emailStr)) {
 		 $('#prompt1').show().html('*邮箱格式不正确');
 		 $("#account").val("");
+		 return false;
 	}else{
 		$('#prompt1').hide();
+		return true;
 	}
-	return true;
+	
 }
 
 function checkReg(){

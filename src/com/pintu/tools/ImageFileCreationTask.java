@@ -140,7 +140,7 @@ public class ImageFileCreationTask implements Runnable {
 				int dotPos = fileName.lastIndexOf(".");
 				fileType = fileName.substring(dotPos+1);
 			}
-			return fileType;
+			return fileType.toLowerCase();
 		}
 		
 }

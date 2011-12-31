@@ -520,11 +520,11 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			HttpServletResponse res) {
 		try {
 			InputStream imageIn = new FileInputStream(imgFile);
-			if (fileType.equals("jpg")) {
+			if ("jpg".equalsIgnoreCase(fileType)){
 				writeJPGImage(imageIn, res);
-			} else if (fileType.equals("png")) {
+			} else if ("png".equalsIgnoreCase(fileType)) {
 				writePNGImage(imageIn, res);
-			} else if (fileType.equals("gif")) {
+			} else if ("gif".equalsIgnoreCase(fileType)) {
 				writeGIFImage(imageIn, res);
 			}
 		} catch (FileNotFoundException e) {
@@ -541,11 +541,11 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			ImageOutputStream imOut = ImageIO.createImageOutputStream(bos);
 			ImageIO.write((BufferedImage) img, fileType, imOut);
 			InputStream imageIn = new ByteArrayInputStream(bos.toByteArray());
-			if (fileType.equals("jpg")) {
+			if ("jpg".equalsIgnoreCase(fileType)){
 				writeJPGImage(imageIn, res);
-			} else if (fileType.equals("png")) {
+			} else if ("png".equalsIgnoreCase(fileType)) {
 				writePNGImage(imageIn, res);
-			} else if (fileType.equals("gif")) {
+			} else if ("gif".equalsIgnoreCase(fileType)) {
 				writeGIFImage(imageIn, res);
 			}
 		} catch (IOException e) {
@@ -1403,6 +1403,32 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		} else {
 			return systemConfigurer.getProperty("wrongPrompt").toString();
 		}
+	}
+
+	@Override
+	public String createInviteCode() {
+		StringBuffer result = new StringBuffer();
+		int i=0;
+		String oldCode = "";
+		for(i=0;i<10;i++){
+			Applicant temp = new Applicant();
+			String newCode = PintuUtils.generateInviteCode();
+			if(newCode.equals(oldCode)){
+				newCode = PintuUtils.generateInviteCode();
+			}
+			result.append(newCode+",");
+			String id = PintuUtils.generateUID();
+			temp.setId(id);
+			temp.setInviteCode(newCode);
+			temp.setApplyReason("I like it");
+			temp.setPassed(1);
+			temp.setAccount("");
+			int rows = dbVisitor.insertApplicant(temp);
+			if(rows == 1){
+				oldCode = newCode;
+			}
+		}
+		return result.toString();
 	}
 
 	// TODO, 实现其他接口方法

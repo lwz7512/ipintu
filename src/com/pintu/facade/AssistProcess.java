@@ -69,6 +69,13 @@ public class AssistProcess {
 			pw.println(result);
 			pw.close();
 
+		} else if (action.equals(AppStarter.CREATEINVITECODE)) {
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String result = apiAdaptor.createInviteCode();
+			pw.print(result);
+			pw.close();
+
 		} else if (action.equals(AppStarter.PUBLISHEVENT)) {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
