@@ -52,7 +52,8 @@
 		   		<span><font  color="red">*</font></span>
 	
 			<label for="email">账户</label>
-				<input type="text" name="account"  class="input" id="account" style="color:#50616d" value="请输入邮箱" onfocus="if(value=='请输入邮箱') {value=''}" onblur="checkReg()"/>
+				<input type="text" name="account"  class="input" id="account" style="color:#999999" value="请输入邮箱" 
+				onfocus="if(value=='请输入邮箱'){value='';this.style.color='#111111'}" onblur="checkReg()"/>
 				<span id="prpt"><font  color="red">*</font></span>
 				
 			<label for="pwd">昵称</label>
@@ -62,18 +63,20 @@
 			<label for="pwd">密码</label>
 				<input type="password" name= "password"  id="password" class="input" onblur="checkLength()"/>
 				<span><font  color="red">*</font></span>
-		   		 
+				
+			 <div class="twoBtn">
+				 	<span id="subm">
+						<img src="img/blank.png" style="vertical-align: middle;">
+					</span>
+					<input type="button" value="注册" name="submit" class="button" id="submit" onclick="register()"/>
+					<input type="reset" value="重置" name="reset" class="button" id="reset" onclick="location.reload()"/>
+			</div>
+			
 	   		 <label for="prompt" class="error">
 				<span style="display: none;" id=prompt1></span>
 				<span style="display: none;" id="prompt2"></span>
 				<span id="report"></span>
 			</label>
-				
-			 <p class="twoBtn">
-				<input type="button" value="注册" name="submit" class="button" id="submit" onclick="register()"/>
-				<span id="subm" style="display: none;"></span>
-				<input type="reset" value="重置" name="reset" class="button" id="reset" onclick="location.reload()"/>
-			</p>
 			
 		</fieldset>
 	</form>

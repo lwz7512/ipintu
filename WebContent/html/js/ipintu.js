@@ -2,7 +2,7 @@
 function apply(){
 	var flag = checkNull();
 	if(flag){
-		$('#subm').show().html('<img src="img/load.gif">');
+		$('#subm').html('<img src="img/load.gif" style="vertical-align: middle;">');
 		var account = $("#account").attr("value");
 		var reason = $("#reason").attr("value");
 		$.post('/ipintu/pintuapi', {
@@ -12,9 +12,9 @@ function apply(){
 		}, 
 		//回调函数
 		function (result) {
-			  $('#subm').hide();
+			  $('#subm').html('<img src="img/blank.png" style="vertical-align: middle;">');
 			  if(result == 'Your apply is processing......'){
-				  $('#report').html('*申请正在处理中，请于1小时后查看您的邮箱，现在可以先进入社区体验一下！');
+				  $('#report').html('*申请正在处理中，请于1小时后查看您的邮箱，现在可以先进入社区，体验一下！');
 			  }else{
 				  $('#report').html('*申请失败，请重试。');
 			  }
@@ -58,6 +58,7 @@ function checkNull(){
 		var account = $("#account").attr("value");
 		var reason =$("#reason").attr("value");
 		if(account == null || reason == null || account == "" || reason == ""){
+			$('#report').html("*请填写正确的邮箱和理由！");
 			return false;
 		}
 		return true;
@@ -81,6 +82,7 @@ function checkBlank(){
 	var nickName = $("#nickName").attr("value");
 	if(account == null || password == null || inviteCode==null ||nickName == null ||
 			nickName ==""|| account == "" || password == "" || inviteCode=="" ){
+		$('#report').html("*请正确填写注册信息！");
 		return false;
 	}
 	return true;
@@ -91,7 +93,7 @@ function checkBlank(){
 function register(){
 	var flag = checkBlank();
 	if(flag){
-		$('#subm').show().html('<img src="img/load.gif">');
+		$('#subm').html('<img src="img/load.gif" style="vertical-align: middle;">');
 		var account = $("#account").attr("value");
 		var password =  $("#password").attr("value");
 		var nickName = $("#nickName").attr("value");
@@ -107,9 +109,9 @@ function register(){
 		}, 
 		//回调函数
 		function (result) {
-			$('#subm').hide();
+			  $('#subm').html('<img src="img/blank.png" style="vertical-align: middle;">');
 			if(result == 'Register sucess!'){
-				  $('#report').html('*注册成功，现在可以先进入社区体验一下！');
+				  $('#report').html('*注册成功，现在可以先进入社区，登录使用了！');
 			  }else{
 				  $('#report').html('*注册失败，请重试。');
 			  }

@@ -42,7 +42,7 @@
 <div id="contact-form"> 
 	<form id="contact" >
 	    <fieldset>
-			<label for="header" class="header">我要申请</label>
+			<label for="header" class="header">申请</label>
 				
 			<label for="email">注册邮箱</label>
 					<input type="text" name="account" id="account" onblur="validate()" class="input"/>
@@ -52,15 +52,17 @@
 				<textarea name="reason" id="reason" ></textarea>
 				<span><font  color="red">*</font></span>
 				
+			<div class="applyBtn">
+				<span id="subm">
+					<img src="img/blank.png" style="vertical-align: middle;">
+				</span>
+				<input type="button"  name="submit"  class="button"  id="submit"  value="我要申请" onclick="apply()"/>
+			</div>	
+			
 			<label for="prompt" class="error">
 				<span id="report"></span>
 			</label>
-				
-			<p class="applyBtn">
-				<input type="button"  name="submit"  class="button"  id="submit"  value="申请" 
-							onclick="apply()"/>
-				<span id="subm" style="display: none;"></span>
-			</p>			
+						
 		</fieldset>
 	</form>
 </div>
