@@ -164,6 +164,7 @@ form#contact label {
 
 form#contact label.header {
 	clear: both;
+	display: inline-block;
     background: #b3d563;
     background: -webkit-gradient(linear, left top, left bottom,  from(#00BC12), to(#0C8918));
     background: -moz-linear-gradient(top,  #00BC12,  #0C8918);

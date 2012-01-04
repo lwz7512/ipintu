@@ -1,5 +1,5 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-type" content="text/html; charset=utf-8">
 <title>注册页面</title>
@@ -47,33 +47,38 @@
 	    <fieldset>
 			<label for="header" class="header">我要注册</label>
 	
-			<label for="pwd">邀请码</label>
+			<label for="pwd">邀请码<font  color="red">*</font></label>
 		   		 <input type="text" name= "inviteCode"  id="inviteCode"  value ="" class="input"/>
-		   		<span><font  color="red">*</font></span>
 	
-			<label for="email">账户</label>
-				<input type="text" name="account"  class="input" id="account" style="color:#50616d" value="请输入邮箱" onfocus="if(value=='请输入邮箱') {value=''}" onblur="checkReg()"/>
-				<span id="prpt"><font  color="red">*</font></span>
+			<label for="email">账户<font  color="red">*</font></label>
+				<input type="text" name="account"  class="input" id="account" style="color:#999999" value="请输入邮箱" 
+				onfocus="if(value=='请输入邮箱'){value='';this.style.color='#111111'}" onblur="checkReg()"/>
+				<span id="prpt" style="visibility:hidden">
+					<img src="img/loading.gif" style="vertical-align: middle;">
+				</span>
 				
-			<label for="pwd">昵称</label>
+			<label for="pwd">昵称<font  color="red">*</font></label>
 				<input type="text" name= "nickName"  id="nickName" class="input" onblur="examine()"/>
-				<span id="prompt"><font  color="red">*</font></span>
+				<span id="prompt" style="visibility:hidden">
+					<img src="img/loading.gif" style="vertical-align: middle;">
+				</span>
 				
-			<label for="pwd">密码</label>
+			<label for="pwd">密码<font  color="red">*</font></label>
 				<input type="password" name= "password"  id="password" class="input" onblur="checkLength()"/>
-				<span><font  color="red">*</font></span>
-		   		 
+				
+			 <div class="twoBtn">
+				 	<span id="subm" style="visibility:hidden">
+						<img src="img/load.gif" style="vertical-align: middle;">
+					</span>
+					<input type="button" value="注册" name="submit" class="button" id="submit" onclick="register()"/>
+					<input type="reset" value="重置" name="reset" class="button" id="reset" onclick="location.reload()"/>
+			</div>
+			
 	   		 <label for="prompt" class="error">
 				<span style="display: none;" id=prompt1></span>
 				<span style="display: none;" id="prompt2"></span>
 				<span id="report"></span>
 			</label>
-				
-			 <p class="twoBtn">
-				<input type="button" value="注册" name="submit" class="button" id="submit" onclick="register()"/>
-				<span id="subm" style="display: none;"></span>
-				<input type="reset" value="重置" name="reset" class="button" id="reset" onclick="location.reload()"/>
-			</p>
 			
 		</fieldset>
 	</form>

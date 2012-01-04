@@ -1,5 +1,5 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-type" content="text/html; charset=utf-8">
 <title>申请页面</title>
@@ -42,25 +42,28 @@
 <div id="contact-form"> 
 	<form id="contact" >
 	    <fieldset>
-			<label for="header" class="header">我要申请</label>
+			<label for="header" class="header">申请</label>
 				
-			<label for="email">注册邮箱</label>
+			<label for="email">注册邮箱<font  color="red">*</font></label>
 					<input type="text" name="account" id="account" onblur="validate()" class="input"/>
-					<span id="prompt"><font  color="red">*</font></span>
+					<span id="prompt" style="visibility:hidden">
+						<img src="img/loading.gif" style="vertical-align: middle;">
+					</span>
 					
-			<label for="message">申请理由</label>
-				<textarea name="reason" id="reason" ></textarea>
-				<span><font  color="red">*</font></span>
+			<label for="message">申请理由<font  color="red">*</font></label>
+				<textarea name="reason" id="reason"  style= "overflow-x:hidden;overflow-y:hidden "></textarea>
 				
+			<div class="applyBtn">
+				<span id="subm" style="visibility:hidden">
+					<img src="img/load.gif" style="vertical-align: middle;">
+				</span>
+				<input type="button"  name="submit" class="button"  id="submit"  value="我要申请" onclick="apply()"/>
+			</div>	
+			
 			<label for="prompt" class="error">
 				<span id="report"></span>
 			</label>
-				
-			<p class="applyBtn">
-				<input type="button"  name="submit"  class="button"  id="submit"  value="申请" 
-							onclick="apply()"/>
-				<span id="subm" style="display: none;"></span>
-			</p>			
+						
 		</fieldset>
 	</form>
 </div>

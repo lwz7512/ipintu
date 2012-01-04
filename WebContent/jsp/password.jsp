@@ -16,6 +16,16 @@
 </head>
 
 <script language=javascript  type=text/javascript>
+function checkForm(){
+	var pwd = $("#oldpwd").attr("value");
+	var pwd1 =  $("#pwd1").attr("value");
+	var pwd2 =  $("#pwd2").attr("value");
+	if(pwd == null || pwd=="" || pwd1==null || pwd1=="" || pwd2==null || pwd2="" ){
+		return false;
+	}
+	return true;
+}
+
 function checkNull(){
 	var pwd = $("#oldpwd").attr("value");
 	if(pwd == null || pwd=="" ){
@@ -78,7 +88,7 @@ function compare(){
 	</div>
 </div>
 <div id="contact-form"> 
-<form   id="contact"  action="<%=request.getContextPath()%>/pintuapi" method="post">
+<form   id="contact"  action="<%=request.getContextPath()%>/pintuapi" method="post"  onsubmit="return checkForm();">
 	<fieldset>  
 		<label for="header" class="header">修改密码</label>
 
