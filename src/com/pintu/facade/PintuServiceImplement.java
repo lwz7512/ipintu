@@ -1010,9 +1010,20 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		Applicant tempUser = this.createApplicant(account, reason);
 		int m = dbVisitor.insertApplicant(tempUser);
 		if (m == 1) {
+			//这里，申请成功发邮件给客服
+			informService(account,reason);
+			
 			return systemConfigurer.getProperty("applyProcess").toString();
 		}
 		return systemConfigurer.getProperty("applyError").toString();
+	}
+
+	private void informService(String account, String reason) {
+		//TODO 需要等改过html后修改下
+		String content = "用户："+account+" 申请加入爱品图，申请理由为："+reason+"<br/>点击这里去登录授理吧<a href='http://ipintu.com/ipintu/jsp/login.jsp'>http://ipintu.com/ipintu/jsp/login.jsp</a>";
+		String address = propertyConfigurer.getProperty("serviceMailAddress")
+				.toString();
+		sendMail(address, content);
 	}
 
 	private Applicant createApplicant(String account, String reason) {

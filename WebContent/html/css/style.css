@@ -59,11 +59,11 @@ LINKS
 /* a:active { color: #06C; text-decoration: underline; } */
 
 .applyBtn{ 
-	margin: 0  10px 0px  150px;
+	margin: 0  10px 0px  166px;
 }
 
 .twoBtn{ 
-	margin: 0  10px 0px  30px;
+	margin: 0  10px 0px  45px;
 }
 
 
@@ -129,7 +129,7 @@ form#contact fieldset {
 
 form#contact textarea {
 	margin: 5px 0px 5px 20px;
-	padding: 6px; 
+	padding: 5px; 
 	width: 280px; 
 	font-family: arial, sans-serif; 
 	font-size: 12px; 
@@ -173,18 +173,18 @@ form#contact label.header {
 }
 
 form#contact label.error { 
-	margin: 10px 0px 0px 15px;
-	padding: 5px; 
+	margin: 0px 0px 15px 15px;
+	padding: 10px; 
 	width: 280px;
 	display: block;
 	color: #cf0101;                              
-	font-size: 11px; 
+	font-size: 12px; 
 	text-align: left;
 }
 
 form#contact .button {
 	display: inline-block;
-	margin: 25px;
+	margin: 15px;
 	padding: 5px 15px 5px 15px;
 	background-color: #00BC12;
 	border: none;

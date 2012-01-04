@@ -47,26 +47,28 @@
 	    <fieldset>
 			<label for="header" class="header">我要注册</label>
 	
-			<label for="pwd">邀请码</label>
+			<label for="pwd">邀请码<font  color="red">*</font></label>
 		   		 <input type="text" name= "inviteCode"  id="inviteCode"  value ="" class="input"/>
-		   		<span><font  color="red">*</font></span>
 	
-			<label for="email">账户</label>
+			<label for="email">账户<font  color="red">*</font></label>
 				<input type="text" name="account"  class="input" id="account" style="color:#999999" value="请输入邮箱" 
 				onfocus="if(value=='请输入邮箱'){value='';this.style.color='#111111'}" onblur="checkReg()"/>
-				<span id="prpt"><font  color="red">*</font></span>
+				<span id="prpt" style="visibility:hidden">
+					<img src="img/loading.gif" style="vertical-align: middle;">
+				</span>
 				
-			<label for="pwd">昵称</label>
+			<label for="pwd">昵称<font  color="red">*</font></label>
 				<input type="text" name= "nickName"  id="nickName" class="input" onblur="examine()"/>
-				<span id="prompt"><font  color="red">*</font></span>
+				<span id="prompt" style="visibility:hidden">
+					<img src="img/loading.gif" style="vertical-align: middle;">
+				</span>
 				
-			<label for="pwd">密码</label>
+			<label for="pwd">密码<font  color="red">*</font></label>
 				<input type="password" name= "password"  id="password" class="input" onblur="checkLength()"/>
-				<span><font  color="red">*</font></span>
 				
 			 <div class="twoBtn">
-				 	<span id="subm">
-						<img src="img/blank.png" style="vertical-align: middle;">
+				 	<span id="subm" style="visibility:hidden">
+						<img src="img/load.gif" style="vertical-align: middle;">
 					</span>
 					<input type="button" value="注册" name="submit" class="button" id="submit" onclick="register()"/>
 					<input type="reset" value="重置" name="reset" class="button" id="reset" onclick="location.reload()"/>
