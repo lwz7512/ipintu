@@ -22,7 +22,6 @@ function createInviteCode(){
 		}, 
 		//回调函数
 		function (result) {
-			alert(result.length);
 			if(result.length==0){
 				$('#prompt').show().html('生成邀请码失败');
 			}else{
@@ -31,13 +30,8 @@ function createInviteCode(){
 		});
 }
 </script>
-
+<%@include file="adminHead.jsp"%>
 <body>
-	<div class="xft">
-		<div class="xq" id="xit">
-			<a href="../index.jsp" class="xdt" id="zh-top-link-logo"></a>
-		</div>
-	</div>
 	<input type="button" name="applicant" class="button" value="生成邀请码"
 		onclick="createInviteCode()" /><br/>
 	<span style="display: none;" id="prompt"></span>

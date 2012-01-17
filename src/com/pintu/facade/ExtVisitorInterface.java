@@ -12,12 +12,17 @@ public interface ExtVisitorInterface {
 	
 	public static final String LOGON ="logon";
 	
+	public static final String RETRIEVE = "retrieve";
+	
 	public static final String APPLY ="apply";
 	
 	public static final String REGISTER ="register";
 	
 	//验证账户
 	public static final String VALIDATE = "validate";
+	
+	//验证账户(申请时用)
+	public static final String CHECKOUT= "checkout";
 	
 	//检查昵称
 	public static final String EXAMINE = "examine";

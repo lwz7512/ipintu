@@ -241,6 +241,10 @@ public interface PintuServiceInterface {
 
 	public String createInviteCode();
 
+	public int checkApplicant(String account);
+
+	public String retrievePwd(String account);
+
 
 
 

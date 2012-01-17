@@ -90,6 +90,9 @@ public interface CacheAccessInterface {
 	//登录，注册的用户都缓存~若有动作，但缓存没有，也要从库里查出放入缓存里
 	public void cacheUser(User user);
 	
+	//更新缓存中的用户积分
+	public void updateUserScore(String userId,int newScore);
+	
 	//更新用户最后操作时间
 	public void updateCachedUser(String userId, Long updateTime);
 	

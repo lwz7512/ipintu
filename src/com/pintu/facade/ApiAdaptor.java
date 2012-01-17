@@ -578,5 +578,15 @@ public class ApiAdaptor {
 		return result;
 	}
 
+	public int checkApplicant(String account) {
+		int resut = pintuService.checkApplicant(account);
+		return resut;
+	}
+
+	public String retrievePwd(String account) {
+		String result = pintuService.retrievePwd(account);
+		return result;
+	}
+
 
 } // end of class

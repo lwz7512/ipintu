@@ -128,11 +128,33 @@ public class PintuCache {
 
 	// 缓存用户信息
 	public void cacheUser(String userId, User user) {
-		Element elmt = new Element(userId, user);
 		synchronized (userCache) {
-			userCache.put(elmt);
+			Element elmt = userCache.get(userId);
+			if(elmt != null){
+				userCache.remove(userId);
+			}
+			Element ele =  new Element(userId, user);
+			log.debug("cached user score is "+user.getScore());
+			userCache.put(ele);
 		}
 	}
+	
+	// 更新缓存用户score
+		public void updateUserScore(String userId, int newScore) {
+			synchronized (userCache) {
+				Element ele = userCache.get(userId);
+				if (ele != null) {
+					User user = (User) ele.getObjectValue();
+					int oldScore = user.getScore();
+					user.setScore(oldScore+newScore);
+					log.debug("user oldScore is "+oldScore+"--newScore"+newScore);
+					log.info("PintuCache:update cachedUser's score!");
+					if(user.getScore() == 0){
+						log.warn("PintuCache:Warning cacheUser error");
+					}
+				}
+			}
+		}
 	
 	//更新缓存中的用户昵称和头像
 	public void updateUserInfo(String userId, String avatarPath, String nickName) {

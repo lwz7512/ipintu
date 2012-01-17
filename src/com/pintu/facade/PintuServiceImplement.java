@@ -156,7 +156,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 			// 更新用户的最后操作时间
 			updateCacheUser(tpicItem.getOwner());
-
+			
 			// 3. 提交imgProcessor生成文件
 			imgProcessor.createImageFile(pic.getRawImageData(), tpicItem);
 
@@ -267,6 +267,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		details.setStoriesNum(storyNum);
 		if (user != null) {
 			details.setAuthor(user.getNickName());
+			// TODO这里要和缓存的加上
 			details.setScore(user.getScore());
 			details.setLevel(user.getLevel());
 			details.setAvatarImgPath(user.getAvatar());
@@ -310,7 +311,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 		// 要根据当天的点击量来累加从库里取出来的浏览次数~即得到最新的浏览次数
 		details.setBrowseCount(item.getBrowseCount() + details.getCounter());
-
 		return details;
 	}
 
@@ -1020,7 +1020,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 	private void informService(String account, String reason) {
 		//TODO 需要等改过html后修改下
-		String content = "用户："+account+" 申请加入爱品图，申请理由为："+reason+"<br/>点击这里去登录授理吧<a href='http://ipintu.com/ipintu/jsp/login.jsp'>http://ipintu.com/ipintu/jsp/login.jsp</a>";
+		String content = "用户："+account+" 申请加入爱品图，申请理由为："+reason+"<br/>点击这里去登录授理吧<a href='http://ipintu.com/ipintu/html/login.html'>http://ipintu.com/ipintu/html/login.html</a>";
 		String address = propertyConfigurer.getProperty("serviceMailAddress")
 				.toString();
 		sendMail(address, content);
@@ -1031,6 +1031,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		tempUser.setId(PintuUtils.generateUID());
 		tempUser.setAccount(account);
 		tempUser.setApplyReason(reason);
+		tempUser.setApplyTime(PintuUtils.getFormatNowTime());
 		return tempUser;
 	}
 
@@ -1057,7 +1058,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		mailInfo.setPassword(password);// 邮箱密码
 		mailInfo.setFromAddress(address);
 		mailInfo.setToAddress(toAddress);
-		mailInfo.setSubject("申请注册爱品图通知");
+		mailInfo.setSubject("爱品图通知");
 		// 邮件内容
 		mailInfo.setContent(content);
 		// 发送html格式
@@ -1403,9 +1404,17 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 	@Override
 	public String reviewPictureById(String picId, String creationTime) {
+		
+		Long createTime = 0l;
 		// 删除缓存中的缩略图
+		if(creationTime.contains("-")){
+			createTime = PintuUtils.parseToDate(creationTime).getTime();
+		}else{
+			createTime = Long.parseLong(creationTime);
+		}
+		
 		boolean flag = cacheVisitor.removeThumbnail(
-				Long.parseLong(creationTime), picId + TPicDesc.THUMBNIAL);
+				createTime, picId + TPicDesc.THUMBNIAL);
 
 		// 更新服务器
 		int i = dbVisitor.reviewPictureById(picId);
@@ -1434,12 +1443,44 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			temp.setApplyReason("I like it");
 			temp.setPassed(1);
 			temp.setAccount("");
+			temp.setApplyTime(PintuUtils.getFormatNowTime());
 			int rows = dbVisitor.insertApplicant(temp);
 			if(rows == 1){
 				oldCode = newCode;
 			}
 		}
 		return result.toString();
+	}
+
+	@Override
+	public int checkApplicant(String account) {
+		int res = 1;
+		User user = dbVisitor.getExistUser(account);
+		int applicant = dbVisitor.getExistApplicant(account);
+		if ((user != null && user.getId() != null) || applicant >0) {
+			res = 1;
+		}else{
+			res = 0;
+		}
+		return res;
+	}
+
+	@Override
+	public String retrievePwd(String account) {
+		//检查用户是否存在，若存在则重置密码为123，并给用户发邮件让其以123为密码登录再修改密码，已完成重置
+		User user =dbVisitor.getExistUser(account);
+		if(user != null && user.getId() != null){
+			String password = Encrypt.encrypt("123");
+			int rows = dbVisitor.updatePassword(password, user.getId());
+			if(rows == 1){
+				String content = propertyConfigurer.getProperty("templateRetrieve")
+						.toString();
+				sendMail(account,content);
+			}
+			return systemConfigurer.getProperty("rightPrompt").toString();
+		}else{
+			return systemConfigurer.getProperty("wrongPrompt").toString();
+		}
 	}
 
 	// TODO, 实现其他接口方法

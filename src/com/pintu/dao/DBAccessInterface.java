@@ -155,6 +155,8 @@ public interface DBAccessInterface {
 	
 	public User getExistUser(String account);
 	
+	public int getExistApplicant(String account);
+	
 	public int insertApplicant(Applicant tempUser);
 	
 	public List<Applicant> getApplicant();

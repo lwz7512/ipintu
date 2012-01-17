@@ -13,8 +13,18 @@ public class Applicant {
 	
 	private String inviteCode;
 	
+	private String applyTime;
+	
 	private int passed;
 	
+	public String getApplyTime() {
+		return applyTime;
+	}
+
+	public void setApplyTime(String applyTime) {
+		this.applyTime = applyTime;
+	}
+
 	public String getId() {
 		return id;
 	}
