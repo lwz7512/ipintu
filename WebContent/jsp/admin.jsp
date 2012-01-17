@@ -10,40 +10,12 @@
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/jsp/css/style.css" />
 </head>
+<%@include file="adminHead.jsp"%>
 <body>
-	<%String userId = request.getParameter("userId"); %>
-<div class="xft">
-<div class="xq" id="xit">
-<a href="../index.jsp" class="xdt" id="zh-top-link-logo"></a>
-
- <div id="zg-top-nav" class="xls">
-<ul class="xjs">
-<li class="xis" id="zh-top-home-link">
-<a class="xhs" href="login.jsp">首页</a>
-</li>
-<li class="xis">
-<a class="xhs" href="accept.jsp?userId=<%=userId %>">处理申请</a>
-</li>
-<li class="xis">
-<a class="xhs" href="review.jsp?userId=<%=userId %>">审核贴图</a>
-</li>
-<li class="xis">
-<a class="xhs" href="invitecode.jsp?userId=<%=userId %>">批量生成邀请码</a>
-</li>
-<li class="xis">
-<a class="xhs" href="#">发布可换礼物</a>
-</li>
-<li class="xis">
-<a class="xhs" href="#">发布社区新闻</a>
-</li>
-</ul>
-</div>
-</div>
-</div>
-
 <div id="contact-form">
+欢迎进入管理员操作界面
 </div>
+
 </body>
 <%@include file="footer.jsp"%>
-</body>
 </html>

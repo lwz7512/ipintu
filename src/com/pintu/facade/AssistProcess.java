@@ -90,7 +90,7 @@ public class AssistProcess {
 		} else if (action.equals(AppStarter.PUBLISHGIFT)) {
 			res.setContentType("text/plain;charset=UTF-8");
 			// PrintWriter pw = res.getWriter();
-			// TODO 这里发布礼物时候要有图片上传(之后做)
+			// 这里发布礼物时候要有图片上传(之后做)
 			apiAdaptor.publishExchangeableGift();
 
 		} else if (action.equals(AppStarter.GETLATESTPIC)) {

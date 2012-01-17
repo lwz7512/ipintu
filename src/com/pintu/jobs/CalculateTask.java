@@ -57,21 +57,33 @@ public class CalculateTask extends TimerTask {
 		if (userList.size() > 0) {
 			updateScoreUserList = this.calAndUpdateScore(userList, start, end);
 		}
-
+		
 		StringBuffer userIds = new StringBuffer();
 		if (updateScoreUserList.size() > 0) {
-			if (updateScoreUserList.size() > 0) {
-				for (int i = 0; i < updateScoreUserList.size(); i++) {
-					User user = updateScoreUserList.get(i);
-					if (userIds.length() > 0) {
-						userIds.append(",");
-					}
-					userIds.append("'");
-					userIds.append(user.getId());
-					userIds.append("'");
+			
+			// 已计算后的用户列表来更新数据库积分
+			int m = this.dbAccess.updateUserScore(updateScoreUserList);
+			if (m == updateScoreUserList.size()) {
+				log.info(">>>Update score success！");
+			} else {
+				log.info(">>>Update score failed！");
+			}
+			
+			for (int i = 0; i < updateScoreUserList.size(); i++) {
+				User user = updateScoreUserList.get(i);
+				
+				//更新用户缓存的积分
+				cacheAccess.updateUserScore(user.getId(), user.getScore());
+				
+				if (userIds.length() > 0) {
+					userIds.append(",");
 				}
+				userIds.append("'");
+				userIds.append(user.getId());
+				userIds.append("'");
 			}
 		}
+		
 		// 财产直接根据可用积分计算结果查找并更新数据库的wealth表
 		// 根据用户的积分更新来处理用户的等级
 		if(userIds.length() > 0){
@@ -124,47 +136,44 @@ public class CalculateTask extends TimerTask {
 					.getOnesStoryCountByTime(startTime, endTime);
 
 			for (int i = 0; i < userList.size(); i++) {
+				//FIXME 这里犯了个严重的错误~唉，要new啊，咋能把引用给改了呢，笨~
+				User changedUser = new User();
+				//介个不能直接用~~~
 				User user = userList.get(i);
 				String userId = user.getId();
+				//下面都要重新赋值再放回List
+				changedUser.setId(userId);
+				
 				// 若某用户同时有插入图片和写故事的操作
 				if (picMap.containsKey(userId) && storyMap.containsKey(userId)) {
-					user.setScore(picMap.get(userId)
+					changedUser.setScore(picMap.get(userId)
 							* Integer.parseInt(propertyConfigurer
 									.getProperty("uploadPictureScore"))
 							+ storyMap.get(userId)
 							* Integer.parseInt(propertyConfigurer
 									.getProperty("tellStoryScore")));
 
-					user.setExchangeScore(user.getScore());
-					resultList.add(user);
+					changedUser.setExchangeScore(changedUser.getScore());
+					resultList.add(changedUser);
 					// 只有发图片操作
 				} else if (picMap.containsKey(userId)) {
-					user.setScore(picMap.get(userId)
+					changedUser.setScore(picMap.get(userId)
 							* Integer.parseInt(propertyConfigurer
 									.getProperty("uploadPictureScore")));
 
-					user.setExchangeScore(user.getScore());
-					resultList.add(user);
+					changedUser.setExchangeScore(changedUser.getScore());
+					resultList.add(changedUser);
 					// 只有写故事操作
 				} else if (storyMap.containsKey(userId)) {
-					user.setScore(storyMap.get(userId)
+					changedUser.setScore(storyMap.get(userId)
 							* Integer.parseInt(propertyConfigurer
 									.getProperty("tellStoryScore")));
-					user.setExchangeScore(user.getScore());
-					resultList.add(user);
+					changedUser.setExchangeScore(changedUser.getScore());
+					resultList.add(changedUser);
 				}
 			}
 		}
 
-		// 已计算后的用户列表来更新完数据库
-		if (resultList.size() > 0) {
-			int m = this.dbAccess.updateUserScore(resultList);
-			if (m == resultList.size()) {
-				log.info(">>>Update score success！");
-			} else {
-				log.info(">>>Update score failed！");
-			}
-		}
 		return resultList;
 	}
 	

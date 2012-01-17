@@ -775,7 +775,7 @@ public class DBAccessImplement implements DBAccessInterface {
 		int startLine = (pageNum -1)*pageSize;
 		String sql = "select p.p_id,p.p_name,p.p_owner,p.p_publishTime,p.p_description,p.p_source,p.p_isOriginal,p.p_browseCount," +
 				"p.p_mobImgId,p.p_mobImgSize,p.p_mobImgPath,p.p_rawImgId,p.p_rawImgSize,p.p_rawImgPath" +
-				" from t_picture p, t_favorite f where p.p_id = f.f_picture and f.f_owner = '"+userId+"' and p. p_pass=1 limit "+startLine+","+pageSize;
+				" from t_picture p, t_favorite f where p.p_id = f.f_picture and f.f_owner = '"+userId+"' and p. p_pass=1  order by f.f_collectTime desc limit "+startLine+","+pageSize;
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -984,12 +984,18 @@ public class DBAccessImplement implements DBAccessInterface {
 		return user;
 	}
 
+	@Override
+	public int getExistApplicant(String account) {
+		String sql = "select count(*) from t_applicant where a_account = '"+account+"'"; 
+		int i = jdbcTemplate.queryForInt(sql);
+		return i;
+	}
 
 	@Override
 	public int insertApplicant(final Applicant tempUser) {
 		String sql = "INSERT INTO t_applicant "
-				+ "(a_id, a_account, a_applyReason,a_inviteCode,a_passed,a_memo) "
-				+ "VALUES (?, ?, ?, ?, ?, ?)";
+				+ "(a_id, a_account, a_applyReason,a_inviteCode,a_applyTime,a_passed,a_memo) "
+				+ "VALUES (?, ?, ?, ?, ?, ?,?)";
 
 		int res =jdbcTemplate.update(sql, new PreparedStatementSetter() {
 			public void setValues(PreparedStatement ps) {
@@ -998,8 +1004,9 @@ public class DBAccessImplement implements DBAccessInterface {
 					ps.setString(2, tempUser.getAccount());
 					ps.setString(3, tempUser.getApplyReason());
 					ps.setString(4, tempUser.getInviteCode());
-					ps.setInt(5, tempUser.getPassed());
-					ps.setString(6, "");
+					ps.setString(5, tempUser.getApplyTime());
+					ps.setInt(6, tempUser.getPassed());
+					ps.setString(7, "");
 
 				} catch (SQLException e) {
 					e.printStackTrace();
@@ -1607,5 +1614,7 @@ public class DBAccessImplement implements DBAccessInterface {
 		int rows = jdbcTemplate.update(sql); 
 		return rows;
 	}
+
+
 
 }

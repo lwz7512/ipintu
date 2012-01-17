@@ -16,26 +16,29 @@
 </head>
 
 <script language=javascript  type=text/javascript>
-function checkForm(){
-	var pwd = $("#oldpwd").attr("value");
-	var pwd1 =  $("#pwd1").attr("value");
-	var pwd2 =  $("#pwd2").attr("value");
-	if(pwd == null || pwd=="" || pwd1==null || pwd1=="" || pwd2==null || pwd2="" ){
-		return false;
-	}
-	return true;
-}
 
 function checkNull(){
 	var pwd = $("#oldpwd").attr("value");
-	if(pwd == null || pwd=="" ){
+	var pwd1 =  $("#pwd1").attr("value");
+	var pwd2 =  $("#pwd2").attr("value");
+	if(pwd == null || pwd=="" || pwd1 == null || pwd1=="" || pwd2 == null || pwd2==""){
 		return false;
+	}else{
+		return true;
 	}
-	return true;
+}
+
+function checkOld(){
+	var pwd = $("#oldpwd").attr("value");
+	if(pwd == null || pwd==""){
+		return false;
+	}else{
+		return true;
+	}
 }
 
 function check(){
-	var flag = checkNull();
+	var flag = checkOld();
 	if(flag){
 		$('#prompt').show().html('<img src="<%=request.getContextPath()%>/jsp/img/loading.gif">');
 		var oldpwd = $("#oldpwd").attr("value");
@@ -88,7 +91,7 @@ function compare(){
 	</div>
 </div>
 <div id="contact-form"> 
-<form   id="contact"  action="<%=request.getContextPath()%>/pintuapi" method="post"  onsubmit="return checkForm();">
+<form   id="contact"  action="<%=request.getContextPath()%>/pintuapi" method="post"  onsubmit="return checkNull();">
 	<fieldset>  
 		<label for="header" class="header">修改密码</label>
 
@@ -113,7 +116,7 @@ function compare(){
 		</label>
 			
 		 <p class="twoBtn">
-			<input type="submit" value="提交" name="submit" class="button" id="submit"/>
+			<input type="submit" value="提交" name="submit" class="button" id="submit"  onclick="check()"/>
 			<input type="reset" value="重置" name="reset" class="button" id="reset"/> 
 		<p>
 		

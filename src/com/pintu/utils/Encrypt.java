@@ -18,6 +18,6 @@ public class Encrypt {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(encrypt("111111"));
+		System.out.println(encrypt("liekkas"));
 	}
 }

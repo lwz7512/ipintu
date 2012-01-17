@@ -188,6 +188,11 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	public void cacheUser(User user) {
 		pintuCache.cacheUser(user.getId(), user);
 	}
+	
+	@Override
+	public void updateUserScore(String userId,int newScore){
+		pintuCache.updateUserScore(userId, newScore);
+	}
 
 	@Override
 	public List<User> getActiveUser(Long startTime,Long endTime) {

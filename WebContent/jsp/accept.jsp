@@ -46,14 +46,8 @@ function loadApplicant(){
 		}, "json");
 }
 </script>
-
+<%@include file="adminHead.jsp"%>
 <body onload="loadApplicant()">
-	<div class="xft">
-<div class="xq" id="xit">
-<a href="../index.jsp" class="xdt" id="zh-top-link-logo"></a>
-</div>
-</div>
-
 	<table class='table' >
 		<tr class="table_title">
 			<td colspan='3' align="center">

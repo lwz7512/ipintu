@@ -40,7 +40,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 	private Logger log = Logger.getLogger(AppStarter.class);
 
 	private static final long serialVersionUID = 1L;
-	
+
 	// 由Spring注入
 	private ApiAdaptor apiAdaptor;
 	
@@ -114,10 +114,12 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 		}
 
 		if (action.equals(AppStarter.LOGON)
-						|| action.equals(AppStarter.REGISTER)
-						|| action.equals(AppStarter.APPLY)
-						|| action.equals(AppStarter.EXAMINE)
-						|| action.equals(AppStarter.VALIDATE)) {
+				|| action.equals(AppStarter.RETRIEVE)
+				|| action.equals(AppStarter.REGISTER)
+				|| action.equals(AppStarter.APPLY)
+				|| action.equals(AppStarter.EXAMINE)
+				|| action.equals(AppStarter.VALIDATE)
+				|| action.equals(AppStarter.CHECKOUT)) {
 			
 			demandProcess(action, req, res);
 			return;
@@ -167,6 +169,17 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			log.debug(result);
 			pw.write(result);
 			pw.close();
+			
+		} else if (action.equals(AppStarter.RETRIEVE)) {
+			// 申请，发送后由管理员授理
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String account = req.getParameter("account");
+			String result = apiAdaptor.retrievePwd(account);
+			log.debug(result);
+			pw.write(result);
+			pw.close();
+
 
 		} else if (action.equals(AppStarter.APPLY)) {
 			// 申请，发送后由管理员授理
@@ -180,7 +193,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			pw.close();
 
 		} else if (action.equals(AppStarter.VALIDATE)) {
-			// 验证注册的账户是否已被用
+			// 验证注册的账户是否已被注册
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String account = req.getParameter("account");
@@ -188,6 +201,17 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			log.debug(result);
 			pw.println(result);
 			pw.close();
+			
+		} else if (action.equals(AppStarter.CHECKOUT)) {
+			// 验证注册的账户是否已被用（包括申请和注册）
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String account = req.getParameter("account");
+			int result = apiAdaptor.checkApplicant(account);
+			log.debug(result);
+			pw.println(result);
+			pw.close();
+			
 		} else if (action.equals(AppStarter.EXAMINE)) {
 				// 验证注册的账户是否已被用
 				res.setContentType("text/plain;charset=UTF-8");

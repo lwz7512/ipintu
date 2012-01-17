@@ -31,7 +31,7 @@ function validate(){
 		$('#prompt').attr("style","visibility:visible");
 		var account = $("#account").attr("value");
 		$.post('/ipintu/pintuapi', {
-			'method'  : 'validate',
+			'method'  : 'checkout',
 			'account'	: account
 		}, 
 		//回调函数
@@ -42,7 +42,7 @@ function validate(){
 			    $("#account").focus();
 			    $("#account").attr("class","inputError");
 			    $('#report').html("*此邮箱已注册");
-			}else{
+			}else if(result ==0){
 				 $('#prompt').html('<img src="img/ok.png">');
 				 $("#account").attr("class","input");
 				 $('#report').html('');

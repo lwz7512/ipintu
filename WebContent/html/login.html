@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-<title>注册页面</title>
+<title>登录页面</title>
 <link rel="icon" type="image/png" href="http://ipintu.com/favicon.png">
 <link rel="stylesheet" type="text/css"  charset="utf-8" 
 	href="css/style.css" />
@@ -11,17 +11,15 @@
 <link rel="stylesheet" type="text/css"  charset="utf-8" 
 	href="css/footer.css" />
 <script language=javascript  charset="utf-8" 
-	src="js/ipintu.js"
+	src="js/normal.js"
 	type=text/javascript></script>
 <script language=javascript  charset="utf-8" 
 	src="js/jquery.js"
 	type=text/javascript></script>
 </head>
 
-<script language=javascript  type=text/javascript>
+<body  onload="document.getElementById('account').focus()">
 
-</script>
-<body onload="init()">
 <div class="xft">
 <div class="xq" id="xit">
 <a href="http://ipintu.com" class="xdt" id="zh-top-link-logo"></a>
@@ -46,45 +44,31 @@
 </div>
 
 <div id="contact-form"> 
-	<form id="contact" >
-	    <fieldset>
-			<label for="header" class="header">我要注册</label>
-	
-			<label for="pwd">邀请码<font  color="red">*</font></label>
-		   		 <input type="text" name= "inviteCode"  id="inviteCode"  value ="" class="input"/>
-	
-			<label for="email">账户<font  color="red">*</font></label>
-				<input type="text" name="account"  class="input" id="account" style="color:#999999" value="请输入邮箱" 
-				onfocus="if(value=='请输入邮箱'){value='';this.style.color='#111111'}" onblur="checkReg()"/>
-				<span id="prpt" style="visibility:hidden">
-					<img src="img/loading.gif" style="vertical-align: middle;">
-				</span>
-				
-			<label for="pwd">昵称<font  color="red">*</font></label>
-				<input type="text" name= "nickName"  id="nickName" class="input" onblur="examine()"/>
-				<span id="prompt" style="visibility:hidden">
-					<img src="img/loading.gif" style="vertical-align: middle;">
-				</span>
-				
-			<label for="pwd">密码<font  color="red">*</font></label>
-				<input type="password" name= "password"  id="password" class="input" onblur="checkLength()"/>
-				
-			 <div class="twoBtn">
+<form id="contact" >
+	<fieldset>
+		<label for="header" class="header">登录</label>
+		
+		<label for="email">账户<font  color="red">*</font></label>
+			  <input type="text" name="account" id="account" class="input"/>
+			  
+		<label for="pwd">密码<font  color="red">*</font></label>
+			  <input type="password" name="password" id="password" class="input" />
+			  
+			<label for="pwd"><a href="retrieve.html">忘记密码</a></label>
+			  
+		 <div class="twoBtn">
 				 	<span id="subm" style="visibility:hidden">
 						<img src="img/load.gif" style="vertical-align: middle;">
 					</span>
-					<input type="button" value="注册" name="submit" class="button" id="submit" onclick="register()"/>
+					<input type="button" value="登录" name="submit" class="button" id="submit" onclick="check()"/>
 					<input type="reset" value="重置" name="reset" class="button" id="reset" onclick="location.reload()"/>
-			</div>
-			
-	   		 <label for="prompt" class="error">
-				<span style="display: none;" id=prompt1></span>
-				<span style="display: none;" id="prompt2"></span>
-				<span id="report"></span>
-			</label>
-			
-		</fieldset>
-	</form>
+		</div>
+		
+		<label for="prompt" class="error">
+			<span style="display: none;" id="prompt"></span>
+		</label>
+	</fieldset>
+</form>
 </div>
 
 <div id="xd" class="xcn">
@@ -92,5 +76,6 @@
 <a href="#" class="xcw">Copyright © 2011 北京远博畅享科技有限公司 保留所有权利</a>
 </div>
 </div>
+
 </body>
 </html>

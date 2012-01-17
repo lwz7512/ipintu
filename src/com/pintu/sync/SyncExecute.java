@@ -198,7 +198,7 @@ public class SyncExecute implements Runnable {
 					//删除缓存中的缩略图
 					boolean flag = cacheVisitor.removeThumbnail(PintuUtils.parseToDate(tpic.getPublishTime()).getTime(),id+TPicDesc.THUMBNIAL);
 					if(flag){
-						log.info(">>>Deleted question thumbnial");
+						log.info(">>>Deleted question thumbnial from cache");
 					}
 					
 					//删除文件目录下的图片(包括三个)
@@ -229,7 +229,7 @@ public class SyncExecute implements Runnable {
 	private void processErrorPicture() {
 		if (illegalCountMap != null && illegalCountMap.size() > 0) {
 			for (String id : illegalCountMap.keySet()) {
-				if (illegalCountMap.get(id) >= 2) {
+				if (illegalCountMap.get(id) >=3) {
 					// 删除缓存的图片id
 					CacheAccessInterface.toSavedUserPicIds.get(
 							CacheAccessInterface.PICTURE_TYPE).remove(id);
