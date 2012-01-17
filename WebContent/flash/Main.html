@@ -52,10 +52,29 @@
         <script type="text/javascript" src="swfobject.js"></script>
         <script type="text/javascript">                
         
+        	//移除html页面中的logo图片所在div
         	function removeLogo(){
         	   var logo = document.getElementById("logo");
         		document.body.removeChild(logo);
         	}
+        	//获取页面#后面的图片Id
+        	function getPicIdAfterAnchor() { 
+				if(window.location.href.indexOf("#")>-1){
+					return window.location.href.split("#")[1];
+				}else{
+					return "";
+				}								 
+			}
+			//生成当前图片的url地址
+			function setCurrentPicUrl(picId){
+				var url =window.location.href;				
+				if(url.indexOf("#")==-1){
+					url += "#"+picId;					
+				}else{
+					url = url.substring(0, url.indexOf("#"))+"#"+picId;					
+				}
+				window.location.href = url;
+			}
         
             // For version detection, set to min. required Flash Player version, or 0 (or 0.0.0), for no version detection. 
             var swfVersionStr = "10.2.0";
