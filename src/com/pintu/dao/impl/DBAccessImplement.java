@@ -1072,18 +1072,15 @@ public class DBAccessImplement implements DBAccessInterface {
 	}
 
 	@Override
-	public int updatePicBrowseCount(final List<Map<String, Integer>> browseCountList) {
+	public int updatePicBrowseCount(final List<TPicItem> browseCountList) {
 		String sql = "update t_picture  set p_browseCount = p_browseCount +? where p_id=?";
 		int[] res = jdbcTemplate.batchUpdate(sql,
 				new BatchPreparedStatementSetter() {
 					public void setValues(PreparedStatement ps, int i)
 							throws SQLException {
-							Map<String,Integer> map = browseCountList.get(i);
-							for(String picId:map.keySet()){
-								int count = map.get(picId);
-								ps.setInt(1, count);
-								ps.setString(2, picId);
-						}
+							TPicItem tpic = browseCountList.get(i);
+							ps.setInt(1, tpic.getBrowseCount());
+							ps.setString(2, tpic.getId());
 					}
 
 					public int getBatchSize() {
