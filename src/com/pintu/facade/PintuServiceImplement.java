@@ -350,7 +350,8 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				storyDetail.setClassical(storyList.get(i).getClassical());
 				User user = this.getUserInfo(userId);
 				if (user != null) {
-					storyDetail.setAuthor(user.getAccount());
+					//这里需要改一下，账户改成昵称
+					storyDetail.setAuthor(user.getNickName());
 				}
 
 				// List<Vote> voteList = this.getVotesOfPic(picId);
@@ -750,7 +751,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 					String userId = story.getOwner();
 					User user = this.getUserInfo(userId);
 					StoryDetails sDetails = new StoryDetails();
-					sDetails.setAuthor(user.getAccount());
+					sDetails.setAuthor(user.getNickName());
 					sDetails.setId(story.getId());
 					sDetails.setOwner(userId);
 					sDetails.setAvatarImgPath(user.getAvatar());
@@ -832,7 +833,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			details.setClassical(sList.get(i).getClassical());
 			User user = this.getUserInfo(userId);
 			if (user != null) {
-				details.setAuthor(user.getAccount());
+				details.setAuthor(user.getNickName());
 			}
 			// List<Vote> voteList = this.getVotesOfPic(picId);
 			// if (voteList != null && voteList.size() > 0) {
