@@ -55,9 +55,12 @@ public class MidnightTask extends TimerTask {
 //		findAndSetClassical();
 		
 		//更新图片的浏览数
-		updatePicBrowseCount();
+		boolean flag = updatePicBrowseCount();
 		
-		clearCounter();
+		if(flag){
+			//如果p_browseCount更新成功则清除缓存计数
+			clearCounter();
+		}
 		
 		//将一天新的top经典和收藏查了放缓存
 		calculateClassicalAndCollectTop();
@@ -133,7 +136,8 @@ public class MidnightTask extends TimerTask {
 //		}
 //	}
 
-	private void updatePicBrowseCount() {
+	private boolean updatePicBrowseCount() {
+		boolean flag = true;
 		Map<String,Integer> hotPicMap = CacheAccessInterface.hotPicCacheIds;
 		log.debug("HotPicMap size is:"+hotPicMap.size());
 		if(hotPicMap.size() > 0){
@@ -146,9 +150,11 @@ public class MidnightTask extends TimerTask {
 					log.info(">>>Update pic browseCount success");
 				}else{
 					log.info(">>>Incorrect number of updates");
+					flag = false;
 				}
 			}
 		}
+		return flag;
 	}
 
 	private void clearCounter() {
