@@ -83,6 +83,9 @@ public class SimpleMailSender {
 		try {
 			// 根据session创建一个邮件消息
 			Message mailMessage = new MimeMessage(sendMailSession);
+			//设置邮件级别
+			String level = "1";
+			mailMessage.setHeader("X-Priority",level);
 			// 创建邮件发送者地址
 			Address from = new InternetAddress(mailInfo.getFromAddress());
 			// 设置邮件消息的发送者

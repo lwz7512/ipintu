@@ -996,8 +996,10 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				if (j == 1) {
 					log.info(" >>>Delete rgistered user." + userId);
 				}
-				return systemConfigurer.getProperty("registerSuccess")
-						.toString();
+				//FIXME 注册成功，返回 role@userId 字符串
+				return user.getRole() + "@" + user.getId();
+//				return systemConfigurer.getProperty("registerSuccess")
+//						.toString();
 			} else {
 				return systemConfigurer.getProperty("registerError").toString();
 			}
