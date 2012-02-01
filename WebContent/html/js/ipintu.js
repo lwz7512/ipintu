@@ -112,7 +112,7 @@ function register(){
 					userRole = res[0];
 					userId = res[1];
 				 	cacheUserBrage(userId, userRole);
-				  $('#report').html('*注册成功，正在为您跳转到社区…');
+				  $('#report').html('*注册成功，现在进入社区体验吧！');
 			  }else{
 				  $('#report').html('*注册失败，请重试。');
 			  }
