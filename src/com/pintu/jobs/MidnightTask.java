@@ -12,6 +12,7 @@ import java.util.TimerTask;
 import org.apache.log4j.Logger;
 
 import com.pintu.beans.TPicDetails;
+import com.pintu.beans.TPicItem;
 import com.pintu.beans.User;
 import com.pintu.dao.CacheAccessInterface;
 import com.pintu.dao.DBAccessInterface;
@@ -49,7 +50,7 @@ public class MidnightTask extends TimerTask {
 
 	@Override
 	public void run() {
-		log.debug(">>> midnight task executed...");
+		log.info(">>> midnight task executed...");
 		
 		//之前用投票数更新经典
 //		findAndSetClassical();
@@ -139,11 +140,16 @@ public class MidnightTask extends TimerTask {
 	private boolean updatePicBrowseCount() {
 		boolean flag = true;
 		Map<String,Integer> hotPicMap = CacheAccessInterface.hotPicCacheIds;
-		log.debug("HotPicMap size is:"+hotPicMap.size());
+		log.info("HotPicMap size is:"+hotPicMap.size());
 		if(hotPicMap.size() > 0){
-			List<Map<String,Integer>> browseCountList = new ArrayList<Map<String,Integer>>();
-			browseCountList.add(hotPicMap);
-			log.debug("Need to update the broseCount picturesize is:"+browseCountList.size());
+			List<TPicItem> browseCountList = new ArrayList<TPicItem>();
+			for(String id:hotPicMap.keySet()){
+				TPicItem tpic = new TPicItem();
+				tpic.setId(id);
+				tpic.setBrowseCount(hotPicMap.get(id));
+				browseCountList.add(tpic);
+			}
+			log.info("Need to update the broseCount picturesize is:"+browseCountList.size());
 			if(browseCountList != null && browseCountList.size() > 0){
 				int res = this.dbAccess.updatePicBrowseCount(browseCountList);
 				if(res == hotPicMap.size()){

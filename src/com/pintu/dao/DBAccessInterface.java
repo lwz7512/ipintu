@@ -169,7 +169,7 @@ public interface DBAccessInterface {
 	
 	public String getExistApplicant(String account, String inviteCode);
 	
-	public int updatePicBrowseCount(List<Map<String, Integer>> browseCountList);
+	public int updatePicBrowseCount(List<TPicItem> browseCountList);
 	
 	public List<TPicDetails> classicalStatistics(int classicalNum);
 	

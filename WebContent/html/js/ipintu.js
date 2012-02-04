@@ -1,4 +1,3 @@
-
 function apply(){
 	var flag = checkNull();
 	if(flag){
@@ -88,8 +87,6 @@ function checkBlank(){
 	return true;
 }
 
-
-
 function register(){
 	var flag = checkBlank();
 	if(flag){
@@ -110,8 +107,12 @@ function register(){
 		//回调函数
 		function (result) {
 			$('#subm').attr("style","visibility:hidden");
-			if(result == 'Register sucess!'){
-				  $('#report').html('*注册成功，现在可以先进入社区，登录使用了！');
+			if(result.indexOf('@')>-1){
+					res = result.split("@");
+					userRole = res[0];
+					userId = res[1];
+				 	cacheUserBrage(userId, userRole);
+				  $('#report').html('*注册成功，现在进入社区体验吧！');
 			  }else{
 				  $('#report').html('*注册失败，请重试。');
 			  }
