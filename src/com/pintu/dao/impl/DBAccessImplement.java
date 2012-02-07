@@ -1029,6 +1029,7 @@ public class DBAccessImplement implements DBAccessInterface {
 				Applicant user = new Applicant();
 				user.setId(map.get("a_id").toString());
 				user.setAccount(map.get("a_account").toString());
+				user.setApplyTime(map.get("a_applyTime").toString());
 				user.setApplyReason(map.get("a_applyReason").toString());
 				resList.add(user);
 			}

@@ -27,7 +27,7 @@ function loadApplicant(){
 			}else{
 				$("tr.table_line").html("");
 				for( key in result ){
-					$("table").append("<tr class='table_line'><td>"+result[key].account+"</td><td>"+result[key].applyReason+"</td>"+
+					$("table").append("<tr class='table_line'><td>"+result[key].account+"</td><td>"+result[key].applyTime+"</td><td>"+result[key].applyReason+"</td>"+
 					"<td><form action='<%=request.getContextPath()%>/pintuapi?userId=<%=request.getParameter("userId")%>' method='post'>"
 					+"<input type='hidden' name='method' value='accept' />"
 					+"<input type='hidden' name='opt' value='approve' />"
@@ -49,7 +49,7 @@ function loadApplicant(){
 <body onload="loadApplicant()">
 	<table class='table' >
 		<tr class="table_title">
-			<td colspan='3' align="center">
+			<td colspan='4' align="center">
 				申请列表 <span style="display: none;" id="prompt"></span>
 			</td>
 			<td colspan='1'>
@@ -58,6 +58,7 @@ function loadApplicant(){
 		</tr>
 		<tr class="table_header">
 			<td>申请邮箱</td>
+			<td>时间</td>
 			<td>理由</td>
 			<td colspan='2'>授理意见</td>
 		</tr>
