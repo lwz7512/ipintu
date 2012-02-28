@@ -2,6 +2,8 @@ package com.pintu.tools;
 
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 import com.pintu.beans.Applicant;
 import com.pintu.dao.DBAccessInterface;
 import com.pintu.utils.MailSenderInfo;
@@ -9,31 +11,25 @@ import com.pintu.utils.PintuUtils;
 import com.pintu.utils.SimpleMailSender;
 
 public class MailSenderTask implements Runnable{
+	
+	private Logger log = Logger.getLogger(MailSenderTask.class);
 
 	private DBAccessInterface dbVisitor;
 	
 	private Properties propertyConfigurer;
 
-	private Properties systemConfigurer;
-	
 	private String account;
 	
 	private String reason;
 	
-	private String result;
-	
-	
-
 	@Override
 	public void run() {
+		log.info("MailSenderTask is running ...");
 		Applicant tempUser = this.createApplicant(account, reason);
 		int m = dbVisitor.insertApplicant(tempUser);
 		if (m == 1) {
 			//这里，申请成功发邮件给客服
 			informService(account,reason);
-			this.setResult(systemConfigurer.getProperty("applyProcess").toString());
-		}else{
-			this.setResult(systemConfigurer.getProperty("applyError").toString());
 		}
 	}
 
@@ -85,35 +81,16 @@ public class MailSenderTask implements Runnable{
 		this.dbVisitor = dbVisitor;
 	}
 
-
 	public void setPropertyConfigurer(Properties propertyConfigurer) {
 		this.propertyConfigurer = propertyConfigurer;
 	}
-
-
-
-	public void setSystemConfigurer(Properties systemConfigurer) {
-		this.systemConfigurer = systemConfigurer;
-	}
-
-
 
 	public void setAccount(String account) {
 		this.account = account;
 	}
 
-
-
 	public void setReason(String reason) {
 		this.reason = reason;
-	}
-
-	public String getResult() {
-		return result;
-	}
-
-	public void setResult(String result) {
-		this.result = result;
 	}
 
 }
