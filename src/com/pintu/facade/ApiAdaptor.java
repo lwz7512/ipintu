@@ -600,14 +600,20 @@ public class ApiAdaptor {
 		return result;
 	}
 	
-	public int checkAcceptOrNot(String account) {
-		int result = 1;
-		//先判断申请表里是否还有此用户，没有即为已拒绝申请，有再看一下是否被审批过
+	public boolean isProcessed(String account) {
+		//先判断申请表里是否还有此用户
 		int live = pintuService.checkApplicant(account);
 		if(live == 1){
-			result = pintuService.checkAcceptApplicant(account);
+			//如果有，再看一下是否被审批过
+			int result = pintuService.checkAcceptApplicant(account);
+			if(result == 1){
+				//已被审批过
+				return true;
+			}
+		}else{
+			return true;
 		}
-		return result;
+		return false;
 	}
 	
 

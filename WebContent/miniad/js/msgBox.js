@@ -126,7 +126,7 @@ function msgBox_getMsgDiv()
 	div.style.top = '-10000px';
 	div.style.left = '0px';
 	div.style.backgroundColor = 'white';
-	div.style.border = 'solid 3px grey';
+	div.style.border = 'solid 2px grey';
 	div.style.padding = '6px';
 	var strHTML = '<div style="position:relative; cursor:default; font-size:14px;" onmousedown="msgBox_moveStart(event);">';
 	strHTML += '<b id="msgBoxTitle"></b>';
