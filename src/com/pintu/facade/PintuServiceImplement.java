@@ -1011,17 +1011,14 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 	@Override
 	public String sendApply(String account, String reason) {
-		
 		MailSenderTask mailTask = new MailSenderTask();
 		mailTask.setAccount(account);
 		mailTask.setReason(reason);
 		mailTask.setDbVisitor(dbVisitor);
-		mailTask.setSystemConfigurer(systemConfigurer);
 		mailTask.setPropertyConfigurer(propertyConfigurer);
-		
-		mailTask.run();
-		
-		return mailTask.getResult();
+		//用线程处理发邮件任务
+		new Thread(mailTask).start();
+		return systemConfigurer.getProperty("applyProcess").toString();
 	}
 
 	/**
