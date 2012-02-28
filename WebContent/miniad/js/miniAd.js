@@ -11,6 +11,7 @@ function bindSelect(){
 	document.getElementById("imgPath").removeAttribute("disabled");
 	if(type == "wenzi"){
 		$('#imgPath').attr("disabled","true");
+		$('#imgSubmit').attr("disabled","true");
 	}
 }
 

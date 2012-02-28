@@ -34,7 +34,7 @@ public class MailSenderInfo {
 		p.put("mail.smtp.host", this.mailServerHost);
 		p.put("mail.smtp.port", this.mailServerPort);
 		p.put("mail.smtp.auth", validate ? "true" : "false");
-		p.put("mail.debug", "true");
+//		p.put("mail.debug", "true");
 		return p;
 	}
 

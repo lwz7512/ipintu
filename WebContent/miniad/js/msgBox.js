@@ -126,11 +126,11 @@ function msgBox_getMsgDiv()
 	div.style.top = '-10000px';
 	div.style.left = '0px';
 	div.style.backgroundColor = 'white';
-	div.style.border = 'solid 5px blue';
-	div.style.padding = '5px';
+	div.style.border = 'solid 3px grey';
+	div.style.padding = '6px';
 	var strHTML = '<div style="position:relative; cursor:default; font-size:14px;" onmousedown="msgBox_moveStart(event);">';
 	strHTML += '<b id="msgBoxTitle"></b>';
-	strHTML += '<a id="msgBoxBtnClose" title="关闭" style="font-size:12px; position:absolute; right:5px; top:1px; font-family:Tahoma; text-decoration:none; color:blue;" href="javascript:msgBox_close(this);">&nbsp;X&nbsp;</a></div>';
+	strHTML += '<a id="msgBoxBtnClose" title="关闭" style="font-size:12px; position:absolute; right:5px; top:1px; font-family:Tahoma; text-decoration:none; color:grey;" href="javascript:msgBox_close(this);">&nbsp;X&nbsp;</a></div>';
 	strHTML += '<div style="border-top:solid 1px gray; margin:5px auto;"></div>';
 	msgBox_innerHTML(div, strHTML);
 	if(document.forms.length == 0)

@@ -10,7 +10,7 @@
 <script type="text/javascript"
 	src="js/jquery.js" charset="utf-8"></script>
 <script type="text/javascript"
-	src="js/adddate.js" charset="utf-8"></script>
+	src="js/addDate.js" charset="utf-8"></script>
 <script type="text/javascript"
 	src="js/msgBox.js" charset="utf-8"></script>
 <script type="text/javascript"
@@ -21,7 +21,7 @@
 <div class="container" >
 	<div class="row">
 		<div class="span10">
-			<div class="logo">微广告系统</div>
+			<div class="logo">爱品图 微广告系统</div>
 		</div>
 	</div>
 	<hr />
@@ -70,7 +70,7 @@
 					<option value="wenzi" >纯文字
  				</select>
  			</td>
-			<td>优先级：
+			<td align="left">优先级：
 				<select id="priority" >
 					 <option value="1">1
 					 <option value="2">2
@@ -79,14 +79,15 @@
 			</td>
 		</tr>
 		<tr>
-			<td>生效时间：<input id="startTime" type="text" onclick="SelectDate(this,'yyyy-MM-dd')"/></td>
-			<td>至<input id="endTime"type="text" onclick="SelectDate(this,'yyyy-MM-dd')"/></td>
+			<td>生效时间：<input id="startTime" placeholder="点击选取开始日期" type="text" onclick="SelectDate(this,'yyyy-MM-dd')"/></td>
+			<td align="left">至<input id="endTime" placeholder="点击选取结束日期" type="text" onclick="SelectDate(this,'yyyy-MM-dd')"/></td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;广告语：<input id="content" type="text" ></td>
 		</tr>
 		<tr>
-			<td>广告图片：<input id="imgPath" type="text"></td>
+			<td>广告图片：<input  id="imgPath" type="file" size="20" /></td>
+			<td><input id="imgSubmit" type="submit" value="上传图片"></td>
 		</tr>
 		<tr>
 			<td>广告链接：<input id="link" type="text"></td>
