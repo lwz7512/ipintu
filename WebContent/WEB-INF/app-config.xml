@@ -38,6 +38,7 @@
 	
 	<bean id="apiAdaptor" class="com.pintu.facade.ApiAdaptor">
 		<property name="pintuService" ref="pintuService" />
+		<property name="adService" ref="adService" />
 	</bean>
 	
 	<bean id="assistProcess" class="com.pintu.facade.AssistProcess">
@@ -48,6 +49,14 @@
 		<property name="cacheVisitor" ref="cacheAccess" />
 		<property name="propertyConfigurer" ref="propertyConfigurer" />
 	</bean>
+	
+	<!-- 后加的微广告系统 -->
+	<bean id="adService" class="com.pintu.ads.facade.AdsServiceImplement">
+		<property name="adDbVisitor" ref="adDbAccess" />
+		<property name="systemConfigurer" ref="systemConfigurer" />
+<!-- 		<property name="imgProcessor" ref="imgProcessor" /> -->
+	</bean>
+	
 	<bean id="pintuService" class="com.pintu.facade.PintuServiceImplement">
 		<property name="dbVisitor" ref="dbAcess" />
 		<property name="cacheVisitor" ref="cacheAccess" />
@@ -77,6 +86,12 @@
 	<bean id="dbAcess" class="com.pintu.dao.impl.DBAccessImplement">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
+	
+	<!-- 后加的微广告系统与数据库的交互 -->
+	<bean id="adDbAccess" class="com.pintu.ads.dao.impl.AdsDBImplement">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
 	<bean id="cacheAccess" class="com.pintu.dao.impl.CacheAccessImplement">
 		<property name="pintuCache" ref="pintuCache" />
 	</bean>

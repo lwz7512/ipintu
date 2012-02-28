@@ -1613,6 +1613,12 @@ public class DBAccessImplement implements DBAccessInterface {
 		return rows;
 	}
 
+	@Override
+	public int getAcceptedApplicant(String account) {
+		String sql = "select count(a_id) from  t_applicant where a_account='"+account+"' and a_inviteCode is not null and a_passed=1";
+		int rows = jdbcTemplate.queryForInt(sql); 
+		return rows;
+	}
 
 
 }

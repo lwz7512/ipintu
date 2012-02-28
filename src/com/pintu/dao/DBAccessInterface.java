@@ -220,4 +220,6 @@ public interface DBAccessInterface {
 	
 	public int reviewPictureById(String picId);
 	
+	public int getAcceptedApplicant(String account);
+	
 }

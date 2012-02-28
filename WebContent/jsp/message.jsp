@@ -27,7 +27,7 @@ function receiveMsg(){
 			}else{
 				$("tr.table_line").html("");
 				for( key in result ){
-					$("table").append("<tr class='table_line'><td>result[key].msgType</td>"
+					$("table").append("<tr class='table_line'><td>"+result[key].msgType+"</td>"
 					+	"<td>"+result[key].senderName+"</td>"+"<td>"+result[key].writeTime+"</td>"
 					+	"<td>"+result[key].content+"</td>"+"<td>"+result[key].read+"</td></tr>");
 				}

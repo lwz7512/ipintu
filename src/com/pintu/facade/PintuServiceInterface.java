@@ -245,6 +245,9 @@ public interface PintuServiceInterface {
 
 	public String retrievePwd(String account);
 
+	//检测是否已经审批通过
+	public int checkAcceptApplicant(String account);
+
 
 
 

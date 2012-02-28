@@ -140,4 +140,25 @@ public interface ExtVisitorInterface {
     //活跃用户排行榜(根据积分排列)
     public static final String ACTIVEUSERRANKING = "getActiveUserRanking";
     
+    
+    //-----------------微广告系统接口
+    
+    //获取当天有效的所有广告
+    public static final String GETTODAYADS = "getTodayAds";
+    
+    //按关键字（包括广告商或者广告语）、时间查询
+    public static final String SEARCHADS = "searchAds";
+    
+    //删除某条广告
+    public static final String DELETEADSBYID = "deleteAdsById";
+    
+    //创建新广告
+    public static final String CREATEADS = "createAds";
+    
+    //编辑广告
+    //先根据id获取一个广告内容并填充
+    public static final String GETADSBYID = "getAdsById";
+    //再更新广告
+    public static final String UPDATEADSBYID = "updateAdsById";
+    
 }

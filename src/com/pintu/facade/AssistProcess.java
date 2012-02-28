@@ -63,11 +63,16 @@ public class AssistProcess {
 			} else {
 				url = "ipintu.com/ipintu";
 			}
-
-			String result = apiAdaptor.acceptApply(account, url, opt);
-			log.debug(result);
-			pw.println(result);
-			pw.close();
+			
+			if(apiAdaptor.checkAcceptOrNot(account) == 0){
+				String result = apiAdaptor.acceptApply(account, url, opt);
+				log.debug(result);
+				pw.println(result);
+				pw.close();
+			}else{
+				return;
+			}
+			
 
 		} else if (action.equals(AppStarter.CREATEINVITECODE)) {
 			res.setContentType("text/plain;charset=UTF-8");
