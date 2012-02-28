@@ -1029,6 +1029,7 @@ public class DBAccessImplement implements DBAccessInterface {
 				Applicant user = new Applicant();
 				user.setId(map.get("a_id").toString());
 				user.setAccount(map.get("a_account").toString());
+				user.setApplyTime(map.get("a_applyTime").toString());
 				user.setApplyReason(map.get("a_applyReason").toString());
 				resList.add(user);
 			}
@@ -1612,6 +1613,12 @@ public class DBAccessImplement implements DBAccessInterface {
 		return rows;
 	}
 
+	@Override
+	public int getAcceptedApplicant(String account) {
+		String sql = "select count(a_id) from  t_applicant where a_account='"+account+"' and a_inviteCode is not null and a_passed=1";
+		int rows = jdbcTemplate.queryForInt(sql); 
+		return rows;
+	}
 
 
 }

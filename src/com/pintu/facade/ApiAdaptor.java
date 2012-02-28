@@ -15,6 +15,8 @@ import net.sf.json.JSONObject;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
 
+import com.pintu.ads.beans.Ads;
+import com.pintu.ads.facade.AdsServiceInterface;
 import com.pintu.beans.Applicant;
 import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
@@ -44,6 +46,8 @@ public class ApiAdaptor {
 
 	// 由Spring注入
 	private PintuServiceInterface pintuService;
+	
+	private AdsServiceInterface adService;
 
 	private Logger log = Logger.getLogger(ApiAdaptor.class);
 	
@@ -57,6 +61,14 @@ public class ApiAdaptor {
 
 	public void setPintuService(PintuServiceInterface pintuService) {
 		this.pintuService = pintuService;
+	}
+
+	public AdsServiceInterface getAdService() {
+		return adService;
+	}
+
+	public void setAdService(AdsServiceInterface adService) {
+		this.adService = adService;
 	}
 
 	// 由AppStarter调用
@@ -586,6 +598,49 @@ public class ApiAdaptor {
 	public String retrievePwd(String account) {
 		String result = pintuService.retrievePwd(account);
 		return result;
+	}
+	
+	public int checkAcceptOrNot(String account) {
+		int result = 1;
+		//先判断申请表里是否还有此用户，没有即为已拒绝申请，有再看一下是否被审批过
+		int live = pintuService.checkApplicant(account);
+		if(live == 1){
+			result = pintuService.checkAcceptApplicant(account);
+		}
+		return result;
+	}
+	
+
+	//爱品图微广告
+	public String getTodayAds() {
+		String today = PintuUtils.getFormatNowTime();
+		 List<Ads> adList = adService.getTodayAds(today);
+		return JSONArray.fromCollection(adList).toString();
+	}
+
+	public String searchAds(String keys, String time) {
+		List<Ads> adList = adService.searchAds(keys ,time);
+		return JSONArray.fromCollection(adList).toString();
+	}
+
+	public String deleteAdsById(String adId) {
+		String res = adService.deleteAdsById(adId);
+		return res;
+	}
+
+	public String createAds() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getAdsById(String adId) {
+		Ads ad = adService.getAdsById(adId);
+		return JSONObject.fromObject(ad).toString();
+	}
+
+	public String updateAdsById() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

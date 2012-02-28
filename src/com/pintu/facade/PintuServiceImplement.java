@@ -51,6 +51,7 @@ import com.pintu.dao.DBAccessInterface;
 import com.pintu.jobs.MidnightTask;
 import com.pintu.tools.ImageHelper;
 import com.pintu.tools.ImgDataProcessor;
+import com.pintu.tools.MailSenderTask;
 import com.pintu.utils.EmailTemplate;
 import com.pintu.utils.Encrypt;
 import com.pintu.utils.MailSenderInfo;
@@ -1010,32 +1011,17 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 	@Override
 	public String sendApply(String account, String reason) {
-		Applicant tempUser = this.createApplicant(account, reason);
-		int m = dbVisitor.insertApplicant(tempUser);
-		if (m == 1) {
-			//这里，申请成功发邮件给客服
-			informService(account,reason);
-			
-			return systemConfigurer.getProperty("applyProcess").toString();
-		}
-		return systemConfigurer.getProperty("applyError").toString();
-	}
-
-	private void informService(String account, String reason) {
-		//TODO 需要等改过html后修改下
-		String content = "用户："+account+" 申请加入爱品图，申请理由为："+reason+"<br/>点击这里去登录授理吧<a href='http://ipintu.com/ipintu/html/login.html'>http://ipintu.com/ipintu/html/login.html</a>";
-		String address = propertyConfigurer.getProperty("serviceMailAddress")
-				.toString();
-		sendMail(address, content);
-	}
-
-	private Applicant createApplicant(String account, String reason) {
-		Applicant tempUser = new Applicant();
-		tempUser.setId(PintuUtils.generateUID());
-		tempUser.setAccount(account);
-		tempUser.setApplyReason(reason);
-		tempUser.setApplyTime(PintuUtils.getFormatNowTime());
-		return tempUser;
+		
+		MailSenderTask mailTask = new MailSenderTask();
+		mailTask.setAccount(account);
+		mailTask.setReason(reason);
+		mailTask.setDbVisitor(dbVisitor);
+		mailTask.setSystemConfigurer(systemConfigurer);
+		mailTask.setPropertyConfigurer(propertyConfigurer);
+		
+		mailTask.run();
+		
+		return mailTask.getResult();
 	}
 
 	/**
@@ -1075,11 +1061,17 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		if (opt.equals("refuse")) {
 			String content = propertyConfigurer.getProperty("templateNo")
 					.toString();
-			sendMail(account, content);
+			try{
+				sendMail(account, content);
+			}catch(Exception e){
+				e.printStackTrace();
+				log.debug("Reject one's apply error......");
+			}
+		
 			// 拒绝加入系统将其从临时用户表中删除
 			int j = dbVisitor.deleteTempUser(account);
 			if (j == 1) {
-				log.info(">>>Delete refused temp user." + account);
+				log.info(">>>delete refused temp user." + account);
 			}
 
 		} else if (opt.equals("approve")) {
@@ -1089,7 +1081,12 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			int i = dbVisitor.updateApplicant(inviteCode,account);
 			if (i == 1) {
 				// 数据库用户临时表更新成功发邮件
-				sendMail(account, resContent);
+				try{
+					sendMail(account, resContent);
+				}catch(Exception e){
+					e.printStackTrace();
+					log.debug("Approve one's apply error......");
+				}
 				return systemConfigurer.getProperty("applyEmailPrompt")
 						.toString();
 
@@ -1478,12 +1475,23 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			if(rows == 1){
 				String content = propertyConfigurer.getProperty("templateRetrieve")
 						.toString();
-				sendMail(account,content);
+				try{
+					sendMail(account,content);
+				}catch(Exception e){
+					e.printStackTrace();
+					log.debug("Retrieve password error ......");
+				}
 			}
 			return systemConfigurer.getProperty("rightPrompt").toString();
 		}else{
 			return systemConfigurer.getProperty("wrongPrompt").toString();
 		}
+	}
+
+	@Override
+	public int checkAcceptApplicant(String account) {
+		int applicant = dbVisitor.getAcceptedApplicant(account);
+		return applicant;
 	}
 
 	// TODO, 实现其他接口方法

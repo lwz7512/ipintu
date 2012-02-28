@@ -133,9 +133,86 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			assistProcess.doPostProcess(action,req,res);
 		}
 		
+		if (action.equals(AppStarter.GETTODAYADS)
+				|| action.equals(AppStarter.SEARCHADS)
+				|| action.equals(AppStarter.DELETEADSBYID)
+				|| action.equals(AppStarter.CREATEADS)
+				|| action.equals(AppStarter.GETADSBYID)
+				|| action.equals(AppStarter.UPDATEADSBYID)) {
+			
+			miniAdProcess(action, req, res);
+			return;
+		} 
+		
 	}
 	
-	
+	/**
+	 * 处理爱品图微广告系统的各种请求
+	 * @param action
+	 * @param req
+	 * @param res
+	 * @throws IOException 
+	 */
+	private void miniAdProcess(String action, HttpServletRequest req,
+			HttpServletResponse res) throws IOException {
+		
+		if(action.equals(AppStarter.GETTODAYADS)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String result = apiAdaptor.getTodayAds();
+			log.debug(result);
+			pw.println(result);
+			pw.close();
+			
+		}else if(action.equals(AppStarter.SEARCHADS)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String keys = req.getParameter("keys");
+			String time = req.getParameter("time");
+			String result = apiAdaptor.searchAds(keys,time);
+			log.debug(result);
+			pw.println(result);
+			pw.close();
+			
+		}else if(action.equals(AppStarter.DELETEADSBYID)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String adId = req.getParameter("adId");
+			String result = apiAdaptor.deleteAdsById(adId);
+			log.debug(result);
+			pw.println(result);
+			pw.close();
+		
+		}else if(action.equals(AppStarter.CREATEADS)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			//TODO
+			String result = apiAdaptor.createAds();
+			log.debug(result);
+			pw.println(result);
+			pw.close();
+			
+		}else if(action.equals(AppStarter.GETADSBYID)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String adId = req.getParameter("adId");
+			String result = apiAdaptor.getAdsById(adId);
+			log.debug(result);
+			pw.println(result);
+			pw.close();
+			
+		}else if(action.equals(AppStarter.UPDATEADSBYID)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			//TODO
+			String result = apiAdaptor.updateAdsById();
+			log.debug(result);
+			pw.println(result);
+			pw.close();
+		}
+		
+	}
+
 	/**
 	 * 处理 登录、 注册、申请、验证用户
 	 * 
