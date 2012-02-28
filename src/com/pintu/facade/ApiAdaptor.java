@@ -612,7 +612,7 @@ public class ApiAdaptor {
 			}
 		}else{
 			return true;
-		}
+		} 
 		return false;
 	}
 	
