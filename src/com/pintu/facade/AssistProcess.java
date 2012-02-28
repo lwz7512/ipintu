@@ -64,13 +64,13 @@ public class AssistProcess {
 				url = "ipintu.com/ipintu";
 			}
 			
-			if(apiAdaptor.checkAcceptOrNot(account) == 0){
+			if(apiAdaptor.isProcessed(account)){
+				return;
+			}else{
 				String result = apiAdaptor.acceptApply(account, url, opt);
 				log.debug(result);
 				pw.println(result);
 				pw.close();
-			}else{
-				return;
 			}
 			
 
