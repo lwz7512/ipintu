@@ -29,14 +29,14 @@ public class AdsDBImplement  implements AdsDBInterface{
 	public List<Ads> getTodayAds(String today) {
 		List<Ads> resList = new ArrayList<Ads>();
 		String sql = "select * from t_ads where ad_startTime <='" + today
-				+ "' and ad_endTime >='"+today+"' and ad_disabled=1 order by ad_priority" ;
+				+ "' and ad_endTime >='"+today+"' and ad_disabled=1 order by ad_priority, ad_createTime desc" ;
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
 				Map<String, Object> map = (Map<String, Object>) rows.get(i);
 				Ads ad = new Ads();
 				ad.setId(map.get("ad_id").toString());
-				ad.setVendor(map.get("ad_vender").toString());
+				ad.setVender(map.get("ad_vender").toString());
 				ad.setType(map.get("ad_type").toString());
 				ad.setContent(map.get("ad_content").toString());
 				ad.setCreateTime(map.get("ad_createTime").toString());
@@ -58,15 +58,24 @@ public class AdsDBImplement  implements AdsDBInterface{
 	public List<Ads> serarchAds(String keys, String time) {
 		List<Ads> resList = new ArrayList<Ads>();
 		String str = "%"+keys+"%";
-		String sql = "select * from t_ads where (ad_vender like '" +str+"' or ad_content like '"+str+"'"+
-				" or (ad_startTime <='" + time+ "' and ad_endTime >='"+time+"')) and ad_disabled=1 order by ad_priority" ;
+		String sql = "";
+		if("".equals(keys) && "".equals(time)){
+			sql = "select * from t_ads where ad_disabled=1 order by ad_priority, ad_createTime desc" ;
+		}else if(!"".equals(keys) && "".equals(time)){
+			sql = "select * from t_ads where (ad_vender like '" +str+"' or ad_content like '"+str+"') and ad_disabled=1 order by ad_priority, ad_createTime desc" ;
+		}else if(!"".equals(time) && "".equals(keys)){
+			sql = "select * from t_ads where (ad_startTime <='" + time+ "' and ad_endTime >='"+time+"') and ad_disabled=1 order by ad_priority, ad_createTime desc" ;
+		}else if(!"".equals(keys) && !"".equals(time)){ 
+			sql = "select * from t_ads where ((ad_vender like '" +str+"' or ad_content like '"+str+"')"+
+					" and (ad_startTime <='" + time+ "' and ad_endTime >='"+time+"')) and ad_disabled=1 order by ad_priority, ad_createTime desc" ;
+		}
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
 				Map<String, Object> map = (Map<String, Object>) rows.get(i);
 				Ads ad = new Ads();
 				ad.setId(map.get("ad_id").toString());
-				ad.setVendor(map.get("ad_vender").toString());
+				ad.setVender(map.get("ad_vender").toString());
 				ad.setType(map.get("ad_type").toString());
 				ad.setContent(map.get("ad_content").toString());
 				ad.setCreateTime(map.get("ad_createTime").toString());
@@ -101,7 +110,7 @@ public class AdsDBImplement  implements AdsDBInterface{
 				public void setValues(PreparedStatement ps) {
 					try {
 						ps.setString(1, ad.getId());
-						ps.setString(2, ad.getVendor());
+						ps.setString(2, ad.getVender());
 						ps.setString(3, ad.getContent());
 						ps.setString(4, ad.getType());
 						ps.setString(5, ad.getImgPath());
@@ -130,7 +139,7 @@ public class AdsDBImplement  implements AdsDBInterface{
 		if (rows != null && rows.size() > 0) {
 				Map<String, Object> map = (Map<String, Object>) rows.get(0);
 				ad.setId(map.get("ad_id").toString());
-				ad.setVendor(map.get("ad_vender").toString());
+				ad.setVender(map.get("ad_vender").toString());
 				ad.setType(map.get("ad_type").toString());
 				ad.setContent(map.get("ad_content").toString());
 				ad.setCreateTime(map.get("ad_createTime").toString());
@@ -148,13 +157,19 @@ public class AdsDBImplement  implements AdsDBInterface{
 
 	@Override
 	public int updateAdsById(String adId, final Ads ad) {
-		//TODO
-		String sql = "update t_ads  set ad_vendor = ? where ad_id ='"+adId+"'";
+		String sql = "update t_ads  set ad_vender=?, ad_content=?, ad_type=?, ad_imgPath=?, ad_startTime=?, ad_endTime=?, ad_link=?, ad_priority=?  where ad_id ='"+adId+"'";
 		int[] res = jdbcTemplate.batchUpdate(sql,
 				new BatchPreparedStatementSetter() {
 					public void setValues(PreparedStatement ps, int i)
 							throws SQLException {
-						ps.setString(1, ad.getVendor());
+						ps.setString(1, ad.getVender());
+						ps.setString(2, ad.getContent());
+						ps.setString(3, ad.getType());
+						ps.setString(4, ad.getImgPath());
+						ps.setString(5, ad.getStartTime());
+						ps.setString(6, ad.getEndTime());
+						ps.setString(7, ad.getLink());
+						ps.setInt(8, ad.getPriority());
 					}
 					public int getBatchSize() {
 						return 1;

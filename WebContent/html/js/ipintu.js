@@ -13,7 +13,7 @@ function apply(){
 		function (result) {
 			 $('#subm').attr("style","visibility:hidden");
 			  if(result == 'Your apply is processing......'){
-				  $('#report').html('*申请正在处理中，请于1小时后查看您的邮箱，现在可以先进入社区，体验一下！');
+				  $('#report').html('*申请正在处理中，请于15分钟后查看您的邮箱，现在可以先进入社区，体验一下！');
 			  }else{
 				  $('#report').html('*申请失败，请重试。');
 			  }

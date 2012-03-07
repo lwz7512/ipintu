@@ -621,22 +621,40 @@ public class ApiAdaptor {
 	public String getTodayAds() {
 		String today = PintuUtils.getFormatNowTime();
 		 List<Ads> adList = adService.getTodayAds(today);
-		return JSONArray.fromCollection(adList).toString();
+		 JSONArray jsonArray = JSONArray.fromCollection(adList);
+		 processPath(jsonArray);
+		 return jsonArray.toString();
+	}
+
+	private void processPath(JSONArray jsonArray) {
+		for (int i = 0; i < jsonArray.length(); i++) {
+			String absolutePath = jsonArray.getJSONObject(i).get("imgPath").toString();
+			if(!"".equals(absolutePath)){
+				//先从字符串中找到文件夹uploadFile的位置，再加上uploadFile的长度10，即可截取到下属文件路径
+				int position = absolutePath.lastIndexOf("uploadFile");
+				String relativePath = absolutePath.substring(position+10);
+				jsonArray.getJSONObject(i).set("imgPath", relativePath);
+			}
+		}
 	}
 
 	public String searchAds(String keys, String time) {
-		List<Ads> adList = adService.searchAds(keys ,time);
-		return JSONArray.fromCollection(adList).toString();
+		 List<Ads> adList = adService.searchAds(keys ,time);
+		 JSONArray jsonArray = JSONArray.fromCollection(adList);
+		 processPath(jsonArray);
+		 return jsonArray.toString();
 	}
+	
+	
 
 	public String deleteAdsById(String adId) {
 		String res = adService.deleteAdsById(adId);
 		return res;
 	}
 
-	public String createAds() {
-		// TODO Auto-generated method stub
-		return null;
+	public String createAds(String vender, String type, String priority, String startTime, String endTime, String content, String link) {
+		String res = adService.createAds(vender,type,adImgPath,priority,startTime,endTime,content,link);
+		return res;
 	}
 
 	public String getAdsById(String adId) {
@@ -644,9 +662,32 @@ public class ApiAdaptor {
 		return JSONObject.fromObject(ad).toString();
 	}
 
-	public String updateAdsById() {
-		// TODO Auto-generated method stub
-		return null;
+	public String updateAdsById(String adId, String vender, String type, String priority, String startTime, String endTime, String content, String link) {
+		String imgPath = "";
+		if(type.equals("image")){
+			imgPath = adImgPath;
+		}
+		String res = adService.updateAdsById(adId,vender,type,imgPath,priority,startTime,endTime,content,link);
+		return res;
+	}
+	
+	public String adImgPath = "";
+
+	public String createAdImg(List<FileItem> fileItems) {
+		FileItem adData = null;
+		for (int i = 0; i < fileItems.size(); i++) {
+			FileItem item = fileItems.get(i);
+			if (!item.isFormField()) {
+				//图片数据
+				adData = item;
+			}
+		}
+		adImgPath = pintuService.createAdImg(adData);
+		return adImgPath;
+	}
+
+	public void getImgByRelativePath(String relativePath, HttpServletResponse res) {
+		pintuService.getImgByRelativePath(relativePath, res);
 	}
 
 

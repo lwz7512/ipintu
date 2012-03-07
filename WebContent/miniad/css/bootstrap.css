@@ -103,11 +103,11 @@ body {
   background-color: #ffffff;
 }
 a {
-  color: #0088cc;
+  color: #005580;
   text-decoration: none;
 }
 a:hover {
-  color: #005580;
+  color: #0088cc;
   text-decoration: underline;
 }
 .row {
@@ -521,7 +521,7 @@ button,
 select,
 textarea {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: normal;
   line-height: 18px;
 }
