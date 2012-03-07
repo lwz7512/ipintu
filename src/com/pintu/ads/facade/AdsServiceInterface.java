@@ -13,5 +13,12 @@ public interface AdsServiceInterface {
 	public String deleteAdsById(String adId);
 
 	public Ads getAdsById(String adId);
+	
+	public String createAds(String vender, String type, String imgPath, String priority,
+			String startTime, String endTime, String content, String link);
+
+	public String updateAdsById(String adId, String vender, String type,String imgPath, 
+			String priority, String startTime, String endTime, String content,
+			String link);
 
 }

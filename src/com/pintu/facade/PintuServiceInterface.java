@@ -248,6 +248,10 @@ public interface PintuServiceInterface {
 	//检测是否已经审批通过
 	public int checkAcceptApplicant(String account);
 
+	public String createAdImg(FileItem adData);
+
+	public void getImgByRelativePath(String relativePath,
+			HttpServletResponse res);
 
 
 

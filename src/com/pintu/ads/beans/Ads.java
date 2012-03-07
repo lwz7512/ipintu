@@ -7,7 +7,7 @@ package com.pintu.ads.beans;
 public class Ads {
 
 	private String id;
-	private String vendor;
+	private String vender;
 	private String content;
 	private String type;
 	private String imgPath;
@@ -26,11 +26,11 @@ public class Ads {
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getVendor() {
-		return vendor;
+	public String getVender() {
+		return vender;
 	}
-	public void setVendor(String vendor) {
-		this.vendor = vendor;
+	public void setVender(String vender) {
+		this.vender = vender;
 	}
 	public String getContent() {
 		return content;

@@ -93,6 +93,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 		log.debug("method:" + action);
 
 		boolean isMultipart = ServletFileUpload.isMultipartContent(req);
+		
 		log.debug("isMultipart value is:" + isMultipart);
 
 		if (action == null && isMultipart == false) {
@@ -125,14 +126,6 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			return;
 		} 
 		
-		if (action.equals(AppStarter.GETIMAGEFILE) || action
-						.equals(AppStarter.GETIMAGEBYPATH)) {
-			
-			doGetProcess(action, req, res);
-		} else {
-			assistProcess.doPostProcess(action,req,res);
-		}
-		
 		if (action.equals(AppStarter.GETTODAYADS)
 				|| action.equals(AppStarter.SEARCHADS)
 				|| action.equals(AppStarter.DELETEADSBYID)
@@ -143,6 +136,15 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			miniAdProcess(action, req, res);
 			return;
 		} 
+		
+		if (action.equals(AppStarter.GETIMAGEFILE)
+				|| action.equals(AppStarter.GETIMAGEBYPATH) 
+				|| action.equals(AppStarter.GETIMGBYRELATIVEPATH)) {
+			
+				doGetProcess(action, req, res);
+		} else {
+			assistProcess.doPostProcess(action,req,res);
+		}
 		
 	}
 	
@@ -186,8 +188,14 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 		}else if(action.equals(AppStarter.CREATEADS)){
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
-			//TODO
-			String result = apiAdaptor.createAds();
+			String vender = req.getParameter("vender");
+			String type = req.getParameter("type");
+			String priority = req.getParameter("priority");
+			String startTime = req.getParameter("startTime");
+			String endTime = req.getParameter("endTime");
+			String content = req.getParameter("content");
+			String link = req.getParameter("link");
+			String result = apiAdaptor.createAds(vender,type,priority,startTime,endTime,content,link);
 			log.debug(result);
 			pw.println(result);
 			pw.close();
@@ -204,8 +212,15 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 		}else if(action.equals(AppStarter.UPDATEADSBYID)){
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
-			//TODO
-			String result = apiAdaptor.updateAdsById();
+			String adId = req.getParameter("adId");
+			String vender = req.getParameter("vender");
+			String type = req.getParameter("type");
+			String priority = req.getParameter("priority");
+			String startTime = req.getParameter("startTime");
+			String endTime = req.getParameter("endTime");
+			String content = req.getParameter("content");
+			String link = req.getParameter("link");
+			String result = apiAdaptor.updateAdsById(adId,vender,type,priority,startTime,endTime,content,link);
 			log.debug(result);
 			pw.println(result);
 			pw.close();
@@ -307,18 +322,25 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 	 * @param action
 	 * @param req
 	 * @param res
+	 * @throws IOException 
+	 * @throws FileUploadException 
 	 */
 	private void doGetProcess(String action, HttpServletRequest req,
-			HttpServletResponse res) {
+			HttpServletResponse res) throws IOException{
 		if (action.equals(AppStarter.GETIMAGEFILE)) {
 			// 要所图片id得到相应图片
 			String tpId = req.getParameter("tpId");
 			apiAdaptor.getImageFile(tpId, res);
 
 		} else if (action.equals(AppStarter.GETIMAGEBYPATH)) {
-			// 根据路径得img(主要用于得到头像图)
+			// 根据绝对路径得img(主要用于得到头像图)
 			String path = req.getParameter("path");
 			apiAdaptor.getImageByPath(path, res);
+			
+		} else if (action.equals(AppStarter.GETIMGBYRELATIVEPATH)){
+			//根据相对路径取图片（即uploadFile的下一级，如：/adsImg/xxx.jpg ）
+			String relativePath = req.getParameter("relativePath");
+			apiAdaptor.getImgByRelativePath(relativePath,res);
 		}
 	}
 
@@ -337,6 +359,11 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 					apiAdaptor.createTastePic(fileItems);
 				}else if(method.equals("uploadAvatar")){
 					apiAdaptor.createAvatar(fileItems);
+				}else{
+					String adResult = apiAdaptor.createAdImg(fileItems);
+					if(!"".equals(adResult)){
+						pw.write(adResult);
+					}
 				}
 			}else{
 				// 送由适配器解析参数前，先检查一下是否是正常用户
@@ -348,6 +375,12 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 						apiAdaptor.createTastePic(fileItems);
 					}else if(method.equals("uploadAvatar")){
 						apiAdaptor.createAvatar(fileItems);
+					}else{
+						//上传广告图片
+						String adResult = apiAdaptor.createAdImg(fileItems);
+						if(!"".equals(adResult)){
+							pw.write(adResult);
+						}
 					}
 				} else {
 					return;

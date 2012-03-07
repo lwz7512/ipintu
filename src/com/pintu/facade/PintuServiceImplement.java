@@ -9,10 +9,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,6 +28,7 @@ import javax.imageio.stream.ImageOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.util.Streams;
 import org.apache.log4j.Logger;
 
 import com.pintu.beans.Applicant;
@@ -1489,6 +1492,68 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	public int checkAcceptApplicant(String account) {
 		int applicant = dbVisitor.getAcceptedApplicant(account);
 		return applicant;
+	}
+
+	@Override
+	public String createAdImg(FileItem adData) {
+		String type = "";
+		if (adData != null) {
+			String fileName = adData.getName();
+			int dotPos = fileName.lastIndexOf(".");
+			type = fileName.substring(dotPos);
+		}
+
+		Date date = new Date();//获取当前时间
+		SimpleDateFormat sdfFileName = new SimpleDateFormat("yyyyMMddHHmmss");
+		String newfileName = sdfFileName.format(date);//文件名称
+		
+		String path = imagePath + File.separator + "adsImg" + File.separator
+				+ newfileName + type;
+		try {
+			BufferedInputStream in = new BufferedInputStream(adData.getInputStream());
+			// 获得文件输入流
+			BufferedOutputStream outStream = new BufferedOutputStream(new FileOutputStream(new File(path)));// 获得文件输出流
+			Streams.copy(in, outStream, true);// 开始把文件写到你指定的上传文件夹
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		//上传成功，则插入数据库
+		if (new File(path).exists()) {
+			//保存到数据库
+			System.out.println("保存成功"+path);
+		}
+		return path;
+	}
+
+
+	@Override
+	public void getImgByRelativePath(String relativePath,
+			HttpServletResponse res) {
+		try {
+			//默认广告图片
+			File defaultImg = new File(imagePath + File.separator
+					+ "adsImg" + File.separator + "defaultAdImg.png");
+			InputStream defaultIn = new FileInputStream(defaultImg);
+			
+			String type = relativePath.substring(relativePath.lastIndexOf(".") + 1);
+			File file = new File(imagePath+relativePath);
+			if (file.exists()) {
+				InputStream imageIn = new FileInputStream(file);
+				if (type.toLowerCase().equals("jpg")) {
+					writeJPGImage(imageIn, res);
+				} else if (type.toLowerCase().equals("png")) {
+					writePNGImage(imageIn, res);
+				} else if (type.toLowerCase().equals("gif")) {
+					writeGIFImage(imageIn, res);
+				} else {
+					writePNGImage(defaultIn, res);
+				}
+			} else {
+				writePNGImage(defaultIn, res);
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	// TODO, 实现其他接口方法

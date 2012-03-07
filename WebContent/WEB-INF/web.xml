@@ -89,4 +89,5 @@
     	<servlet-name>ImageUploader</servlet-name>
     	<url-pattern>/upload</url-pattern>
     </servlet-mapping>
+    
 </web-app>

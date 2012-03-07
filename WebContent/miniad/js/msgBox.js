@@ -87,6 +87,7 @@ function msgBox_showMsg() {
 //关闭对话框
 function msgBox_close(srcElement)
 {
+	$('#floatBoxBg').attr("style","display: none");
 	if(msgBoxBackFunction)
 	{
 		if(srcElement == document.getElementById('msgBoxBtnClose'))

@@ -161,4 +161,7 @@ public interface ExtVisitorInterface {
     //再更新广告
     public static final String UPDATEADSBYID = "updateAdsById";
     
+    //根据相对路径取图片
+    public static final String GETIMGBYRELATIVEPATH = "getImgByRelativePath";
+    
 }
