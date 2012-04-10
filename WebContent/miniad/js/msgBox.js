@@ -88,6 +88,8 @@ function msgBox_showMsg() {
 function msgBox_close(srcElement)
 {
 	$('#floatBoxBg').attr("style","display: none");
+	$('#editAd').attr("style","display: none");
+	$('#editVender').attr("style","display: none");
 	if(msgBoxBackFunction)
 	{
 		if(srcElement == document.getElementById('msgBoxBtnClose'))

@@ -115,7 +115,7 @@ public class ImageUploader extends HttpServlet {
 		} catch (SizeLimitExceededException e) {
 			
 			log.debug(">>>File size exceeds the limit, can not upload!");
-			pw.println(">>> File size exceeds the limit, can not upload!");
+			pw.print(">>> File size exceeds the limit, can not upload!");
 			return;
 			
 		} catch (Exception e) {
@@ -131,7 +131,7 @@ public class ImageUploader extends HttpServlet {
 		String name = item.getFieldName();
 		String value = item.getString();
 		log.debug(name + " : " + value + "\r\n");
-		pw.println(name + " : " + value + "\r\n");
+		pw.print(name + " : " + value + "\r\n");
 	}
 
 	// 处理上传的文件
@@ -145,7 +145,7 @@ public class ImageUploader extends HttpServlet {
 		if(fileType.equals("png") || fileType.equals("jpg") || fileType.equals("gif")){
 			log.debug(">>>The current file type is:"+fileType);
 		}else{
-			pw.println(">>> The current file is not a picture file, not to generate!");
+			pw.print(">>> The current file is not a picture file, not to generate!");
 			return;			
 		}
 
@@ -170,9 +170,9 @@ public class ImageUploader extends HttpServlet {
 		log.debug(fileName + " File is complete ...");
 		
 		// 返回客户端信息
-		pw.println(fileName + " File is complete ...");
-		pw.println("file size is:" + sizeInK);
-		pw.println("file route is:" + uploadFile.getAbsolutePath() + "\r\n");
+		pw.print(fileName + " File is complete ...");
+		pw.print("file size is:" + sizeInK);
+		pw.print("file route is:" + uploadFile.getAbsolutePath() + "\r\n");
 	}
 
 }

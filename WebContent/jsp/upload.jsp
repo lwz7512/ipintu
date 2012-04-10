@@ -18,7 +18,7 @@
 		var FileName = new String(objFileUpload.value);//文件名 
 		var extension = new String(FileName.substring(FileName.lastIndexOf(".") + 1, FileName.length));//文件扩展名
 		extension = extension.toLowerCase();
-		if (extension == "jpg" || extension == "png")//你可以添加扩展名 
+		if (extension == "jpeg" || extension == "png")//你可以添加扩展名 
 		{
 			objMSG.innerHTML="it's ok, now go to Upload!";
 		} else {

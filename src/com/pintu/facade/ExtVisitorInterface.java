@@ -164,4 +164,26 @@ public interface ExtVisitorInterface {
     //根据相对路径取图片
     public static final String GETIMGBYRELATIVEPATH = "getImgByRelativePath";
     
+    //验证厂商
+    public static final String LOGINAD = "loginAd";
+    //厂商修改密码
+    public static final String CHANGEPWD = "changePwd";
+    //按条件查询厂商
+    public static final String SEARCHVENDERS = "searchVenders";
+    //查询某一厂商
+    public static final String GETVENDERSBYID = "getVendersById";
+    
+    //创建新厂商
+    public static final String CREATEVENDERS = "createVenders";
+    //再更新厂商
+    public static final String UPDATEVENDERSBYID = "updateVendersById";
+    
+    //提供一个用来验证用户是否到期的接口
+    public static final String VALIDATEVENDER = "validateVender";
+    
+    //注册新厂商
+    public static final String REGISTVENDERS = "registVenders";
+    
+    //验证厂商是否已被注册
+    public static final String CHECKOUTREGISTER = "checkoutRegister";
 }

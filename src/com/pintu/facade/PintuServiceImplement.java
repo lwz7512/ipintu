@@ -502,12 +502,16 @@ public class PintuServiceImplement implements PintuServiceInterface {
 					+ "defaultImage.png");
 			File pngFile = new File(imagePath + File.separator + picId + ".png");
 			File jpgFile = new File(imagePath + File.separator + picId + ".jpg");
+			File jpegFile = new File(imagePath + File.separator + picId + ".jpeg");
 			File gifFile = new File(imagePath + File.separator + picId + ".gif");
 			File imgFile = defaultFile;
 			String fileType = "png";
 			if (jpgFile.exists()) {
 				imgFile = jpgFile;
 				fileType="jpg";
+			} else if (jpegFile.exists()) {
+				imgFile = jpegFile;
+				fileType="jpeg";
 			} else if (gifFile.exists()) {
 				imgFile = gifFile;
 				fileType="gif";
@@ -525,7 +529,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			HttpServletResponse res) {
 		try {
 			InputStream imageIn = new FileInputStream(imgFile);
-			if ("jpg".equalsIgnoreCase(fileType)){
+			if ("jpg".equalsIgnoreCase(fileType) || "jpeg".equals(fileType)){
 				writeJPGImage(imageIn, res);
 			} else if ("png".equalsIgnoreCase(fileType)) {
 				writePNGImage(imageIn, res);
@@ -546,7 +550,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			ImageOutputStream imOut = ImageIO.createImageOutputStream(bos);
 			ImageIO.write((BufferedImage) img, fileType, imOut);
 			InputStream imageIn = new ByteArrayInputStream(bos.toByteArray());
-			if ("jpg".equalsIgnoreCase(fileType)){
+			if ("jpg".equalsIgnoreCase(fileType) || "jpeg".equals(fileType)){
 				writeJPGImage(imageIn, res);
 			} else if ("png".equalsIgnoreCase(fileType)) {
 				writePNGImage(imageIn, res);
@@ -645,7 +649,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			File file = new File(path);
 			if (file.exists()) {
 				InputStream imageIn = new FileInputStream(file);
-				if (type.toLowerCase().equals("jpg")) {
+				if (type.toLowerCase().equals("jpg") || type.toLowerCase().equals("jpeg")) {
 					writeJPGImage(imageIn, res);
 				} else if (type.toLowerCase().equals("png")) {
 					writePNGImage(imageIn, res);
@@ -1539,7 +1543,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			File file = new File(imagePath+relativePath);
 			if (file.exists()) {
 				InputStream imageIn = new FileInputStream(file);
-				if (type.toLowerCase().equals("jpg")) {
+				if (type.toLowerCase().equals("jpg") || type.toLowerCase().equals("jpeg")) {
 					writeJPGImage(imageIn, res);
 				} else if (type.toLowerCase().equals("png")) {
 					writePNGImage(imageIn, res);
@@ -1556,6 +1560,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		}
 	}
 
+	
 	// TODO, 实现其他接口方法
 
 }

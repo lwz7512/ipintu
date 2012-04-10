@@ -7,6 +7,7 @@ package com.pintu.ads.beans;
 public class Ads {
 
 	private String id;
+	private String publisher;
 	private String vender;
 	private String content;
 	private String type;
@@ -18,7 +19,7 @@ public class Ads {
 	//优先级 取值123，1最优先
 	private int priority;
 	//是否可用 
-	private int disabled;
+	private int enable;
 	
 	public String getId() {
 		return id;
@@ -26,11 +27,11 @@ public class Ads {
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getVender() {
-		return vender;
+	public String getPublisher() {
+		return publisher;
 	}
-	public void setVender(String vender) {
-		this.vender = vender;
+	public void setPublisher(String publisher) {
+		this.publisher = publisher;
 	}
 	public String getContent() {
 		return content;
@@ -80,12 +81,17 @@ public class Ads {
 	public void setPriority(int priority) {
 		this.priority = priority;
 	}
-	public int getDisabled() {
-		return disabled;
+	public int getEnable() {
+		return enable;
 	}
-	public void setDisabled(int disabled) {
-		this.disabled = disabled;
+	public void setEnable(int enable) {
+		this.enable = enable;
 	}
-	
+	public String getVender() {
+		return vender;
+	}
+	public void setVender(String vender) {
+		this.vender = vender;
+	}
 	
 }
