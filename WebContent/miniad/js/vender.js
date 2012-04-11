@@ -195,11 +195,12 @@ function venderRegist(){
 		//回调函数
 		function (result) {
 			if(result.trim() == 'Operate Success!'){
-				  $('#registPrompt').html('<font color="red">*注册厂商成功</font>');
+				  $('#registPrompt').html('<font color="red">*注册客户成功</font>');
 			}else{
 			  	  errorClass();
-				  $('#registPrompt').html('<font color="red">*注册厂商失败</font>');
+				  $('#registPrompt').html('<font color="red">*注册客户失败</font>');
 			}
+			$('#submit').attr("disabled","true");
 		});
 	}else{
 		$('#registPrompt').html('<font color="red">*注册信息填写有误</font>');

@@ -8,6 +8,13 @@ document.onkeydown = function (e) {
 
 //加载页面的时候去检查cookie
 window.onload = function(){
+
+	var action =request("do"); 
+	if(action == "regist"){
+		showRegisterWindow();
+		return;
+	}
+
     //分析cookie值，看是否存在
 //    hideLoginWindow();
     var idValue = getCookieValue("venderId");
@@ -22,6 +29,23 @@ window.onload = function(){
 	}
     
 }
+
+function request(paras)
+{ 
+    var url = location.href; 
+    var paraString = url.substring(url.indexOf("?")+1,url.length).split("&"); 
+    var paraObj = {};
+    for (var i=0; j=paraString[i]; i++){ 
+    	paraObj[j.substring(0,j.indexOf("=")).toLowerCase()] = j.substring(j.indexOf("=")+1,j.length); 
+    } 
+    var returnValue = paraObj[paras.toLowerCase()]; 
+    if(typeof(returnValue)=="undefined"){ 
+    	return ""; 
+    }else{ 
+    	return returnValue; 
+    } 
+}
+
 
 //验证邮箱
 function checkEmail(){
@@ -153,6 +177,8 @@ function comparePwd(){
 }
 
 function changePwd(){
+	var flag = checkPwdNull();
+	if(flag){
 		var venderId = $("#venderId").attr("value");
 		var password =  $("#pwd1").attr("value");
 		$.post('/ipintu/pintuapi', {
@@ -169,8 +195,20 @@ function changePwd(){
 				  $('#pwdPrompt').html('<font color="red">*密码修改失败</font>');
 			  }
 		});
+	}else{
+		$('#pwdPrompt').html('<font color="red">*请按要求设置新密码</font>');
+	}
 }
 
+function checkPwdNull(){
+	var pwd1 =  $("#pwd1").attr("value");
+	var pwd2 =  $("#pwd2").attr("value");
+	if(pwd1==null || pwd1=="" || pwd2==null || pwd2==""){
+		return false;
+	}else{
+		return true;
+	}
+}
 
 //退出
 function exit(){
@@ -203,16 +241,17 @@ function rightClass(){
 
 //显示登录窗口
 function showLoginWindow(){
+	$('#displayArea').children().remove();
 	var html = '<div id="loginDiv">';
-    html += '<div class="row"><div class="span3 offset5"><div class="row-fluid">';
+    html += '<div class="row"><div class="span3 offset6"><div class="row-fluid">';
 	html += '<form class="well">';
 	html += '<fieldset id="normalField"><legend>登录</legend>';
 	html += '<label class="control-label" for="input01">账户：</label><input type="text" name="email" id="email" onfocus="rightClass();" onblur="checkEmail();"> <span class="help-block">可用邮箱</span>';
 	html += '<label class="control-label" for="input01">密码：</label><input type="password" name="pwd" id="pwd" onblur="checkPwdLength()"> <span class="help-block">6~8位密码</span>';									
-	html += '<div><span style="color: blue;">记住我<input id="saveCookie" type="checkbox" value="" /></span>';
-	html += '  <button type="button" class="btn" id="submit" onclick="checkLogin();">登录</button>';  
-	html += '  <a href="javascript:showRegisterWindow();">我要注册</a></div>';
-	html += '<span id="loginPrompt"></span>';
+	html += '<div ><span style="color: blue;">记住我<input id="saveCookie" type="checkbox" value="" /></span>';
+	html += '	<span style="visibility: hidden"><input type="text" size="5" /></span>';
+	html += ' <button type="button" class="btn" id="submit" onclick="checkLogin();">登录</button></div>';  
+	html += '<div id="loginPrompt"></div>';
 	html += '</fieldset></form></div></div></div></div>';
 	$('#displayArea').append(html);
 }
@@ -224,31 +263,32 @@ function showPwdWindow(id){
 	$('#displayArea').children().remove();
 	
 	var html = '<div id="pwdDiv">';
-    html += '<div class="row"><div class="span3 offset5"><div class="row-fluid">';
+    html += '<div class="row"><div class="span3 offset6"><div class="row-fluid">';
 	html += '<form class="well"><input type="hidden" id="venderId" value="'+id+'" />';
 	html += '<fieldset id="normalField"><legend>修改密码</legend>';
 	html += '<label class="control-label" for="input01">新密码：</label>	<input type="password" name="newPwd" id="pwd1" onclick="rightClass();">';
 	html += '<label class="control-label" for="input01">密码：</label><input type="password" name="rePwd" id="pwd2" onblur="comparePwd()"> <span class="help-block">6~8位密码</span>';									
-	html += '<button type="button" class="btn" id="submit" onclick="changePwd();">确认修改</button>';
-	html += '<span id="pwdPrompt"></span>';
+	html += '<div align="center"><button type="button" class="btn" id="submit" onclick="changePwd();">确认修改</button></div>';
+	html += '<div id="pwdPrompt"></div>';
 	html += '</fieldset></form></div></div></div></div>';
 	$('#displayArea').append(html);
 }
+
 
 //显示注册页面
 function showRegisterWindow(){
 	// 删除显示区域的内容
 	$('#displayArea').children().remove();
 	var html = '<div id="registerDiv">';
-	html += '<div class="row"><div class="span3 offset5"><div class="row-fluid">';
+	html += '<div class="row"><div class="span3 offset6"><div class="row-fluid">';
 	html += '<form class="well"><fieldset id="normalField"><legend>注册</legend>';
 	html += '<label class="control-label" for="input01">邮箱：</label><input type="text" name="email" id="email" onfocus="rightClass();" onblur="validateRegister();">';
 	html += '<span id="prompt" style="visibility:hidden"><img src="imgs/loading.gif" style="vertical-align: middle;"></span>';
 	html += '<label class="control-label" for="input01">密码：</label><input type="password" name="pwd" id="pwd" onblur="checkPwdLength()"> <span class="help-block">6~8位密码</span>';									
-	html += '<label class="control-label" for="input01">厂商：</label><input type="text" name="name" id="name">';
+	html += '<label class="control-label" for="input01">客户：</label><input type="text" name="name" id="name">';
 	html += '<label class="control-label" for="input01">域名：</label><input type="text" name="deployDNS" id="deployDNS"> <span class="help-block">http://开头</span>';
-	html += '<button type="button" class="btn" id="submit" onclick="venderRegist();">确定</button>';
-	html += '<span id="registPrompt"></span>';
+	html += '<div align="center"><button type="button" class="btn" id="submit" onclick="venderRegist();">确定</button></div>';
+	html += '<div id="registPrompt"></div>';
 	html += '</fieldset></form></div></div></div></div>';
 	$('#displayArea').append(html);
 }

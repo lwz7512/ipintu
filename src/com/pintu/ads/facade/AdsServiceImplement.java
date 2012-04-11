@@ -235,13 +235,35 @@ public class AdsServiceImplement implements AdsServiceInterface {
 		String effectiveTime = PintuUtils.getToday();
 		String deadTime = PintuUtils.getAmonthAgo();
 		String enable = "1";
-		Vender vender = this.generateVender(venderId, name, email, serviceLevel, effectiveTime, deadTime, deployDNS, enable);
+		Vender vender = this.generateRegVender(venderId, name, email, pwd, serviceLevel, effectiveTime, deadTime, deployDNS, enable);
 		int rows = adDbVisitor.createVender(vender);
 		if(rows == 1){
 			return systemConfigurer.getProperty("rightPrompt");
 		}else{
 			return systemConfigurer.getProperty("wrongPrompt");
 		}
+	}
+	
+	private Vender generateRegVender(String venderId, String name, String email,String pwd,
+			String serviceLevel, String effectiveTime, String deadTime,
+			String deployDNS, String enable) {
+		Vender vender = new Vender();
+		if(venderId != null){
+			vender.setId(venderId);
+		}else{
+			vender.setId(PintuUtils.generateUID());
+		}
+		vender.setPwd(Encrypt.encrypt(pwd));
+		vender.setName(name);
+		vender.setEmail(email);
+		vender.setServiceLevel(serviceLevel);
+		vender.setEnable(Integer.parseInt(enable));
+		vender.setCreateTime(PintuUtils.getFormatNowTime());
+		vender.setEffectiveTime(effectiveTime);
+		vender.setDeadTime(deadTime);
+		vender.setDeployDNS(deployDNS);
+		vender.setRole("vender");
+		return vender;
 	}
 
 	@Override

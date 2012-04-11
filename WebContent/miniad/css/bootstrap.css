@@ -497,7 +497,7 @@ pre code {
   background-color: transparent;
 }
 form {
-  margin: 0 0 18px;
+  margin: 50px 0 0 0px;
 }
 fieldset {
   padding: 0;
@@ -1681,7 +1681,7 @@ table .span12 {
   -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
   cursor: pointer;
-  *margin-left: .3em;
+/*   margin-left: .3em; */
 }
 .btn:first-child {
   *margin-left: 0;
