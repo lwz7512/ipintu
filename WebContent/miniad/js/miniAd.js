@@ -140,7 +140,7 @@ function checkLogin(){
 				$('#loginPrompt').html('<font color="red">*密码错误</font>');
 			}else if( result.trim() == "-1"){
 				errorClass();
-				$('#loginPrompt').html('<font color="red">*账户不存在</font>');
+				$('#loginPrompt').html('<font color="red">*账户不存在，点击右上角导航注册吧</font>');
 			}
 		});
 	}else{
@@ -241,6 +241,9 @@ function rightClass(){
 
 //显示登录窗口
 function showLoginWindow(){
+	$('#func').remove();
+	$('<ul class="nav pull-right" id="func"></ul>').insertAfter('#brand');
+	$('<li><a href="javascript:showRegisterWindow();"><b>我要注册</b></a></li>').appendTo("#func");
 	$('#displayArea').children().remove();
 	var html = '<div id="loginDiv">';
     html += '<div class="row"><div class="span3 offset6"><div class="row-fluid">';
@@ -261,7 +264,6 @@ function showLoginWindow(){
 function showPwdWindow(id){
 	// 删除显示区域的内容
 	$('#displayArea').children().remove();
-	
 	var html = '<div id="pwdDiv">';
     html += '<div class="row"><div class="span3 offset6"><div class="row-fluid">';
 	html += '<form class="well"><input type="hidden" id="venderId" value="'+id+'" />';
@@ -278,7 +280,10 @@ function showPwdWindow(id){
 //显示注册页面
 function showRegisterWindow(){
 	// 删除显示区域的内容
+	$('#func').remove();
 	$('#displayArea').children().remove();
+	$('<ul class="nav pull-right" id="func"></ul>').insertAfter('#brand');
+	$('<li><a href="javascript:showLoginWindow();"><b>我要登录</b></a></li>').appendTo("#func");
 	var html = '<div id="registerDiv">';
 	html += '<div class="row"><div class="span3 offset6"><div class="row-fluid">';
 	html += '<form class="well"><fieldset id="normalField"><legend>注册</legend>';
@@ -304,6 +309,8 @@ function generateOperatePage(venderName,venderId,role){
 
 //根据角色来自动生成导航
 function generateNavigate(venderName,venderId,role){
+	$('#brand').children().remove();
+	$('#func').remove();
 	$('<ul class="nav pull-left" id="func"></ul>').insertAfter('#brand');
 	var para1 = "('"+venderName+"','"+venderId+"')";
 		$('<li><a href = "javascript:generateAdManagement'+para1+'">广告管理</a></li>').appendTo('#func');
@@ -313,7 +320,7 @@ function generateNavigate(venderName,venderId,role){
 	
 	$('<ul class="nav pull-right" id="userInfo">').insertAfter('#brand');
 	var para2 ="'"+venderId+"'";
-	$('<li><a href="#">当前登陆用户：'+venderName+'</a></li>').appendTo("#userInfo");
+	$('<li><a href="#">当前登录用户：'+venderName+'</a></li>').appendTo("#userInfo");
 	$('<li><a href = "javascript:showPwdWindow('+para2+')">修改密码</a></li>').appendTo('#userInfo');
 	$('<li><a href = "javascript:exit()">退出</a></li>').appendTo('#userInfo');
 }
@@ -326,19 +333,18 @@ function generateVenderManagement(venderName,venderId){
 }
 
 function generateVenderTabbar(){
-	var html='<div class="container well">';
-	html+='<div class="span12">';
+	var html='<div class="container innerWell">';
 	html+='<span class="label label-info">广告商名称：</span>';
 	html+='<input id="keys" type="text" class="search-query" placeholder="关键字" size="15" />';
-	html+=' <button id="submit" class="btn" onclick="searchVenders();">查询</button>';
+	html+='<button id="submit" class="btn" onclick="searchVenders();">查询</button>';
 	html+=' <button id="" class="btn" onclick="newVenderWindow();">新建厂商</button>';
 	html+=' <button id="" class="btn" onclick="initVenderData();">全部厂商</button>';
-	html+='</div></div>';
+	html+='</div>';
 	$('#displayArea').append(html);
 }
 
 function generateVenderContent(){
-	var html='<div class="container well">';
+	var html='<div class="container blankWell">';
 	html+='<table class="table table-bordered  table-striped">';
 	html+='<thead><tr><th>序号</th><th>厂商</th><th>邮箱</th><th>部署域名</th><th>创建时间</th>';
 	html+='<th>生效时间</th><th>失效时间</th><th>等级</th><th>状态</th><th>编辑</th></tr></thead>';
@@ -356,16 +362,12 @@ function generateAdManagement(venderName,venderId){
 }
 
 function generateAdTabbar(venderName,venderId){
-	var html='<div class="container well">';
-	html+='<div class="span12">';
-	html+='<a href="javascript:newAdWindow()"  title="新建广告"><img src="imgs/cloud_add1.png" alt="新建广告"></a>';
-	html+='<a href="#"  title="预览广告"><img src="imgs/cloud_preview1.png" alt="预览广告"></a>';
-	html+=' <input id="keys" type="text" class="search-query" placeholder="输入广告关键字" size="15" />';
-	para = 'yyyy-MM-dd';
-	html+=' <input id="time" type="text" placeholder="点击选取日期" onclick="SelectDate(this,para);" size="15" />';
-	html+=' <button id="" class="btn" onclick="searchAds();">查询</button>';
-	html+=' <button id="" class="btn" onclick="initAdData();">全部广告</button>';
-	html+='</div></div>';
+	var html='<div class="container innerWell">';
+	html+='<div class="search"> <input id="keys" type="text"  placeholder="输入广告关键字" size="15" />';
+	html+='<button id="submit" class="btn" onclick="searchAds();">查询</button></div>';
+	html+='<div class="done"><a href="javascript:newAdWindow()"  title="新建广告"><img src="imgs/cloud_add1.png" alt="新建广告"></a>';
+	html+='<a href="#"  title="预览广告"><img src="imgs/cloud_preview1.png" alt="预览广告"></a></div>';
+	html+='</div>';
 	$('#displayArea').append(html)
 		.append($('<input></input')
 		.attr("id","venderId")
@@ -374,7 +376,7 @@ function generateAdTabbar(venderName,venderId){
 }
 
 function generateAdContent(venderName,venderId){
-	var html='<div class="container well">';
+	var html='<div class="container blankWell">';
 	html+='<table class="table table-bordered  table-striped">';
 	html+='<thead><tr><th>序号</th><th>厂商</th><th>广告分类</th><th width="200" height="30">广告内容</th><th>创建时间</th>';
 	html+='<th>生效时间</th><th>失效时间</th><th>优先级</th><th>编辑</th><th>删除</th></tr></thead>';

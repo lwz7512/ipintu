@@ -41,9 +41,25 @@ function initVenderData(){
 				generateNewTd(result[key].createTime,key);
 				generateNewTd(result[key].effectiveTime,key);
 				generateNewTd(result[key].deadTime,key);
-				generateNewTd(result[key].serviceLevel,key);
-				generateNewTd(result[key].enable,key);
 				
+				var serviceLevel;
+				if(result[key].serviceLevel == "free"){
+					serviceLevel="免费版";
+				}else	if(result[key].serviceLevel == "standard"){
+					serviceLevel="标准版";
+				}else	if(result[key].serviceLevel == "upgrade"){
+					serviceLevel="升级版";
+				}else	if(result[key].serviceLevel == "advanced"){
+					serviceLevel="高级版";
+				}
+				generateNewTd(serviceLevel,key);
+				var enable;
+				if(result[key].enable==1){
+					enable = "可用";
+				}else{
+					enable = "不可用";
+				}
+				generateNewTd(enable,key);
 				generateVenderOperate(result[key].id,key);
 			}
 		}
@@ -195,7 +211,7 @@ function venderRegist(){
 		//回调函数
 		function (result) {
 			if(result.trim() == 'Operate Success!'){
-				  $('#registPrompt').html('<font color="red">*注册客户成功</font>');
+				  $('#registPrompt').html('<font color="red">*注册成功，点击右上角导航登录吧！</font>');
 			}else{
 			  	  errorClass();
 				  $('#registPrompt').html('<font color="red">*注册客户失败</font>');

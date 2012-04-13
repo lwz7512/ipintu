@@ -17,7 +17,13 @@ function initAdData(venderId){
 			
 				generateNewTd(parseInt(key)+1,key);
 				generateNewTd(result[key].vender,key);
-				generateNewTd(result[key].type,key);
+				var type;
+				if(result[key].type == "image"){
+					type = "纯图片广告"
+				}else{
+					type = "纯文字广告";
+				}
+				generateNewTd(type,key);
 				generateContentTd(result[key].type,result[key].content,result[key].imgPath,result[key].link,key);
 				generateNewTd(result[key].createTime,key);
 				generateNewTd(result[key].startTime,key);
@@ -214,7 +220,6 @@ function operateAd(){
 	var venderId = $("#vender").attr("value");
 	var type = $("#type").attr("value");
 	if(id == null || id==""){
-	alert(venderId);
 		createAd();
 	}else{
 		updateAd(id);
