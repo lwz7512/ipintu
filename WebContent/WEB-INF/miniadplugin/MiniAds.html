@@ -2,29 +2,32 @@
 <!-- saved from url=(0014)about:internet -->
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"> 
     <!-- 
-    	----- 报雨鸟微广告的客户端包裹页面 -----
-    	----- version 1.0.0 @2012/04/13 --------    	
+    	----- 报雨鸟微广告的客户端示例页面 -----
+    	----- version 1.0.0 @2012/04/13 -------- 
+    	----- 产品地址：http://ipintu.com/ipintu/miniad/index.html
+    	
     	----- 版权所有：北京远博畅享科技有限公司 -----
-    	----- http://rainbirdtech.com -----
+    	----- 公司网站：http://rainbirdtech.com
     	
     	使用指南：
-    		如果是本地版用户：
+    		如果是下载本地版，先进行本地数据测试，后发布：
     			1、在本地用文本编辑器打开此页面，实现createLocalAdvData方法；
     			2、准备幻灯片需要的图片，并在flashvars对象中修改幻灯展示大小参数，使之与图片匹配；
-    			3、修改下面脚本部分中，flashvars.runningMode的值为deploy，即：flashvars.runningMode = "deploy";
-    			4、将本页面的style部分、script部分、div部分拷贝到你自己的页面中，相应的
+    			3、本地可以在调试模式下运行查看效果了，下一步进入发布流程；
+    			4、修改下面脚本部分中，flashvars.runningMode的值为deploy，即：flashvars.runningMode = "deploy";
+    			5、将本页面的style部分、script部分、div部分拷贝到你自己的页面中，相应的
     				还需要将swfobject.js、playerProductInstall.swf、MiniAds.swf拷贝到你使用该插件的网页目录中
-    			5、通过URL浏览嵌入微广告插件后的页面效果；
+    			6、通过URL浏览嵌入微广告插件后的页面效果；
     				
-    		如果是网络版用户：
+    		如果是下载网络版，执行下列步骤直接进行发布流程：
     			1、修改javascript中，flashvars.runningMode的值为deploy，即：flashvars.runningMode = "deploy";
-    			2、修改javascript中，flashvars对象中幻灯展示大小参数，使之与要发布展示的图片大小匹配；
+    			2、修改javascript中，flashvars对象中幻灯展示大小参数，使之与要发布展示的图片大小匹配；    			
     			3、将本页面的style部分、script部分、div部分拷贝到你自己的页面中，相应的
     				还需要将swfobject.js、playerProductInstall.swf、MiniAds.swf上传到你使用该插件的网页目录中；
     			4、登录后台管理系统，发布事先准备好的广告图片；
     			5、通过URL浏览嵌入微广告插件后的页面效果；
     			    			
-    		注意：	下面需要修改的部分见星号标识的部分
+    		注意：	下面需要修改的内容见星号标识的部分
     // -->
     <head>
         <title>微广告样例页面</title>
@@ -39,42 +42,66 @@
         <script type="text/javascript" src="swfobject.js"></script>
         <script type="text/javascript">
         
-             //本地版需要客户自己实现的方法，网络版用户就不用这么麻烦了
-             //注意：该方法名称不运行改变，否则本地版没法获得数据！
-            function createLocalAdvData(){
-            	var advItems = [];
-            	//一条纯文字型广告内容，目前只能在免费版中使用，可以指定该广告词的链接指向地址
-            	advItems.push({"type":"text", "content":"你的广告词写在这里。。。", "link":"http://rainbirdtech.com"});
-            	//一条图片型广告内容，可以放在任何版本中使用，需要指定图片相对于MiniAds.swf的相对路径
-            	advItems.push({"type":"image", "imgPath":"assets/small/sample1.png", "link":"http://ipintu.com"});
-            	//继续添加新的广告图片内容，类似上一条形式
-            	advItems.push({"type":"image", "imgPath":"assets/small/sample2.png", "link":"http://ipintu.com"});
-            	//更多广告内容，以此类推。。。
-            	//...
-            	            	            
-            	//最后返回给FLASH对象结果
-            	return advItems;
-            }
-            
+  
             //这里配置客户端需要的参数值
             var flashvars = {};
                                               
             //***  注意：部署到你的网站时，需要将此参数值改为deploy ***
             flashvars.runningMode = "debug";
+            
             //***  注意：定制幻灯片展示区域宽度 ***
-            flashvars.visualWidth = ^^^;
+            flashvars.visualWidth = ^^^;                        
             //***  注意：定制幻灯片展示区域高度 ***
-            flashvars.visualHeight = %%%;
+            flashvars.visualHeight = %%%;            
             
              //账户ID，每个用户注册时分配的，不能随便更改
             flashvars.accountId = "###";
             //数据类型，默认是本地版local，如果是购买网络版，此参数值为network
-            flashvars.dataType = "@@@";
-            //服务类型，默认是免费版
+            flashvars.dataType = "@@@";            
+            //服务类型，默认是标准版
             flashvars.versionType = "$$$";
-            //特效使用模式，是随机还是顺序，默认是随机，可以修改为顺序sequence
+            
+            //多个特效使用模式，是随机模式random，还是顺序模式sequence
             flashvars.effectMode = "random";
-           
+           	//幻灯片停留时长，秒为单位
+           	flashvars.stayTime = 3;
+           	
+             //本地版需要客户自己实现的方法，网络版用户就不用这么麻烦了
+             //注意：该方法名称不运行改变，否则本地版没法获得数据！
+             //注意：修改测试数据，相应的要修改幻灯片展示区域大小：             
+             //免费版<=288*48，标准版<=250*250，升级版<=500*500，高级版不做大小限制
+             
+            function createLocalAdvData(){
+            	var advItems = [];
+            	var productUrl = "http://ipintu.com/miniad.html";
+            	
+            	//免费版使用的模拟数据，本地测试时打开advItems.push所在行注释
+            	//一条纯文字型广告内容，目前只能在免费版中使用，可以指定该广告词的链接指向地址            	
+            	//advItems.push({"type":"text", "content":"报雨鸟微广告，属于您的魔法广告牌", "link":productUrl});
+            	//一条图片型广告内容，可以放在任何版本中使用，需要指定图片相对于MiniAds.swf的相对路径            	
+            	//advItems.push({"type":"image", "imgPath":"assets/small/sample1.png", "link":productUrl});
+            	//继续添加新的广告图片内容，类似上一条形式
+            	//advItems.push({"type":"image", "imgPath":"assets/small/sample2.png", "link":productUrl});
+            	
+            	//标准版使用的模拟数据，本地测试时打开advItems.push所在行注释
+            	//advItems.push({"type":"image", "imgPath":"assets/medium/sample7.png", "link":productUrl});
+            	//advItems.push({"type":"image", "imgPath":"assets/medium/sample8.png", "link":productUrl});
+            	//advItems.push({"type":"image", "imgPath":"assets/medium/sample9.png", "link":productUrl});
+            	
+            	//升级版版使用的模拟数据，本地测试时打开advItems.push所在行注释
+            	//advItems.push({"type":"image", "imgPath":"assets/large/sample500_1.jpg", "link":productUrl});
+            	//advItems.push({"type":"image", "imgPath":"assets/large/sample500_2.jpg", "link":productUrl});
+            	//advItems.push({"type":"image", "imgPath":"assets/large/sample500_3.jpg", "link":productUrl});
+            	
+            	//高级版使用的模拟数据，本地测试时打开advItems.push所在行注释
+            	advItems.push({"type":"image", "imgPath":"assets/huge/huge_1.jpg", "link":productUrl});
+            	advItems.push({"type":"image", "imgPath":"assets/huge/huge_2.jpg", "link":productUrl});
+            	            	            
+            	//最后返回给FLASH对象结果
+            	return advItems;
+            }
+            
+
             
             //创建FLASH对象，客户不必改动此块代码
            var swfVersionStr = "10.2.0";           
