@@ -93,7 +93,7 @@ function generateAdOperate(id,key,venderId){
 //按条件查询
 function searchAds(){
 	var keys = $("#keys").attr("value");
-	var time =  $("#time").attr("value");
+	var time = '';
 	var venderId = $("#venderId").attr("value");
 	if((keys ==null || keys =="")&&(time ==null || time=="")){
 		return false;

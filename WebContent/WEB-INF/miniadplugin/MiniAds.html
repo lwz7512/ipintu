@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0014)about:internet -->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"> 
+    <!-- 
+    	----- 报雨鸟微广告的客户端包裹页面 -----
+    	----- version 1.0.0 @2012/04/13 --------    	
+    	----- 版权所有：北京远博畅享科技有限公司 -----
+    	----- http://rainbirdtech.com -----
+    	
+    	使用指南：
+    		如果是本地版用户：
+    			1、在本地用文本编辑器打开此页面，实现createLocalAdvData方法；
+    			2、准备幻灯片需要的图片，并在flashvars对象中修改幻灯展示大小参数，使之与图片匹配；
+    			3、修改下面脚本部分中，flashvars.runningMode的值为deploy，即：flashvars.runningMode = "deploy";
+    			4、将本页面的style部分、script部分、div部分拷贝到你自己的页面中，相应的
+    				还需要将swfobject.js、playerProductInstall.swf、MiniAds.swf拷贝到你使用该插件的网页目录中
+    			5、通过URL浏览嵌入微广告插件后的页面效果；
+    				
+    		如果是网络版用户：
+    			1、修改javascript中，flashvars.runningMode的值为deploy，即：flashvars.runningMode = "deploy";
+    			2、修改javascript中，flashvars对象中幻灯展示大小参数，使之与要发布展示的图片大小匹配；
+    			3、将本页面的style部分、script部分、div部分拷贝到你自己的页面中，相应的
+    				还需要将swfobject.js、playerProductInstall.swf、MiniAds.swf上传到你使用该插件的网页目录中；
+    			4、登录后台管理系统，发布事先准备好的广告图片；
+    			5、通过URL浏览嵌入微广告插件后的页面效果；
+    			    			
+    		注意：	下面需要修改的部分见星号标识的部分
+    // -->
+    <head>
+        <title>微广告样例页面</title>
+        <meta name="google" value="notranslate" />         
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        
+        <style type="text/css" media="screen">         	           
+            body { margin:0; padding:0;}   
+            object:focus { outline:none; }            
+            #flashMiniAD { display:none; }            
+        </style>         
+        <script type="text/javascript" src="swfobject.js"></script>
+        <script type="text/javascript">
+        
+             //本地版需要客户自己实现的方法，网络版用户就不用这么麻烦了
+             //注意：该方法名称不运行改变，否则本地版没法获得数据！
+            function createLocalAdvData(){
+            	var advItems = [];
+            	//一条纯文字型广告内容，目前只能在免费版中使用，可以指定该广告词的链接指向地址
+            	advItems.push({"type":"text", "content":"你的广告词写在这里。。。", "link":"http://rainbirdtech.com"});
+            	//一条图片型广告内容，可以放在任何版本中使用，需要指定图片相对于MiniAds.swf的相对路径
+            	advItems.push({"type":"image", "imgPath":"assets/small/sample1.png", "link":"http://ipintu.com"});
+            	//继续添加新的广告图片内容，类似上一条形式
+            	advItems.push({"type":"image", "imgPath":"assets/small/sample2.png", "link":"http://ipintu.com"});
+            	//更多广告内容，以此类推。。。
+            	//...
+            	            	            
+            	//最后返回给FLASH对象结果
+            	return advItems;
+            }
+            
+            //这里配置客户端需要的参数值
+            var flashvars = {};
+                                              
+            //***  注意：部署到你的网站时，需要将此参数值改为deploy ***
+            flashvars.runningMode = "debug";
+            //***  注意：定制幻灯片展示区域宽度 ***
+            flashvars.visualWidth = ^^^;
+            //***  注意：定制幻灯片展示区域高度 ***
+            flashvars.visualHeight = %%%;
+            
+             //账户ID，每个用户注册时分配的，不能随便更改
+            flashvars.accountId = "###";
+            //数据类型，默认是本地版local，如果是购买网络版，此参数值为network
+            flashvars.dataType = "@@@";
+            //服务类型，默认是免费版
+            flashvars.versionType = "$$$";
+            //特效使用模式，是随机还是顺序，默认是随机，可以修改为顺序sequence
+            flashvars.effectMode = "random";
+           
+            
+            //创建FLASH对象，客户不必改动此块代码
+           var swfVersionStr = "10.2.0";           
+            var xiSwfUrlStr = "playerProductInstall.swf";             
+            var params = {};
+            params.quality = "high";
+            params.bgcolor = "#ffffff";
+            params.allowscriptaccess = "sameDomain";
+            params.allowfullscreen = "true";
+            var attributes = {};
+            attributes.id = "MiniAds";
+            attributes.name = "MiniAds";
+            attributes.align = "middle";
+            swfobject.embedSWF("MiniAds.swf", "flashMiniAD", flashvars.visualWidth, flashvars.visualHeight, swfVersionStr, xiSwfUrlStr,flashvars, params, attributes);            
+            swfobject.createCSS("#flashMiniAD", "display:block;text-align:left;");             
+            
+        </script>
+    </head>
+    <body>
+        <!-- 需要拷贝这下面的div部分到你的页面中，id和内容不能改 -->
+        <div id="flashMiniAD">
+            <p>
+                To view this page ensure that Adobe Flash Player version 
+                10.2.0 or greater is installed. 
+            </p>
+            <script type="text/javascript"> 
+                var pageHost = ((document.location.protocol == "https:") ? "https://" : "http://"); 
+                document.write("<a href='http://www.adobe.com/go/getflashplayer'><img src='" 
+                                + pageHost + "www.adobe.com/images/shared/download_buttons/get_flash_player.gif' alt='Get Adobe Flash player' /></a>" ); 
+            </script>
+        </div>
+   </body>
+</html>

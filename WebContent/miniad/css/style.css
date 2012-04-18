@@ -174,6 +174,11 @@ div {
   float: left;
 }
 
+.innerWell .tip{
+  margin-top:30px;
+  float: right;
+}
+
 .innerWell .done a{
   margin-left:20px;
 }
@@ -373,3 +378,72 @@ input, textarea, select, .uneditable-input {
   margin-bottom: 0;
   color: #999999;
 }
+
+
+.caption {
+    font: bold 25px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; 
+	color: #003371; 
+	letter-spacing: 2px; 
+	text-align: center; 
+	text-shadow:#ffffff 1.5px 1.5px 0;
+	margin-top:50px;
+}
+
+.note{
+	color: #003371; 
+	letter-spacing: 2px; 
+	text-align: left; 
+	text-shadow:#ffffff 1.5px 1.5px 0;
+	margin-top:50px;
+	text-align: center; 
+}
+
+table.dataintable {
+    font-family:Arial, Helvetica, sans-serif;
+    margin-top:40px;
+    border-collapse:collapse;
+    width:60%;
+    margin-left: auto;
+	margin-right: auto;
+    border:1px solid #888;
+    }
+
+
+table.dataintable thead tr {
+    font: 14px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; 
+	color: #666666; 
+/* 	border: 1px solid #C1DAD7;  */
+    BORDER-TOP: #e9f1f6 2px solid; 
+    BORDER-LEFT: #e0eee8 2px solid; 
+    BORDER-RIGHT: #e0eee8 2px solid; 
+    BORDER-BOTTOM: #e9f1f6 2px solid; 
+	letter-spacing: 2px; 
+	text-align: center; 
+	border-style: outset;
+	background: #96BEC9  no-repeat;  
+    }
+    
+table.dataintable thead th{
+    BORDER-RIGHT: #ffffff 2px solid; 
+    BORDER-LEFT: #e0eee8 2px solid;
+    padding: 6px 6px 6px 12px; 
+    border-style: outset;
+ 
+}
+
+table.dataintable tbody td {
+/* 	border: 1px solid #C1DAD7;  */
+	background: #dbe8f0; 
+	font-size:13px; 
+	text-align: center; 
+	padding: 6px 6px 6px 12px; 
+	color: #4f6b72; 
+    BORDER-RIGHT: #ffffff 2px solid; 
+    BORDER-LEFT: #e0eee8 2px solid; 
+    border-style: outset;
+    }
+    
+table.dataintable tbody tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
+  background-color: #fafafa;
+}
+

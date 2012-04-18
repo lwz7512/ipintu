@@ -1,3 +1,4 @@
+
 //生成各tr
 function generateVenderTr(key){
 	$('<tr></tr>').appendTo($('#venderList'))

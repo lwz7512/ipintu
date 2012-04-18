@@ -43,4 +43,5 @@ public interface AdsServiceInterface {
 			String deployDNS);
 
 	public int checkoutRegiser(String email);
+
 }

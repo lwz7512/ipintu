@@ -274,5 +274,4 @@ public class AdsServiceImplement implements AdsServiceInterface {
 		}
 		return 0;
 	}
-	
 }

@@ -129,16 +129,16 @@ function msgBox_getMsgDiv()
 	div.style.top = '-10000px';
 	div.style.left = '0px';
 	div.style.backgroundColor = 'white';
-//	div.style.border = 'solid 2px grey';
+	div.style.border = 'solid 4px #a1afc9';
 //    div.style.borderTop='#a1afc9 2px solid'; 
  //   div.style.borderLeft='#a1afc9 2px solid'; 
-    div.style.borderRight='red 3px solid'; 
-    div.style.borderBottom='red 3px solid'; 
-    div.style.borderStyle = 'outset';
-	div.style.padding = '6px';
+ //   div.style.borderRight='red 3px solid'; 
+//    div.style.borderBottom='red 3px solid'; 
+    div.style.borderStyle = 'ridge';
+	div.style.padding = '9px';
 	var strHTML = '<div style="position:relative; cursor:default; font-size:14px;" onmousedown="msgBox_moveStart(event);">';
 	strHTML += '<b id="msgBoxTitle"></b>';
-	strHTML += '<a id="msgBoxBtnClose" title="关闭" style="font-size:12px; position:absolute; right:5px; top:1px; font-family:Tahoma; text-decoration:none; color:grey;" href="javascript:msgBox_close(this);">&nbsp;X&nbsp;</a></div>';
+	strHTML += '<a id="msgBoxBtnClose" title="关闭" style="font-size:12px; position:absolute; right:5px; top:1px; font-family:Tahoma; text-decoration:none; color:grey;" href="javascript:msgBox_close(this);">&nbsp;关闭&nbsp;</a></div>';
 	strHTML += '<div style="border-top:solid 1px gray; margin:5px auto;"></div>';
 	msgBox_innerHTML(div, strHTML);
 	if(document.forms.length == 0)

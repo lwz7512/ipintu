@@ -314,6 +314,7 @@ function generateNavigate(venderName,venderId,role){
 	$('<ul class="nav pull-left" id="func"></ul>').insertAfter('#brand');
 	var para1 = "('"+venderName+"','"+venderId+"')";
 		$('<li><a href = "javascript:generateAdManagement'+para1+'">广告管理</a></li>').appendTo('#func');
+		$('<li><a href = "javascript:generateAdDownload'+para1+'">安装包下载</a></li>').appendTo('#func');
 	if(role == "admin"){
 		$('<li><a href = "javascript:generateVenderManagement'+para1+'">厂商管理</a></li>').appendTo('#func');
 	}
@@ -336,7 +337,7 @@ function generateVenderTabbar(){
 	var html='<div class="container innerWell">';
 	html+='<span class="label label-info">广告商名称：</span>';
 	html+='<input id="keys" type="text" class="search-query" placeholder="关键字" size="15" />';
-	html+='<button id="submit" class="btn" onclick="searchVenders();">查询</button>';
+	html+=' <button id="submit" class="btn" onclick="searchVenders();">查询</button>';
 	html+=' <button id="" class="btn" onclick="newVenderWindow();">新建厂商</button>';
 	html+=' <button id="" class="btn" onclick="initVenderData();">全部厂商</button>';
 	html+='</div>';
@@ -366,14 +367,16 @@ function generateAdTabbar(venderName,venderId){
 	html+='<div class="search"> <input id="keys" type="text"  placeholder="输入广告关键字" size="15" />';
 	html+='<button id="submit" class="btn" onclick="searchAds();">查询</button></div>';
 	html+='<div class="done"><a href="javascript:newAdWindow()"  title="新建广告"><img src="imgs/cloud_add1.png" alt="新建广告"></a>';
-	html+='<a href="#"  title="预览广告"><img src="imgs/cloud_preview1.png" alt="预览广告"></a></div>';
-	html+='</div>';
+	var para = "('"+venderId+"')";
+	html+='<a href="javascript:newPreviewWindow'+para+'"  title="预览广告"><img src="imgs/cloud_preview1.png" alt="预览广告"></a></div>';
+	html+='<div class="tip">提示：为保证显示效果，发布广告时请选择尺寸大小相同的图片！</div></div>';
 	$('#displayArea').append(html)
 		.append($('<input></input')
 		.attr("id","venderId")
 		.attr("value",venderId)
 		.attr("type","hidden"));
 }
+
 
 function generateAdContent(venderName,venderId){
 	var html='<div class="container blankWell">';
@@ -387,7 +390,148 @@ function generateAdContent(venderName,venderId){
 }
 
 
+function generateAdDownload(venderName,venderId){
+	    $('#displayArea').children().remove();
+	    var html='<div class="caption">报雨鸟微广告系统安装包下载</div>';
+		html+='<table class="dataintable">';
+		html+='<thead><tr><th>版本</th><th>本地版</th><th>网络版</th></tr></thead>';
+		var free='free';
+		var standard = 'standard';
+		var upgrade = 'upgrade';
+		var advanced = 'advanced';
+		var local='local';
+		var web='network';
+		
+		var para = "venderId="+venderId+"&version="+free+"&dataSource="+local;
+		html+='<tbody><tr><td>免费版</td><td><a href="/ipintu/download_center.do?'+para+'">点击下载</a></td>';
+		
+		para="venderId="+venderId+"&version="+free+"&dataSource="+web;
+		html+='<td><a href="/ipintu/download_center.do?'+para+'">点击下载</a></td></tr>';
+		
+		para="venderId="+venderId+"&version="+standard+"&dataSource="+local;
+		html+='<tr><td>标准版</td><td><a href="/ipintu/download_center.do?'+para+'">点我下载</a></td>';
+		
+		para="venderId="+venderId+"&version="+standard+"&dataSource="+web;
+		html+='<td><a href="/ipintu/download_center.do?'+para+'">点击下载</a></td></tr>';
+		
+		para="venderId="+venderId+"&version="+upgrade+"&dataSource="+local;
+		html+='<tr><td>升级版</td><td><a href="/ipintu/download_center.do?'+para+'">点击下载</a></td>';
+		
+		para="venderId="+venderId+"&version="+upgrade+"&dataSource="+web;
+		html+='<td><a href="/ipintu/download_center.do?'+para+'">点击下载</a></td></tr>';
+		
+		para="venderId="+venderId+"&version="+advanced+"&dataSource="+local;
+		html+='<tr><td>高级版</td><td><a href="/ipintu/download_center.do?'+para+'">点击下载</a></td>';
+		
+	    para="venderId="+venderId+"&version="+advanced+"&dataSource="+web;
+		html+='<td><a href="/ipintu/download_center.do?'+para+'">点击下载</a></td></tr>';
+		
+		html+='</tbody></table>';
+		html+='<div class="note">说明：本地版与网络版的主要区别是数据来源不同，用户可自行选择版本下载，我们提供一个月的试用时间！</div>';
+		$('#displayArea').append(html);
+}
 
 
+function newPreviewWindow(venderId){
+	
+	//调用函数居中窗口
+	centerPopup();   
+	//调用函数加载窗口
+	loadPopup();   
+	
+	//初始化flash
+	initFlash(venderId);
+	
+	//默认显示的标准版
+	showSwf('standarddemoDiv');
+	
+}
 
+//初始化：是否开启DIV弹出窗口功能
+//0 表示开启; 1 表示不开启;
+var popupStatus = 0;
+
+//使用Jquery加载弹窗 
+function loadPopup(){   
+	//仅在开启标志popupStatus为0的情况下加载  
+	if(popupStatus==0){   
+	$("#backgroundPopup").css({   
+	"opacity": "0.7"  
+	});   
+	$("#backgroundPopup").fadeIn("slow");   
+	$("#popupContact").fadeIn("slow");   
+	popupStatus = 1;   
+	} 
+}  
+
+//使用Jquery去除弹窗效果 
+function disablePopup(){   
+	//仅在开启标志popupStatus为1的情况下去除
+	if(popupStatus==1){   
+	$("#backgroundPopup").fadeOut("slow");   
+	$("#popupContact").fadeOut("slow");   
+	popupStatus = 0;   
+	}   
+}  
+
+//将弹出窗口定位在屏幕的中央
+function centerPopup(){   
+	//获取系统变量
+	var windowWidth = document.documentElement.clientWidth;   
+	var windowHeight = document.documentElement.clientHeight;   
+	var popupHeight = $("#popupContact").height();   
+	var popupWidth = $("#popupContact").width();   
+	//居中设置   
+	$("#popupContact").css({   
+	"position": "absolute",   
+	"top": windowHeight/2-popupHeight/2,   
+	"left": windowWidth/2-popupWidth/2   
+	});   
+	//以下代码仅在IE6下有效
+	  
+	$("#backgroundPopup").css({   
+	"height": windowHeight   
+	});   
+}
+
+function initFlash(venderId){
+	createSWFById('freedemoDiv',venderId,288,48,"free");
+	createSWFById('standarddemoDiv',venderId,250,250,"standard");	
+	createSWFById('upgradedemoDiv',venderId,500,500,"upgrade");
+	createSWFById('advanceddemoDiv',venderId,1000,300,"advanced");
+	
+//divId,venderId,width,height,free
+}
+
+
+function createSWFById(divId, accountId, width, height, version){
+           
+            var flashvars = {};                                                         
+            flashvars.runningMode = "debug";                      
+            flashvars.visualWidth = width;                                    
+            flashvars.visualHeight = height;                                   
+            flashvars.accountId = accountId;            
+            flashvars.dataType = "network";
+            flashvars.versionType = version;                       
+            flashvars.effectMode = "random";           	
+           	flashvars.stayTime = 3;
+           	flashvars.host = "localhost:8080";
+            var swfVersionStr = "10.2.0";           
+            var xiSwfUrlStr = "js/playerProductInstall.swf";             
+            var params = {};
+            params.quality = "high";
+            params.bgcolor = "#ffffff";
+            params.allowscriptaccess = "sameDomain";
+            params.allowfullscreen = "true";
+            var attributes = {};
+            attributes.id = divId;
+            attributes.name = divId;
+            attributes.align = "middle";
+            swfobject.embedSWF("js/MiniAds.swf", divId, flashvars.visualWidth, flashvars.visualHeight, swfVersionStr, xiSwfUrlStr,flashvars, params, attributes);            
+            swfobject.createCSS("#"+divId, "display:none;text-align:left;");	
+}
+
+function showSwf(divId){
+  swfobject.createCSS("#"+divId, "display:block;text-align:left;");
+}
 
