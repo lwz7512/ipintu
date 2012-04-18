@@ -663,11 +663,7 @@ public class ApiAdaptor {
 		return JSONObject.fromObject(ad).toString();
 	}
 
-	public String updateAdsById(String adId, String publisher, String type, String priority, String startTime, String endTime, String content, String link) {
-		String imgPath = "";
-		if(type.equals("image")){
-			imgPath = adImgPath;
-		}
+	public String updateAdsById(String adId, String publisher, String type, String priority, String startTime, String endTime, String content, String link, String imgPath) {
 		String res = adService.updateAdsById(adId,publisher,type,imgPath,priority,startTime,endTime,content,link);
 		return res;
 	}

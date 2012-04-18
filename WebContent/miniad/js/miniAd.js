@@ -515,7 +515,7 @@ function createSWFById(divId, accountId, width, height, version){
             flashvars.versionType = version;                       
             flashvars.effectMode = "random";           	
            	flashvars.stayTime = 3;
-           	flashvars.host = "localhost:8080";
+          // 	flashvars.host = "localhost:8080";
             var swfVersionStr = "10.2.0";           
             var xiSwfUrlStr = "js/playerProductInstall.swf";             
             var params = {};

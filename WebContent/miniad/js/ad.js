@@ -199,7 +199,7 @@ function createEditWindow(result,venderId){
 	$("#endTime").val(result.endTime);
 	$("#content").val(result.content);
 	$("#link").val(result.link);
-	$("#imgPath").val("");
+	$("#imgPath").val(result.imgPath);
 }
 
 function bindSelect(){
@@ -236,8 +236,12 @@ function updateAd(adId){
 	var content = $("#content").attr("value");
 	var link = $("#link").attr("value");
 	var venderId = $("#venderId").attr("value");
+	var imgPath = $("#imgPath").attr("value");
 	if(type == "image"){
 		content = "";
+	}
+	if(type == "text"){
+		imgPath = "";
 	}
 	if(flag){
 		$.post('/ipintu/pintuapi', {
@@ -249,6 +253,7 @@ function updateAd(adId){
 			'startTime' : startTime,
 			'endTime' : endTime,
 			'content' : content,
+			'imgPath' : imgPath,
 			'link' : link
 		}, 
 	//回调函数
@@ -321,22 +326,25 @@ function checkAd(){
 	var imgPath = $("#imgPath").attr("value");
 	var venderId = $("#venderId").attr("value");
 	var link = $("#link").attr("value");
-	if(type == "text"){
-
-		if(venderId==null || venderId=="" || type == null || type == ""  || priority == null || priority == ""
-			|| content == ""|| content ==null || startTime == null || startTime == "" || endTime == null || endTime == ""){
-				return false;
-		}
+	
+	if(type=="text"){
+	
+			if(venderId==null || venderId=="" || type == null || type == ""  || priority == null || priority == ""
+				 || startTime == null || startTime == "" || endTime == null || endTime == ""|| content == ""|| content ==null){
+					return false;
+			}
+	
 	}else{
-		if(imgPath == null || imgPath == ""){
-			  $('#imgPrompt').attr("style","display:block");
-			  $("#imgPrompt").html("<font color='red'>提示：请选择图片并上传</font>");
-			  return false;
-		}
-		if(venderId==null || venderId=="" || type == null || type == ""  || priority == null || priority == ""
-			 || startTime == null || startTime == "" || endTime == null || endTime == ""){
-				return false;
-		}
+			if(imgPath == null || imgPath == ""){
+				  $('#imgPrompt').attr("style","display:block");
+				  $("#imgPrompt").html("<font color='red'>提示：请选择图片并上传</font>");
+				  return false;
+			}
+			if(venderId==null || venderId=="" || type == null || type == ""  || priority == null || priority == ""
+				|| startTime == null || startTime == "" || endTime == null || endTime == ""){
+				alert(content);
+					return false;
+			}
 	}
 	return true;
 }

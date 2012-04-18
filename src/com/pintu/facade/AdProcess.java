@@ -120,7 +120,8 @@ public class AdProcess {
 			String endTime = req.getParameter("endTime");
 			String content = req.getParameter("content");
 			String link = req.getParameter("link");
-			String result = apiAdaptor.updateAdsById(adId,publisher,type,priority,startTime,endTime,content,link);
+			String imgPath = req.getParameter("imgPath");
+			String result = apiAdaptor.updateAdsById(adId,publisher,type,priority,startTime,endTime,content,link,imgPath);
 			log.debug(result);
 			pw.print(result);
 			pw.close();
