@@ -17,8 +17,8 @@ li{list-style:none;display:inline-block;}
 #btmDiv{width:1000px;margin:20px 0 0 0;color:#111111;}
 #btmDiv #leftDiv{float:left; margin-left:50px; margin-top:15px; margin-right:15px; width:420px; height:170px;}
 #btmDiv #rightDiv{float:right;margin-left:15px;  margin-top:15px; margin-right:50px; width:420px;height:170px;}
-#btmDiv #footDiv{margin-left:52px;width:896px; text-align:center; background-image: url("../imgs/shadow.png");}
-#footDiv ul{margin-top:50px;}
+#btmDiv #footDiv{margin-left:52px; margin-top:55px;width:896px;text-align:center;background-image: url("../imgs/shadow.png");}
+#btmDiv ul{margin-top:10px;}
 
 body {
 	background-image: url("../imgs/paper104.png") ;
@@ -69,7 +69,7 @@ table.dataintable {
 
 table.dataintable thead tr {
     font: 14px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; 
-	color: #666666; 
+	color: #003371; 
 /* 	border: 1px solid #C1DAD7;  */
     BORDER-TOP: #e9f1f6 2px solid; 
     BORDER-LEFT: #e0eee8 2px solid; 
