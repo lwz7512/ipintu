@@ -44,7 +44,7 @@ public class AdDownloadServlet extends HttpServlet{
 		
 		String fileFolder = miniadPath;
 		String zipFile = AdConst.miniadzip;
-		String destFile = tempzipPath+"\\"+zipFile;
+		String destFile = tempzipPath+File.separator+zipFile;
 		String modifyFile = AdConst.modifyFile;
 		
 		//修改内容并打包
@@ -67,7 +67,7 @@ public class AdDownloadServlet extends HttpServlet{
 			response.getWriter().write(sb.toString());
 		}
 		// 以下是文件名的完整路径，具体根据情况需要自己在这里处理一下了
-		String filePath = path.getAbsoluteFile().getParent() +"\\"+ file;
+		String filePath = path.getAbsoluteFile().getParent() +File.separator+ file;
 		if (logger.isDebugEnabled()) {
 			StringBuilder sb = new StringBuilder("filename:").append(file)
 					.append(",file absolute path:").append(filePath);

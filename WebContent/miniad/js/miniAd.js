@@ -402,36 +402,43 @@ function generateAdDownload(venderName,venderId){
 		var local='local';
 		var web='network';
 		
-		var para = "venderId="+venderId+"&version="+free+"&dataSource="+local;
-		html+='<tbody><tr><td>免费版</td><td><a href="/ipintu/download_center.do?'+para+'">点击下载</a></td>';
+		var para = "('"+venderId+"','"+free+"','"+local+"')";
+		html+='<tbody><tr><td>免费版</td><td><a href="javascript:downloadZip'+para+'">点击下载</a></td>';
 		
-		para="venderId="+venderId+"&version="+free+"&dataSource="+web;
-		html+='<td><a href="/ipintu/download_center.do?'+para+'">点击下载</a></td></tr>';
+		para = "('"+venderId+"','"+free+"','"+web+"')";
+		html+='<td><a href="javascript:downloadZip'+para+'">点击下载</a></td></tr>';
 		
-		para="venderId="+venderId+"&version="+standard+"&dataSource="+local;
-		html+='<tr><td>标准版</td><td><a href="/ipintu/download_center.do?'+para+'">点我下载</a></td>';
+		para = "('"+venderId+"','"+standard+"','"+local+"')";
+		html+='<tr><td>标准版</td><td><a href="javascript:downloadZip'+para+'">点我下载</a></td>';
 		
-		para="venderId="+venderId+"&version="+standard+"&dataSource="+web;
-		html+='<td><a href="/ipintu/download_center.do?'+para+'">点击下载</a></td></tr>';
+		para = "('"+venderId+"','"+standard+"','"+web+"')";
+		html+='<td><a href="javascript:downloadZip'+para+'">点击下载</a></td></tr>';
 		
-		para="venderId="+venderId+"&version="+upgrade+"&dataSource="+local;
-		html+='<tr><td>升级版</td><td><a href="/ipintu/download_center.do?'+para+'">点击下载</a></td>';
+		para = "('"+venderId+"','"+upgrade+"','"+local+"')";
+		html+='<tr><td>升级版</td><td><a href="javascript:downloadZip'+para+'">点击下载</a></td>';
 		
-		para="venderId="+venderId+"&version="+upgrade+"&dataSource="+web;
-		html+='<td><a href="/ipintu/download_center.do?'+para+'">点击下载</a></td></tr>';
+		para = "('"+venderId+"','"+upgrade+"','"+web+"')";
+		html+='<td><a href="javascript:downloadZip'+para+'">点击下载</a></td></tr>';
 		
-		para="venderId="+venderId+"&version="+advanced+"&dataSource="+local;
-		html+='<tr><td>高级版</td><td><a href="/ipintu/download_center.do?'+para+'">点击下载</a></td>';
+		para = "('"+venderId+"','"+advanced+"','"+local+"')";
+		html+='<tr><td>高级版</td><td><a href="javascript:downloadZip'+para+'">点击下载</a></td>';
 		
-	    para="venderId="+venderId+"&version="+advanced+"&dataSource="+web;
-		html+='<td><a href="/ipintu/download_center.do?'+para+'">点击下载</a></td></tr>';
+	    para = "('"+venderId+"','"+advanced+"','"+web+"')";
+		html+='<td><a href="javascript:downloadZip'+para+'">点击下载</a></td></tr>';
 		
 		html+='</tbody></table>';
-		html+='<div class="note">说明：本地版与网络版的主要区别是数据来源不同，用户可自行选择版本下载，我们提供一个月的试用时间！</div>';
+		html+='<div class="note">说明：本地版与网络版的主要区别是数据来源不同，新注册的用户默认是免费版，请选择对应版本下载，以保证显示效果！</div>';
 		$('#displayArea').append(html);
 }
 
+function downloadZip(venderId,version,dataSource){
+	window.location.href="/ipintu/download_center.do?venderId="+venderId+"&version="+version+"&dataSource="+dataSource;
+}
 
+
+
+
+//创建广告图片预览窗口
 function newPreviewWindow(venderId){
 	
 	//调用函数居中窗口
@@ -443,7 +450,7 @@ function newPreviewWindow(venderId){
 	initFlash(venderId);
 	
 	//默认显示的标准版
-	showSwf('standarddemoDiv');
+	showSwf('freedemoDiv');
 	
 }
 
@@ -468,8 +475,8 @@ function loadPopup(){
 function disablePopup(){   
 	//仅在开启标志popupStatus为1的情况下去除
 	if(popupStatus==1){   
-	$("#backgroundPopup").fadeOut("slow");   
-	$("#popupContact").fadeOut("slow");   
+	$("#backgroundPopup").fadeOut();   
+	$("#popupContact").fadeOut();   
 	popupStatus = 0;   
 	}   
 }  
