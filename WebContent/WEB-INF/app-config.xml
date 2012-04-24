@@ -31,6 +31,7 @@
 	<bean id="appStarter" class="com.pintu.facade.AppStarter">
 		<property name="apiAdaptor" ref="apiAdaptor" />
 		<property name="assistProcess" ref="assistProcess" />
+		<property name="adProcess" ref="adProcess" />
 		<property name="taskStarter" ref="taskStarter" />
 		<property name="synchProcess" ref="synchProcess" />
 		<property name="dailySync" ref="dailySync" />
@@ -44,6 +45,10 @@
 	<bean id="assistProcess" class="com.pintu.facade.AssistProcess">
 		<property name="apiAdaptor" ref="apiAdaptor" />
 	</bean>
+	<bean id="adProcess" class="com.pintu.facade.AdProcess">
+		<property name="apiAdaptor" ref="apiAdaptor" />
+	</bean>
+	
 	<bean id="taskStarter" class="com.pintu.jobs.TaskStarter">
 		<property name="dbVisitor" ref="dbAcess" />
 		<property name="cacheVisitor" ref="cacheAccess" />
@@ -54,6 +59,7 @@
 	<bean id="adService" class="com.pintu.ads.facade.AdsServiceImplement">
 		<property name="adDbVisitor" ref="adDbAccess" />
 		<property name="systemConfigurer" ref="systemConfigurer" />
+		<property name="propertyConfigurer" ref="propertyConfigurer" />
 <!-- 		<property name="imgProcessor" ref="imgProcessor" /> -->
 	</bean>
 	

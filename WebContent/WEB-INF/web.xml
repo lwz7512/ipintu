@@ -76,7 +76,7 @@
             <param-value>/WEB-INF/uploadFile</param-value> 
         </init-param> 
         <init-param> 
-            <param-name>temppath</param-name> 
+            <param-name>tempzippath</param-name> 
             <param-value>/WEB-INF/temp</param-value> 
         </init-param>    	
     </servlet>  
@@ -89,5 +89,22 @@
     	<servlet-name>ImageUploader</servlet-name>
     	<url-pattern>/upload</url-pattern>
     </servlet-mapping>
+    
+<servlet>  
+    <servlet-name>downloadServer</servlet-name>  
+    <servlet-class>com.pintu.ads.facade.AdDownloadServlet</servlet-class>  
+    <init-param> 
+            <param-name>miniadpath</param-name> 
+            <param-value>/WEB-INF/miniadplugin</param-value> 
+    </init-param> 
+    <init-param> 
+        <param-name>tempzippath</param-name> 
+        <param-value>/WEB-INF/temp</param-value> 
+    </init-param> 
+</servlet>  
+<servlet-mapping>  
+    <servlet-name>downloadServer</servlet-name>  
+    <url-pattern>/download_center.do</url-pattern>  
+</servlet-mapping>  
     
 </web-app>

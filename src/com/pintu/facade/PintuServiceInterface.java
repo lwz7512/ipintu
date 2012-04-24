@@ -255,6 +255,7 @@ public interface PintuServiceInterface {
 
 
 
+
 	// ANYMORE NECESSARY???
 
 	// ************************ 以下为客户端2.0版本功能 *********************************

@@ -1,0 +1,126 @@
+@charset "UTF-8";
+*{border:0px; margin:0px; padding:0px; text-align:center;}
+li{list-style:none;display:inline-block;}
+.clearDiv{clear:both;}
+#topDiv{width:1000px;margin:-35px auto;}
+#logoImg{margin-left:20px; margin-top:35px;margin-bottom:5px;float:left;}
+#menuDiv{margin-right:50px;margin-top:120px;float:right; }
+#menuDiv li{float:center; padding: 0px 0px 0px 20px;}
+
+#menuDiv a{font-size: 14px; font-weight: bold ; color: #111111; text-decoration: none;}
+#menuDiv a:hover {color: #0072ff; text-decoration: none;}
+#menuDiv img {vertical-align: middle;margin-left:15px;}
+
+#demoDiv{width:1000px; height:500px;text-align:center;clear:both; margin: 0 auto;}
+#demoDiv img {vertical-align: middle;}
+
+#btmDiv{width:1000px;margin:20px 0 0 0;color:#111111;}
+#btmDiv #leftDiv{float:left; margin-left:50px; margin-top:15px; margin-right:15px; width:420px; height:170px;}
+#btmDiv #rightDiv{float:right;margin-left:15px;  margin-top:15px; margin-right:50px; width:420px;height:170px;}
+#btmDiv #footDiv{margin-left:52px; margin-top:55px;width:896px;text-align:center;background-image: url("../imgs/shadow.png");}
+#btmDiv ul{margin-top:10px;}
+
+body {
+	background-image: url("../imgs/paper104.png") ;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	font-variant:normal;
+	line-height: 180%;
+}
+
+a {
+	color: #111111;
+	text-decoration: none;
+	text-shadow:#ffffff 1px 1px 0;
+}
+a:hover {
+	color: #0072ff;
+	text-decoration: none;
+}
+
+p.footer{
+	margin-top: 20px;
+	text-align:center;
+	margin-bottom:60px;
+}
+p.info{
+	text-align:left;
+}
+
+.caption {
+    font: bold 25px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; 
+	color: #003371; 
+	letter-spacing: 2px; 
+	text-align: center; 
+	text-shadow:#ffffff 1.5px 1.5px 0;
+	margin-top:50px;
+}
+
+table.dataintable {
+    font-family:Arial, Helvetica, sans-serif;
+    margin-top:40px;
+    border-collapse:collapse;
+    width:100%;
+    margin-left: auto;
+	margin-right: auto;
+    border:1px solid #888;
+    }
+
+
+table.dataintable thead tr {
+    font: 14px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; 
+	color: #003371; 
+/* 	border: 1px solid #C1DAD7;  */
+    BORDER-TOP: #e9f1f6 2px solid; 
+    BORDER-LEFT: #e0eee8 2px solid; 
+    BORDER-RIGHT: #e0eee8 2px solid; 
+    BORDER-BOTTOM: #e9f1f6 2px solid; 
+	letter-spacing: 2px; 
+	text-align: center; 
+	border-style: outset;border-style: 
+    }
+
+table.dataintable thead td{
+    BORDER-RIGHT: #ffffff 2px solid; 
+    BORDER-LEFT: #e0eee8 2px solid;
+    border-style: outset;
+}
+
+table.dataintable thead td.cols0{
+		background: #96BEC9 no-repeat;  
+}
+
+table.dataintable thead td.cols1{
+		background: #CAFCD8 no-repeat;  
+}
+table.dataintable thead td.cols2{
+		background: #F7E967 no-repeat;  
+}
+table.dataintable thead td.cols3{
+		background: #A9CF54 no-repeat;  
+}
+table.dataintable thead td.cols4{
+		background: #588F27 no-repeat;  
+}
+
+
+table.dataintable tbody td {
+/* 	border: 1px solid #C1DAD7;  */
+	background: #dbe8f0; 
+	font-size:11px; 
+	text-align: center; 
+	padding: 3px 3px 3px 6px; 
+	color: #4f6b72; 
+    BORDER-RIGHT: #ffffff 2px solid; 
+    BORDER-LEFT: #e0eee8 2px solid; 
+    border-style: outset;
+    }
+    
+table.dataintable tbody tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
+  background-color: #fafafa;
+}
+
+
+
+
+

@@ -16,6 +16,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
 
 import com.pintu.ads.beans.Ads;
+import com.pintu.ads.beans.Vender;
 import com.pintu.ads.facade.AdsServiceInterface;
 import com.pintu.beans.Applicant;
 import com.pintu.beans.Event;
@@ -618,9 +619,9 @@ public class ApiAdaptor {
 	
 
 	//爱品图微广告
-	public String getTodayAds() {
+	public String getTodayAds(String userId) {
 		String today = PintuUtils.getFormatNowTime();
-		 List<Ads> adList = adService.getTodayAds(today);
+		 List<Ads> adList = adService.getTodayAds(today,userId);
 		 JSONArray jsonArray = JSONArray.fromCollection(adList);
 		 processPath(jsonArray);
 		 return jsonArray.toString();
@@ -638,8 +639,8 @@ public class ApiAdaptor {
 		}
 	}
 
-	public String searchAds(String keys, String time) {
-		 List<Ads> adList = adService.searchAds(keys ,time);
+	public String searchAds(String keys, String time, String venderId) {
+		 List<Ads> adList = adService.searchAds(keys ,time ,venderId);
 		 JSONArray jsonArray = JSONArray.fromCollection(adList);
 		 processPath(jsonArray);
 		 return jsonArray.toString();
@@ -652,8 +653,8 @@ public class ApiAdaptor {
 		return res;
 	}
 
-	public String createAds(String vender, String type, String priority, String startTime, String endTime, String content, String link) {
-		String res = adService.createAds(vender,type,adImgPath,priority,startTime,endTime,content,link);
+	public String createAds(String publisher, String type, String priority, String startTime, String endTime, String content, String link) {
+		String res = adService.createAds(publisher,type,adImgPath,priority,startTime,endTime,content,link);
 		return res;
 	}
 
@@ -662,12 +663,8 @@ public class ApiAdaptor {
 		return JSONObject.fromObject(ad).toString();
 	}
 
-	public String updateAdsById(String adId, String vender, String type, String priority, String startTime, String endTime, String content, String link) {
-		String imgPath = "";
-		if(type.equals("image")){
-			imgPath = adImgPath;
-		}
-		String res = adService.updateAdsById(adId,vender,type,imgPath,priority,startTime,endTime,content,link);
+	public String updateAdsById(String adId, String publisher, String type, String priority, String startTime, String endTime, String content, String link, String imgPath) {
+		String res = adService.updateAdsById(adId,publisher,type,imgPath,priority,startTime,endTime,content,link);
 		return res;
 	}
 	
@@ -688,6 +685,55 @@ public class ApiAdaptor {
 
 	public void getImgByRelativePath(String relativePath, HttpServletResponse res) {
 		pintuService.getImgByRelativePath(relativePath, res);
+	}
+
+	public String getExistVender(String email, String pwd) {
+		String result = adService.getExistVender(email,pwd);
+		return result;
+	}
+
+	public int changePwd(String newPwd, String venderId) {
+		int result = adService.changePwd(newPwd,venderId);
+		return result;
+	}
+
+	public String searchVenders(String keys) {
+		 List<Vender> adList = adService.searchVenders(keys);
+		 return JSONArray.fromCollection(adList).toString();
+	}
+
+	public String getVendersById(String venderId) {
+		Vender vender = adService.getVendersById(venderId);
+		return JSONObject.fromObject(vender).toString();
+	}
+
+	public String updateVendersById(String venderId, String name, String email,
+			String serviceLevel, String effectiveTime, String deadTime,
+			String deployDNS, String enable) {
+		String res = adService.updateVendersById(venderId,name,email,serviceLevel,effectiveTime,deadTime,deployDNS,enable);
+		return res;
+	}
+
+	public String createVenders(String name, String email, String serviceLevel,
+			String effectiveTime, String deadTime, String deployDNS, String enable) {
+		String res = adService.createVenders(name,email,serviceLevel,effectiveTime,deadTime,deployDNS,enable);
+		return res;
+	}
+
+	public String validateVender(String venderId) {
+		String flag = adService.validateVender(venderId);
+		return flag;
+	}
+
+	public String registVenders(String name, String email, String pwd,
+			String deployDNS) {
+		String res = adService.registVenders(name,email,pwd,deployDNS);
+		return res;
+	}
+
+	public int checkoutRegister(String email) {
+		int res = adService.checkoutRegiser(email); 
+		return res;
 	}
 
 

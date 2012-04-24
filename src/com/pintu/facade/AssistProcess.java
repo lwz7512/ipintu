@@ -42,7 +42,7 @@ public class AssistProcess {
 			PrintWriter pw = res.getWriter();
 			String result= apiAdaptor.getApplicant();
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 
 		} else if (action.equals(AppStarter.ACCEPT)) {
 			// 管理员处理申请，审核后发带邀请码的链接的为内容的邮件~
@@ -69,7 +69,7 @@ public class AssistProcess {
 			}else{
 				String result = apiAdaptor.acceptApply(account, url, opt);
 				log.debug(result);
-				pw.println(result);
+				pw.print(result);
 				pw.close();
 			}
 			
@@ -103,7 +103,7 @@ public class AssistProcess {
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getLatestTPicDesc();
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 
 		} else if (action.equals(AppStarter.REVIEWPICTURE)) {
@@ -113,7 +113,7 @@ public class AssistProcess {
 			String creationTime = req.getParameter("creationTime");
 			String result = apiAdaptor.reviewPictureById(picId, creationTime);
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 
 		} else if (action.equals(AppStarter.GETGALLERYBYTIME)) {
@@ -124,7 +124,7 @@ public class AssistProcess {
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getGalleryByTime(startTime, endTime);
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 
 		} else if (action.equals(AppStarter.GETPICDETAIL)) {
@@ -187,7 +187,7 @@ public class AssistProcess {
 
 			String result = apiAdaptor.sendMessage(sender, receiver, content,source);
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 
 		} else if (action.equals(AppStarter.GETUSERMSG)) {
@@ -198,7 +198,7 @@ public class AssistProcess {
 			String userId = req.getParameter("userId");
 			String result = apiAdaptor.getUserMsg(userId);
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 
 		} else if (action.equals(AppStarter.CHANGEMSGSTATE)) {
@@ -212,7 +212,7 @@ public class AssistProcess {
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getHotPicture();
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 
 		} else if (action.equals(AppStarter.GETUSERESTATE)) {
@@ -222,7 +222,7 @@ public class AssistProcess {
 			String userId = req.getParameter("userId");
 			String result = apiAdaptor.getUserEstate(userId);
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 
 		} else if (action.equals(AppStarter.MARKTHEPIC)) {
@@ -232,7 +232,7 @@ public class AssistProcess {
 			String userId = req.getParameter("userId");
 			String picId = req.getParameter("picId");
 			String result = apiAdaptor.markFavoritePic(userId, picId);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 
 		} else if (action.equals(AppStarter.DELETEONEFAVOR)) {
@@ -241,7 +241,7 @@ public class AssistProcess {
 			PrintWriter pw = res.getWriter();
 			String fId = req.getParameter("fId");
 			String result = apiAdaptor.deleteOneFavorite(fId);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 
 		} else if (action.equals(AppStarter.GETFAVORITEPICS)) {
@@ -255,7 +255,7 @@ public class AssistProcess {
 			}
 			String result = apiAdaptor.getFavorTpics(userId, pageNum);
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 
 		} else if (action.equals(AppStarter.GETTPICSBYUSER)) {
@@ -269,7 +269,7 @@ public class AssistProcess {
 			}
 			String result = apiAdaptor.getTpicsByUser(userId, pageNum);
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 
 		} else if (action.equals(AppStarter.GETGIFTS)) {
@@ -278,7 +278,7 @@ public class AssistProcess {
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getExchangeableGifts();
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 
 		} else if (action.equals(AppStarter.GETEVENTS)) {
@@ -287,7 +287,7 @@ public class AssistProcess {
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getCommunityEvents();
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 
 		} else  if(action.equals(AppStarter.COLLECTSTATISTICS)){
@@ -295,7 +295,7 @@ public class AssistProcess {
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.collectStatistics();
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 
 		} else  if(action.equals(AppStarter.CLASSICALSTATISTICS)){
@@ -303,7 +303,7 @@ public class AssistProcess {
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.classicalStatistics();
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 
 		} else  if(action.equals(AppStarter.GETGALLERYFORWEB)){
@@ -315,7 +315,7 @@ public class AssistProcess {
 			}
 			String result = apiAdaptor.getGalleryForWeb(pageNum);
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 			
 		}else if(action.equals(AppStarter.SEARCHBYTAG)){
@@ -324,7 +324,7 @@ public class AssistProcess {
 			String tags = req.getParameter("tags");
 			String result = apiAdaptor.searchByTag(tags);
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 			
 			//取得最热标签前三
@@ -333,7 +333,7 @@ public class AssistProcess {
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getHotTags();
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 			
 		}else if(action.equals(AppStarter.GETSYSTEMTAGS)){
@@ -341,7 +341,7 @@ public class AssistProcess {
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.geSystemTags();
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 			
 		}else if (action.equals(AppStarter.DELETEONECMT)) {
@@ -350,7 +350,7 @@ public class AssistProcess {
 				PrintWriter pw = res.getWriter();
 				String sId = req.getParameter("sId");
 				String result = apiAdaptor.deleteOneCmt(sId);
-				pw.println(result);
+				pw.print(result);
 				pw.close();
 
 		}else if (action.equals(AppStarter.DELETEONEPIC)) {
@@ -359,7 +359,7 @@ public class AssistProcess {
 			PrintWriter pw = res.getWriter();
 			String pId = req.getParameter("pId");
 			String result = apiAdaptor.deleteOnePic(pId);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 
 		}else if(action.equals(AppStarter.GETTHUMBNAILSBYTAG)){
@@ -372,7 +372,7 @@ public class AssistProcess {
 			}
 			String result = apiAdaptor.getThumbnailsByTag(tagId,pageNum);
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 		
 		}else if(action.equals(AppStarter.PICDARENSTATISTICS)){
@@ -380,7 +380,7 @@ public class AssistProcess {
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getPicDaren();
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 			
 		}else if(action.equals(AppStarter.CMTDARENSTATISTICS)){
@@ -388,7 +388,7 @@ public class AssistProcess {
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getCmtDaren();
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 		}else if(action.equals(AppStarter.GETPICCOOLCOUNT)){
 			res.setContentType("text/plain;charset=UTF-8");
@@ -396,7 +396,7 @@ public class AssistProcess {
 			String picId = req.getParameter("pId");
 			String result = apiAdaptor.getPicCoolCount(picId);
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 			
 		}else if(action.equals(AppStarter.CONFIRM)){
@@ -406,7 +406,7 @@ public class AssistProcess {
 			String password = req.getParameter("password");
 			int result = apiAdaptor.confirmPassword(userId,password);
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 			
 			
@@ -417,7 +417,7 @@ public class AssistProcess {
 			String newPwd = req.getParameter("newPwd");
 			String result = apiAdaptor.modifyPasswordById(userId,newPwd);
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 		
 		}else if(action.equals(AppStarter.GETRANDGALLERY)){
@@ -425,7 +425,7 @@ public class AssistProcess {
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getRandGallery();
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close(); 
 			
 		}else if(action.equals(AppStarter.ACTIVEUSERRANKING)){
@@ -433,7 +433,7 @@ public class AssistProcess {
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getActiveUserRanking();
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close(); 
 			
 		}else{

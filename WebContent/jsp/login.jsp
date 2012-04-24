@@ -51,7 +51,7 @@ function check(){
 				//转到管理员页面admin.jsp
 				res = res.split("@");
 				userId = res[1];
-				window.location.replace("<%=request.getContextPath()%>/jsp/admin.jsp?userId="+userId);
+				window.location.replace("<%=request.getContextPath()%>/jsp/accept.jsp?userId="+userId);
 			}else if( res == "0" ){
 				 $('#prompt').show().html('*密码不正确');
 				 $("#password").val("");

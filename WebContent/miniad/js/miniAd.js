@@ -6,402 +6,539 @@ document.onkeydown = function (e) {
 	} 
 } 
 
-function bindSelect(){
-	var type = $("#type").attr("value");
-	 $('#adImg').attr("style","display:none");
-	 $('#adTxt').attr("style","visibility:hidden");
-	 $('#imgPrompt').attr("style","display:none");
-	 $('#adPrompt').attr("style","display:none");
-	if(type == "image"){
-		 $('#adImg').attr("style","display:block");
-	}else{
-		 $('#adTxt').attr("style","visibility:visible");
+//加载页面的时候去检查cookie
+window.onload = function(){
+
+	var action =request("do"); 
+	if(action == "regist"){
+		showRegisterWindow();
+		return;
 	}
+
+    //分析cookie值，看是否存在
+//    hideLoginWindow();
+    var idValue = getCookieValue("venderId");
+    var nameValue = getCookieValue("venderName");
+	var roleValue = getCookieValue("role");
+    //验证用户存在就自动显示所需页面，否则要重新登录
+    if(idValue != "" && nameValue !="" && roleValue != ""){
+    	generateOperatePage(nameValue,idValue,roleValue);
+    }else{
+	    //登录
+	    showLoginWindow();
+	}
+    
 }
 
-function getAllAds(){
-	$("#adList").html("");
-	$.post('/ipintu/pintuapi', {
-		'method'  : 'searchAds',
-		'keys' : "",
-		'time' : ""
-	}, 
-	//回调函数
-	function (result) {
-		if(result.length > 0){
-			for( key in result ){
-				
-				generateNewTr(key);
-			
-				generateNewTd(parseInt(key)+1,key);
-				generateNewTd(result[key].vender,key);
-				generateNewTd(result[key].type,key);
-				generateContentTd(result[key].type,result[key].content,result[key].imgPath,result[key].link,key);
-				generateNewTd(result[key].createTime,key);
-				generateNewTd(result[key].startTime,key);
-				generateNewTd(result[key].endTime,key);
-				generateNewTd(result[key].priority,key);
-				
-				generateOperate(result[key].id,key);
-			}
-		}
-	}, "json");
+function request(paras)
+{ 
+    var url = location.href; 
+    var paraString = url.substring(url.indexOf("?")+1,url.length).split("&"); 
+    var paraObj = {};
+    for (var i=0; j=paraString[i]; i++){ 
+    	paraObj[j.substring(0,j.indexOf("=")).toLowerCase()] = j.substring(j.indexOf("=")+1,j.length); 
+    } 
+    var returnValue = paraObj[paras.toLowerCase()]; 
+    if(typeof(returnValue)=="undefined"){ 
+    	return ""; 
+    }else{ 
+    	return returnValue; 
+    } 
 }
 
-//按条件查询
-function searchAds(){
-	var keys = $("#keys").attr("value");
-	var time =  $("#time").attr("value");
-	if((keys ==null || keys =="")&&(time ==null || time=="")){
+
+//验证邮箱
+function checkEmail(){
+	var emailStr = $("#email").attr("value");
+	var emailPat = new RegExp(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/g);
+	if (!emailPat.test(emailStr)) {
+		$('#prompt').html('邮箱格式不正确');
 		return false;
-	}
-	$("#adList").html("");
-	$.post('/ipintu/pintuapi', {
-		'method'  : 'searchAds',
-		'keys' : keys,
-		'time' : time
-	}, 
-	//回调函数
-	function (result) {
-		if(result.length > 0){
-			for( key in result ){
-				
-				generateNewTr(key);
-			
-				generateNewTd(parseInt(key)+1,key);
-				generateNewTd(result[key].vender,key);
-				generateNewTd(result[key].type,key);
-				generateContentTd(result[key].type,result[key].content,result[key].imgPath,result[key].link,key);
-				generateNewTd(result[key].createTime,key);
-				generateNewTd(result[key].startTime,key);
-				generateNewTd(result[key].endTime,key);
-				generateNewTd(result[key].priority,key);
-				
-				generateOperate(result[key].id,key);
-			}
-		}
-	}, "json");
-}
-
-//生成各tr
-function generateNewTr(key){
-	var adList = document.getElementById("adList");
-	var para = document.createElement("tr");
-	para.setAttribute("id","line"+key);
-	adList.appendChild(para);
-}
-
-//生成各td
-function generateNewTd(txt,key){
-	var tr = document.getElementById("line"+key);
-	var para = document.createElement("td");
-	var node = document.createTextNode(txt);
-	para.appendChild(node);
-	tr.appendChild(para);
-}
-
-function generateContentTd(type,content,imgPath,link,key){
-	var tr = document.getElementById("line"+key);
-	var para = document.createElement("td");
-	var a = document.createElement("a")
-	para.appendChild(a);
-	if(type == "text"){
-		var node = document.createTextNode(content);
-		a.appendChild(node);
-		a.setAttribute("href",link);
-	}else{
-		var img = document.createElement("img");
-		var local = '/ipintu/pintuapi?method=getImgByRelativePath&relativePath=';
-		img.setAttribute("src",local+imgPath);
-		img.setAttribute("height",36);
-		a.appendChild(img);
-		a.setAttribute("href",link);
-	}
-	tr.appendChild(para);
-}
-
-//生成 编辑和删除 选项
-function generateOperate(id,key){
-
-	var tr = document.getElementById("line"+key);
-	
-	var para = document.createElement("input");
-	para.setAttribute("id","adId"+key);
-	para.setAttribute("value",id);
-	para.setAttribute("type","hidden");
-	
-	var para1 = document.createElement("td");
-	var edit = document.createElement("img");
-	edit.setAttribute("src","imgs/edit.png");
-	var aEdit = document.createElement("a");
-	aEdit.setAttribute("href","javascript:getAdsById("+key+");");
-	aEdit.appendChild(edit);
-	para1.appendChild(aEdit);
-	para1.appendChild(para);
-	tr.appendChild(para1);
-	
-	var para2 = document.createElement("td");
-	var del = document.createElement("img");
-	del.setAttribute("src","imgs/del.png");
-	var aDel = document.createElement("a");
-	aDel.setAttribute("href","javascript:deleteAdsById("+key+");");
-	aDel.appendChild(del);
-	para2.appendChild(aDel);
-	aDel.appendChild(del);
-	para2.appendChild(para);
-	tr.appendChild(para2);
-}
-
-//删除
-function deleteAdsById(key){
-	if(confirmDel()){
-		var adId=$("#adId"+key).attr("value");
-		$.post('/ipintu/pintuapi', {
-			'method'  : 'deleteAdsById',
-			'adId' : adId
-		}, 
-		//回调函数
-		function (result) {
-			if(result.trim() == 'Operate Failed!'){
-				 alert("操作有误，请重试！");
-		     }
-		     //操作后刷新列表
-			 getAllAds();
-		});
-	}
-}
-
-function confirmDel(){
-	    if(confirm("确定要删除吗？删除将不能恢复！"))
-	   		 return true;
-	    else
-	   		 return false;
-}
-
-
-//编辑
-function getAdsById(key){
-	var adId=$("#adId"+key).attr("value");
-	//根据id查出广告详情并填充newAd用于修改
-	$.post('/ipintu/pintuapi', {
-		'method'  : 'getAdsById',
-		'adId' : adId
-	}, 
-	//回调函数
-	function (result) {
-		if(result != "[]"){
-			createEditWindow(result);
-		}else{
-			alert("获取广告详情有误，请重试！");
-		}
-	}, "json");
-}
-
-
-function createEditWindow(result){
-	$('#floatBoxBg').attr("style","display: block");
-	msgBox('editAd', '内容编辑');
-	$("#adId").val(result.id);
-	$("#vender").val(result.vender);
-	$("#type").val(result.type);
-	//这里加上根据type来判断是否图片框可用
-	bindSelect();
-	$("#priority").val(result.priority);
-	$("#startTime").val(result.startTime);
-	$("#endTime").val(result.endTime);
-	$("#content").val(result.content);
-	$("#link").val(result.link);
-	$("#imgPath").val("");
-}
-
-function newAdWindow(){
-	$('#floatBoxBg').attr("style","display: block");
-	$("#adId").val("");
-	$("#vender").val("");
-	$("#type").val("");
-	$("#priority").val("");
-	$("#startTime").val("");
-	$("#endTime").val("");
-	$("#content").val("");
-	$("#uploadify").val("");
-	$("#imgPath").val("");
-	$("#link").val("");
-	bindSelect();
-	msgBox('editAd', '新建广告');
-}
-
-
-function operateAd(){
-	var id = $("#adId").attr("value");
-	var type = $("#type").attr("value");
-	if(id == null || id==""){
-		createAd();
-	}else{
-		updateAd(id);
-	}
-}
-
-//编辑广告
-function updateAd(adId){
-	var flag = check();
-	var vender = $("#vender").attr("value");
-	var type =  $("#type").attr("value");
-	var priority = $("#priority").attr("value");
-	var startTime = $("#startTime").attr("value");
-	var endTime =  $("#endTime").attr("value");
-	var content = $("#content").attr("value");
-	var link = $("#link").attr("value");
-	if(type == "image"){
-		content = "";
-	}
-	if(flag){
-		$.post('/ipintu/pintuapi', {
-			'method'  : 'updateAdsById',
-			'adId' : adId,
-			'vender' : vender,
-			'type' : type,
-			'priority' : priority,
-			'startTime' : startTime,
-			'endTime' : endTime,
-			'content' : content,
-			'link' : link
-		}, 
-	//回调函数
-		function (result) {
-			if(result.trim() == 'Operate Failed!'){
-				 $('#adPrompt').attr("style","visibility:visible");
-	   			 $("#info").html("<font color='red'>提示：更新广告有误，请重试！</font>");
-//				 alert("操作有误，请重试！");
-		     }
-		     //操作后刷新列表
-			getAllAds();
-			 //关闭弹出窗口
-			 msgBox_close();
-		});
-	}else{
-		 $('#adPrompt').attr("style","visibility:visible");
-	   	 $("#info").html("<font color='red'>提示：填写广告有误，请重试！</font>");
-	}
-}
-
-//新建广告
-function createAd(){
-	var flag = check();
-	var vender = $("#vender").attr("value");
-	var type =  $("#type").attr("value");
-	var priority = $("#priority").attr("value");
-	var startTime = $("#startTime").attr("value");
-	var endTime =  $("#endTime").attr("value");
-	var content = $("#content").attr("value");
-	var link = $("#link").attr("value");
-	if(type == "image"){
-		content = "";
-	}
-	if(flag){
-		$.post('/ipintu/pintuapi', {
-			'method'  : 'createAds',
-			'vender' : vender,
-			'type' : type,
-			'priority' : priority,
-			'startTime' : startTime,
-			'endTime' : endTime,
-			'content' : content,
-			'link' : link
-		}, 
-		//回调函数
-		function (result) {
-			if(result.trim() == 'Operate Failed!'){
-				 $('#adPrompt').attr("style","visibility:visible");
-	   			 $("#info").html("<font color='red'>提示：创建广告有误，请重试！</font>");
-			 }
-			 //操作后刷新列表
-			getAllAds();
-			 //关闭弹出窗口
-			 msgBox_close();
-		});
-	}else{
-		 $('#adPrompt').attr("style","visibility:visible");
-	   	$("#info").html("<font color='red'>提示：填写广告有误，请重试！</font>");
-	}
-}
-
-
-//检查新广告字段是否全部填写
-function check(){
-	var vender = $("#vender").attr("value");
-	var type =  $("#type").attr("value");
-	var priority = $("#priority").attr("value");
-	var startTime = $("#startTime").attr("value");
-	var endTime =  $("#endTime").attr("value");
-	var content = $("#content").attr("value");
-	var imgPath = $("#imgPath").attr("value");
-	var link = $("#link").attr("value");
-	if(type == "text"){
-		if(vender == null || vender == "" || type == null || type == ""  || priority == null || priority == ""
-			|| content == ""|| content ==null || startTime == null || startTime == "" || endTime == null || endTime == ""){
-				return false;
-		}
-	}else{
-		if(imgPath == null || imgPath == ""){
-			  $('#imgPrompt').attr("style","display:block");
-			  $("#imgPrompt").html("<font color='red'>提示：请选择图片并上传</font>");
-			  return false;
-		}
-		if(vender == null || vender == "" || type == null || type == ""  || priority == null || priority == ""
-			 || startTime == null || startTime == "" || endTime == null || endTime == ""){
-				return false;
-		}
 	}
 	return true;
 }
 
- $(document).ready(function() {
-	  $("#uploadify").uploadify({
-	   'uploader'       : 'js/uploadify.swf',
-	   'script'         : '/ipintu/pintuapi',//servlet的路径,这是访问servlet 'scripts/uploadif' 
-	   'method'         :'POST',  //如果要传参数，就必须改为GET
-	   'cancelImg'      : 'imgs/cancel.png',
-       'buttonImg'      : 'imgs/select.png',
-	   'folder'         : 'WEB-INF/uploadFile/adsImg', //要上传到的服务器路径，
-	   'queueID'        : 'fileQueue',
-	   'auto'           : false, //选定文件后是否自动上传，默认false
-	   'multi'          : false, //是否允许同时上传多文件，默认false
-	   'simUploadLimit' : 1, //一次同步上传的文件数目  
-	   'sizeLimit'      : 19871202, //设置单个文件大小限制，单位为byte  
-	   'queueSizeLimit' : 3, //限制在一次队列中的次数（可选定几个文件）。默认值= 999，而一次可传几个文件有 simUploadLimit属性决定。
-	   'fileDesc'       : '支持格式:jpg,png或gif', //如果配置了以下的'fileExt'属性，那么这个属性是必须的  
-	   'fileExt'        : '*.jpg;*.gif;*.png',//允许的格式
-	   'scriptData'     :{'userId':$('#userId').val()}, // 多个参数用逗号隔开 'name':$('#name').val(),'num':$('#num').val(),'ttl':$('#ttl').val()
-	   　onComplete: function (event, queueID, fileObj, response, data) {
-	   			 var value = response ;//返回的图片路径 
-	   			 $('#imgPrompt').attr("style","display:block");
-	   			 $("#imgPrompt").html("<font color='red'>提示：图片上传成功</font>");
-	   			 $("#imgPath").attr("value",value);
-	   			 $('#adPrompt').attr("style","visibility:hidden");
-	   　  //  alert("文件:" + fileObj.name + "上传成功");
-	   　},  
-	   　onError: function(event, queueID, fileObj, errorObj) {  
-	   			  $('#imgPrompt').attr("style","display:block");
-	  			  $("#imgPrompt").html("<font color='red'>提示：图片上传失败</font>");
-	   　 //	  alert("文件:" + fileObj.name + "上传失败");  
-	   　},  
-	   　onCancel: function(event, queueID, fileObj){  
-	   			 $('#imgPrompt').attr("style","display:block");
-	   			 $("#imgPrompt").html("<font color='red'>提示：图片上传取消了</font>");
-	   　 	//	alert("取消了" + fileObj.name);  
-	   　} 
-	  });
- });
-		 
-		 
- function uploadsFile(){ 
- 	  //校验
- 	  var userId=document.getElementById("userId").value; 
-	  if(userId.replace(/\s/g,'') == ''){
-			return false;
-	  }  
-      //上传
- 	  jQuery('#uploadify').uploadifyUpload() 	 		 
- }
+function validateRegister(){
+	var flag = checkEmail();
+	if(flag){
+		$('#prompt').attr("style","visibility:visible");
+		var email = $("#email").attr("value");
+		$.post('/ipintu/pintuapi', {
+			'method'  : 'checkoutRegister',
+			'email'	: email
+		}, 
+		//回调函数
+		function (result) {
+			if(result == 1){//result为1，用户已存在
+			    $('#prompt').html('<img src="imgs/no.png">');
+			    $('#registPrompt').html("*此邮箱已注册");
+			}else if(result ==0){
+				 $('#prompt').html('<img src="imgs/ok.png">');
+				 $('#registPrompt').html('');
+			}
+		});
+	}
+}
 
+
+function checkPwdLength(){
+	var pwd =  $("#pwd").attr("value");
+	if(pwd.length <6 || pwd.length>8){
+		 errorClass();
+		 $('#loginPrompt').html('<font color="red">*密码长度6~8位</font>');
+	}
+}
+
+function checkLoginNull(){
+	var email = $("#email").attr("value");
+	var pwd =  $("#pwd").attr("value");
+	if(email == null || pwd == null || email == "" || pwd == ""){
+		return false;
+	}
+	return true;
+}
+
+
+function checkLogin(){
+	var flag = checkLoginNull();
+	if(flag){
+		var email = $("#email").attr("value");
+		var pwd =  $("#pwd").attr("value");
+		$.post('/ipintu/pintuapi', {
+			'method'  : 'loginAd',
+			'email'	: email,
+			'pwd' : pwd 
+		}, 
+		//回调函数
+		function (result) {
+			if(result.indexOf('admin')>-1 ){
+				//转到管理员页面
+				var res = result.trim().split("@");
+				var role = res[0];
+				var venderId = res[1];
+				var venderName = res[2];
+				rememberMe(venderId,venderName,role);
+				generateOperatePage(venderName,venderId,role);
+				
+			}else if(result.indexOf('vender')>-1){
+				//转到普通用户页面
+				var res = result.trim().split("@");
+				var role = res[0];
+				var venderId = res[1];
+				var venderName = res[2];
+				var state = res[3];
+//				if(state == "dead"){
+					//如果已到期给出提醒并不予跳转
+//					showExpiredWindow();
+//				}else{
+				 	rememberMe(venderId,venderName,role);
+				 	generateOperatePage(venderName,venderId,role);
+//				}
+				
+			}else if( result.trim() == "0"){
+				errorClass();
+				$('#loginPrompt').html('<font color="red">*密码错误</font>');
+			}else if( result.trim() == "-1"){
+				errorClass();
+				$('#loginPrompt').html('<font color="red">*账户不存在，点击右上角导航注册吧</font>');
+			}
+		});
+	}else{
+		//输入为空 将输入框变红出错，并有提示
+		errorClass();
+		$('#loginPrompt').html('账户和密码不能为空');
+	}
+}
+
+//cookie存30天
+function rememberMe(venderId,venderName,role){
+	//选择了记住的存30天，否则存两小时
+ 	 if( $("#saveCookie").attr("checked")){  
+        setCookie("venderId",venderId,24*30,"/");
+        setCookie("venderName",venderName,24*30,"/");
+        setCookie("role",role,24*30,"/");
+     }else{
+       setCookie("venderId",venderId,2,"/");
+        setCookie("venderName",venderName,2,"/");
+        setCookie("role",role,2,"/");
+     }
+}
+
+function comparePwd(){
+	var pwd1 =  $("#pwd1").attr("value");
+	var pwd2 =  $("#pwd2").attr("value");
+	if((pwd1.length <6 || pwd1.length>8) && (pwd2.length <6 || pwd2.length>8)){
+		 errorClass();
+		 $('#pwdPrompt').html('<font color="red">*密码长度6~8位</font>');
+	}else if(pwd1 != pwd2){
+	  	errorClass();
+		$('#pwdPrompt').html('<font color="red">*两次输入的密码不一致</font>');
+	}
+}
+
+function changePwd(){
+	var flag = checkPwdNull();
+	if(flag){
+		var venderId = $("#venderId").attr("value");
+		var password =  $("#pwd1").attr("value");
+		$.post('/ipintu/pintuapi', {
+			'method'  : 'changePwd',
+			'venderId'	: venderId,
+			'newPwd' : password
+		}, 
+		//回调函数
+		function (result) {
+			if(result==1){
+				  $('#pwdPrompt').html('<font color="red">*密码修改成功</font>');
+			  }else{
+			  	  errorClass();
+				  $('#pwdPrompt').html('<font color="red">*密码修改失败</font>');
+			  }
+		});
+	}else{
+		$('#pwdPrompt').html('<font color="red">*请按要求设置新密码</font>');
+	}
+}
+
+function checkPwdNull(){
+	var pwd1 =  $("#pwd1").attr("value");
+	var pwd2 =  $("#pwd2").attr("value");
+	if(pwd1==null || pwd1=="" || pwd2==null || pwd2==""){
+		return false;
+	}else{
+		return true;
+	}
+}
+
+//退出
+function exit(){
+	//删除cookie
+	deleteCookie("venderId","/");
+	
+	// 删除显示区域的内容
+	$('#displayArea').children().remove();
+	$('ul').remove();
+	
+	//显示登录框 
+	showLoginWindow();
+}
+
+
+//弹出过期提醒
+function showExpiredWindow(){
+	$('#floatBoxBg').attr("style","display: block");
+	msgBox('expiredPrompt', '到期提醒');
+}
+
+//错误样式提示
+function errorClass(){
+ 	$("#normalField").addClass("control-group error");
+}
+//错误样式恢复
+function rightClass(){
+ 	$("#normalField").removeClass("control-group error");
+}
+
+//显示登录窗口
+function showLoginWindow(){
+	$('#func').remove();
+	$('<ul class="nav pull-right" id="func"></ul>').insertAfter('#brand');
+	$('<li><a href="javascript:showRegisterWindow();"><b>我要注册</b></a></li>').appendTo("#func");
+	$('#displayArea').children().remove();
+	var html = '<div id="loginDiv">';
+    html += '<div class="row"><div class="span3 offset6"><div class="row-fluid">';
+	html += '<form class="well">';
+	html += '<fieldset id="normalField"><legend>登录</legend>';
+	html += '<label class="control-label" for="input01">账户：</label><input type="text" name="email" id="email" onfocus="rightClass();" onblur="checkEmail();"> <span class="help-block">可用邮箱</span>';
+	html += '<label class="control-label" for="input01">密码：</label><input type="password" name="pwd" id="pwd" onblur="checkPwdLength()"> <span class="help-block">6~8位密码</span>';									
+	html += '<div ><span style="color: blue;">记住我<input id="saveCookie" type="checkbox" value="" /></span>';
+	html += '	<span style="visibility: hidden"><input type="text" size="5" /></span>';
+	html += ' <button type="button" class="btn" id="submit" onclick="checkLogin();">登录</button></div>';  
+	html += '<div id="loginPrompt"></div>';
+	html += '</fieldset></form></div></div></div></div>';
+	$('#displayArea').append(html);
+}
+
+
+//显示修改密码窗口
+function showPwdWindow(id){
+	// 删除显示区域的内容
+	$('#displayArea').children().remove();
+	var html = '<div id="pwdDiv">';
+    html += '<div class="row"><div class="span3 offset6"><div class="row-fluid">';
+	html += '<form class="well"><input type="hidden" id="venderId" value="'+id+'" />';
+	html += '<fieldset id="normalField"><legend>修改密码</legend>';
+	html += '<label class="control-label" for="input01">新密码：</label>	<input type="password" name="newPwd" id="pwd1" onclick="rightClass();">';
+	html += '<label class="control-label" for="input01">密码：</label><input type="password" name="rePwd" id="pwd2" onblur="comparePwd()"> <span class="help-block">6~8位密码</span>';									
+	html += '<div align="center"><button type="button" class="btn" id="submit" onclick="changePwd();">确认修改</button></div>';
+	html += '<div id="pwdPrompt"></div>';
+	html += '</fieldset></form></div></div></div></div>';
+	$('#displayArea').append(html);
+}
+
+
+//显示注册页面
+function showRegisterWindow(){
+	// 删除显示区域的内容
+	$('#func').remove();
+	$('#displayArea').children().remove();
+	$('<ul class="nav pull-right" id="func"></ul>').insertAfter('#brand');
+	$('<li><a href="javascript:showLoginWindow();"><b>我要登录</b></a></li>').appendTo("#func");
+	var html = '<div id="registerDiv">';
+	html += '<div class="row"><div class="span3 offset6"><div class="row-fluid">';
+	html += '<form class="well"><fieldset id="normalField"><legend>注册</legend>';
+	html += '<label class="control-label" for="input01">邮箱：</label><input type="text" name="email" id="email" onfocus="rightClass();" onblur="validateRegister();">';
+	html += '<span id="prompt" style="visibility:hidden"><img src="imgs/loading.gif" style="vertical-align: middle;"></span>';
+	html += '<label class="control-label" for="input01">密码：</label><input type="password" name="pwd" id="pwd" onblur="checkPwdLength()"> <span class="help-block">6~8位密码</span>';									
+	html += '<label class="control-label" for="input01">客户：</label><input type="text" name="name" id="name">';
+	html += '<label class="control-label" for="input01">域名：</label><input type="text" name="deployDNS" id="deployDNS"> <span class="help-block">http://开头</span>';
+	html += '<div align="center"><button type="button" class="btn" id="submit" onclick="venderRegist();">确定</button></div>';
+	html += '<div id="registPrompt"></div>';
+	html += '</fieldset></form></div></div></div></div>';
+	$('#displayArea').append(html);
+}
+
+//动态创建用户界面
+function generateOperatePage(venderName,venderId,role){
+	//导航栏
+	$('#displayArea').children().remove();
+	generateNavigate(venderName,venderId,role);
+	//加载进来之后就要看到广告列表
+	generateAdManagement(venderName,venderId);
+}
+
+//根据角色来自动生成导航
+function generateNavigate(venderName,venderId,role){
+	$('#brand').children().remove();
+	$('#func').remove();
+	$('<ul class="nav pull-left" id="func"></ul>').insertAfter('#brand');
+	var para1 = "('"+venderName+"','"+venderId+"')";
+		$('<li><a href = "javascript:generateAdManagement'+para1+'">广告管理</a></li>').appendTo('#func');
+		$('<li><a href = "javascript:generateAdDownload'+para1+'">安装包下载</a></li>').appendTo('#func');
+	if(role == "admin"){
+		$('<li><a href = "javascript:generateVenderManagement'+para1+'">厂商管理</a></li>').appendTo('#func');
+	}
+	
+	$('<ul class="nav pull-right" id="userInfo">').insertAfter('#brand');
+	var para2 ="'"+venderId+"'";
+	$('<li><a href="#">当前登录用户：'+venderName+'</a></li>').appendTo("#userInfo");
+	$('<li><a href = "javascript:showPwdWindow('+para2+')">修改密码</a></li>').appendTo('#userInfo');
+	$('<li><a href = "javascript:exit()">退出</a></li>').appendTo('#userInfo');
+}
+
+//厂商管理
+function generateVenderManagement(venderName,venderId){
+	$('#displayArea').children().remove();
+	generateVenderTabbar();
+	generateVenderContent();
+}
+
+function generateVenderTabbar(){
+	var html='<div class="container innerWell">';
+	html+='<span class="label label-info">广告商名称：</span>';
+	html+='<input id="keys" type="text" class="search-query" placeholder="关键字" size="15" />';
+	html+=' <button id="submit" class="btn" onclick="searchVenders();">查询</button>';
+	html+=' <button id="" class="btn" onclick="newVenderWindow();">新建厂商</button>';
+	html+=' <button id="" class="btn" onclick="initVenderData();">全部厂商</button>';
+	html+='</div>';
+	$('#displayArea').append(html);
+}
+
+function generateVenderContent(){
+	var html='<div class="container blankWell">';
+	html+='<table class="table table-bordered  table-striped">';
+	html+='<thead><tr><th>序号</th><th>厂商</th><th>邮箱</th><th>部署域名</th><th>创建时间</th>';
+	html+='<th>生效时间</th><th>失效时间</th><th>等级</th><th>状态</th><th>编辑</th></tr></thead>';
+	html+='<tbody id="venderList"></tbody></table></div>';
+	$('#displayArea').append(html);
+	//初始化厂商数据
+	initVenderData();
+}
+
+//广告管理
+function generateAdManagement(venderName,venderId){
+	$('#displayArea').children().remove();
+	generateAdTabbar(venderName,venderId);
+	generateAdContent(venderName,venderId);
+}
+
+function generateAdTabbar(venderName,venderId){
+	var html='<div class="container innerWell">';
+	html+='<div class="search"> <input id="keys" type="text"  placeholder="输入广告关键字" size="15" />';
+	html+='<button id="submit" class="btn" onclick="searchAds();">查询</button></div>';
+	html+='<div class="done"><a href="javascript:newAdWindow()"  title="新建广告"><img src="imgs/cloud_add1.png" alt="新建广告"></a>';
+	var para = "('"+venderId+"')";
+	html+='<a href="javascript:newPreviewWindow'+para+'"  title="预览广告"><img src="imgs/cloud_preview1.png" alt="预览广告"></a></div>';
+	html+='<div class="tip">提示：为保证显示效果，发布广告时请选择尺寸大小相同的图片！</div></div>';
+	$('#displayArea').append(html)
+		.append($('<input></input')
+		.attr("id","venderId")
+		.attr("value",venderId)
+		.attr("type","hidden"));
+}
+
+
+function generateAdContent(venderName,venderId){
+	var html='<div class="container blankWell">';
+	html+='<table class="table table-bordered  table-striped">';
+	html+='<thead><tr><th>序号</th><th>厂商</th><th>广告分类</th><th width="200" height="30">广告内容</th><th>创建时间</th>';
+	html+='<th>生效时间</th><th>失效时间</th><th>优先级</th><th>编辑</th><th>删除</th></tr></thead>';
+	html+='<tbody id="adList"></tbody></table></div>';
+	$('#displayArea').append(html);
+	//初始化数据
+	initAdData(venderId);
+}
+
+
+function generateAdDownload(venderName,venderId){
+	    $('#displayArea').children().remove();
+	    var html='<div class="caption">报雨鸟微广告系统安装包下载</div>';
+		html+='<table class="dataintable">';
+		html+='<thead><tr><th>版本</th><th>本地版</th><th>网络版</th></tr></thead>';
+		var free='free';
+		var standard = 'standard';
+		var upgrade = 'upgrade';
+		var advanced = 'advanced';
+		var local='local';
+		var web='network';
+		
+		var para = "('"+venderId+"','"+free+"','"+local+"')";
+		html+='<tbody><tr><td>免费版</td><td><a href="javascript:downloadZip'+para+'">点击下载</a></td>';
+		
+		para = "('"+venderId+"','"+free+"','"+web+"')";
+		html+='<td><a href="javascript:downloadZip'+para+'">点击下载</a></td></tr>';
+		
+		para = "('"+venderId+"','"+standard+"','"+local+"')";
+		html+='<tr><td>标准版</td><td><a href="javascript:downloadZip'+para+'">点我下载</a></td>';
+		
+		para = "('"+venderId+"','"+standard+"','"+web+"')";
+		html+='<td><a href="javascript:downloadZip'+para+'">点击下载</a></td></tr>';
+		
+		para = "('"+venderId+"','"+upgrade+"','"+local+"')";
+		html+='<tr><td>升级版</td><td><a href="javascript:downloadZip'+para+'">点击下载</a></td>';
+		
+		para = "('"+venderId+"','"+upgrade+"','"+web+"')";
+		html+='<td><a href="javascript:downloadZip'+para+'">点击下载</a></td></tr>';
+		
+		para = "('"+venderId+"','"+advanced+"','"+local+"')";
+		html+='<tr><td>高级版</td><td><a href="javascript:downloadZip'+para+'">点击下载</a></td>';
+		
+	    para = "('"+venderId+"','"+advanced+"','"+web+"')";
+		html+='<td><a href="javascript:downloadZip'+para+'">点击下载</a></td></tr>';
+		
+		html+='</tbody></table>';
+		html+='<div class="note">说明：本地版与网络版的主要区别是数据来源不同，新注册的用户默认是免费版，请选择对应版本下载，以保证显示效果！</div>';
+		$('#displayArea').append(html);
+}
+
+function downloadZip(venderId,version,dataSource){
+	window.location.href="/ipintu/download_center.do?venderId="+venderId+"&version="+version+"&dataSource="+dataSource;
+}
+
+
+
+
+//创建广告图片预览窗口
+function newPreviewWindow(venderId){
+	
+	//调用函数居中窗口
+	centerPopup();   
+	//调用函数加载窗口
+	loadPopup();   
+	
+	//初始化flash
+	initFlash(venderId);
+	
+	//默认显示的标准版
+	showSwf('freedemoDiv');
+	
+}
+
+//初始化：是否开启DIV弹出窗口功能
+//0 表示开启; 1 表示不开启;
+var popupStatus = 0;
+
+//使用Jquery加载弹窗 
+function loadPopup(){   
+	//仅在开启标志popupStatus为0的情况下加载  
+	if(popupStatus==0){   
+	$("#backgroundPopup").css({   
+	"opacity": "0.7"  
+	});   
+	$("#backgroundPopup").fadeIn("slow");   
+	$("#popupContact").fadeIn("slow");   
+	popupStatus = 1;   
+	} 
+}  
+
+//使用Jquery去除弹窗效果 
+function disablePopup(){   
+	//仅在开启标志popupStatus为1的情况下去除
+	if(popupStatus==1){   
+	$("#backgroundPopup").fadeOut();   
+	$("#popupContact").fadeOut();   
+	popupStatus = 0;   
+	}   
+}  
+
+//将弹出窗口定位在屏幕的中央
+function centerPopup(){   
+	//获取系统变量
+	var windowWidth = document.documentElement.clientWidth;   
+	var windowHeight = document.documentElement.clientHeight;   
+	var popupHeight = $("#popupContact").height();   
+	var popupWidth = $("#popupContact").width();   
+	//居中设置   
+	$("#popupContact").css({   
+	"position": "absolute",   
+	"top": windowHeight/2-popupHeight/2,   
+	"left": windowWidth/2-popupWidth/2   
+	});   
+	//以下代码仅在IE6下有效
+	  
+	$("#backgroundPopup").css({   
+	"height": windowHeight   
+	});   
+}
+
+function initFlash(venderId){
+	createSWFById('freedemoDiv',venderId,288,48,"free");
+	createSWFById('standarddemoDiv',venderId,250,250,"standard");	
+	createSWFById('upgradedemoDiv',venderId,500,500,"upgrade");
+	createSWFById('advanceddemoDiv',venderId,1000,300,"advanced");
+	
+//divId,venderId,width,height,free
+}
+
+
+function createSWFById(divId, accountId, width, height, version){
+           
+            var flashvars = {};                                                         
+            flashvars.runningMode = "debug";                      
+            flashvars.visualWidth = width;                                    
+            flashvars.visualHeight = height;                                   
+            flashvars.accountId = accountId;            
+            flashvars.dataType = "network";
+            flashvars.versionType = version;                       
+            flashvars.effectMode = "random";           	
+           	flashvars.stayTime = 3;
+          // 	flashvars.host = "localhost:8080";
+            var swfVersionStr = "10.2.0";           
+            var xiSwfUrlStr = "js/playerProductInstall.swf";             
+            var params = {};
+            params.quality = "high";
+            params.bgcolor = "#ffffff";
+            params.allowscriptaccess = "sameDomain";
+            params.allowfullscreen = "true";
+            var attributes = {};
+            attributes.id = divId;
+            attributes.name = divId;
+            attributes.align = "middle";
+            swfobject.embedSWF("js/MiniAds.swf", divId, flashvars.visualWidth, flashvars.visualHeight, swfVersionStr, xiSwfUrlStr,flashvars, params, attributes);            
+            swfobject.createCSS("#"+divId, "display:none;text-align:left;");	
+}
+
+function showSwf(divId){
+  swfobject.createCSS("#"+divId, "display:block;text-align:left;");
+}
 

@@ -45,6 +45,8 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 	private ApiAdaptor apiAdaptor;
 	
 	private AssistProcess assistProcess;
+	
+	private AdProcess adProcess;
 
 	// 启动自动任务，由Spring注入
 	private TaskStarter taskStarter;
@@ -68,6 +70,10 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 
 	public void setAssistProcess(AssistProcess assistProcess) {
 		this.assistProcess = assistProcess;
+	}
+
+	public void setAdProcess(AdProcess adProcess) {
+		this.adProcess = adProcess;
 	}
 
 	public void setTaskStarter(TaskStarter taskStarter) {
@@ -126,14 +132,24 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			return;
 		} 
 		
+		//有关微广告系统的所有api
 		if (action.equals(AppStarter.GETTODAYADS)
 				|| action.equals(AppStarter.SEARCHADS)
 				|| action.equals(AppStarter.DELETEADSBYID)
 				|| action.equals(AppStarter.CREATEADS)
 				|| action.equals(AppStarter.GETADSBYID)
-				|| action.equals(AppStarter.UPDATEADSBYID)) {
+				|| action.equals(AppStarter.UPDATEADSBYID)
+				|| action.equals(AppStarter.LOGINAD)
+				|| action.equals(AppStarter.CHANGEPWD)
+				|| action.equals(AppStarter.SEARCHVENDERS)
+				|| action.equals(AppStarter.GETVENDERSBYID)
+				|| action.equals(AppStarter.CREATEVENDERS)
+				|| action.equals(AppStarter.REGISTVENDERS)
+				|| action.equals(AppStarter.UPDATEVENDERSBYID)
+				|| action.equals(AppStarter.VALIDATEVENDER)
+				|| action.equals(AppStarter.CHECKOUTREGISTER)) {
 			
-			miniAdProcess(action, req, res);
+			adProcess.doPostProcess(action, req, res);
 			return;
 		} 
 		
@@ -142,91 +158,14 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 				|| action.equals(AppStarter.GETIMGBYRELATIVEPATH)) {
 			
 				doGetProcess(action, req, res);
+				return;
 		} else {
 			assistProcess.doPostProcess(action,req,res);
+			return;
 		}
 		
 	}
 	
-	/**
-	 * 处理爱品图微广告系统的各种请求
-	 * @param action
-	 * @param req
-	 * @param res
-	 * @throws IOException 
-	 */
-	private void miniAdProcess(String action, HttpServletRequest req,
-			HttpServletResponse res) throws IOException {
-		
-		if(action.equals(AppStarter.GETTODAYADS)){
-			res.setContentType("text/plain;charset=UTF-8");
-			PrintWriter pw = res.getWriter();
-			String result = apiAdaptor.getTodayAds();
-			log.debug(result);
-			pw.println(result);
-			pw.close();
-			
-		}else if(action.equals(AppStarter.SEARCHADS)){
-			res.setContentType("text/plain;charset=UTF-8");
-			PrintWriter pw = res.getWriter();
-			String keys = req.getParameter("keys");
-			String time = req.getParameter("time");
-			String result = apiAdaptor.searchAds(keys,time);
-			log.debug(result);
-			pw.println(result);
-			pw.close();
-			
-		}else if(action.equals(AppStarter.DELETEADSBYID)){
-			res.setContentType("text/plain;charset=UTF-8");
-			PrintWriter pw = res.getWriter();
-			String adId = req.getParameter("adId");
-			String result = apiAdaptor.deleteAdsById(adId);
-			log.debug(result);
-			pw.println(result);
-			pw.close();
-		
-		}else if(action.equals(AppStarter.CREATEADS)){
-			res.setContentType("text/plain;charset=UTF-8");
-			PrintWriter pw = res.getWriter();
-			String vender = req.getParameter("vender");
-			String type = req.getParameter("type");
-			String priority = req.getParameter("priority");
-			String startTime = req.getParameter("startTime");
-			String endTime = req.getParameter("endTime");
-			String content = req.getParameter("content");
-			String link = req.getParameter("link");
-			String result = apiAdaptor.createAds(vender,type,priority,startTime,endTime,content,link);
-			log.debug(result);
-			pw.println(result);
-			pw.close();
-			
-		}else if(action.equals(AppStarter.GETADSBYID)){
-			res.setContentType("text/plain;charset=UTF-8");
-			PrintWriter pw = res.getWriter();
-			String adId = req.getParameter("adId");
-			String result = apiAdaptor.getAdsById(adId);
-			log.debug(result);
-			pw.println(result);
-			pw.close();
-			
-		}else if(action.equals(AppStarter.UPDATEADSBYID)){
-			res.setContentType("text/plain;charset=UTF-8");
-			PrintWriter pw = res.getWriter();
-			String adId = req.getParameter("adId");
-			String vender = req.getParameter("vender");
-			String type = req.getParameter("type");
-			String priority = req.getParameter("priority");
-			String startTime = req.getParameter("startTime");
-			String endTime = req.getParameter("endTime");
-			String content = req.getParameter("content");
-			String link = req.getParameter("link");
-			String result = apiAdaptor.updateAdsById(adId,vender,type,priority,startTime,endTime,content,link);
-			log.debug(result);
-			pw.println(result);
-			pw.close();
-		}
-		
-	}
 
 	/**
 	 * 处理 登录、 注册、申请、验证用户
@@ -246,7 +185,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			// 登录成功后，返回一个用户的id，否则返回错误信息
 			String result = apiAdaptor.getExistUser(account, pwd);
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 
 		} else if (action.equals(AppStarter.REGISTER)) {
@@ -291,7 +230,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			String account = req.getParameter("account");
 			int result = apiAdaptor.validateAccount(account);
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 			
 		} else if (action.equals(AppStarter.CHECKOUT)) {
@@ -301,7 +240,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			String account = req.getParameter("account");
 			int result = apiAdaptor.checkApplicant(account);
 			log.debug(result);
-			pw.println(result);
+			pw.print(result);
 			pw.close();
 			
 		} else if (action.equals(AppStarter.EXAMINE)) {
@@ -311,7 +250,7 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 				String nickName = req.getParameter("nickName");
 				int result = apiAdaptor.examineNickname(nickName);
 				log.debug(result);
-				pw.println(result);
+				pw.print(result);
 				pw.close();
 			}
 	}
@@ -375,22 +314,20 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 						apiAdaptor.createTastePic(fileItems);
 					}else if(method.equals("uploadAvatar")){
 						apiAdaptor.createAvatar(fileItems);
-					}else{
-						//上传广告图片
-						String adResult = apiAdaptor.createAdImg(fileItems);
-						if(!"".equals(adResult)){
-							pw.write(adResult);
-						}
 					}
 				} else {
-					return;
+					//上传广告图片
+					String adResult = apiAdaptor.createAdImg(fileItems);
+					if(!"".equals(adResult)){
+						pw.write(adResult);
+					}
 				}
 			}
 			
 		} catch (SizeLimitExceededException e) {
 
 			log.debug(">>> File size exceeds the limit, can not upload!");
-			pw.println(">>> File size exceeds the limit, can not upload!");
+			pw.print(">>> File size exceeds the limit, can not upload!");
 			return;
 
 		} catch (FileUploadException e) {
