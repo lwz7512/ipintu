@@ -1,0 +1,104 @@
+/*浮层*/
+#floatBoxBg {
+	width: 100%;
+	height: 100%;
+	background: #ffffff;
+	filter: alpha(opacity =     50);
+	opacity: 0.5;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.floatBox {
+	border: #666 5px solid;
+	width: 300px;
+	position: absolute;
+	top: 50px;
+	left: 40%;
+}
+
+.floatBox .title {
+	height: 23px;
+	padding: 7px 10px 0;
+	background: #333;
+	color: #fff;
+}
+
+.floatBox .title h4 {
+	float: left;
+	padding: 0;
+	margin: 0;
+	font-size: 14px;
+	line-height: 16px;
+}
+
+.floatBox .title span {
+	float: right;
+	cursor: pointer;
+}
+
+.floatBox .content {
+	padding: 20px 15px;
+	background: #fff;
+}
+
+#loginPrompt,#pwdPrompt,#registPrompt{
+	color:red;
+}
+
+ #freedemoDiv{width:1000px; height:500px;text-align:center;clear:both; margin: 0 auto;} 
+ #standarddemoDiv{width:1000px; height:500px;text-align:center;clear:both; margin: 0 auto;}
+ #upgradedemoDiv{width:1000px; height:500px;text-align:center;clear:both; margin: 0 auto;} 
+ #advanceddemoDiv{width:1000px; height:500px;text-align:center;clear:both; margin: 0 auto;} 
+
+#demoDiv{width:1000px; height:500px;text-align:center;clear:both; margin: 0 auto;}
+#demoDiv img {vertical-align: middle;}
+
+#backgroundPopup{   
+	display:none;   
+	position:fixed;   
+	_position:absolute;   
+	height:100%;   
+	width:100%;   
+	top:0;   
+	left:0;   
+	background:#000000;   
+	border:1px solid #cecece;   
+	z-index:1;   
+}   
+#popupContact{   
+	/* display:none;    */
+	position:fixed;   
+	_position:absolute;   
+	height:568px;   
+	width:1100px;   
+	background:#FFFFFF;   
+	border:0px solid #c0c0c0;   
+	z-index:2;   
+	padding:-3px,-1px,-1px,-1px;   
+	font-size:13px;   
+	box-shadow:3px 3px 3px #000;
+	border-radius: 5px;
+}   
+#popupContact h1{   
+	text-align:left;   
+	color:#6FA5FD;   
+	font-size:22px;   
+	font-weight:700;   
+	border-bottom:1px dotted #D3D3D3;   
+	padding-bottom:2px;   
+	margin-bottom:20px;   
+}
+
+#popupContactClose{   
+	font-size:14px;   
+	line-height:14px;   
+	right:6px;   
+	top:4px;   
+	position:absolute;   
+	color:#6fa5fd;   
+	font-weight:700;   
+	display:block;   
+	cursor: pointer;
+}
