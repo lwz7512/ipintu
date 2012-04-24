@@ -542,3 +542,26 @@ function showSwf(divId){
   swfobject.createCSS("#"+divId, "display:block;text-align:left;");
 }
 
+
+$('#widget-docs').bind('tabsselect', function(event, ui) {
+	var index = ui.index;
+	if(index == 0){
+		showSwf('freedemoDiv');
+	}else if(index == 1){
+		showSwf('standarddemoDiv');
+	}else if(index == 2){
+		showSwf('upgradedemoDiv');
+	}else if(index == 3){
+		showSwf('advanceddemoDiv');
+	}
+});
+
+
+//键盘按下ESC时关闭窗口!
+document.onkeydown=function(e){   
+	var theEvent = window.event || e; 
+	var code = theEvent.keyCode || theEvent.which; 
+	if (code == 27  && popupStatus==1) { 
+		disablePopup();   
+	} 
+}  
