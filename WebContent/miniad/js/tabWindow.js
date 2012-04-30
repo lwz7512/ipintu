@@ -229,3 +229,17 @@ function gotoHash() {
 	$(document).scrollTop(h3.parent().effect('highlight', null, 2000).offset().top);
 		
 }
+
+
+$('#widget-docs').bind('tabsselect', function(event, ui) {
+	var index = ui.index;
+	if(index == 0){
+		showSwf('freedemoDiv');
+	}else if(index == 1){
+		showSwf('standarddemoDiv');
+	}else if(index == 2){
+		showSwf('upgradedemoDiv');
+	}else if(index == 3){
+		showSwf('advanceddemoDiv');
+	}
+});
