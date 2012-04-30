@@ -1,3 +1,5 @@
+var section = "tabWindow/tabs";
+
 function loadDemo(path) {
 
 	resetDemos();
@@ -168,7 +170,7 @@ $(document).ready(function() {
 	(/(draggable|droppable|sortable)$/i).test(section) && $('#widget-docs > ul li:last').hide();
 
 	//Load themeswitcher
-	$('#switcher').themeswitcher({loadTheme: 'UI lightness'});
+	//$('#switcher').themeswitcher({loadTheme: 'UI lightness'});
 	
 	listenToHashChange();
 

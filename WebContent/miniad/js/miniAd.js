@@ -215,12 +215,16 @@ function exit(){
 	//删除cookie
 	deleteCookie("venderId","/");
 	
-	// 删除显示区域的内容
+	//删除显示区域的内容
 	$('#displayArea').children().remove();
-	$('ul').remove();
+	
+	//删掉导航栏的内容
+	$('#func').remove();
+	$('#userInfo').remove();
 	
 	//显示登录框 
 	showLoginWindow();
+	
 }
 
 
@@ -512,7 +516,6 @@ function initFlash(venderId){
 
 
 function createSWFById(divId, accountId, width, height, version){
-           
             var flashvars = {};                                                         
             flashvars.runningMode = "debug";                      
             flashvars.visualWidth = width;                                    
