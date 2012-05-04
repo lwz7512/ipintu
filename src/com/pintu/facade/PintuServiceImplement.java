@@ -31,6 +31,15 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.util.Streams;
 import org.apache.log4j.Logger;
 
+import weibo4j.Oauth;
+import weibo4j.Timeline;
+import weibo4j.Users;
+import weibo4j.Weibo;
+import weibo4j.http.AccessToken;
+import weibo4j.http.ImageItem;
+import weibo4j.model.Status;
+import weibo4j.model.WeiboException;
+
 import com.pintu.beans.Applicant;
 import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
@@ -47,6 +56,7 @@ import com.pintu.beans.Tag;
 import com.pintu.beans.TastePic;
 import com.pintu.beans.User;
 import com.pintu.beans.UserDetail;
+import com.pintu.beans.UserExtend;
 import com.pintu.beans.Vote;
 import com.pintu.beans.Wealth;
 import com.pintu.dao.CacheAccessInterface;
@@ -1560,6 +1570,208 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		}
 	}
 
+	
+	@Override
+	public AccessToken getAccessTokenByCode(String code) {
+		Oauth oauth = new Oauth();
+		AccessToken token = null;
+		try{
+			token = oauth.getAccessTokenByCode(code);
+		} catch (WeiboException e) {
+			if(401 == e.getStatusCode()){
+				log.info("Unable to get the access token.");
+			}else{
+				e.printStackTrace();
+			}
+		}
+		//获取token后操作库（直接存或更新）
+		this.optWeiboUser(token);
+		
+		return token;
+	}
+
+	
+	private void optWeiboUser(AccessToken token) {
+		boolean flag = false;
+		String uid = token.getUid();
+		String userId = dbVisitor.getExtendUser(uid);
+		if(!"".equals(userId) && userId != null){
+			//如果当前用微博登录的用户存在，更新表
+			flag = updateWeiboUser(token,uid,userId);
+			if(flag){
+				log.info("update weibo user success");
+			}else{
+				log.info("update weibo user error");
+			}
+		}else{
+			//不存在，新插入记录到表
+			flag =addWeiboUser(token);
+			if(flag){
+				log.info("new weibo user success");
+			}else{
+				log.info("new weibo user error");
+			}
+		}
+	}
+	
+	//将微博登录用户更新库，原user表和扩展表
+	private boolean updateWeiboUser(AccessToken token, String uid, String userId) {
+		weibo4j.model.User wbUser = this.getUserByToken(token);
+		UserExtend userExtend = generateUserExtend("",token ,wbUser);
+		int rows = dbVisitor.updateExtendUser(userExtend,uid);
+		
+		String avatar = wbUser.getAvatarLarge();
+		String nickName = wbUser.getName();
+		int lines = dbVisitor.updateAvatarAndNickname(avatar, nickName, userId);
+		
+		if(rows == 1 && lines == 1){
+			log.info("update user and extend success");
+			return true;
+		}else if(rows == 1 && lines == 0){
+			log.info("update user error");
+		}else if(rows == 0 && lines == 1){
+			log.info("update extend error");
+		}else{
+			log.info("update user and extend error");
+		}
+		return false;
+	}
+
+	//将微博登录用户存库包括两部分，存原user表和扩展表
+	private boolean addWeiboUser(AccessToken token) {
+		String newId = PintuUtils.generateUID();
+		weibo4j.model.User user = this.getUserByToken(token);
+		
+		UserExtend userExtend = generateUserExtend(newId,token ,user);
+		int rows = dbVisitor.addExtendUser(userExtend);
+		
+		User iptUser = this.generateUser(newId,user);
+		int lines = dbVisitor.insertUser(iptUser);
+		
+		if(rows == 1 && lines == 1){
+			log.info("insert user and extend success");
+			return true;
+		}else if(rows == 1 && lines == 0){
+			log.info("insert user error");
+		}else if(rows == 0 && lines == 1){
+			log.info("insert extend error");
+		}else{
+			log.info("insert user and extend error");
+		}
+		return false;
+	}
+
+	private User generateUser(String newId,weibo4j.model.User user) {
+		User iptUser = new User();
+		iptUser.setId(newId);
+		iptUser.setAccount("guest@ipintu.com");
+		iptUser.setPwd(Encrypt.encrypt("guest"));
+		iptUser.setAvatar(user.getAvatarLarge());
+		iptUser.setNickName(user.getName());
+		iptUser.setRegisterTime(PintuUtils.getFormatNowTime());
+		return iptUser;
+	}
+
+	//根据token和uid获取用户信息
+	private weibo4j.model.User  getUserByToken(AccessToken token) {
+		weibo4j.model.User wbUser = null;
+		String accessToken = token.getAccessToken();
+		String uid = token.getUid();
+		
+		Weibo weibo = new Weibo();
+		weibo.setToken(accessToken);
+		Users um = new Users();
+		try {
+			wbUser = um.showUserById(uid);
+			log.info(wbUser.toString());
+		} catch (WeiboException e) {
+			e.printStackTrace();
+		}
+		return wbUser;
+	}
+
+	private UserExtend generateUserExtend(String newId,AccessToken token, weibo4j.model.User user){
+		UserExtend userExtend = new UserExtend();
+		String timespan = token.getExpireIn();
+		Long now = System.currentTimeMillis();
+		String expiration = PintuUtils.formatLong(now + Long.parseLong(timespan)*1000);
+		
+		userExtend.setId(newId);
+		userExtend.setUid(token.getUid());
+		userExtend.setToken(token.getAccessToken());
+		userExtend.setTokenExpiration(expiration);
+		
+		userExtend.setGender(user.getGender());
+		userExtend.setLocation(user.getLocation());
+		userExtend.setDescripttion(user.getDescription());
+		userExtend.setPersonalUrl(user.getUrl());
+		
+		//联系方式这里没有
+		userExtend.setContract("");
+		
+		return userExtend;
+	}
+
+	@Override
+	public String forwardToWeibo(String userId, String picId) {
+		// 这里主要分两步 1、根据userId去找token 2、根据picId取图片原图与描述+广告语@爱品图 3、转发内容到微博
+		String token = dbVisitor.getTokenById(userId);
+		
+		TPicItem pic = dbVisitor.getPictureById(picId);
+		String description = pic.getDescription();
+		String imgPath = pic.getRawImgPath();
+		
+		//取标语模板
+		String banner = propertyConfigurer.getProperty("bannerTemplate");
+		String text = description +"　"+ banner;
+		
+		boolean flag = uploadToWeibo(token,imgPath,text);
+		return String.valueOf(flag);
+	}
+	
+	//转发内容到新浪微博
+	private boolean uploadToWeibo(String token, String imgPath, String text) {
+		
+		try{
+			Weibo weibo = new Weibo();
+			weibo.setToken(token);
+			try{
+				byte[] content= readFileImage(imgPath);
+				System.out.println("content length:" + content.length);
+				ImageItem pic=new ImageItem("pic",content);
+
+				String s=java.net.URLEncoder.encode( text,"utf-8");
+				Timeline tl = new Timeline();
+				Status status=tl.UploadStatus(s, pic);
+
+				log.info("Successfully upload the status to ["
+						+status.getText()+"].");
+			}
+			catch(Exception e1){
+				e1.printStackTrace();
+			}
+		}catch(Exception ioe){
+			ioe.printStackTrace();
+			log.info("Failed to read the system input.");
+			return false;
+		}
+		
+		return true;
+	}
+	
+	private static byte[] readFileImage(String filename)throws IOException{
+		BufferedInputStream bufferedInputStream=new BufferedInputStream(
+				new FileInputStream(filename));
+		int len =bufferedInputStream.available();
+		byte[] bytes=new byte[len];
+		int r=bufferedInputStream.read(bytes);
+		if(len !=r){
+			bytes=null;
+			throw new IOException("读取文件不正确");
+		}
+		bufferedInputStream.close();
+		return bytes;
+	}
 	
 	// TODO, 实现其他接口方法
 

@@ -24,6 +24,7 @@ import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TPicItem;
 import com.pintu.beans.Tag;
 import com.pintu.beans.User;
+import com.pintu.beans.UserExtend;
 import com.pintu.beans.Vote;
 import com.pintu.beans.Wealth;
 import com.pintu.dao.DBAccessInterface;
@@ -1618,6 +1619,86 @@ public class DBAccessImplement implements DBAccessInterface {
 		String sql = "select count(a_id) from  t_applicant where a_account='"+account+"' and a_inviteCode is not null and a_passed=1";
 		int rows = jdbcTemplate.queryForInt(sql); 
 		return rows;
+	}
+
+	@Override
+	public int addExtendUser(final UserExtend userExtend) {
+		String sql = "insert into t_userextend "
+		 + "(u_id,u_gender,u_location,u_contract,u_description,u_personalUrl,u_uid,u_token,u_tokenExpiration,u_memo) "
+		 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
+		int res =jdbcTemplate.update(sql, new PreparedStatementSetter() {
+			public void setValues(PreparedStatement ps) {
+				try {
+					ps.setString(1, userExtend.getId());
+					ps.setString(2, userExtend.getGender());
+					ps.setString(3, userExtend.getLocation());
+					ps.setString(4, userExtend.getContract());
+					ps.setString(5, userExtend.getDescripttion());
+					ps.setString(6, userExtend.getPersonalUrl());
+					ps.setString(7, userExtend.getUid());
+					ps.setString(8, userExtend.getToken());
+					ps.setString(9, userExtend.getTokenExpiration());
+					ps.setString(10,"");
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+
+			}
+		});
+
+		return res;
+	}
+
+	@Override
+	public String getExtendUser(String uid) {
+		String userId = "";
+		String sql = "select u_id from t_userextend where u_uid ='"+uid+"'";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				userId =map.get("u_id").toString();
+			}
+		}
+		return userId;
+	}
+
+	@Override
+	public int updateExtendUser(final UserExtend userExtend, String uid) {
+		String sql = "update t_userextend set u_gender = ?,u_location = ?,u_description=?,u_personalUrl=?,u_token=?,u_tokenExpiration = ? where u_uid='"+uid+"'";
+		int res =jdbcTemplate.update(sql, new PreparedStatementSetter() {
+			public void setValues(PreparedStatement ps) {
+				try {
+					ps.setString(1, userExtend.getGender());
+					ps.setString(2, userExtend.getLocation());
+					ps.setString(3, userExtend.getDescripttion());
+					ps.setString(4, userExtend.getPersonalUrl());
+					ps.setString(5, userExtend.getToken());
+					ps.setString(6, userExtend.getTokenExpiration());
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+
+			}
+		});
+
+		return res;
+	}
+
+	@Override
+	public String getTokenById(String userId) {
+		String token = "";
+		String sql = "select u_token from t_userextend where u_id ='"+userId+"'";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				token =map.get("u_token").toString();
+			}
+		}
+		return token;
 	}
 
 

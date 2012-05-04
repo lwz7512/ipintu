@@ -15,6 +15,8 @@ import net.sf.json.JSONObject;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
 
+import weibo4j.http.AccessToken;
+
 import com.pintu.ads.beans.Ads;
 import com.pintu.ads.beans.Vender;
 import com.pintu.ads.facade.AdsServiceInterface;
@@ -733,6 +735,19 @@ public class ApiAdaptor {
 
 	public int checkoutRegister(String email) {
 		int res = adService.checkoutRegiser(email); 
+		return res;
+	}
+
+	
+	//---------------
+	public String getAccessTokenByCode(String code) {
+		AccessToken token = pintuService.getAccessTokenByCode(code);
+		String res =JSONObject.fromObject(token).toString();
+		return res;
+	}
+
+	public String forwardToWeibo(String userId, String picId) {
+		String res = pintuService.forwardToWeibo(userId,picId);
 		return res;
 	}
 

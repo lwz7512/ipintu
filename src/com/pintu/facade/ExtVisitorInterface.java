@@ -186,4 +186,15 @@ public interface ExtVisitorInterface {
     
     //验证厂商是否已被注册
     public static final String CHECKOUTREGISTER = "checkoutRegister";
+    
+    
+    //--------接微博相关方法
+    
+    //根据code获取access token
+    public static final String GETACCESSTOKENBYCODE = "getAccessTokenByCode";
+    
+    //转发到微博
+    public static final String FORWARDTOWEIBO = "forwardToWeibo";
+    
+    
 }

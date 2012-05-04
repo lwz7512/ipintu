@@ -14,6 +14,7 @@ import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TPicItem;
 import com.pintu.beans.Tag;
 import com.pintu.beans.User;
+import com.pintu.beans.UserExtend;
 import com.pintu.beans.Vote;
 import com.pintu.beans.Wealth;
 
@@ -221,5 +222,13 @@ public interface DBAccessInterface {
 	public int reviewPictureById(String picId);
 	
 	public int getAcceptedApplicant(String account);
+	
+	public int addExtendUser(UserExtend userExtend);
+	
+	public String getExtendUser(String uid);
+	
+	public int updateExtendUser(UserExtend userExtend, String uid);
+	
+	public String getTokenById(String userId);
 	
 }
