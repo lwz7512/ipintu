@@ -14,9 +14,17 @@ import com.pintu.beans.Vote;
 
 public interface CacheAccessInterface {
 
+
+	public static String USER_TYPE = "user";
+	
+	public static String PICTURE_TYPE = "picture";
+
+	public static String STORY_TYPE = "story";
+
+	public static String VOTE_TYPE = "vote";
+	
 	// 存放要同步入库的对象ID，该对象在缓冲中已存放；
 	// 同步入库后要从该列表中清除；
-	
 	//存储图片id（后续可能加上存用户）
 	public static Map<String, LinkedList<String>> toSavedUserPicIds = new HashMap<String, LinkedList<String>>();
 	
@@ -28,13 +36,11 @@ public interface CacheAccessInterface {
 	//在每天零点计算积分等级等时，顺便将这个清空
 	public static Map<String, Integer> hotPicCacheIds = new HashMap<String,Integer>();
 	 
-	public static String USER_TYPE = "user";
+	//条子的关注度
+	public static Map<String,Integer> noteAttentionMap = new HashMap<String,Integer>();
 	
-	public static String PICTURE_TYPE = "picture";
-
-	public static String STORY_TYPE = "story";
-
-	public static String VOTE_TYPE = "vote";
+	//条子的感兴趣人数
+	public static Map<String,Integer> noteInterestMap = new HashMap<String,Integer>();
 
 	//清空热图MAP
 	public void clearHotPicCacheIds();
@@ -110,5 +116,14 @@ public interface CacheAccessInterface {
 	public boolean removeTPic(String id);
 
 	public boolean removeThumbnail(long longTime, String thumbnailId);
+
+	//条子的关注度
+	public void cacheNoteAttention(String noteId, int count);
+	//条子的感兴趣人数
+	public void cacheNoteInterest(String noteId, int count);
+	
+	public void clearCacheNoteAttention();
+	
+	public void clearCacheNoteInterest();
 
 }

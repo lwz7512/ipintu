@@ -11,6 +11,7 @@ import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
 
+import com.pintu.beans.Note;
 import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TPicItem;
 import com.pintu.beans.User;
@@ -57,7 +58,6 @@ public class MidnightTask extends TimerTask {
 		
 		//更新图片的浏览数
 		boolean flag = updatePicBrowseCount();
-		
 		if(flag){
 			//如果p_browseCount更新成功则清除缓存计数
 			clearCounter();
@@ -68,6 +68,17 @@ public class MidnightTask extends TimerTask {
 		
 		//将社区发图和发评论达人查询放缓存
 		calculatePicAndCmtDaren();
+		
+		
+		//FIXME 更新条子的关注数和浏览数
+		boolean atte = updateNoteAttentionCount();
+		if(atte){
+			clearNoteAttentionCount();
+		}
+		boolean inte =updateNoteInterestCount();
+		if(inte){
+			clearNoteInterestCount();
+		}
 	}
 	
 	private void calculatePicAndCmtDaren() {
@@ -163,9 +174,73 @@ public class MidnightTask extends TimerTask {
 		return flag;
 	}
 
+	
 	private void clearCounter() {
 		// 将一天内查看过详情的图片点击量清零
 		this.cacheAccess.clearHotPicCacheIds();
+	}
+	
+
+	private boolean updateNoteInterestCount() {
+		boolean flag = true;
+		Map<String,Integer> interestMap =CacheAccessInterface.noteInterestMap;
+		log.info("NoteInterestMap size is:"+interestMap.size());
+		if(interestMap.size() > 0){
+			List<Note> interestCountList = new ArrayList<Note>();
+			for(String id:interestMap.keySet()){
+				Note note = new Note();
+				note.setId(id);
+				note.setInterest(interestMap.get(id));
+				interestCountList.add(note);
+			}
+			log.info("Need to update the interest count is:"+interestCountList.size());
+	
+			if(interestCountList != null && interestCountList.size() > 0){
+				int res = this.dbAccess.updateNoteInterest(interestCountList);
+				if(res == interestMap.size()){
+					log.info(">>>Update note interest count success");
+				}else{
+					log.info(">>>Incorrect number of updates");
+					flag = false;
+				}
+			}
+		}
+		return flag;
+	}
+
+	private boolean updateNoteAttentionCount() {
+		boolean flag = true;
+		Map<String,Integer> attentionMap =CacheAccessInterface.noteAttentionMap;
+		log.info("NoteAttentionMap size is:"+attentionMap.size());
+		if(attentionMap.size() > 0){
+			List<Note> attentionCountList = new ArrayList<Note>();
+			for(String id:attentionMap.keySet()){
+				Note note = new Note();
+				note.setId(id);
+				note.setAttention(attentionMap.get(id));
+				attentionCountList.add(note);
+			}
+			log.info("Need to update the attention count is:"+attentionCountList.size());
+	
+			if(attentionCountList != null && attentionCountList.size() > 0){
+				int res = this.dbAccess.updateNoteAttention(attentionCountList);
+				if(res == attentionCountList.size()){
+					log.info(">>>Update pic attention count success");
+				}else{
+					log.info(">>>Incorrect number of updates");
+					flag = false;
+				}
+			}
+		}
+		return flag;
+	}
+	
+	private void clearNoteInterestCount() {
+		this.cacheAccess.clearCacheNoteInterest();
+	}
+
+	private void clearNoteAttentionCount() {
+		this.cacheAccess.clearCacheNoteAttention();
 	}
 	
 }

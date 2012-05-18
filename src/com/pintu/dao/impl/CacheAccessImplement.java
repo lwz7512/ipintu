@@ -133,12 +133,10 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	
 //	@Override
 //	public Story getSpecificStory(String sid) {
-//		// TODO Auto-generated method stub
 //		return null;
 //	}
 //	@Override
 //	public Vote getSpecificVote(String vid) {
-//		// TODO Auto-generated method stub
 //		return null;
 //	}
 
@@ -232,6 +230,38 @@ public class CacheAccessImplement implements CacheAccessInterface {
 	@Override
 	public ImageDesc getCachedImage(String id) {
 		return pintuCache.getCacheImageById(id);
+	}
+
+	@Override
+	public void cacheNoteAttention(String noteId, int count) {
+		if (CacheAccessInterface.noteAttentionMap.containsKey(noteId)) {
+			Integer value = CacheAccessInterface.noteAttentionMap.get(noteId);
+			CacheAccessInterface.noteAttentionMap.put(noteId, value
+					+ count);
+		} else {
+			CacheAccessInterface.noteAttentionMap.put(noteId,count);
+		}
+	}
+
+	@Override
+	public void cacheNoteInterest(String noteId, int count) {
+		if (CacheAccessInterface.noteInterestMap.containsKey(noteId)) {
+			Integer value = CacheAccessInterface.noteInterestMap.get(noteId);
+			CacheAccessInterface.noteInterestMap.put(noteId, value
+					+ count);
+		} else {
+			CacheAccessInterface.noteInterestMap.put(noteId,count);
+		}
+	}
+
+	@Override
+	public void clearCacheNoteAttention() {
+		noteAttentionMap.clear();
+	}
+
+	@Override
+	public void clearCacheNoteInterest() {
+		noteInterestMap.clear();
 	}
 
 

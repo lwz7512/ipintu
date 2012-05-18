@@ -25,6 +25,7 @@ import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
 import com.pintu.beans.Gift;
 import com.pintu.beans.Message;
+import com.pintu.beans.Note;
 import com.pintu.beans.Story;
 import com.pintu.beans.StoryDetails;
 import com.pintu.beans.TPicDesc;
@@ -263,13 +264,16 @@ public class ApiAdaptor {
 	}
 
 	private Message createMessage(String sender, String receiver,
-			String content, String source) {
+			String content, String reference) {
 		Message msg = new Message();
 		msg.setId(PintuUtils.generateUID());
 		msg.setSender(sender);
 		msg.setReceiver(receiver);
 		msg.setContent(content);
-		msg.setReference("");
+		msg.setReference(reference);
+		if(reference !=null && !"".equals(reference)){
+			msg.setMsgType("contact");
+		}
 		msg.setWriteTime(PintuUtils.getFormatNowTime());
 		msg.setRead(0);
 		return msg;
@@ -284,8 +288,8 @@ public class ApiAdaptor {
 	 * @param source
 	 */
 	public String sendMessage(String sender, String receiver, String content,
-			String source) {
-		Message msg = this.createMessage(sender, receiver, content, source);
+			String reference) {
+		Message msg = this.createMessage(sender, receiver, content, reference);
 		return pintuService.sendMessage(msg);
 	}
 
@@ -739,7 +743,7 @@ public class ApiAdaptor {
 	}
 
 	
-	//---------------
+	//-----微博
 	public String getAccessTokenByCode(String code) {
 		AccessToken token = pintuService.getAccessTokenByCode(code);
 		String res =JSONObject.fromObject(token).toString();
@@ -750,6 +754,44 @@ public class ApiAdaptor {
 		String res = pintuService.forwardToWeibo(userId,picId);
 		return res;
 	}
+	
+
+	//条子
+	public String getCommunityNotes(int pageNum) {
+		List<Note> noteList = pintuService.getCommunityNotes(pageNum);
+		return JSONArray.fromCollection(noteList).toString();
+	}
+
+	public String addNote(String userId, String type, String title,
+			String content) {
+		String res = pintuService.addNote(userId,type,title,content);
+		return res;
+	}
+
+	public String deleteNoteById(String noteId) {
+		String res = pintuService.deleteNoteById(noteId);
+		return res;
+	}
+
+	public String updateNoteById(String noteId, String type, String title,
+			String content) {
+		String res = pintuService.updateNoteById(noteId,type,title,content);
+		return res;
+	}
+
+	public void addAttentionById(String noteId, int count) {
+		pintuService.addAttentionById(noteId,count);
+	}
+
+	public void addInterestById(String noteId, int count) {
+		pintuService.addInterestById(noteId,count);
+	}
+
+	public String getUserNotes(String userId) {
+		List<Note> noteList = pintuService.getUserNotes(userId);
+		return JSONArray.fromCollection(noteList).toString();
+	}
+	
 
 
 } // end of class

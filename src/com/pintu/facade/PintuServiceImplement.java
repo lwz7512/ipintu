@@ -46,6 +46,7 @@ import com.pintu.beans.Favorite;
 import com.pintu.beans.Gift;
 import com.pintu.beans.ImageDesc;
 import com.pintu.beans.Message;
+import com.pintu.beans.Note;
 import com.pintu.beans.Story;
 import com.pintu.beans.StoryDetails;
 import com.pintu.beans.TPicDesc;
@@ -1257,7 +1258,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		return calcPicDetailCount(resList);
 	}
 
-	// 将and的结果与or的结果合并
+	// 将and的结果与or的结果合并,并限制最多返回64条
 	private List<TPicDetails> combineResult(List<TPicDetails> andList,
 			List<TPicDetails> orList) {
 		for (int m = 0; m < andList.size(); m++) {
@@ -1271,7 +1272,16 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			}
 		}
 		andList.addAll(orList);
-		return andList;
+		//FIXME 限制条数返回
+		List<TPicDetails> resList = new ArrayList<TPicDetails>();
+		for(int i = 0; i<andList.size(); i++){
+			if(i==64){
+				break;
+			}
+			TPicDetails tPic = andList.get(i);
+			resList.add(tPic);
+		}
+		return resList;
 	}
 
 	@Override
@@ -1746,9 +1756,10 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 				log.info("Successfully upload the status to ["
 						+status.getText()+"].");
-			}
-			catch(Exception e1){
+			}catch(Exception e1){
 				e1.printStackTrace();
+				log.info("WeiboException: invalid_access_token.");
+				return false;
 			}
 		}catch(Exception ioe){
 			ioe.printStackTrace();
@@ -1771,6 +1782,100 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		}
 		bufferedInputStream.close();
 		return bytes;
+	}
+
+	@Override
+	public List<Note> getCommunityNotes(int pageNum) {
+		List<Note> list = dbVisitor.getCommunityNotes(pageNum);
+		return combinCount(list);
+	}
+	
+	//将缓存中的关注数与感兴趣数累加到要返回的数据里
+	private List<Note> combinCount(List<Note> list){
+		List<Note> resList = new ArrayList<Note>();
+		for(int i = 0 ; i < list.size() ; i++){
+			Note note = list.get(i);
+			//加关注数
+			int attentionCount = note.getAttention() ; 
+			if (CacheAccessInterface.noteAttentionMap.containsKey(note.getId())) {
+				Integer value = CacheAccessInterface.noteAttentionMap.get(note
+						.getId());
+				note.setAttention(value+ attentionCount);
+			}
+			//加感兴趣数
+			int interestCount = note.getInterest() ;
+			if (CacheAccessInterface.noteInterestMap.containsKey(note.getId())) {
+				Integer value = CacheAccessInterface.noteInterestMap.get(note
+						.getId());
+				note.setInterest(value + interestCount);
+			}
+			
+			resList.add(note);
+		}
+		return resList;
+	}
+
+	@Override
+	public String addNote(String userId, String type, String title,
+			String content) {
+		boolean flag = false;
+		Note note = generateNote(userId,type,title,content);
+		int rows = dbVisitor.addNote(note);
+		if(rows == 1){
+			flag = true;
+		}
+		return String.valueOf(flag);
+	}
+	
+	private Note generateNote(String userId, String type, String title,
+			String content){
+		Note note = new Note();
+		note.setId(PintuUtils.generateUID());
+		note.setType(type);
+		note.setTitle(title);
+		note.setContent(content);
+		note.setPublisher(userId);
+		note.setPublishTime(PintuUtils.getFormatNowTime());
+		return note;
+	}
+
+	@Override
+	public String deleteNoteById(String noteId) {
+		boolean flag = false;
+		int rows = dbVisitor.deleteNoteById(noteId);
+		if(rows == 1){
+			flag = true;
+		}
+		return String.valueOf(flag);
+	}
+
+	@Override
+	public String updateNoteById(String noteId, String type, String title,
+			String content) {
+		boolean flag = false;
+		int rows = dbVisitor.updateNoteById(noteId,type,title,content);
+		if(rows == 1){
+			flag = true;
+		}
+		return String.valueOf(flag);
+	}
+
+	@Override
+	public void addAttentionById(String noteId, int count) {
+		// TODO Auto-generated method stub
+		cacheVisitor.cacheNoteAttention(noteId,count);
+	}
+
+	@Override
+	public void addInterestById(String noteId, int count) {
+		// TODO Auto-generated method stub
+		cacheVisitor.cacheNoteInterest(noteId,count);
+	}
+
+	@Override
+	public List<Note> getUserNotes(String userId) {
+		List<Note> list = dbVisitor.getUserNotes(userId);
+		return combinCount(list);
 	}
 	
 	// TODO, 实现其他接口方法

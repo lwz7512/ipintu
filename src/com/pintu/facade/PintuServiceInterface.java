@@ -14,6 +14,7 @@ import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
 import com.pintu.beans.Gift;
 import com.pintu.beans.Message;
+import com.pintu.beans.Note;
 import com.pintu.beans.Story;
 import com.pintu.beans.StoryDetails;
 import com.pintu.beans.TPicDesc;
@@ -258,6 +259,24 @@ public interface PintuServiceInterface {
 	public AccessToken getAccessTokenByCode(String code);
 
 	public String forwardToWeibo(String userId, String picId);
+	
+	
+	//社区贴条子
+	public List<Note> getCommunityNotes(int pageNum);
+
+	public String addNote(String userId, String type, String title,
+			String content);
+
+	public String deleteNoteById(String noteId);
+
+	public String updateNoteById(String noteId, String type, String title,
+			String content);
+
+	public void addAttentionById(String noteId, int count);
+
+	public void addInterestById(String noteId, int count);
+
+	public List<Note> getUserNotes(String userId);
 
 
 

@@ -18,6 +18,7 @@ import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
 import com.pintu.beans.Gift;
 import com.pintu.beans.Message;
+import com.pintu.beans.Note;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicDetails;
@@ -1699,6 +1700,140 @@ public class DBAccessImplement implements DBAccessInterface {
 			}
 		}
 		return token;
+	}
+
+	@Override
+	public int addNote(final Note note) {
+		String sql = "INSERT INTO t_note "
+				+ "(n_id, n_publisher, n_type, n_title, n_content, n_publishTime, n_attention, n_interest, n_enable,n_memo) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ? ,? ,?)";
+
+		int res =jdbcTemplate.update(sql, new PreparedStatementSetter() {
+			public void setValues(PreparedStatement ps) {
+				try {
+					ps.setString(1, note.getId());
+					ps.setString(2, note.getPublisher());
+					ps.setString(3, note.getType());
+					ps.setString(4, note.getTitle());
+					ps.setString(5, note.getContent());
+					ps.setString(6, note.getPublishTime());
+					ps.setInt(7, note.getAttention());
+					ps.setInt(8, note.getInterest());
+					ps.setInt(9, note.getEnable());
+					ps.setString(10, "");
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+
+			}
+		});
+
+		return res;
+	}
+
+	@Override
+	public int deleteNoteById(String noteId) {
+		String sql = "update t_note set n_enable = 0  where n_id='"+noteId+"'";
+		int rows = jdbcTemplate.update(sql);
+		return rows;
+	}
+
+	@Override
+	public int updateNoteById(String noteId, String type, String title,
+			String content) {
+		String sql = "update t_note set n_type='"+type+"', n_title='"+title+"', n_content='"+content+"' where n_id='"+noteId+"'";
+		int rows = jdbcTemplate.update(sql);
+		return rows;
+	}
+
+	@Override
+	public List<Note> getUserNotes(String userId) {
+		List<Note> noteList = new ArrayList<Note>();
+		String sql = "select n.n_id,n.n_type,n.n_title,n.n_content,n.n_publisher,n.n_publishTime,n.n_attention,n.n_interest,u.u_nickName from t_note n,t_user u " +
+				"where n.n_publisher = u.u_id and n.n_publisher = '"+userId+"' and n.n_enable = 1 order by n.n_publishTime desc";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Note note = new Note();
+				note.setId(map.get("n_id").toString());
+				note.setType(map.get("n_type").toString());
+				note.setTitle(map.get("n_title").toString());
+				note.setContent(map.get("n_content").toString());
+				note.setPublisher(map.get("n_publisher").toString());
+				note.setAuthorName(map.get("u_nickName").toString());
+				note.setPublishTime(map.get("n_publishTime").toString());
+				note.setAttention(Integer.parseInt(map.get("n_attention").toString()));
+				note.setAttention(Integer.parseInt(map.get("n_interest").toString()));
+				noteList.add(note);
+			}
+		}
+		return noteList;
+	}
+
+	@Override
+	public List<Note> getCommunityNotes(int pageNum) {
+		int startLine = (pageNum -1)*9;
+		List<Note> noteList = new ArrayList<Note>();
+		String sql = "select n.n_id,n.n_type,n.n_title,n.n_content,n.n_publisher,n.n_publishTime,n.n_attention,n.n_interest,u.u_nickName from t_note n,t_user u " +
+				"where n.n_publisher = u.u_id and n.n_enable = 1  order by n.n_publishTime desc limit "+startLine+","+9;
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Note note = new Note();
+				note.setId(map.get("n_id").toString());
+				note.setType(map.get("n_type").toString());
+				note.setTitle(map.get("n_title").toString());
+				note.setContent(map.get("n_content").toString());
+				note.setPublisher(map.get("n_publisher").toString());
+				note.setAuthorName(map.get("u_nickName").toString());
+				note.setPublishTime(map.get("n_publishTime").toString());
+				note.setAttention(Integer.parseInt(map.get("n_attention").toString()));
+				note.setAttention(Integer.parseInt(map.get("n_interest").toString()));
+				noteList.add(note);
+			}
+		}
+		return noteList;
+	}
+
+	@Override
+	public int updateNoteAttention(final List<Note> attentionCountList) {
+		String sql = "update t_note set n_attention= n_attention +? where n_id=?";
+		int[] res = jdbcTemplate.batchUpdate(sql,
+				new BatchPreparedStatementSetter() {
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+							Note note = attentionCountList.get(i);
+							ps.setInt(1, note.getInterest());
+							ps.setString(2, note.getId());
+					}
+
+					public int getBatchSize() {
+						return attentionCountList.size();
+					}
+				});
+		return res.length;
+	}
+
+	@Override
+	public int updateNoteInterest(final List<Note> interestCountList) {
+		String sql = "update t_note set n_interest= n_interest +? where n_id=?";
+		int[] res = jdbcTemplate.batchUpdate(sql,
+				new BatchPreparedStatementSetter() {
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+							Note note = interestCountList.get(i);
+							ps.setInt(1, note.getInterest());
+							ps.setString(2, note.getId());
+					}
+
+					public int getBatchSize() {
+						return interestCountList.size();
+					}
+				});
+		return res.length;
 	}
 
 

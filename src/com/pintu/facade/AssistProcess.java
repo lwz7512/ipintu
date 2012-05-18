@@ -183,9 +183,9 @@ public class AssistProcess {
 			String sender = req.getParameter("userId");
 			String receiver = req.getParameter("receiver");
 			String content = req.getParameter("content");
-			String source = req.getParameter("source");
+			String reference = req.getParameter("reference");
 
-			String result = apiAdaptor.sendMessage(sender, receiver, content,source);
+			String result = apiAdaptor.sendMessage(sender, receiver, content, reference);
 			log.debug(result);
 			pw.print(result);
 			pw.close();
@@ -194,7 +194,6 @@ public class AssistProcess {
 			// 得到收件箱详情
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
-
 			String userId = req.getParameter("userId");
 			String result = apiAdaptor.getUserMsg(userId);
 			log.debug(result);
@@ -432,6 +431,71 @@ public class AssistProcess {
 			res.setContentType("text/plain;charset=UTF-8");
 			PrintWriter pw = res.getWriter();
 			String result = apiAdaptor.getActiveUserRanking();
+			log.debug(result);
+			pw.print(result);
+			pw.close(); 
+			
+		//FIXME 新加的社区贴条子模块api	
+		}else if(action.equals(AppStarter.GETCOMMUNITYNOTES)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			int pageNum = Integer.parseInt(req.getParameter("pageNum"));
+			if(pageNum<=0){
+				pageNum = 1;
+			}
+			String result = apiAdaptor.getCommunityNotes(pageNum);
+			log.debug(result);
+			pw.print(result);
+			pw.close(); 
+			
+		}else if(action.equals(AppStarter.ADDNOTE)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String userId =req.getParameter("userId");
+			String type =req.getParameter("type");
+			String title =req.getParameter("title");
+			String content =req.getParameter("content");
+			String result = apiAdaptor.addNote(userId,type,title,content);
+			log.debug(result);
+			pw.print(result);
+			pw.close(); 
+			
+		}else if(action.equals(AppStarter.DELETENOTEBYID)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String noteId =req.getParameter("noteId");
+			String result = apiAdaptor.deleteNoteById(noteId);
+			log.debug(result);
+			pw.print(result);
+			pw.close(); 
+			
+		}else if(action.equals(AppStarter.UPDATENOTEBYID)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String noteId =req.getParameter("noteId");
+			String type =req.getParameter("type");
+			String title =req.getParameter("title");
+			String content =req.getParameter("content");
+			String result = apiAdaptor.updateNoteById(noteId,type,title,content);
+			log.debug(result);
+			pw.print(result);
+			pw.close(); 
+			
+		}else if(action.equals(AppStarter.ADDATTENTIONBYID)){
+			String noteId =req.getParameter("noteId");
+			int count = Integer.parseInt(req.getParameter("count"));
+			apiAdaptor.addAttentionById(noteId,count);
+			
+		}else if(action.equals(AppStarter.ADDINTERESTBYID)){
+			String noteId =req.getParameter("noteId");
+			int count = Integer.parseInt(req.getParameter("count"));
+			apiAdaptor.addInterestById(noteId,count);
+			
+		}else if(action.equals(AppStarter.GETUSERNOTES)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String userId =req.getParameter("userId");
+			String result = apiAdaptor.getUserNotes(userId);
 			log.debug(result);
 			pw.print(result);
 			pw.close(); 
