@@ -1877,6 +1877,12 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		List<Note> list = dbVisitor.getUserNotes(userId);
 		return combinCount(list);
 	}
+
+	@Override
+	public Note getNoteById(String noteId) {
+		Note note = dbVisitor.getNoteById(noteId);
+		return note;
+	}
 	
 	// TODO, 实现其他接口方法
 

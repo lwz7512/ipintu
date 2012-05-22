@@ -481,6 +481,15 @@ public class AssistProcess {
 			pw.print(result);
 			pw.close(); 
 			
+		}else if(action.equals(AppStarter.GETNOTEBYID)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String noteId =req.getParameter("noteId");
+			String result = apiAdaptor.getNoteById(noteId);
+			log.debug(result);
+			pw.print(result);
+			pw.close(); 
+			
 		}else if(action.equals(AppStarter.ADDATTENTIONBYID)){
 			String noteId =req.getParameter("noteId");
 			int count = Integer.parseInt(req.getParameter("count"));

@@ -247,4 +247,6 @@ public interface DBAccessInterface {
 		
 		public int updateNoteInterest(List<Note> interestCountList);
 		
+		public Note getNoteById(String noteId);
+		
 }

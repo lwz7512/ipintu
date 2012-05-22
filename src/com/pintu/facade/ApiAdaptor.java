@@ -791,6 +791,11 @@ public class ApiAdaptor {
 		List<Note> noteList = pintuService.getUserNotes(userId);
 		return JSONArray.fromCollection(noteList).toString();
 	}
+
+	public String getNoteById(String noteId) {
+		Note note = pintuService.getNoteById(noteId);
+		return JSONObject.fromBean(note).toString();
+	}
 	
 
 

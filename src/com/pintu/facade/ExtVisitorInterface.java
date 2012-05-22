@@ -212,6 +212,9 @@ public interface ExtVisitorInterface {
     //修改条子
     public static final String UPDATENOTEBYID = "updateNoteById";
     
+    //获取指定条子
+    public static final String GETNOTEBYID = "getNoteById";
+    
     //增加关注数
     public static final String ADDATTENTIONBYID = "addAttentionById";
     

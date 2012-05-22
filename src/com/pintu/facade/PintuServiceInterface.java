@@ -278,6 +278,8 @@ public interface PintuServiceInterface {
 
 	public List<Note> getUserNotes(String userId);
 
+	public Note getNoteById(String noteId);
+
 
 
 
