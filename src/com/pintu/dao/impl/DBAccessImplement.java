@@ -1325,10 +1325,11 @@ public class DBAccessImplement implements DBAccessInterface {
 	@Override
 	public List<TPicDesc> getThumbnailByTag(String tagId, int pageNum,
 			int pageSize) {
+		int startLine = (pageNum -1)*pageSize;
 		List<TPicDesc> resList = new ArrayList<TPicDesc>();
 		String sql = "select p.p_id,p.p_publishTime "+
 				"from t_picture p,t_user u,t_tag t,t_category c where u.u_id=p.p_owner and p.p_id=c.c_picture and c.c_tag=t.t_id "+
-				"and t.t_id ='" + tagId + "' and p.p_pass=1";
+				"and t.t_id ='" + tagId + "' and p.p_pass=1 order by p.p_publishTime desc limit "+startLine+","+pageSize;
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {

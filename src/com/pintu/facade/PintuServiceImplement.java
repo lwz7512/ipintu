@@ -1273,15 +1273,16 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		}
 		andList.addAll(orList);
 		//FIXME 限制条数返回
-		List<TPicDetails> resList = new ArrayList<TPicDetails>();
-		for(int i = 0; i<andList.size(); i++){
-			if(i==64){
-				break;
-			}
-			TPicDetails tPic = andList.get(i);
-			resList.add(tPic);
-		}
-		return resList;
+//		List<TPicDetails> resList = new ArrayList<TPicDetails>();
+//		for(int i = 0; i<andList.size(); i++){
+//			if(i==64){
+//				break;
+//			}
+//			TPicDetails tPic = andList.get(i);
+//			resList.add(tPic);
+//		}
+//		return resList;
+		return andList;
 	}
 
 	@Override
