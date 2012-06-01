@@ -249,4 +249,8 @@ public interface DBAccessInterface {
 		
 		public Note getNoteById(String noteId);
 		
+		public int updateWeiboUesr(String userId, String account,
+				String encryptPwd);
+		
+		
 }

@@ -32,6 +32,7 @@
 	  var code = request("code");
 	  
 	  if(code != null && code != ""){
+	  	$('#btn').attr("disabled","true");
 	    $('#code').show().html("Code:"+code);
 	    console.log("code:"+code);
 	  	
@@ -44,34 +45,36 @@
 				  $('#accessToken').show().html("token:"+result.accessToken);
 				  
 				  //获取token后存cookie
+				  var userId = result.userId;
+				  var role = result.role;
 				  var uidVal = result.uid;
 				  var expireIn = result.expireIn;
 				  var spanVal = expireIn/(60*60*24);
 				  var tokenVal = result.accessToken;
+				  
+				  console.log('userId：'+userId);
+				  console.log('role：'+role);
 				  console.log('uid：'+uidVal);
 				  console.log('expires：'+spanVal);
 				  console.log('token：'+tokenVal);
+				  
 				  $.cookie('expires',spanVal);
 				  $.cookie('uid', uidVal, {expires:spanVal});
 				  $.cookie('token', tokenVal, {expires:spanVal});
 				  
 			}, "json");
+	  }else{
+	  		redirect();
 	  }
 	}
 	
 	//加载页面的时候先检查cookie
 	window.onload = function(){
-		var uid = $.cookie('uid');
-		var token = $.cookie('token');
-		console.log("cookie uid :"+uid);
-		console.log("cookie token :"+token);
-	    //$.cookie('uid',null);
-		if(uid !=null){
-			  $('#btn').attr("disabled","true");
-		}else{
+		var code = request("code");
+	  
+	  if(code != null && code != ""){
 			getAccessToken();
 		}
-	
 	}
 	
 	

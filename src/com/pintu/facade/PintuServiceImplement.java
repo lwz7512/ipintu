@@ -40,6 +40,7 @@ import weibo4j.http.ImageItem;
 import weibo4j.model.Status;
 import weibo4j.model.WeiboException;
 
+import com.pintu.beans.AccessUser;
 import com.pintu.beans.Applicant;
 import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
@@ -1583,7 +1584,8 @@ public class PintuServiceImplement implements PintuServiceInterface {
 
 	
 	@Override
-	public AccessToken getAccessTokenByCode(String code) {
+	public AccessUser getAccessTokenByCode(String code) {
+		AccessUser accessUser = new AccessUser();
 		Oauth oauth = new Oauth();
 		AccessToken token = null;
 		try{
@@ -1595,20 +1597,31 @@ public class PintuServiceImplement implements PintuServiceInterface {
 				e.printStackTrace();
 			}
 		}
-		//获取token后操作库（直接存或更新）
-		this.optWeiboUser(token);
 		
-		return token;
+		if(token == null){
+			log.info("code is out date");
+			return accessUser;
+		}
+		
+		//获取token后操作库（直接存或更新）
+		String userId = this.optWeiboUser(token);
+		
+		accessUser.setUserId(userId);
+		accessUser.setUid(token.getUid());
+		accessUser.setAccessToken(token.getAccessToken());
+		accessUser.setExpireIn(token.getExpireIn());
+		
+		return accessUser;
 	}
 
 	
-	private void optWeiboUser(AccessToken token) {
-		boolean flag = false;
+	private String optWeiboUser(AccessToken token) {
+		String userId = "";
 		String uid = token.getUid();
-		String userId = dbVisitor.getExtendUser(uid);
+		userId = dbVisitor.getExtendUser(uid);
 		if(!"".equals(userId) && userId != null){
 			//如果当前用微博登录的用户存在，更新表
-			flag = updateWeiboUser(token,uid,userId);
+			boolean flag = updateWeiboUser(token,uid,userId);
 			if(flag){
 				log.info("update weibo user success");
 			}else{
@@ -1616,13 +1629,14 @@ public class PintuServiceImplement implements PintuServiceInterface {
 			}
 		}else{
 			//不存在，新插入记录到表
-			flag =addWeiboUser(token);
-			if(flag){
+			userId =addWeiboUser(token);
+			if(!"".equals(userId) && userId != null){
 				log.info("new weibo user success");
 			}else{
 				log.info("new weibo user error");
 			}
 		}
+		return userId;
 	}
 	
 	//将微博登录用户更新库，原user表和扩展表
@@ -1649,7 +1663,7 @@ public class PintuServiceImplement implements PintuServiceInterface {
 	}
 
 	//将微博登录用户存库包括两部分，存原user表和扩展表
-	private boolean addWeiboUser(AccessToken token) {
+	private String addWeiboUser(AccessToken token) {
 		String newId = PintuUtils.generateUID();
 		weibo4j.model.User user = this.getUserByToken(token);
 		
@@ -1661,7 +1675,6 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		
 		if(rows == 1 && lines == 1){
 			log.info("insert user and extend success");
-			return true;
 		}else if(rows == 1 && lines == 0){
 			log.info("insert user error");
 		}else if(rows == 0 && lines == 1){
@@ -1669,16 +1682,19 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		}else{
 			log.info("insert user and extend error");
 		}
-		return false;
+		return newId;
 	}
 
 	private User generateUser(String newId,weibo4j.model.User user) {
 		User iptUser = new User();
 		iptUser.setId(newId);
-		iptUser.setAccount("guest@ipintu.com");
-		iptUser.setPwd(Encrypt.encrypt("guest"));
+		iptUser.setAccount(user.getId()+"@ipintu.com");
+		//FIXME 这里需要修改，若都用一样的邮箱和密码，会出现问题
+		String pwd = user.getId().substring(0,6);
+		iptUser.setPwd(Encrypt.encrypt(pwd));
 		iptUser.setAvatar(user.getAvatarLarge());
 		iptUser.setNickName(user.getName());
+		iptUser.setRole("weibo");
 		iptUser.setRegisterTime(PintuUtils.getFormatNowTime());
 		return iptUser;
 	}
@@ -1884,6 +1900,18 @@ public class PintuServiceImplement implements PintuServiceInterface {
 		Note note = dbVisitor.getNoteById(noteId);
 		return note;
 	}
+
+	@Override
+	public String updateWeiboUser(String userId, String account, String pwd) {
+		boolean flag = false;
+		String encryptPwd = Encrypt.encrypt(pwd);
+		int rows = dbVisitor.updateWeiboUesr(userId,account,encryptPwd);
+		if(rows == 1){
+			flag = true;
+		}
+		return String.valueOf(flag);
+	}
+
 	
 	// TODO, 实现其他接口方法
 

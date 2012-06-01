@@ -134,7 +134,8 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 		
 		//微博接入有关api
 		if(action.equals(AppStarter.GETACCESSTOKENBYCODE) 
-				||(action.equals(AppStarter.FORWARDTOWEIBO)) ){
+				||(action.equals(AppStarter.FORWARDTOWEIBO)) 
+				||(action.equals(AppStarter.IMPROVEWEIBOUSER))){
 			
 			weiboProcess(action,req,res);
 		}
@@ -201,6 +202,18 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			log.debug(result);
 			pw.print(result);
 			pw.close();
+			
+		}else if(action.equals(AppStarter.IMPROVEWEIBOUSER)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String userId = req.getParameter("userId");
+			String account = req.getParameter("account");
+			String pwd = req.getParameter("password");
+			String result = apiAdaptor.updateWeiboUser(userId,account,pwd);
+			log.debug(result);
+			pw.print(result);
+			pw.close();
+			
 		}
 		
 	}

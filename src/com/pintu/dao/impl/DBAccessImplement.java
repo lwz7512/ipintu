@@ -1858,5 +1858,12 @@ public class DBAccessImplement implements DBAccessInterface {
 		return note;
 	}
 
+	@Override
+	public int updateWeiboUesr(String userId, String account, String encryptPwd) {
+		String sql = "update t_user  set u_account ='"+account+"', u_pwd ='"+encryptPwd+"' where u_id='"+userId+"'";
+		int rows = jdbcTemplate.update(sql); 
+		return rows;
+	}
+
 
 }

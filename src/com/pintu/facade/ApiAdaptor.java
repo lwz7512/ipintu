@@ -15,11 +15,10 @@ import net.sf.json.JSONObject;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
 
-import weibo4j.http.AccessToken;
-
 import com.pintu.ads.beans.Ads;
 import com.pintu.ads.beans.Vender;
 import com.pintu.ads.facade.AdsServiceInterface;
+import com.pintu.beans.AccessUser;
 import com.pintu.beans.Applicant;
 import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
@@ -745,8 +744,8 @@ public class ApiAdaptor {
 	
 	//-----微博
 	public String getAccessTokenByCode(String code) {
-		AccessToken token = pintuService.getAccessTokenByCode(code);
-		String res =JSONObject.fromObject(token).toString();
+		AccessUser accessUser = pintuService.getAccessTokenByCode(code);
+		String res =JSONObject.fromObject(accessUser).toString();
 		return res;
 	}
 
@@ -796,6 +795,12 @@ public class ApiAdaptor {
 		Note note = pintuService.getNoteById(noteId);
 		return JSONObject.fromBean(note).toString();
 	}
+
+	public String updateWeiboUser(String userId, String account, String pwd) {
+		String result = pintuService.updateWeiboUser(userId,account,pwd);
+		return result;
+	}
+
 	
 
 

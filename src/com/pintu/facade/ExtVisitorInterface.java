@@ -196,6 +196,8 @@ public interface ExtVisitorInterface {
     //转发到微博
     public static final String FORWARDTOWEIBO = "forwardToWeibo";
     
+    //完善资料(使用weibo账户登录，完善账号密码)
+    public static final String IMPROVEWEIBOUSER = "improveWeiboUser";
     
     
    //---贴条子相关方法

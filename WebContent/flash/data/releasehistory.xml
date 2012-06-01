@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<life product="ipintu">
+	<release version="v1.0" time="2012/01/05" status="第一个正式发布版"/>
+	<release version="v1.06" time="2012/03/06" status="加入微广告模块"/>
+	<release version="v1.1" time="2012/05/21" status="加入社区模块"/>
+	<release version="coming soon..." time="..." status="..."/>
+</life>

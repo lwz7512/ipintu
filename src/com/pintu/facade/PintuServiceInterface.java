@@ -7,8 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
 
-import weibo4j.http.AccessToken;
-
+import com.pintu.beans.AccessUser;
 import com.pintu.beans.Applicant;
 import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
@@ -256,7 +255,7 @@ public interface PintuServiceInterface {
 	public void getImgByRelativePath(String relativePath,
 			HttpServletResponse res);
 
-	public AccessToken getAccessTokenByCode(String code);
+	public AccessUser getAccessTokenByCode(String code);
 
 	public String forwardToWeibo(String userId, String picId);
 	
@@ -279,6 +278,8 @@ public interface PintuServiceInterface {
 	public List<Note> getUserNotes(String userId);
 
 	public Note getNoteById(String noteId);
+
+	public String updateWeiboUser(String userId, String account, String pwd);
 
 
 
