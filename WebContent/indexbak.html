@@ -10,7 +10,6 @@
 <link rel="icon" type="image/png" href="http://ipintu.com/favicon.png">
 <link rel="stylesheet" type="text/css" href="sharejs.css">
 <link rel="stylesheet" type="text/css" href="ipintu.css"/>
-<script type="text/javascript" src="js/jquery.js" charset="utf-8"></script>
 <script type="text/javascript" src="js/swfobject.js"  charset="utf-8"></script>
 
 <script type="text/javascript">
@@ -38,6 +37,7 @@
 	}
 	
 	function redirect(){
+		 console.log("https start~");
 		var url = "https://api.weibo.com/oauth2/authorize?client_id=829498868&redirect_uri=http://ipintu.com/index.html&response_type=code";
 		window.location.href = url;
 	}
@@ -135,7 +135,9 @@
 				</li>
 				<li>
 <!-- 					<a href="http://weibo.com/ipintu" target="_blank">新浪微博</a> -->
-						<a href="javascript:redirect();" target="_blank"><img src ="images/weibo24.png"></img></a>
+						<a target="_blank"><img src ="images/weibo24.png" onclick="javascript:redirect();"></img></a>
+						
+						
 				</li>
 			</ul>
 			
