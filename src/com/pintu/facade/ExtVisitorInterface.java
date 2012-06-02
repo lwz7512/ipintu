@@ -186,4 +186,43 @@ public interface ExtVisitorInterface {
     
     //验证厂商是否已被注册
     public static final String CHECKOUTREGISTER = "checkoutRegister";
+    
+    
+    //--------接微博相关方法
+    
+    //根据code获取access token
+    public static final String GETACCESSTOKENBYCODE = "getAccessTokenByCode";
+    
+    //转发到微博
+    public static final String FORWARDTOWEIBO = "forwardToWeibo";
+    
+    //完善资料(使用weibo账户登录，完善账号密码)
+    public static final String IMPROVEWEIBOUSER = "improveWeiboUser";
+    
+    
+   //---贴条子相关方法
+    
+    //条子列表
+    public static final String GETCOMMUNITYNOTES = "getCommunityNotes";
+    
+    //添加新条子
+    public static final String ADDNOTE = "addNote";
+    
+    //删除指定条子
+    public static final String DELETENOTEBYID = "deleteNoteById";
+    
+    //修改条子
+    public static final String UPDATENOTEBYID = "updateNoteById";
+    
+    //获取指定条子
+    public static final String GETNOTEBYID = "getNoteById";
+    
+    //增加关注数
+    public static final String ADDATTENTIONBYID = "addAttentionById";
+    
+    //增加感兴趣数
+    public static final String ADDINTERESTBYID = "addInterestById";
+    
+    //显示自己的条子列表
+    public static final String GETUSERNOTES = "getUserNotes";
 }

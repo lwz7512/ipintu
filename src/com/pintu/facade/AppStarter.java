@@ -132,6 +132,14 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 			return;
 		} 
 		
+		//微博接入有关api
+		if(action.equals(AppStarter.GETACCESSTOKENBYCODE) 
+				||(action.equals(AppStarter.FORWARDTOWEIBO)) 
+				||(action.equals(AppStarter.IMPROVEWEIBOUSER))){
+			
+			weiboProcess(action,req,res);
+		}
+		
 		//有关微广告系统的所有api
 		if (action.equals(AppStarter.GETTODAYADS)
 				|| action.equals(AppStarter.SEARCHADS)
@@ -166,6 +174,49 @@ public class AppStarter extends HttpServlet implements ApplicationListener,
 		
 	}
 	
+	/**
+	 * 处理微博接入相关api
+	 * @param action
+	 * @param req
+	 * @param res
+	 * @throws IOException 
+	 */
+	private void weiboProcess(String action, HttpServletRequest req,
+			HttpServletResponse res) throws IOException {
+		
+		if(action.equals(AppStarter.GETACCESSTOKENBYCODE)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String code = req.getParameter("code");
+			String result = apiAdaptor.getAccessTokenByCode(code);
+			log.debug(result);
+			pw.print(result);
+			pw.close();
+			
+		}else if(action.equals(AppStarter.FORWARDTOWEIBO)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String userId = req.getParameter("userId");
+			String picId = req.getParameter("picId");
+			String result = apiAdaptor.forwardToWeibo(userId,picId);
+			log.debug(result);
+			pw.print(result);
+			pw.close();
+			
+		}else if(action.equals(AppStarter.IMPROVEWEIBOUSER)){
+			res.setContentType("text/plain;charset=UTF-8");
+			PrintWriter pw = res.getWriter();
+			String userId = req.getParameter("userId");
+			String account = req.getParameter("account");
+			String pwd = req.getParameter("password");
+			String result = apiAdaptor.updateWeiboUser(userId,account,pwd);
+			log.debug(result);
+			pw.print(result);
+			pw.close();
+			
+		}
+		
+	}
 
 	/**
 	 * 处理 登录、 注册、申请、验证用户

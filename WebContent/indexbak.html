@@ -1,0 +1,229 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta property="wb:webmaster" content="77d8dc8aa8a157e8" />
+<title>爱品图 随时随地发现创意</title>
+<meta name="description" content="爱品图是一个为插画、动漫、平面创意作品爱好者开发的一款移动互联网应用，通过手机、平板、桌面浏览器可以随时随地欣赏优美的作品并分享自己的发现。" />
+<meta name="keywords" content="创意分享 图片分享 艺术交流 手绘艺术 平面艺术 动漫艺术 移动互联网 创意生活 社交工具" />
+<link rel="canonical" href="http://ipintu.com/" />
+<link rel="icon" type="image/png" href="http://ipintu.com/favicon.png">
+<link rel="stylesheet" type="text/css" href="sharejs.css">
+<link rel="stylesheet" type="text/css" href="ipintu.css"/>
+<script type="text/javascript" src="js/swfobject.js"  charset="utf-8"></script>
+
+<script type="text/javascript">
+	var flashvars = {};
+	var params = {};
+//	params.bgcolor = "#000000";
+	params.wmode = "transparent";
+	params.allowscriptaccess = "always";
+	var attributes = {};
+	attributes.id = "ssobj";
+    attributes.name = "ssobj";
+    swfobject.embedSWF("ssobj.swf", "flashContent", "10", "10", "10.0.0","playerProductInstall.swf", flashvars, params, attributes);
+</script>
+
+<script type="text/javascript">
+	function cacheUserBrage(userId, userRole, expireDate){
+		try{
+			if(swfobject == null){
+				 console.log("swfobject is null");
+			}
+			swfobject.getObjectById("ssobj").cacheUserForFlash(userId, userRole, expireDate);
+		}catch(err){
+			 console.log(err.message);
+		}
+	}
+	
+	function redirect(){
+		 console.log("https start~");
+		var url = "https://api.weibo.com/oauth2/authorize?client_id=829498868&redirect_uri=http://ipintu.com/index.html&response_type=code";
+		window.location.href = url;
+	}
+	
+	function request(paras)
+	{ 
+	    var url = location.href; 
+	    var paraString = url.substring(url.indexOf("?")+1,url.length).split("&"); 
+	    var paraObj = {};
+	    for (var i=0; j=paraString[i]; i++){ 
+	    	paraObj[j.substring(0,j.indexOf("=")).toLowerCase()] = j.substring(j.indexOf("=")+1,j.length); 
+	    } 
+	    var returnValue = paraObj[paras.toLowerCase()]; 
+	    if(typeof(returnValue)=="undefined"){ 
+	    	return ""; 
+	    }else{ 
+	    	return returnValue; 
+	    } 
+	}
+
+	function getAccessToken(){
+	  var code = request("code");
+	  
+	  if(code != null && code != ""){
+	    console.log("code:"+code);
+	    
+	  	      xhr = new XMLHttpRequest();
+		      xhr.open('GET', 'http://ipintu.com/ipintu/pintuapi?method=getAccessTokenByCode&code='+code, true);
+		      xhr.onreadystatechange = function(e) {
+		        if (xhr.readyState === 4) {
+		          if (xhr.status === 200) {
+		            var result = JSON.parse(xhr.responseText);
+		            	console.log('result：'+result.userId);
+		            	
+				             //获取token后存cookie
+						  var userId = result.userId;
+						  var role = result.role;
+						  var expireIn = result.expireIn;
+		                  var expireDate = new Date().getTime() + expireIn * 1000; 
+						
+						  console.log('userId：'+userId);
+						  console.log('role：'+role);
+						  console.log('expireDate：'+expireDate);
+						  console.log('uid：'+result.uid);
+						  console.log('accessToken：'+result.accessToken);
+						  
+						  if(userId!=null && userId!=""){
+							  cacheUserBrage(userId,role,expireDate);
+						  }
+						  
+						  window.location.href ="http://ipintu.com/ipintu/flash/index.html";
+		          }
+		        }
+		      };
+		      xhr.send(null);
+					
+	  }else{
+	  		redirect();
+	  }
+	}
+	
+	
+		//加载页面的时候先检查cookie
+	window.onload = function(){
+		var code = request("code");
+	 	 if(code != null && code != ""){
+			getAccessToken();
+		}
+	}
+	
+	
+</script>
+
+</head>
+<body>
+	<span id="flashContent">
+		<p>Flash content</p>
+	</span>
+	
+	<div id="topDiv">
+		<img src="images/logo.jpg" id="logoImg" width="119" height="105" />
+		<div id="menuDiv">
+			<ul>
+				<li class="home">
+					<a href="index.html">首页</a> ｜ 
+				</li>
+				<li>
+					<a href="http://ipintu.com/ipintu/html/apply.html" target="_blank">申请加入社区</a> ｜ 
+				</li>
+				<li>
+					<a href="http://ipintu.com/ipintu/flash/index.html" target="_blank">体验一下</a> ｜ 
+				</li>
+				<li>
+					<a href="http://rainbirdtech.com" target="_blank">联系我们</a> ｜ 
+				</li>
+				<li>
+<!-- 					<a href="http://weibo.com/ipintu" target="_blank">新浪微博</a> -->
+						<a target="_blank"><img src ="images/weibo24.png" onclick="javascript:redirect();"></img></a>
+						
+						
+				</li>
+			</ul>
+			
+		</div>
+		<div class="clearDiv">
+			<div id="phoneDiv">
+				<div id="idContainer2" class="container">
+				<table id="idSlider2" border="0" cellSpacing="0" cellPadding="0">
+				  <tbody>
+				  	<tr>
+						<td class="td_f"><img src="images/splash.jpg" width="122" height="173"></td>
+						<td class="td_f"><img src="images/splash_1.jpg" width="122" height="173"></td>
+						<td class="td_f"><img src="images/splash_2.jpg" width="122" height="173"></td>
+						<td class="td_f"><img src="images/splash_3.jpg" width="122" height="173"></td>
+						<td class="td_f"><img src="images/splash_4.jpg" width="122" height="173"></td>
+					</tr>
+					</tbody>
+				</table>
+				<ul id=idNum class="num"></ul>
+				</div>
+			</div>
+			
+			<div id="sloganDiv">
+				<img src="images/slogan.jpg" width="357" height="62"/>
+				<br />
+				爱品图是一个创意图片分享与品评的平台
+				<br />
+				目前有web版和android手机版
+			</div>
+			
+			<div id="downloadDiv">
+				<a href="http://ipintu.com/ipintu/download/PintuMain-release_v1_local.apk" alt="Android ipintu" title="local version">	
+				<img src="images/downloadBtns1.png" width="318" height="147" border="0" cellspacing="0" cellpadding="0"/>
+				</a>
+				<a target="_blank" href="https://market.android.com/details?id=com.ybcx#?t=W251bGwsMSwxLDEsImNvbS55YmN4Il0." alt="Android ipintu" title="market version">
+					<img src="images/downloadBtns2.png" width="318" height="147" border="0" cellspacing="0" cellpadding="0"/>
+				</a>
+		
+			</div>
+		</div>
+	</div>
+	<div id="btmDiv" >
+		<div id="leftDiv" class="clearDiv">
+			<div class="itemDiv">
+				<img src="images/showicon.jpg"/>
+				<img src="images/title1.jpg"/>
+				<p>
+				结识圈内朋友，分享心得与共鸣；
+				</p>
+			</div>
+			<div class="itemDiv">
+				<img src="images/friendsicon.jpg"/>
+				<img src="images/title2.jpg"/>
+				<p>
+				发布绘画作品和摄影作品，供社友欣赏和点评；
+				</p>
+			</div>
+			<div class="itemDiv">
+				<img src="images/moneyicon.jpg"/>
+				<img src="images/title3.jpg"/>
+				<p>推广自己的创作，获得更多商业机会</p>
+			</div>
+		</div>
+		<div id="rightDiv">
+			<img src="images/title4.jpg"/>
+			<ul>
+				<li>产品类型：艺术图片分享应用</li><br/>
+				<li>产品定位：轻艺术传播工具！</li><br/>
+				<li>产品目标：让图形艺术雅俗共赏并产生商业价值！</li><br/>
+				<li>产品理念：爱品图，随时随地享受创意生活！</li>
+			</ul>
+			<img src="images/title5.jpg"/>
+			<ul>
+				<li>帮助艺术家们推广和宣传自己的创作，以得到社会认可和价值实现；</li>
+				<li>为普通用户带来美的享受和艺术体验；</li>
+				<li>为文化及创意企业提供产品、形象推广的渠道；</li>
+			</ul>
+			
+		</div>
+		
+		<div id="footDiv" class="clearDiv">
+			Copyright © 2011 北京远博畅享科技有限公司 保留所有权利&nbsp;&nbsp;
+			京ICP备12006883&nbsp;&nbsp;&nbsp;&nbsp;
+			<script src="http://s13.cnzz.com/stat.php?id=3797512&web_id=3797512" language="JavaScript"></script>&nbsp;&nbsp;			
+		</div>
+	</div>
+	<script src="image.js"></script>
+</body>
+</html>

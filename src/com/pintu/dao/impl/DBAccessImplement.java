@@ -18,12 +18,14 @@ import com.pintu.beans.Event;
 import com.pintu.beans.Favorite;
 import com.pintu.beans.Gift;
 import com.pintu.beans.Message;
+import com.pintu.beans.Note;
 import com.pintu.beans.Story;
 import com.pintu.beans.TPicDesc;
 import com.pintu.beans.TPicDetails;
 import com.pintu.beans.TPicItem;
 import com.pintu.beans.Tag;
 import com.pintu.beans.User;
+import com.pintu.beans.UserExtend;
 import com.pintu.beans.Vote;
 import com.pintu.beans.Wealth;
 import com.pintu.dao.DBAccessInterface;
@@ -1323,10 +1325,11 @@ public class DBAccessImplement implements DBAccessInterface {
 	@Override
 	public List<TPicDesc> getThumbnailByTag(String tagId, int pageNum,
 			int pageSize) {
+		int startLine = (pageNum -1)*pageSize;
 		List<TPicDesc> resList = new ArrayList<TPicDesc>();
 		String sql = "select p.p_id,p.p_publishTime "+
 				"from t_picture p,t_user u,t_tag t,t_category c where u.u_id=p.p_owner and p.p_id=c.c_picture and c.c_tag=t.t_id "+
-				"and t.t_id ='" + tagId + "' and p.p_pass=1";
+				"and t.t_id ='" + tagId + "' and p.p_pass=1 order by p.p_publishTime desc limit "+startLine+","+pageSize;
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -1358,7 +1361,7 @@ public class DBAccessImplement implements DBAccessInterface {
 		String sql = "select p.p_id,p.p_name,p.p_owner,p.p_publishTime,p.p_description,p.p_source,p.p_isOriginal,p.p_browseCount," +
 				"p.p_mobImgId,p.p_mobImgSize,p.p_mobImgPath,p.p_rawImgId,p.p_rawImgSize,p.p_rawImgPath," +
 				"u.u_nickName,u.u_avatar,u.u_score,u.u_level " +
-				"from t_picture p left join t_user u on p.p_owner=u.u_id where p.p_pass=1 and "+tagAnd.toString();
+				"from t_picture p left join t_user u on p.p_owner=u.u_id where p.p_pass=1 and "+tagAnd.toString() +"order by p.p_publishTime desc";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -1396,7 +1399,7 @@ public class DBAccessImplement implements DBAccessInterface {
 				"p.p_mobImgId,p.p_mobImgSize,p.p_mobImgPath,p.p_rawImgId,p.p_rawImgSize,p.p_rawImgPath," +
 				"u.u_nickName,u.u_avatar,u.u_score,u.u_level " +
 				"from t_picture p,t_user u,t_tag t,t_category c where u.u_id=p.p_owner and p.p_id=c.c_picture and c.c_tag=t.t_id "+
-				"and t.t_name in (" + tagOr + ") and p.p_pass=1";
+				"and t.t_name in (" + tagOr + ") and p.p_pass=1 order by p.p_publishTime desc";
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		if (rows != null && rows.size() > 0) {
 			for (int i = 0; i < rows.size(); i++) {
@@ -1617,6 +1620,248 @@ public class DBAccessImplement implements DBAccessInterface {
 	public int getAcceptedApplicant(String account) {
 		String sql = "select count(a_id) from  t_applicant where a_account='"+account+"' and a_inviteCode is not null and a_passed=1";
 		int rows = jdbcTemplate.queryForInt(sql); 
+		return rows;
+	}
+
+	@Override
+	public int addExtendUser(final UserExtend userExtend) {
+		String sql = "insert into t_userextend "
+		 + "(u_id,u_gender,u_location,u_contract,u_description,u_personalUrl,u_uid,u_token,u_tokenExpiration,u_memo) "
+		 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
+		int res =jdbcTemplate.update(sql, new PreparedStatementSetter() {
+			public void setValues(PreparedStatement ps) {
+				try {
+					ps.setString(1, userExtend.getId());
+					ps.setString(2, userExtend.getGender());
+					ps.setString(3, userExtend.getLocation());
+					ps.setString(4, userExtend.getContract());
+					ps.setString(5, userExtend.getDescripttion());
+					ps.setString(6, userExtend.getPersonalUrl());
+					ps.setString(7, userExtend.getUid());
+					ps.setString(8, userExtend.getToken());
+					ps.setString(9, userExtend.getTokenExpiration());
+					ps.setString(10,"");
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+
+			}
+		});
+
+		return res;
+	}
+
+	@Override
+	public String getExtendUser(String uid) {
+		String userId = "";
+		String sql = "select u_id from t_userextend where u_uid ='"+uid+"'";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				userId =map.get("u_id").toString();
+			}
+		}
+		return userId;
+	}
+
+	@Override
+	public int updateExtendUser(final UserExtend userExtend, String uid) {
+		String sql = "update t_userextend set u_gender = ?,u_location = ?,u_description=?,u_personalUrl=?,u_token=?,u_tokenExpiration = ? where u_uid='"+uid+"'";
+		int res =jdbcTemplate.update(sql, new PreparedStatementSetter() {
+			public void setValues(PreparedStatement ps) {
+				try {
+					ps.setString(1, userExtend.getGender());
+					ps.setString(2, userExtend.getLocation());
+					ps.setString(3, userExtend.getDescripttion());
+					ps.setString(4, userExtend.getPersonalUrl());
+					ps.setString(5, userExtend.getToken());
+					ps.setString(6, userExtend.getTokenExpiration());
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+
+			}
+		});
+
+		return res;
+	}
+
+	@Override
+	public String getTokenById(String userId) {
+		String token = "";
+		String sql = "select u_token from t_userextend where u_id ='"+userId+"'";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				token =map.get("u_token").toString();
+			}
+		}
+		return token;
+	}
+
+	@Override
+	public int addNote(final Note note) {
+		String sql = "INSERT INTO t_note "
+				+ "(n_id, n_publisher, n_type, n_title, n_content, n_publishTime, n_attention, n_interest, n_enable,n_memo) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ? ,? ,?)";
+
+		int res =jdbcTemplate.update(sql, new PreparedStatementSetter() {
+			public void setValues(PreparedStatement ps) {
+				try {
+					ps.setString(1, note.getId());
+					ps.setString(2, note.getPublisher());
+					ps.setString(3, note.getType());
+					ps.setString(4, note.getTitle());
+					ps.setString(5, note.getContent());
+					ps.setString(6, note.getPublishTime());
+					ps.setInt(7, note.getAttention());
+					ps.setInt(8, note.getInterest());
+					ps.setInt(9, note.getEnable());
+					ps.setString(10, "");
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+
+			}
+		});
+
+		return res;
+	}
+
+	@Override
+	public int deleteNoteById(String noteId) {
+		String sql = "update t_note set n_enable = 0  where n_id='"+noteId+"'";
+		int rows = jdbcTemplate.update(sql);
+		return rows;
+	}
+
+	@Override
+	public int updateNoteById(String noteId, String type, String title,
+			String content) {
+		String sql = "update t_note set n_type='"+type+"', n_title='"+title+"', n_content='"+content+"' where n_id='"+noteId+"'";
+		int rows = jdbcTemplate.update(sql);
+		return rows;
+	}
+
+	@Override
+	public List<Note> getUserNotes(String userId) {
+		List<Note> noteList = new ArrayList<Note>();
+		String sql = "select n.n_id,n.n_type,n.n_title,n.n_content,n.n_publisher,n.n_publishTime,n.n_attention,n.n_interest,u.u_nickName from t_note n,t_user u " +
+				"where n.n_publisher = u.u_id and n.n_publisher = '"+userId+"' and n.n_enable = 1 order by n.n_publishTime desc";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Note note = new Note();
+				note.setId(map.get("n_id").toString());
+				note.setType(map.get("n_type").toString());
+				note.setTitle(map.get("n_title").toString());
+				note.setContent(map.get("n_content").toString());
+				note.setPublisher(map.get("n_publisher").toString());
+				note.setAuthorName(map.get("u_nickName").toString());
+				note.setPublishTime(map.get("n_publishTime").toString());
+				note.setAttention(Integer.parseInt(map.get("n_attention").toString()));
+				note.setAttention(Integer.parseInt(map.get("n_interest").toString()));
+				noteList.add(note);
+			}
+		}
+		return noteList;
+	}
+
+	@Override
+	public List<Note> getCommunityNotes(int pageNum) {
+		int startLine = (pageNum -1)*9;
+		List<Note> noteList = new ArrayList<Note>();
+		String sql = "select n.n_id,n.n_type,n.n_title,n.n_content,n.n_publisher,n.n_publishTime,n.n_attention,n.n_interest,u.u_nickName from t_note n,t_user u " +
+				"where n.n_publisher = u.u_id and n.n_enable = 1  order by n.n_publishTime desc limit "+startLine+","+9;
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				Note note = new Note();
+				note.setId(map.get("n_id").toString());
+				note.setType(map.get("n_type").toString());
+				note.setTitle(map.get("n_title").toString());
+				note.setContent(map.get("n_content").toString());
+				note.setPublisher(map.get("n_publisher").toString());
+				note.setAuthorName(map.get("u_nickName").toString());
+				note.setPublishTime(map.get("n_publishTime").toString());
+				note.setAttention(Integer.parseInt(map.get("n_attention").toString()));
+				note.setAttention(Integer.parseInt(map.get("n_interest").toString()));
+				noteList.add(note);
+			}
+		}
+		return noteList;
+	}
+
+	@Override
+	public int updateNoteAttention(final List<Note> attentionCountList) {
+		String sql = "update t_note set n_attention= n_attention +? where n_id=?";
+		int[] res = jdbcTemplate.batchUpdate(sql,
+				new BatchPreparedStatementSetter() {
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+							Note note = attentionCountList.get(i);
+							ps.setInt(1, note.getInterest());
+							ps.setString(2, note.getId());
+					}
+
+					public int getBatchSize() {
+						return attentionCountList.size();
+					}
+				});
+		return res.length;
+	}
+
+	@Override
+	public int updateNoteInterest(final List<Note> interestCountList) {
+		String sql = "update t_note set n_interest= n_interest +? where n_id=?";
+		int[] res = jdbcTemplate.batchUpdate(sql,
+				new BatchPreparedStatementSetter() {
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+							Note note = interestCountList.get(i);
+							ps.setInt(1, note.getInterest());
+							ps.setString(2, note.getId());
+					}
+
+					public int getBatchSize() {
+						return interestCountList.size();
+					}
+				});
+		return res.length;
+	}
+
+	@Override
+	public Note getNoteById(String noteId) {
+		Note note = new Note();
+		String sql = "select * from t_note where n_id ='"+noteId+"'";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		if (rows != null && rows.size() > 0) {
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> map = (Map<String, Object>) rows.get(i);
+				note.setId(map.get("n_id").toString());
+				note.setType(map.get("n_type").toString());
+				note.setTitle(map.get("n_title").toString());
+				note.setContent(map.get("n_content").toString());
+				note.setPublisher(map.get("n_publisher").toString());
+				note.setPublishTime(map.get("n_publishTime").toString());
+				note.setAttention(Integer.parseInt(map.get("n_attention").toString()));
+				note.setAttention(Integer.parseInt(map.get("n_interest").toString()));
+			}
+		}
+		return note;
+	}
+
+	@Override
+	public int updateWeiboUesr(String userId, String account, String encryptPwd) {
+		String sql = "update t_user  set u_account ='"+account+"', u_pwd ='"+encryptPwd+"' where u_id='"+userId+"'";
+		int rows = jdbcTemplate.update(sql); 
 		return rows;
 	}
 

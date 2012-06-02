@@ -55,7 +55,7 @@ public class PintuUtils {
 		return today;
 	}
 	
-	//当日零点
+	//一月后零点
 	public static String getAmonthAgo() {
 		Calendar c = Calendar.getInstance();
 	    int   year=c.get(Calendar.YEAR); 
@@ -63,7 +63,7 @@ public class PintuUtils {
 	    int   day=c.get(Calendar.DATE); 
 		c.set(year, month, day, 0, 0, 0);
 		Date date = c.getTime();
-		//得到当天零点即 "2011-08-12 00:00:00"
+		//得到零点即 "2011-08-12 00:00:00"
 		String today = PintuUtils.formatDate(date);
 		return today;
 	}
@@ -73,6 +73,6 @@ public class PintuUtils {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(generateUID());
+		System.out.println(System.currentTimeMillis());
 	}
 }

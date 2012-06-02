@@ -215,12 +215,16 @@ function exit(){
 	//删除cookie
 	deleteCookie("venderId","/");
 	
-	// 删除显示区域的内容
+	//删除显示区域的内容
 	$('#displayArea').children().remove();
-	$('ul').remove();
+	
+	//删掉导航栏的内容
+	$('#func').remove();
+	$('#userInfo').remove();
 	
 	//显示登录框 
 	showLoginWindow();
+	
 }
 
 
@@ -512,7 +516,6 @@ function initFlash(venderId){
 
 
 function createSWFById(divId, accountId, width, height, version){
-           
             var flashvars = {};                                                         
             flashvars.runningMode = "debug";                      
             flashvars.visualWidth = width;                                    
@@ -541,20 +544,6 @@ function createSWFById(divId, accountId, width, height, version){
 function showSwf(divId){
   swfobject.createCSS("#"+divId, "display:block;text-align:left;");
 }
-
-
-$('#widget-docs').bind('tabsselect', function(event, ui) {
-	var index = ui.index;
-	if(index == 0){
-		showSwf('freedemoDiv');
-	}else if(index == 1){
-		showSwf('standarddemoDiv');
-	}else if(index == 2){
-		showSwf('upgradedemoDiv');
-	}else if(index == 3){
-		showSwf('advanceddemoDiv');
-	}
-});
 
 
 //键盘按下ESC时关闭窗口!
